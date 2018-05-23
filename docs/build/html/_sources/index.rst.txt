@@ -9,8 +9,7 @@ Welcome to HNSciCloud Test Suite's documentation!
 .. toctree::
    :maxdepth: 2
    test
-
-
+   test2
 
 Indices and tables
 ==================
