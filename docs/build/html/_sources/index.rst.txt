@@ -11,6 +11,9 @@ Welcome to HNSciCloud Test Suite's documentation!
    test
    test2
 
+Compute
+==================
+
 Indices and tables
 ==================
 
