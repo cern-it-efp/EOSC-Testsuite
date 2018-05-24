@@ -6,23 +6,22 @@
 HNSciCloud Test Suite Documentation
 =================================================
 
+Introduction
+===================
+
 Documentation for users, administrators, and developers of the set of tests that have been included in HNSciCloud project: http://hnscicloud.eu.
 
 .. toctree::
    :maxdepth: 2
 
+
+Contents
+===================
    compute
    storage
+   network
 
 
-Compute
-==================
-
-Storage
-==================
-
-Network
-==================
 
 * :ref:`genindex`
 * :ref:`modindex`
