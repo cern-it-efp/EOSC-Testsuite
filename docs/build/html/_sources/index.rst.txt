@@ -6,8 +6,8 @@
 HNSciCloud Test Suite Documentation
 =================================================
 
-Documentation for users, administrators, and developers of the set of tests that have been included in `HNSciCloud <http://hnscicloud.eu>`.
-For more information on the project consult the `project description <README.rst>`.
+Documentation for users, administrators, and developers of the set of tests that have been included in `HNSciCloud <http://hnscicloud.eu>`_.
+For more information on the project consult the `project description <README.rst>`_.
 
 
 Contents
