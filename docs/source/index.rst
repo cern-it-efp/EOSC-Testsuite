@@ -3,22 +3,14 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-HNSciCloud Test Suite Documentation
+HNSciCloud Test Suite
 =================================================
 
-Documentation for users, administrators, and developers of the set of tests that have been included in `HNSciCloud <http://hnscicloud.eu>`_.
+This documentation covers the set of tests that have been included in the `HNSciCloud <http://hnscicloud.eu>`_ project.
 For more information on the project consult the `project description <README.rst>`_.
-
-
-Contents
-===================
 
 .. toctree::
    :maxdepth: 3
-
-   compute
-   storage
-   network
 
 * :ref:`genindex`
 * :ref:`modindex`
