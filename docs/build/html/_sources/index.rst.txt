@@ -10,7 +10,10 @@ This documentation covers the set of tests that have been included in the `HNSci
 For more information on the project consult the `project description <README.rst>`_.
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
+   compute
+   storage
+   network
 
 * :ref:`genindex`
 * :ref:`modindex`
