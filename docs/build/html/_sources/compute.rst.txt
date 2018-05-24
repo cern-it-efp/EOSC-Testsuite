@@ -7,7 +7,7 @@ Compute
 That's where the docs will come.
 
 
-Contents
+CPU Benchmarking
 ===================
-   CPU Benchmarking
-   GPU Benchmarking
+GPU Benchmarking
+===================
