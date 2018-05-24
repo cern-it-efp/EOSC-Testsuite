@@ -7,7 +7,7 @@ HNSciCloud Test Suite
 =================================================
 
 This documentation covers the set of tests that have been included in the `HNSciCloud <http://hnscicloud.eu>`_ project.
-For more information on the project consult the `project description <README.rst>`_.
+For more information on the project consult the `project description :ref:'README'`.
 
 .. toctree::
    :maxdepth: 2
