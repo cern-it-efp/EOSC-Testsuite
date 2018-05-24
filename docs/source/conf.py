@@ -19,7 +19,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = u'HNSciCloud Testsuite Doocumentation'
+project = u'HNSciCloud Testsuite'
 copyright = u'2018, HNSciCloud Buyers Group'
 author = u'HNSciCloud Buyers Group'
 
