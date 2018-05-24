@@ -10,8 +10,9 @@ Documentation for users, administrators, and developers of the set of tests that
 
 .. toctree::
    :maxdepth: 2
-   Compute
-   Storage
+
+   compute
+   storage
 
 
 Compute
