@@ -9,3 +9,10 @@ For more information on the project consult the :role: `project description <REA
    :width: 200 px
    :alt: alternate text
    :align: center
+
+.. toctree::
+   :maxdepth: 2
+
+   compute
+   storage
+   network
