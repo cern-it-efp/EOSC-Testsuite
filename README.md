@@ -1,2 +1,2 @@
-# HNSciCloud Test-suite documentation - v0.1
+# CERN Test-Suite documentation - v0.1
 # 
