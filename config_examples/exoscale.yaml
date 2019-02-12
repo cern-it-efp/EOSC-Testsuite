@@ -1,0 +1,27 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+general:
+  slaves_amount: 4
+  provider_name: "exoscale"
+  provider_instance_name: "exoscale_compute"
+  path_to_key: "~/.ssh/id_rsa"
+
+credentials:
+  key: "o9b6sh7vd6n8h8yji8"
+  secret: "o9b6sh7vd6n8h8yji8o9b6sh7vd6n8h8yji8"
+
+instance_definition:
+  display_name = "kubenode"#NAME
+  template = "Linux CentOS 7.5 64-bit"
+  size = "GPU-small"
+  key_pair = "k_cl"
+  security_groups = ["kgroup"]
+  disk_size = 50
+  zone = "ch-gva-2"
+
+#---------------TEST CATALOG----------------------------------------------------
+tests_catalog:
+  s3_test:
+    run: True
+    endpoint: https://sos-ch-dk-2.exo.io
+  ml_test:
+    run: True
