@@ -1,0 +1,280 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Test-Suite for cloud provider validation - CERN IT (EFP) &#8212; Cloud Test Suite - CERN IT  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="test-suite-for-cloud-provider-validation-cern-it-efp">
+<h1>Test-Suite for cloud provider validation - CERN IT (EFP)<a class="headerlink" href="#test-suite-for-cloud-provider-validation-cern-it-efp" title="Permalink to this headline">¶</a></h1>
+<p>This tool is intended to be used for cloud providers (public cloud) validation and testing. The test-suite does 3 main things:</p>
+<ol class="arabic simple">
+<li>Create the infrastructure in which to deploy the tests: VMs are created using Terraform and then Kubernetes and Docker are installed on them to create a k8s cluster.</li>
+<li>Deploy the tests: Docker images have been prebuilt and pushed to a hub/registry beforehand. These images are used on Kubernetes yaml file for the deployments.</li>
+<li>Harvest results: at the end of each test run a results file -written in JSON- is created. This file is stored on the user’s machine, from where the test-suite was run.</li>
+</ol>
+<hr class="docutils" />
+<div class="section" id="follow-these-steps-to-test-a-cloud-provider">
+<h2>Follow these steps to test a cloud provider:<a class="headerlink" href="#follow-these-steps-to-test-a-cloud-provider" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="install-terraform">
+<h2>1. Install Terraform<a class="headerlink" href="#install-terraform" title="Permalink to this headline">¶</a></h2>
+<p>Terraform is the tool that creates the VMs that will later become a Kubernetes cluster. The test-suite makes use of it so download and install <a class="reference external" href="https://learn.hashicorp.com/terraform/getting-started/install.html">Terraform</a>.</p>
+</div>
+<div class="section" id="manage-ssh-keys">
+<h2>2. Manage ssh keys<a class="headerlink" href="#manage-ssh-keys" title="Permalink to this headline">¶</a></h2>
+<p>A ssh key pair is needed to establish connections to the VMs that will be created later. Therefore you must create (or import) this key on you provider beforehand and place the private key at <cite>~/.ssh/id_rsa</cite>.
+Note errors may occur if your key doesn’t have the right permissions. Set these to the right value using the following command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> chmod <span class="m">600</span> path/to/key
+</pre></div>
+</div>
+</div>
+<div class="section" id="dependencies">
+<h2>3. Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<p>This test-suite requires some packages to work properly and these must be installed by yourself.</p>
+<div class="section" id="kubernetes-client">
+<h3>3.1 Kubernetes client<a class="headerlink" href="#kubernetes-client" title="Permalink to this headline">¶</a></h3>
+<p>In order to manage the Kubernetes cluster locally instead of using the master node, install <a class="reference external" href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">kubectl</a> on your machine.</p>
+</div>
+<div class="section" id="python">
+<h3>3.2 Python<a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h3>
+<p>Python version 2.7 is required.</p>
+</div>
+</div>
+<div class="section" id="test-suite-download-and-preparation">
+<h2>4. Test-suite download and preparation<a class="headerlink" href="#test-suite-download-and-preparation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="clone-repository">
+<h3>4.1 Clone repository<a class="headerlink" href="#clone-repository" title="Permalink to this headline">¶</a></h3>
+<p>Clone this repository as follows and cd into it:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> git clone https://github.com/jyohhann/HNSciCloud-Testsuite.git
+<span class="gp">$</span> <span class="nb">cd</span> HNSciCloud-Testsuite
+</pre></div>
+</div>
+</div>
+<div class="section" id="prepare-the-suite-according-to-your-preferences-and-configurations">
+<h3>4.2 Prepare the suite according to your preferences and configurations<a class="headerlink" href="#prepare-the-suite-according-to-your-preferences-and-configurations" title="Permalink to this headline">¶</a></h3>
+<p>While completing this task refer to <a class="reference external" href="https://www.terraform.io/docs/providers/">Terraform’s documentation</a> in order to complete it successfully as some parts are provider specific and differ from one provider to another.
+You must fill configs.yaml to match your requirements, a filled example can be found in /config_examples.
+This file has different sections:</p>
+<p><code class="docutils literal notranslate"><span class="pre">general</span></code>:  For specifying general variables:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="73%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Explanation / Values</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>slaves_amount</td>
+<td>Indicate the number of slaves the cluster must contain</td>
+</tr>
+<tr class="row-odd"><td>provider_name</td>
+<td>Name of the provider</td>
+</tr>
+<tr class="row-even"><td>provider_instance_name</td>
+<td>Compute instance name. This is provider specific.</td>
+</tr>
+<tr class="row-odd"><td>path_to_key</td>
+<td>Path to the location of your private key</td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">credentials</span></code>:  For specifying the credentials to connect to the provider and deploy resources.</p>
+<p><code class="docutils literal notranslate"><span class="pre">instance_definition</span></code>:  In this section you should write all the key-pair values that would be written on the body of an instance declaration resource on Terraform, according to the provider you want to test. Refer to the documentation of the provider to check which pairs you need to specify and in any case you can run the test-suite (next steps) and if there is any missing pair a message will be shown on the console telling you which ones these are. This is how you must specify each pair:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">YOUR_PROVIDER</span><span class="s1">&#39;S_STRING_FOR_A_KEY&gt; = &quot;&lt;VALUE_GIVEN_FOR_THAT_KEY&gt;&quot;</span>
+</pre></div>
+</div>
+<p>An example (Exoscale):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;kubenode&quot;</span><span class="c1">#NAME</span>
+<span class="n">template</span> <span class="o">=</span> <span class="s2">&quot;Linux CentOS 7.5 64-bit&quot;</span>
+<span class="n">size</span> <span class="o">=</span> <span class="s2">&quot;GPU-small&quot;</span>
+<span class="n">key_pair</span> <span class="o">=</span> <span class="s2">&quot;k_cl&quot;</span>
+<span class="n">security_groups</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;kgroup&quot;</span><span class="p">]</span>
+<span class="n">disk_size</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="n">zone</span> <span class="o">=</span> <span class="s2">&quot;ch-gva-2&quot;</span>
+</pre></div>
+</div>
+<p>Pay attention on this section to the name for the instance. A random string will be added later to the name given to the instance in order to avoid DNS issues when running the test-suite several times. For this, the block must contain the ‘#NAME’ placeholder. When specifying the name for the instance, follow this structure:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">YOUR_PROVIDER</span><span class="s1">&#39;S_STRING_FOR_NAME&gt; = &quot;&lt;NAME_FOR_YOUR_INSTANCES&gt;&quot;#NAME</span>
+</pre></div>
+</div>
+<p>So lets image you provider’s string for the instance name is “display_name”, and you want to call your instances “kubenode” then you should write:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;kubenode&quot;</span><span class="c1">#NAME</span>
+</pre></div>
+</div>
+<p>Note the ‘#NAME’!</p>
+<p><strong>[Note: Even though this is a yaml file, ‘=’ is used on this section instead of ‘:’ as that is required on Terraform files and this will be taken as a whole block and placed directly on a .tf file]</strong>
+<strong>[Note2: providers that do not support resource creation with Terraform can’t be tested with this test-suite currently]</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">tests_catalog</span></code>:  In this section, you have to specify which tests you want to run. If you want to run certain test simply set its <cite>run</cite> variable to the True Boolean value. On the other hand if you don’t want it to be run set this value to False. Following find a description of each test:</p>
+<ul>
+<li><p class="first">Machine Learning using GPU: trains a GAN making use of a k8s cluster and MPI.</p>
+</li>
+<li><p class="first">S3 endpoint tests: An S3 test script that will check the following things</p>
+<ul class="simple">
+<li>S3 authentication (access key + secret key)</li>
+<li>PUT</li>
+<li>GET</li>
+<li>GET with prefix matching</li>
+<li>GET chunk</li>
+<li>GET multiple chunks</li>
+</ul>
+<p>For this test, besides the <cite>run</cite> variable, the following ones must be set on the configs.yaml file:</p>
+</li>
+</ul>
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="89%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Explanation / Values</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><cite>endpoint</cite></td>
+<td>Endpoint under which your S3 bucket is reachable. This URL must not include the bucket name but only the host.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>[Note: If no test’s `run` is set to True, this tool will simply create a raw Kubernetes cluster]</strong></p>
+</div>
+</div>
+<div class="section" id="run-the-test-suite">
+<h2>5. Run the test-suite<a class="headerlink" href="#run-the-test-suite" title="Permalink to this headline">¶</a></h2>
+<p>Once all the previous steps are completed, the test-suite is ready to be run:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ./test_suite.py &lt;options&gt;
+</pre></div>
+</div>
+<p>Terraform will first show the user what it is going to do, what to create. If agreed, type “yes” and press enter.</p>
+<div class="section" id="options">
+<h3>5.1 Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h3>
+<p>The following table describes all the accepted options:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="88%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Explanation / Values</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><cite>–only-test</cite></td>
+<td>Run without creating the infrastructure (VMs and cluster). Not valid for the first run.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="results">
+<h2>6. Results<a class="headerlink" href="#results" title="Permalink to this headline">¶</a></h2>
+<p>Once all tests are run the results and logs of this cloud benchmarking can be seen at /results in JSON format.</p>
+<hr class="docutils" />
+<p><strong>This test-suite has been tested on:</strong></p>
+<div class="line-block">
+<div class="line">Python: 2.7</div>
+<div class="line">Linux distros: Ubuntu, Centos, Coreos, Debian, RedHat, Fedora</div>
+<div class="line">OS running on provider’s VMs : Centos</div>
+<div class="line">Providers: Openstack, Exoscale</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">Cloud Test Suite - CERN IT</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, CERN IT-DI-EFP.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
