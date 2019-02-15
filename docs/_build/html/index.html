@@ -133,8 +133,10 @@ This file has different sections:</p>
 </pre></div>
 </div>
 <p>Note the ‘#NAME’!</p>
-<p><strong>[Note: Even though this is a yaml file, ‘=’ is used on this section instead of ‘:’ as that is required on Terraform files and this will be taken as a whole block and placed directly on a .tf file]</strong>
-<strong>[Note2: providers that do not support resource creation with Terraform can’t be tested with this test-suite currently]</strong></p>
+<div class="line-block">
+<div class="line"><strong>[Note: Even though this is a yaml file, ‘=’ is used on this section instead of ‘:’ as that is required on Terraform files and this will be taken as a whole block and placed directly on a .tf file]</strong></div>
+<div class="line"><strong>[Note2: providers that do not support resource creation with Terraform can’t be tested with this test-suite currently]</strong></div>
+</div>
 <p><code class="docutils literal notranslate"><span class="pre">tests_catalog</span></code>:  In this section, you have to specify which tests you want to run. If you want to run certain test simply set its <cite>run</cite> variable to the True Boolean value. On the other hand if you don’t want it to be run set this value to False. Following find a description of each test:</p>
 <ul>
 <li><p class="first">Machine Learning using GPU: trains a GAN making use of a k8s cluster and MPI.</p>

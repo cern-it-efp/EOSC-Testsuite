@@ -1,3 +1,8 @@
+.. Cloud Test Suite - CERN IT documentation master file, created by
+   sphinx-quickstart on Fri Feb 15 15:59:59 2019.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
 ===========================================================
 Test-Suite for cloud provider validation - CERN IT (EFP)
 ===========================================================
@@ -99,8 +104,8 @@ So lets image you provider's string for the instance name is "display_name", and
 
 Note the '#NAME'!
 
-| **[Note: Even though this is a yaml file, '=' is used on this section instead of ':' as that is required on Terraform files and this will be taken as a whole block and placed directly on a .tf file]**
-| **[Note2: providers that do not support resource creation with Terraform can't be tested with this test-suite currently]**
+**[Note: Even though this is a yaml file, '=' is used on this section instead of ':' as that is required on Terraform files and this will be taken as a whole block and placed directly on a .tf file]**
+**[Note2: providers that do not support resource creation with Terraform can't be tested with this test-suite currently]**
 
 ``tests_catalog``:  In this section, you have to specify which tests you want to run. If you want to run certain test simply set its `run` variable to the True Boolean value. On the other hand if you don't want it to be run set this value to False. Following find a description of each test:
 
