@@ -157,4 +157,5 @@ Once all tests are run the results and logs of this cloud benchmarking can be se
 | Python: 2.7
 | Linux distros: Ubuntu, Centos, Coreos, Debian, RedHat, Fedora
 | OS running on provider's VMs : Centos
-| Providers: Openstack, Exoscale
+| Providers: Exoscale (CloudStack), CERN Private Cloud (OpenStack)
+

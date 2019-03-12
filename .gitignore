@@ -1,4 +1,4 @@
-tests/ml/s3cfg-secret.yamls
+tests/ml/s3cfg-secret.yaml
 tests/ml/s3cfg
 tests/ml/train-mpi_3dGAN.yaml
 terraform/main.tf
