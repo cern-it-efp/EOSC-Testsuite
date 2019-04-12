@@ -1,9 +1,0 @@
-tests/ml/s3cfg-secret.yaml
-tests/ml/s3cfg
-tests/ml/train-mpi_3dGAN.yaml
-terraform/main.tf
-terraform/join.sh
-terraform/terraform.tfstate
-terraform/terraform.tfstate.backup
-tests/s3/s3pod.yaml
-terraform/aux/master_ip

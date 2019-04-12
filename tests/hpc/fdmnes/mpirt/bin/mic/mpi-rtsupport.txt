@@ -1,0 +1,11 @@
+Please use the following information when submitting customer support requests
+ 
+Package ID: l_mpi_p_5.0.1.034
+Package Contents: Intel(R) MPI Library for Linux* OS
+ 
+To register for support for the Intel MPI Runtime Environment product, submit
+your information at:
+https://registrationcenter.intel.com/RegCenter/ComForm.aspx?productid=785.
+
+Direct customer support requests using your registration ID and password
+through Intel(R) Premier Support at www.intel.com/software/products/support.

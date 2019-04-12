@@ -4,6 +4,8 @@ install_ml()
 {
   export SOURCE=$PWD
 
+  yum install -y wget git #needed for following cmd's. TODO: Will fail if VM OS is not Centos
+
   wget https://dl.google.com/go/go1.11.4.linux-amd64.tar.gz
   tar -xvf go1.11.4.linux-amd64.tar.gz
   rm -f go1.11.4.linux-amd64.tar.gz
@@ -11,27 +13,27 @@ install_ml()
   export GOPATH=$HOME/Projects/Proj1
   export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
-  yum install -y git #needed for the following cmd
   go get github.com/ksonnet/ksonnet
   cd $GOPATH/src/github.com/ksonnet/ksonnet
   make install
 
   export KUBEFLOW_SRC=$SOURCE"/KUBEFLOW_SRC"
   export KFAPP=KFAPP
-  export KUBEFLOW_TAG=v0.3.5
+  export KUBEFLOW_TAG=v0.4.1
   mkdir ${KUBEFLOW_SRC}
   cd ${KUBEFLOW_SRC}
   curl https://raw.githubusercontent.com/kubeflow/kubeflow/${KUBEFLOW_TAG}/scripts/download.sh | bash
+  mkdir /mnt/pv1
+  mkdir /mnt/pv2
+  mkdir /mnt/pv3
   ${KUBEFLOW_SRC}/scripts/kfctl.sh init ${KFAPP} --platform none
   cd ${KFAPP}
   ${KUBEFLOW_SRC}/scripts/kfctl.sh generate k8s
   ${KUBEFLOW_SRC}/scripts/kfctl.sh apply k8s
 
   cd ks_app
-  ks generate mpi-operator mpi-operator --gpusPerNode=1
-  ks apply default -c mpi-operator
+  ks generate mpi-operator mpi-operator --gpusPerNode=1 || exit 1
+  ks apply default -c mpi-operator || exit 1
 }
 
-echo "Installing machine learning and MPI components..."
-install_ml &> /dev/null &&
-echo "Cluster ready for ML!"
+install_ml || exit 1

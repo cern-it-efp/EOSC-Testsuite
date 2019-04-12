@@ -5,5 +5,5 @@ security-groups="kgroup"
 key-pair="k_cl"
 region="ch-gva-2"
 disk_size="50"
-exoscale_api_key="" #hnsc not mine
-exoscale_secret_key="" #hnsc not mine
+exoscale_api_key=""
+exoscale_secret_key="" 

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ps-pod
+spec:
+  containers:
+  - name: ps-cont
+    image: perfsonar/testpoint:latest
+    securityContext:
+      privileged: true
+    imagePullPolicy: Always
+    env:
+    - name: ENDPOINT
+      value: ENDPOINT_PH

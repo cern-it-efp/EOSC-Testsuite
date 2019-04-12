@@ -1,0 +1,5 @@
+#!/bin/bash
+fdmnesDir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+. "${fdmnesDir}/mpirt/bin/intel64/mpivars.sh"
+
+mpirun $* "${fdmnesDir}/fdmnes_mpi_linux64"

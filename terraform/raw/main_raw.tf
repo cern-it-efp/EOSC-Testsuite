@@ -6,61 +6,54 @@ resource "PROVIDER_INSTANCE_NAME" "kubemaster" {
 
   MASTER_DEFINITION_PLACEHOLDER
 
-  provisioner "local-exec" {
-    command = "echo ${self.ip_address} > aux/master_ip"
-  }
-
   connection {
     type        = "ssh"
     user        = "root"
-    private_key = "${file("PATH_TO_KEY_VALUE")}" #must be the key used for the VM: "key_par"
+    private_key = "${file("PATH_TO_KEY_VALUE")}"
   }
-
-  provisioner "local-exec" {
-    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ip_address} 'bash -s' -- < aux/cluster_creator.sh -m -l &> /dev/null"
-  }
-
   provisioner "remote-exec" {
     inline = [
-      "JOIN_COMMAND=$(kubeadm token create --print-join-command)' --ignore-preflight-errors=SystemVerification'",
-      "echo $JOIN_COMMAND > ~/join.sh",
+      "echo DOCKER_CE_VER=DOCKER_CE_PH >> /etc/environment",
+      "echo DOCKER_EN_VER=DOCKER_EN_PH >> /etc/environment",
+      "echo K8S_VER=K8S_PH >> /etc/environment",
+      "source /etc/environment"
     ]
   }
-
-  provisioner "local-exec"{
-    command = "scp -o 'StrictHostKeyChecking no' root@${self.ip_address}:~/join.sh ./join.sh &> /dev/null",
-  }
-
   provisioner "local-exec" {
-    command = "mkdir ~/.kube & scp -o 'StrictHostKeyChecking no' root@${self.ip_address}:~/.kube/config ~/.kube/config &> /dev/null",
+    command = "echo NODE_IP_GETTER > ../master_ip && ./ssh_connect.sh --usr root --ip NODE_IP_GETTER --file aux/cluster_creator.sh --opts -m; mkdir -p ~/.kube & ./ssh_connect.sh --scp --src root@NODE_IP_GETTER:~/.kube/config --dst ~/.kube/config"
+  }
+  provisioner "remote-exec" {
+    inline = [
+      "echo $(kubeadm token create --print-join-command)' --ignore-preflight-errors=SystemVerification' > ~/join.sh"
+    ]
+  }
+  provisioner "local-exec"{
+    command = "timeout 240 ./ssh_connect.sh --scp --src root@NODE_IP_GETTER:~/join.sh --dst ./join.sh --hide-logs; if [ $? -eq 124 ]; then echo ' ! ! ! ERROR: Timeout trying to fetch join command from master node ! ! ! ' ; exit 1 ; else exit 0; fi"
   }
 }
 
 resource "PROVIDER_INSTANCE_NAME" "kubenode" {
-  count      = "SLAVES_AMOUNT"
+  count      = "SLAVE_NODES"
 
   SLAVE_DEFINITION_PLACEHOLDER
 
   connection {
     type        = "ssh"
     user        = "root"
-    private_key = "${file("PATH_TO_KEY_VALUE")}" #must be the key used for the VM: "key_par".
+    private_key = "${file("PATH_TO_KEY_VALUE")}"
   }
-
+  provisioner "remote-exec" {
+    inline = [
+      "echo DOCKER_CE_VER=DOCKER_CE_PH >> /etc/environment",
+      "echo DOCKER_EN_VER=DOCKER_EN_PH >> /etc/environment",
+      "echo K8S_VER=K8S_PH >> /etc/environment",
+      "source /etc/environment"
+    ]
+  }
   provisioner "local-exec" {
-    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ip_address} 'bash -s' -- < aux/cluster_creator.sh -l &> /dev/null"
+    command = "./ssh_connect.sh --usr root --ip NODE_IP_GETTER --file aux/cluster_creator.sh"
   }
-
   provisioner "local-exec" {
-    command = "echo 'Waiting for join command... ' ; while [ ! -e ./join.sh ]; do : ; done"
+    command = "echo 'Waiting for join command... ' ; timeout 240 ./ssh_connect.sh --usr root --ip NODE_IP_GETTER --file ./join.sh --hide-logs; if [ $? -eq 124 ]; then echo ' ! ! ! ERROR: Timeout waiting for join command at NODE_IP_GETTER ! ! ! ' ; exit 1 ; else exit 0 ; fi"
   }
-
-  provisioner "local-exec" { 
-    command = "ssh -o 'StrictHostKeyChecking no' root@${self.ip_address} 'bash -s' -- < ./join.sh &> /dev/null "
-  }
-
-  provisioner "local-exec" { #needed for being able to run this several times
-    command ="rm -f join.sh"
-  }
-
 }

@@ -4,90 +4,110 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Test-Suite for cloud provider validation - CERN IT (EFP) &#8212; Cloud Test Suite - CERN IT  documentation</title>
+    <title>OCRE Test-Suite for cloud provider validation - CERN IT (EFP) &#8212; Cloud Test Suite - CERN IT  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
-  
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
-  </head><body>
+  </head>
+  <body>
   
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          
-
           <div class="body" role="main">
             
-  <div class="section" id="test-suite-for-cloud-provider-validation-cern-it-efp">
-<h1>Test-Suite for cloud provider validation - CERN IT (EFP)<a class="headerlink" href="#test-suite-for-cloud-provider-validation-cern-it-efp" title="Permalink to this headline">¶</a></h1>
-<p>This tool is intended to be used for cloud providers (public cloud) validation and testing. The test-suite does 3 main things:</p>
+  <div class="section" id="ocre-test-suite-for-cloud-provider-validation-cern-it-efp">
+<h1>OCRE Test-Suite for cloud provider validation - CERN IT (EFP)<a class="headerlink" href="#ocre-test-suite-for-cloud-provider-validation-cern-it-efp" title="Permalink to this headline">¶</a></h1>
+<p>This tool is intended to be used for cloud providers (public cloud) validation and testing. The test-suite does 4 main things:</p>
 <ol class="arabic simple">
-<li>Create the infrastructure in which to deploy the tests: VMs are created using Terraform and then Kubernetes and Docker are installed on them to create a k8s cluster.</li>
-<li>Deploy the tests: Docker images have been prebuilt and pushed to a hub/registry beforehand. These images are used on Kubernetes yaml file for the deployments.</li>
-<li>Harvest results: at the end of each test run a results file -written in JSON- is created. This file is stored on the user’s machine, from where the test-suite was run.</li>
+<li>Infrastructure provisioning: VMs are created using Terraform and then Kubernetes and Docker are installed on them to create a k8s cluster.</li>
+<li>Deploy the tests: Kubernetes resource definition files (YAML) are used to deploy the tests, either as single pods or deployments.</li>
+<li>Harvest results: at the end of each test run a result file -written in JSON- is created. This file is stored locally.</li>
+<li>Through the verification system, the TS is triggered from a service running at CERN. In this case results are then pushed to a S3 Bucket at CERN.</li>
 </ol>
-<hr class="docutils" />
-<div class="section" id="follow-these-steps-to-test-a-cloud-provider">
-<h2>Follow these steps to test a cloud provider:<a class="headerlink" href="#follow-these-steps-to-test-a-cloud-provider" title="Permalink to this headline">¶</a></h2>
+<p>The test set here available is the one used for <a class="reference external" href="https://www.hnscicloud.eu/">EC project Helix Nebula The Science Cloud</a>.</p>
+<p><strong>This test-suite has been tested on:</strong></p>
+<div class="line-block">
+<div class="line">Python: 3</div>
+<div class="line">Linux distros: Ubuntu, Centos, Coreos, Debian, RedHat, Fedora</div>
+<div class="line">OS running on provider’s VMs : Centos</div>
+<div class="line">Providers:  Exoscale (Cloudstack), CERN Private Cloud (OpenStack), Cloudscale (OpenStack)</div>
 </div>
+<hr class="docutils" />
+<div class="section" id="getting-started">
+<h2>1. Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<p>Follow these steps to test a cloud provider:</p>
 <div class="section" id="install-terraform">
-<h2>1. Install Terraform<a class="headerlink" href="#install-terraform" title="Permalink to this headline">¶</a></h2>
-<p>Terraform is the tool that creates the VMs that will later become a Kubernetes cluster. The test-suite makes use of it so download and install <a class="reference external" href="https://learn.hashicorp.com/terraform/getting-started/install.html">Terraform</a>.</p>
+<h3>1.1 Install Terraform<a class="headerlink" href="#install-terraform" title="Permalink to this headline">¶</a></h3>
+<p>Terraform is the tool that creates the VMs that will later become a Kubernetes cluster. The test-suite makes use of it so download and
+install <a class="reference external" href="https://learn.hashicorp.com/terraform/getting-started/install.html">Terraform</a> on your machine.
+In some cases, providers are not fully supported by Terraform but these provide plugins to gap this bridge. In such cases, refer to the documentation of the provider
+to download the plugin. Once downloaded, this must be placed at <em>~/.terraform.d/plugins</em> and execution permissions must be given to it (<em>+x</em>).</p>
 </div>
 <div class="section" id="manage-ssh-keys">
-<h2>2. Manage ssh keys<a class="headerlink" href="#manage-ssh-keys" title="Permalink to this headline">¶</a></h2>
-<p>A ssh key pair is needed to establish connections to the VMs that will be created later. Therefore you must create (or import) this key on you provider beforehand and place the private key at <cite>~/.ssh/id_rsa</cite>.
-Note errors may occur if your key doesn’t have the right permissions. Set these to the right value using the following command:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> chmod <span class="m">600</span> path/to/key
+<h3>1.2 Manage ssh keys<a class="headerlink" href="#manage-ssh-keys" title="Permalink to this headline">¶</a></h3>
+<p>A ssh key pair is needed to establish connections to the VMs that will be created later. Therefore you must create (or import) this key on your provider beforehand
+and place the private key at <em>~/.ssh/id_rsa</em>. Note errors may occur if your key doesn’t have the right permissions. Set these to the right value using the following command:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> chmod <span class="m">600</span> path/to/key
 </pre></div>
 </div>
 </div>
 <div class="section" id="dependencies">
-<h2>3. Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<h3>1.3 Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h3>
 <p>This test-suite requires some packages to work properly and these must be installed by yourself.</p>
 <div class="section" id="kubernetes-client">
-<h3>3.1 Kubernetes client<a class="headerlink" href="#kubernetes-client" title="Permalink to this headline">¶</a></h3>
+<h4>Kubernetes client<a class="headerlink" href="#kubernetes-client" title="Permalink to this headline">¶</a></h4>
 <p>In order to manage the Kubernetes cluster locally instead of using the master node, install <a class="reference external" href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">kubectl</a> on your machine.</p>
 </div>
 <div class="section" id="python">
-<h3>3.2 Python<a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h3>
-<p>Python version 2.7 is required.</p>
+<h4>Python<a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h4>
+<p>Version python3 is required. In some Linux distributions, it has been seen not all the python required packages are included by default, like pyyaml.
+In such cases, install the missing packages according to the error messages when running the test-suite.</p>
 </div>
 </div>
-<div class="section" id="test-suite-download-and-preparation">
-<h2>4. Test-suite download and preparation<a class="headerlink" href="#test-suite-download-and-preparation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="download-and-preparation">
+<h3>1.4 Download and preparation<a class="headerlink" href="#download-and-preparation" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="clone-repository">
-<h3>4.1 Clone repository<a class="headerlink" href="#clone-repository" title="Permalink to this headline">¶</a></h3>
+<h4>Clone repository<a class="headerlink" href="#clone-repository" title="Permalink to this headline">¶</a></h4>
 <p>Clone this repository as follows and cd into it:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> git clone https://github.com/jyohhann/HNSciCloud-Testsuite.git
-<span class="gp">$</span> <span class="nb">cd</span> HNSciCloud-Testsuite
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> git clone https://github.com/cern-it-efp/OCRE-Testsuite.git
+<span class="gp">$</span> <span class="nb">cd</span> OCRE-Testsuite
 </pre></div>
 </div>
 </div>
-<div class="section" id="prepare-the-suite-according-to-your-preferences-and-configurations">
-<h3>4.2 Prepare the suite according to your preferences and configurations<a class="headerlink" href="#prepare-the-suite-according-to-your-preferences-and-configurations" title="Permalink to this headline">¶</a></h3>
-<p>While completing this task refer to <a class="reference external" href="https://www.terraform.io/docs/providers/">Terraform’s documentation</a> in order to complete it successfully as some parts are provider specific and differ from one provider to another.
-You must fill configs.yaml to match your requirements, a filled example can be found in /config_examples.
-This file has different sections:</p>
-<p><code class="docutils literal notranslate"><span class="pre">general</span></code>:  For specifying general variables:</p>
+<div class="section" id="configuration">
+<h4>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h4>
+<p>While completing this task refer to <a class="reference external" href="https://www.terraform.io/docs/providers/">Terraform’s documentation</a> in order to complete it successfully as some parts are provider
+specific and differ from one provider to another.
+You will find on the root of the cloned repository a file named <em>configs_raw.yaml</em>. You must rename it <em>configs.yaml</em> and fill it to match your requirements. <strong>A filled example can be
+found in */config_examples*</strong>. This file has different sections:</p>
+<p><code class="docutils literal"><span class="pre">general</span></code></p>
+<p>For specifying general variables:</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="27%" />
-<col width="73%" />
+<col width="21%" />
+<col width="79%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Name</th>
@@ -95,64 +115,90 @@ This file has different sections:</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>slaves_amount</td>
-<td>Indicate the number of slaves the cluster must contain</td>
+<tr class="row-even"><td>clusterNodes</td>
+<td>Indicate the number of nodes the cluster must contain, including master node.</td>
 </tr>
-<tr class="row-odd"><td>provider_name</td>
-<td>Name of the provider</td>
+<tr class="row-odd"><td>providerName</td>
+<td>Name of the provider for Terraform.</td>
 </tr>
-<tr class="row-even"><td>provider_instance_name</td>
-<td>Compute instance name. This is provider specific.</td>
+<tr class="row-even"><td>providerInstanceName</td>
+<td>Compute instance name for Terraform. This is provider specific.</td>
 </tr>
-<tr class="row-odd"><td>path_to_key</td>
+<tr class="row-odd"><td>pathToKey</td>
 <td>Path to the location of your private key</td>
+</tr>
+<tr class="row-even"><td>dockerCE</td>
+<td>Version of docker-ce to be installed. Leave empty for latest.</td>
+</tr>
+<tr class="row-odd"><td>dockerEngine</td>
+<td>Version of docker-engine to be installed. Leave empty for latest.</td>
+</tr>
+<tr class="row-even"><td>kubernetes</td>
+<td>Version of Kubernetes to be installed. Leave empty for latest.</td>
 </tr>
 </tbody>
 </table>
-<p><code class="docutils literal notranslate"><span class="pre">credentials</span></code>:  For specifying the credentials to connect to the provider and deploy resources.</p>
-<p><code class="docutils literal notranslate"><span class="pre">instance_definition</span></code>:  In this section you should write all the key-pair values that would be written on the body of an instance declaration resource on Terraform, according to the provider you want to test. Refer to the documentation of the provider to check which pairs you need to specify and in any case you can run the test-suite (next steps) and if there is any missing pair a message will be shown on the console telling you which ones these are. This is how you must specify each pair:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">YOUR_PROVIDER</span><span class="s1">&#39;S_STRING_FOR_A_KEY&gt; = &quot;&lt;VALUE_GIVEN_FOR_THAT_KEY&gt;&quot;</span>
+<p>Note that it’s possible to chose between Docker Community Edition and Docker Engine (older Docker packages), however it is <strong>highly recommended</strong> to leave these variables empty to create a
+cluster with the latest stack.</p>
+<p><code class="docutils literal"><span class="pre">auth</span></code></p>
+<p>For specifying the credentials to connect to the provider and deploy resources.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Explanation / Values</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>useFile</td>
+<td>Indicate if a credentials file is used instead of secret-key pair (Boolean). Required property.</td>
+</tr>
+<tr class="row-odd"><td>credentials</td>
+<td>String block containing the required credentials. This is not yaml but string, therefore use ‘=’ and ‘ ” ‘. (Provider specific).</td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal"><span class="pre">instanceDefinition</span></code></p>
+<p>In this section you should write all the key-pair values that would be written on the body of an instance declaration resource on Terraform, according to the provider you want to test.
+Refer to the documentation of the provider to check which pairs you need to specify and in any case you can run the test-suite (next steps) and if there is any missing pair a message
+will be shown on the terminal telling you which ones these are. This is how you must specify each pair:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">YOUR_PROVIDER</span><span class="s1">&#39;S_STRING_FOR_A_KEY&gt; = &quot;&lt;VALUE_GIVEN_FOR_THAT_KEY&gt;&quot;</span>
 </pre></div>
 </div>
 <p>An example (Exoscale):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;kubenode&quot;</span><span class="c1">#NAME</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;kubenode&quot;</span><span class="c1">#NAME</span>
 <span class="n">template</span> <span class="o">=</span> <span class="s2">&quot;Linux CentOS 7.5 64-bit&quot;</span>
-<span class="n">size</span> <span class="o">=</span> <span class="s2">&quot;GPU-small&quot;</span>
+<span class="n">size</span> <span class="o">=</span> <span class="s2">&quot;Medium&quot;</span>
 <span class="n">key_pair</span> <span class="o">=</span> <span class="s2">&quot;k_cl&quot;</span>
 <span class="n">security_groups</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;kgroup&quot;</span><span class="p">]</span>
 <span class="n">disk_size</span> <span class="o">=</span> <span class="mi">50</span>
 <span class="n">zone</span> <span class="o">=</span> <span class="s2">&quot;ch-gva-2&quot;</span>
 </pre></div>
 </div>
-<p>Pay attention on this section to the name for the instance. A random string will be added later to the name given to the instance in order to avoid DNS issues when running the test-suite several times. For this, the block must contain the ‘#NAME’ placeholder. When specifying the name for the instance, follow this structure:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">YOUR_PROVIDER</span><span class="s1">&#39;S_STRING_FOR_NAME&gt; = &quot;&lt;NAME_FOR_YOUR_INSTANCES&gt;&quot;#NAME</span>
+<p>Pay attention on this section to the name for the instance. A random string will be added later to the name given to the instance in order to avoid DNS issues when running
+the test-suite several times. For this, the block must contain the ‘#NAME’ placeholder. When specifying the name for the instance, follow this structure:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">YOUR_PROVIDER</span><span class="s1">&#39;S_STRING_FOR_NAME&gt; = &quot;&lt;NAME_FOR_YOUR_INSTANCES&gt;&quot;#NAME</span>
 </pre></div>
 </div>
 <p>So lets image you provider’s string for the instance name is “display_name”, and you want to call your instances “kubenode” then you should write:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;kubenode&quot;</span><span class="c1">#NAME</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;kubenode&quot;</span><span class="c1">#NAME</span>
 </pre></div>
 </div>
 <p>Note the ‘#NAME’!</p>
 <div class="line-block">
-<div class="line"><strong>[Note: Even though this is a yaml file, ‘=’ is used on this section instead of ‘:’ as that is required on Terraform files and this will be taken as a whole block and placed directly on a .tf file]</strong></div>
-<div class="line"><strong>[Note2: providers that do not support resource creation with Terraform can’t be tested with this test-suite currently]</strong></div>
+<div class="line">[<strong>NOTE</strong>: Even though this is a yaml file, ‘=’ is used on this section instead of ‘:’ as that is required on Terraform files and this will be taken as a whole block and placed directly on a .tf file]</div>
+<div class="line">[<strong>NOTE2</strong>: providers that do not support resource creation with Terraform or k8saaS can’t be tested with this test-suite currently]</div>
+<div class="line"><br /></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">tests_catalog</span></code>:  In this section, you have to specify which tests you want to run. If you want to run certain test simply set its <cite>run</cite> variable to the True Boolean value. On the other hand if you don’t want it to be run set this value to False. Following find a description of each test:</p>
-<ul>
-<li><p class="first">Machine Learning using GPU: trains a GAN making use of a k8s cluster and MPI.</p>
-</li>
-<li><p class="first">S3 endpoint tests: An S3 test script that will check the following things</p>
-<ul class="simple">
-<li>S3 authentication (access key + secret key)</li>
-<li>PUT</li>
-<li>GET</li>
-<li>GET with prefix matching</li>
-<li>GET chunk</li>
-<li>GET multiple chunks</li>
-</ul>
-<p>For this test, besides the <cite>run</cite> variable, the following ones must be set on the configs.yaml file:</p>
-</li>
-</ul>
+<p><code class="docutils literal"><span class="pre">testsCatalog</span></code></p>
+<p>In this section, you have to specify which tests you want to run. If you want to run certain test simply set its <em>run</em> variable to the True Boolean value. On the other
+hand if you don’t want it to be run set this value to False. Following find a description of each test:</p>
+<p><strong>Deep Learning using GPU: trains a GAN making use of a Kubernetes cluster (GPU flavored) with Kubeflow and MPI.</strong></p>
+<p>Note that for this test a cluster with GPU flavor is required.
+For this test, besides the <em>run</em> variable, the following one can be set on the configs.yaml file:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="11%" />
@@ -164,27 +210,29 @@ This file has different sections:</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><cite>endpoint</cite></td>
-<td>Endpoint under which your S3 bucket is reachable. This URL must not include the bucket name but only the host.</td>
+<tr class="row-even"><td>nodes</td>
+<td>Number of nodes to be used for the deployment. If not set, the max number of nodes available will be used.</td>
 </tr>
 </tbody>
 </table>
-<p><strong>[Note: If no test’s `run` is set to True, this tool will simply create a raw Kubernetes cluster]</strong></p>
+<p>Currently this test is still undergoing development and testing, hence it cant be deployed.</p>
+<p>(Contributor/owner: Sofia Vallecorsa - <a class="reference external" href="mailto:sofia&#46;vallecorsa&#37;&#52;&#48;cern&#46;ch">sofia<span>&#46;</span>vallecorsa<span>&#64;</span>cern<span>&#46;</span>ch</a>)</p>
+<div class="line-block">
+<div class="line"><br /></div>
 </div>
-</div>
-<div class="section" id="run-the-test-suite">
-<h2>5. Run the test-suite<a class="headerlink" href="#run-the-test-suite" title="Permalink to this headline">¶</a></h2>
-<p>Once all the previous steps are completed, the test-suite is ready to be run:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ./test_suite.py &lt;options&gt;
-</pre></div>
-</div>
-<p>Terraform will first show the user what it is going to do, what to create. If agreed, type “yes” and press enter.</p>
-<div class="section" id="options">
-<h3>5.1 Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h3>
-<p>The following table describes all the accepted options:</p>
+<p><strong>S3 endpoint tests: An S3 test script that will check the following things:</strong></p>
+<ul class="simple">
+<li>S3 authentication (access key + secret key)</li>
+<li>PUT</li>
+<li>GET</li>
+<li>GET with prefix matching</li>
+<li>GET chunk</li>
+<li>GET multiple chunks</li>
+</ul>
+<p>For this test, besides the <em>run</em> variable, the following ones must be set on the configs.yaml file:</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="12%" />
+<col width="13%" />
 <col width="88%" />
 </colgroup>
 <thead valign="bottom">
@@ -193,45 +241,208 @@ This file has different sections:</p>
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td><cite>–only-test</cite></td>
-<td>Run without creating the infrastructure (VMs and cluster). Not valid for the first run.</td>
+<tr class="row-even"><td>endpoint</td>
+<td>Endpoint under which your S3 bucket is reachable. This URL must not include the bucket name but only the host.</td>
+</tr>
+<tr class="row-odd"><td>accessKey</td>
+<td>Access key for S3 resource management.</td>
+</tr>
+<tr class="row-even"><td>secretKey</td>
+<td>Secret key for S3 resource management.</td>
+</tr>
+</tbody>
+</table>
+<p>(Contributor/owner: Oliver Keeble - <a class="reference external" href="mailto:oliver&#46;keeble&#37;&#52;&#48;cern&#46;ch">oliver<span>&#46;</span>keeble<span>&#64;</span>cern<span>&#46;</span>ch</a>)</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p><strong>Data repatriation test: Take data from a VM running on a cloud provider to Zenodo.</strong></p>
+<p>In the chase of making the scientific community embrace a vouchers usage of cloud computing, there is always a drawback: once my
+cloud credits are over, what can I do with the data I have on the cloud? Zenodo is a tool developed by CERN useful in this case as it
+keeps data for the long term and it is free. What this test does is to verify that data can be taken from the private cloud being tested onto Zenodo.</p>
+<p>(Contributor/owner: Ignacio Peluaga - <a class="reference external" href="mailto:ignacio&#46;peluaga&#46;lozada&#37;&#52;&#48;cern&#46;ch">ignacio<span>&#46;</span>peluaga<span>&#46;</span>lozada<span>&#64;</span>cern<span>&#46;</span>ch</a>)</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p><strong>CPU Benchmarking: Containerised benchmarking tools.</strong></p>
+<p>The following benchmarks are run on the provider side using a containerised approach:</p>
+<ul class="simple">
+<li>DIRAC Benchmark</li>
+<li>ATLAS Kit Validation</li>
+<li>Whetstone: from the UnixBench benchmark suite.</li>
+<li>Hyper-benchmark: A pre-defined sequence of measurements and fast benchmarks.</li>
+</ul>
+<p>(Contributor/owner: Domenico Giordano - <a class="reference external" href="mailto:domenico&#46;giordano&#37;&#52;&#48;cern&#46;ch">domenico<span>&#46;</span>giordano<span>&#64;</span>cern<span>&#46;</span>ch</a>)</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p><strong>perfSONAR: Networking performance measurements.</strong></p>
+<p>A perfSONAR testpoint is created using a containerised approach on the provider side. The following tests are launched from there to the endpoint provided by the user:</p>
+<ul class="simple">
+<li>throughput: A test to measure the observed speed of a data transfer and associated statistics between two endpoints.</li>
+<li>rtt: Measure the round trip time and related statistics between hosts.</li>
+<li>trace: Trace the path between IP hosts.</li>
+<li>latencybg: Continuously measure one-way latency and associated statistics between hosts and report back results periodically.</li>
+</ul>
+<p>The endpoint for these tests must be specified at configs’ <em>endpoint</em> variable. Use endpoints from:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://fasterdata.es.net/performance-testing/perfsonar/esnet-perfsonar-services/esnet-iperf-hosts/">Here</a></li>
+<li><a class="reference external" href="http://perfsonar-otc.hnsc.otc-service.com/toolkit/">Here</a></li>
+<li><a class="reference external" href="http://stats.es.net/ServicesDirectory/">Here</a></li>
+</ul>
+<p>(Contributor/owner: Marian Babik - <a class="reference external" href="mailto:marian&#46;babik&#37;&#52;&#48;cern&#46;ch">marian<span>&#46;</span>babik<span>&#64;</span>cern<span>&#46;</span>ch</a>)</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p><strong>HPC test: ESRF’s FDMNES: Simulation of x-ray spectroscopies.</strong></p>
+<p>Parallel calculations on Linux using OpenMPI. Rather heavy on CPU and memory, light on IO.
+This test is still under development and will be available on next releases.</p>
+<p>(Contributor/owner: Rainer Wilcke - <a class="reference external" href="mailto:wilcke&#37;&#52;&#48;esrf&#46;fr">wilcke<span>&#64;</span>esrf<span>&#46;</span>fr</a>)</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>[<strong>NOTE</strong>: If no test’s <em>run</em> is set to True, this tool will simply create a raw Kubernetes cluster]</p>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p><code class="docutils literal"><span class="pre">costCalculation</span></code></p>
+<p>Fill in this section in case you would like to get an approximation of the cost of running the test-suite.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="88%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Explanation / Values</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>instancePrice</td>
+<td>Price of a VM per hour.</td>
+</tr>
+<tr class="row-odd"><td>s3bucketPrice</td>
+<td>S3 bucket price.</td>
+</tr>
+</tbody>
+</table>
+<p>Note that if a price is required for the cost calculation but the <em>costCalculation</em> section is not properly filled (For example, S3 Endpoint test was set
+to True but <em>s3bucketPrice</em> was not set), no approximation will be given.</p>
+</div>
+</div>
+<div class="section" id="run-the-test-suite">
+<h3>1.5 Run the test-suite<a class="headerlink" href="#run-the-test-suite" title="Permalink to this headline">¶</a></h3>
+<p>Once all the previous steps are completed, the test-suite is ready to be run:</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> ./test_suite.py &lt;options&gt;
+</pre></div>
+</div>
+<p>Terraform will first show the user what it is going to do, what to create. If agreed, type “yes” and press enter.</p>
+<div class="section" id="options">
+<h4>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h4>
+<p>The following table describes all the accepted options:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="89%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Explanation / Values</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>–only-test</td>
+<td>Run without creating the infrastructure (VMs and cluster), only deploy tests. Not valid for the first run.</td>
+</tr>
+<tr class="row-odd"><td>–auto-retry</td>
+<td>Automatically retry in case of errors on the Terraform phase. Note that in the case errors occur, the user will have to stop the run using Ctrl+z.</td>
+</tr>
+<tr class="row-even"><td>–via-backend</td>
+<td>Runs the Test-Suite using CERN’s backend service instead of the cloned local version. This option must be used for verification (2nd or later runs).</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<div class="section" id="results">
-<h2>6. Results<a class="headerlink" href="#results" title="Permalink to this headline">¶</a></h2>
-<p>Once all tests are run the results and logs of this cloud benchmarking can be seen at /results in JSON format.</p>
-<hr class="docutils" />
-<p><strong>This test-suite has been tested on:</strong></p>
-<div class="line-block">
-<div class="line">Python: 2.7</div>
-<div class="line">Linux distros: Ubuntu, Centos, Coreos, Debian, RedHat, Fedora</div>
-<div class="line">OS running on provider’s VMs : Centos</div>
-<div class="line">Providers: Exoscale (CloudStack), CERN Private Cloud (OpenStack)</div>
 </div>
+<div class="section" id="using-existing-clusters">
+<h2>2. Using existing clusters<a class="headerlink" href="#using-existing-clusters" title="Permalink to this headline">¶</a></h2>
+<p>It is also possible to use this tool for testing providers that support Kubernetes as a Service. This is, the provider offers the user a way for simply creating a cluster.
+In case you want to validate a provider that offers this and want to take advantage of it, simply skip steps 1.1 and 1.2 (install Terraform and manage ssh keys) and when
+running the test-suite, use option <em>–only-test</em> for normal -local results- run and <em>–via-backend</em> for verification runs. <strong>Note that you must have the file *~/.kube/config*
+for the previously provisioned cluster on your local machine so that it can be managed from there.</strong></p>
+</div>
+<div class="section" id="results">
+<h2>3. Results<a class="headerlink" href="#results" title="Permalink to this headline">¶</a></h2>
+<p>Once all tests are run and the test-suite has completed its execution, the results and logs of this cloud benchmarking can be seen at /results in JSON format.
+Prior to completing the run, a message will be printed to the console showing the exact path to the results. There you will find a file <em>general.json</em> containing general information
+such as IPs of the provisioned VMs, estimated cost and brief test results information and also a directory <em>detailed</em> containing more detailed information for each test.</p>
+</div>
+<div class="section" id="verification">
+<h2>4. Verification<a class="headerlink" href="#verification" title="Permalink to this headline">¶</a></h2>
+<p>Run using <em>–via-backend</em> so that the proxy at CERN runs the TS (only deploys tests, no provisioning), harvests results and push them to CERN’s S3 bucket.
+Before starting the run, a message will be shown asking for yes/no answer. It warns the user that backend runs publish results to the CERN bucket.
+<strong>Note that this feature is still under development and testing and will be available on next releases.</strong></p>
+</div>
+<div class="section" id="cost-of-run-calculation">
+<h2>5. Cost of run calculation<a class="headerlink" href="#cost-of-run-calculation" title="Permalink to this headline">¶</a></h2>
+<p>An approximation of the cost of running the test-suite will be calculated in case the prices are specified at configs.yaml under the <em>costCalculation</em> section.
+There you must specify the price per hour for each resource and at the end of the run, the resulting approximated cost will be added to the results json file.
+In case you do not want this information, simply leave the values on the section <em>costCalculation</em> empty.
+Note that this is an approximation and not an exact value. Therefore the value provided here might vary to the real one.
+The formula used is as follows:</p>
+<p><em>(Number of VMs created) x (Price of a VM per hour) x (Time in hours the VMs were used for the test-suite run) + (Cost of other resources)</em></p>
+<p>Where “Cost of other resources” are the cost of resources which are not compute resources, like storage. For example in the case of the S3 Endpoint test:</p>
+<p><em>(Price of a S3 bucket per hour) x (Time in hours the bucket was used for the test)</em></p>
+<p>Note that the price per request or data amount (GB) are not considered here as these are not significant since less than 10 requests are done for this test and for very small data sets.
+Note also that here only the cost of the running time of the VM is considered, so if your provider charges also for creating a VM and not only for the time it is running, the cost
+here obtained will vary to the real one.</p>
+</div>
+<div class="section" id="license">
+<h2>6. License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<p>Copyright (C) CERN.</p>
+<p>You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <a class="reference external" href="https://www.gnu.org/licenses/">gnu.org/licenses</a>.</p>
+<a class="reference external image-reference" href="https://home.cern/"><img alt="CERN logo" src="img/logo.jpg" style="width: 4.0px; height: 4.0px;" /></a>
 </div>
 </div>
 
 
           </div>
-          
         </div>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="#">Cloud Test Suite - CERN IT</a></h1>
-
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">OCRE Test-Suite for cloud provider validation - CERN IT (EFP)</a><ul>
+<li><a class="reference internal" href="#getting-started">1. Getting started</a><ul>
+<li><a class="reference internal" href="#install-terraform">1.1 Install Terraform</a></li>
+<li><a class="reference internal" href="#manage-ssh-keys">1.2 Manage ssh keys</a></li>
+<li><a class="reference internal" href="#dependencies">1.3 Dependencies</a><ul>
+<li><a class="reference internal" href="#kubernetes-client">Kubernetes client</a></li>
+<li><a class="reference internal" href="#python">Python</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#download-and-preparation">1.4 Download and preparation</a><ul>
+<li><a class="reference internal" href="#clone-repository">Clone repository</a></li>
+<li><a class="reference internal" href="#configuration">Configuration</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#run-the-test-suite">1.5 Run the test-suite</a><ul>
+<li><a class="reference internal" href="#options">Options</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#using-existing-clusters">2. Using existing clusters</a></li>
+<li><a class="reference internal" href="#results">3. Results</a></li>
+<li><a class="reference internal" href="#verification">4. Verification</a></li>
+<li><a class="reference internal" href="#cost-of-run-calculation">5. Cost of run calculation</a></li>
+<li><a class="reference internal" href="#license">6. License</a></li>
+</ul>
+</li>
+</ul>
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
@@ -239,26 +450,23 @@ This file has different sections:</p>
   </ul></li>
 </ul>
 </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
-    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
         </div>
       </div>
       <div class="clearer"></div>
@@ -267,8 +475,8 @@ This file has different sections:</p>
       &copy;2019, CERN IT-DI-EFP.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.4</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.7</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
       
       |
       <a href="_sources/index.rst.txt"

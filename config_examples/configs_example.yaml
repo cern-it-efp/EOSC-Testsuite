@@ -1,0 +1,49 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+general:
+  clusterNodes: 5
+  providerName: "exoscale"
+  providerInstanceName: "exoscale_compute"
+  pathToKey: "~/.ssh/id_rsa"
+  dockerCE:
+  dockerEngine:
+  kubernetes:
+
+auth:
+  useFile: False
+  credentials:
+    key = "abcdefg123456789"
+    secret = "abcdefg123456789"
+
+instanceDefinition:
+  display_name = "kubenode"#NAME
+  template = "Linux CentOS 7.6 64-bit"
+  size = "Medium"
+  key_pair = "k_cl"
+  security_groups = ["default"]
+  disk_size = 50
+  zone = "ch-gva-2"
+
+#---------------TEST CATALOG----------------------------------------------------
+testsCatalog:
+  s3Test:
+    run: True
+    endpoint: https://sos-ch-dk-2.exo.io
+    accessKey: abcdefg123456789
+    secretKey: abcdefg123456789
+  mlTest:
+    run: False
+    nodes:
+  dataRepatriationTest:
+    run: True
+  cpuBenchmarking:
+    run: False
+  perfsonarTest:
+    run: True
+    endpoint: psb01-gva.cern.ch
+  hpcTest:
+    run: False
+
+#---------------COST CALCULATION------------------------------------------------
+costCalculation:
+  instancePrice: 1.5
+  s3bucketPrice: 1

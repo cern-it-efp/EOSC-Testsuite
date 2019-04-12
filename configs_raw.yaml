@@ -1,0 +1,42 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+general:
+  clusterNodes:
+  providerName:
+  providerInstanceName:
+  pathToKey:
+  dockerCE:
+  dockerEngine:
+  kubernetes:
+
+auth:
+  useFile:
+  credentials:
+
+
+instanceDefinition:
+
+
+#---------------TEST CATALOG----------------------------------------------------
+testsCatalog:
+  s3Test:
+    run:
+    endpoint:
+    accessKey:
+    secretKey:
+  mlTest:
+    run:
+    nodes:
+  dataRepatriationTest:
+    run:
+  cpuBenchmarking:
+    run:
+  perfsonarTest:
+    run:
+    endpoint:
+  hpcTest:
+    run:
+
+#---------------COST CALCULATION------------------------------------------------
+costCalculation:
+  instancePrice:
+  s3bucketPrice: 
