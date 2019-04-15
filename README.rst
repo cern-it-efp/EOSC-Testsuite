@@ -1,8 +1,8 @@
 ===============================================================
-OCRE Test-Suite for cloud provider validation - CERN IT (EFP)
+OCRE Test-Suite for cloud provider validation - CERN
 ===============================================================
 
-This tool is intended to be used for cloud providers (public cloud) validation and testing. The test-suite does 4 main things:
+This tool is intended to be used for cloud services validation and testing. When applicable, the test-suite executes four main steps:
 
 1) Infrastructure provisioning: VMs are created using Terraform and then Kubernetes and Docker are installed on them to create a k8s cluster.
 
@@ -12,7 +12,7 @@ This tool is intended to be used for cloud providers (public cloud) validation a
 
 4) Through the verification system, the TS is triggered from a service running at CERN. In this case results are then pushed to a S3 Bucket at CERN.
 
-The test set here available is the one used for `EC project Helix Nebula The Science Cloud <https://www.hnscicloud.eu/>`_.
+The test set described below available derives from the tests used in `Helix Nebula The Science Cloud <https://www.hnscicloud.eu/>`_ PCP project funded by the European Commission.
 
 **This test-suite has been tested on:**
 
@@ -20,7 +20,6 @@ The test set here available is the one used for `EC project Helix Nebula The Sci
 | Linux distros: Ubuntu, Centos, Coreos, Debian, RedHat, Fedora
 | OS running on provider's VMs : Centos
 | Providers:  Exoscale (Cloudstack), CERN Private Cloud (OpenStack), Cloudscale (OpenStack)
-
 
 *****
 
