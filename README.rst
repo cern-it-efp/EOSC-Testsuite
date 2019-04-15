@@ -2,7 +2,8 @@
 OCRE Test-Suite for cloud provider validation - CERN
 ===============================================================
 
-This tool is intended to be used for cloud services validation and testing. When applicable, the test-suite executes four main steps:
+This tool is intended to be used for cloud services validation and testing. 
+When applicable, the test-suite executes four main steps:
 
 1) Infrastructure provisioning: VMs are created using Terraform and then Kubernetes and Docker are installed on them to create a k8s cluster.
 
