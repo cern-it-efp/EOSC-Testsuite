@@ -123,7 +123,7 @@ In the section ``testsCatalog`` of *configs.yaml*, you have to specify which tes
 **Deep Learning using GPUs: It trains a Generative Adversarial Network (GAN) using a Kubernetes cluster (GPU flavored) with Kubeflow and MPI.**
 
 Note that for this test a cluster with GPU flavor is required.
-For this test, besides the *run* variable, the following one can be set on the configs.yaml file:
+For this test, apart from the *run* variable, the following one can be set on the configs.yaml file:
 
 +--------------+----------------------------------------------------------------------------------------------------------------+
 | Name	       | Explanation / Values                                                                                           |
@@ -138,7 +138,7 @@ Repository: https://github.com/svalleco/mpi_learn
 
 |
 
-**S3 endpoint tests: An S3 test script that will check the following things:**
+**S3 endpoint tests: A simple S3 test script to test functionality of S3-like endpoints, checking the following:**
 
 - S3 authentication (access key + secret key)
 - PUT
@@ -147,7 +147,7 @@ Repository: https://github.com/svalleco/mpi_learn
 - GET chunk
 - GET multiple chunks
 
-For this test, besides the *run* variable, the following ones must be set on the configs.yaml file:
+For this test, apart from the *run* variable, the following ones must be set on the configs.yaml file:
 
 +----------------+----------------------------------------------------------------------------------------------------------------+
 | Name	         | Explanation / Values                                                                                           |
@@ -159,36 +159,41 @@ For this test, besides the *run* variable, the following ones must be set on the
 |secretKey       | Secret key for S3 resource management.                                                                         |
 +----------------+----------------------------------------------------------------------------------------------------------------+
 
-(Contributor/owner: Oliver Keeble - oliver.keeble@cern.ch)
+Contributors/owners: Oliver Keeble (CERN) - oliver.keeble@cern.ch
+Repository: https://gitlab.cern.ch/okeeble/s3test
 
 |
 
-**Data repatriation test: Take data from a VM running on a cloud provider to Zenodo.**
+**Data Export: Move data from a VM running on a cloud provider to Zenodo.**
 
-In the chase of making the scientific community embrace a vouchers usage of cloud computing, there is always a drawback: once my
-cloud credits are over, what can I do with the data I have on the cloud? Zenodo is a tool developed by CERN useful in this case as it
-keeps data for the long term and it is free. What this test does is to verify that data can be taken from the private cloud being tested onto Zenodo.
+When using cloud credits, when credit is exhausted cloud, data can be repatriated or moved to a long-term data storage service. The example used in this test uses Zenodo service maintained by CERN: https://zenodo.org/, verifying that the output data can be taken from the cloud provider to Zenodo.
 
-(Contributor/owner: Ignacio Peluaga - ignacio.peluaga.lozada@cern.ch)
+Contributors/owners: Ignacio Peluaga - ignacio.peluaga.lozada@cern.ch
+Repository: https://github.com/ignpelloz/cloud-exporter
 
 |
 
 **CPU Benchmarking: Containerised benchmarking tools.**
 
-The following benchmarks are run on the provider side using a containerised approach:
+Suite contanining several CPU benchmarks used at CERN.
+The following benchmarks are run on the cloud provider, using a containerised approach:
 
 - DIRAC Benchmark
 - ATLAS Kit Validation
 - Whetstone: from the UnixBench benchmark suite.
 - Hyper-benchmark: A pre-defined sequence of measurements and fast benchmarks.
 
-(Contributor/owner: Domenico Giordano - domenico.giordano@cern.ch)
+Contributors/Owners: Domenico Giordano (CERN) - domenico.giordano@cern.ch
+Repository:  https://gitlab.cern.ch/cloud-infrastructure/cloud-benchmark-suite 
 
 |
 
 **perfSONAR: Networking performance measurements.**
 
-A perfSONAR testpoint is created using a containerised approach on the provider side. The following tests are launched from there to the endpoint provided by the user:
+perfSONAR is a network measurement toolkit designed to provide federated coverage of paths, and help to establish end-to-end usage expectations.
+
+In this test, a perfSONAR testpoint is created using a containerised approach on the cloud provider infrastructure. 
+The following tests are launched end to end:
 
 - throughput: A test to measure the observed speed of a data transfer and associated statistics between two endpoints.
 - rtt: Measure the round trip time and related statistics between hosts.
@@ -197,11 +202,12 @@ A perfSONAR testpoint is created using a containerised approach on the provider 
 
 The endpoint for these tests must be specified at configs' *endpoint* variable. Use endpoints from:
 
-- `Here <https://fasterdata.es.net/performance-testing/perfsonar/esnet-perfsonar-services/esnet-iperf-hosts/>`_
+- `List of throughput hosts <https://fasterdata.es.net/performance-testing/perfsonar/esnet-perfsonar-services/esnet-iperf-hosts/>`_
 - `Here <http://perfsonar-otc.hnsc.otc-service.com/toolkit/>`_
 - `Here <http://stats.es.net/ServicesDirectory/>`_
 
-(Contributor/owner: Marian Babik - marian.babik@cern.ch)
+Contributors/Owners: Shawn Mckee (University of Michigan) - smckee@umich.edu; Marian Babik CERN) - marian.babik@cern.ch
+Repository: https://github.com/perfsonar/perfsonar-testpoint-docker
 
 |
 
