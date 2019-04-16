@@ -203,20 +203,23 @@ The following tests are launched end to end:
 The endpoint for these tests must be specified at configs' *endpoint* variable. Use endpoints from:
 
 - `List of throughput hosts <https://fasterdata.es.net/performance-testing/perfsonar/esnet-perfsonar-services/esnet-iperf-hosts/>`_
-- `Here <http://perfsonar-otc.hnsc.otc-service.com/toolkit/>`_
-- `Here <http://stats.es.net/ServicesDirectory/>`_
+- `perfSONAR Toolkit <http://perfsonar-otc.hnsc.otc-service.com/toolkit/>`_
+- `Lookup Services Directory <http://stats.es.net/ServicesDirectory/>`_
 
 Contributors/Owners: Shawn Mckee (University of Michigan) - smckee@umich.edu; Marian Babik CERN) - marian.babik@cern.ch
 Repository: https://github.com/perfsonar/perfsonar-testpoint-docker
 
 |
 
-**HPC test: ESRF's FDMNES: Simulation of x-ray spectroscopies.**
+**FDMNES: Simulation of X-ray spectroscopies.**
 
-Parallel calculations on Linux using OpenMPI. Rather heavy on CPU and memory, light on IO.
-This test is still under development and will be available on next releases.
+The aim of the FDMNES project is to supply to the community a user friendly code to simulate x-ray spectroscopies, linked to the real absorption (XANES, XMCD) or resonant scattering (RXD in bulk or SRXRD for surfaces) of the synchrotron radiation.
+IT uses parallel calculations using OpenMPI. As an HPC test FDMNES is rather heavy on CPU and Memory and light on I/O.
 
-(Contributor/owner: Rainer Wilcke - wilcke@esrf.fr)
+This test is currently under development and will be available on the next release of the Test-Suite.
+
+Contributors/Owners: Rainer Wilcke (ESRF) - wilcke@esrf.fr
+Repository: http://neel.cnrs.fr/spip.php?article3137&lang=en
 
 |
 
@@ -226,24 +229,24 @@ This test is still under development and will be available on next releases.
 
 1.5 Run the test-suite
 ========================
-Once all the previous steps are completed, the test-suite is ready to be run:
+Once the previous steps are completed, the Test-Suite is ready to be run:
 
 .. code-block:: console
 
     $ ./test_suite.py <options>
 
-Terraform will first show the user what it is going to do, what to create. If agreed, type "yes" and press enter.
+Terraform will first show the user what will be done and what to create. If agreed, type "yes" and press enter.
 
 Options
 ^^^^^^^^^
-The following table describes all the accepted options:
+The following table describes all the available options:
 
 +------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Name	           | Explanation / Values                                                                                                                                  |
 +==================+=======================================================================================================================================================+
 |--only-test       | Run without creating the infrastructure (VMs and cluster), only deploy tests. Not valid for the first run.                                            |
 +------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+
-|--auto-retry      | Automatically retry in case of errors on the Terraform phase. Note that in the case errors occur, the user will have to stop the run using Ctrl+z.    |
+|--auto-retry      | Automatically retry in case of errors on the Terraform phase. Note that in the case errors occur, the user will have to stop the run using Ctrl+Z.    |
 +------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+
-|--via-backend     | Runs the Test-Suite using CERN's backend service instead of the cloned local version. This option must be used for verification (2nd or later runs).  |
+|--via-backend     | Runs the Test-Suite using CERN's backend service instead of the cloned local version. This option must be used for verification purposes (2nd or later runs).  |
 +------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+
