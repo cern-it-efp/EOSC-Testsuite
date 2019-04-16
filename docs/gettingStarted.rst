@@ -82,7 +82,7 @@ For specifying the credentials to connect to the provider and deploy resources.
 |useFile      | Indicate if a credentials file is used instead of secret-key pair (Boolean). Required.       |
 +-------------+----------------------------------------------------------------------------------------------+
 |credentials  | String block with the required credentials.                                                  | 
-|             | This is not yaml but string, therefore use '=' and ' " '. (cloud provider specific).         |
+|             | |This is not yaml but string, therefore use '=' and ' " '. (cloud provider specific).        |
 +-------------+----------------------------------------------------------------------------------------------+
 
 ``instanceDefinition``
