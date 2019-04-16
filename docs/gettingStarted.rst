@@ -1,6 +1,6 @@
 1. Getting started
 ---------------------------------------------
-Please follow the following steps in order to test a cloud provider:
+Please follow the steps below in order to deploy and test a cloud provider:
 
 1.1 Install Terraform
 ==========================
@@ -19,7 +19,7 @@ A ssh key pair is needed to establish connections to the VMs to be created later
 
 1.3 Dependencies
 ==========================
-This test-suite requires some packages to work properly and these must be installed by yourself directly.
+This test-suite requires some packages to work properly and these must be installed by yourself directly. Please see below.
 
 Kubernetes client
 ^^^^^^^^^^^^^^^^^^^^^
@@ -27,15 +27,15 @@ In order to manage the Kubernetes cluster locally instead of using the master no
 
 Python
 ^^^^^^^^^
-Version python3 is required. In some Linux distributions, it has been seen not all the python required packages are included by default, like pyyaml.
-In such cases, install the missing packages according to the error messages when running the test-suite.
+Version python3 is required. In some Linux distributions, it has been noticed that not all the python required packages are included by default, like pyyaml.
+In such cases, please install the missing packages according to the error messages when running the Test-Suite.
 
 
 1.4 Download and preparation
 ==========================================
-Clone repository
+Cloning repository
 ^^^^^^^^^^^^^^^^^^^^^^^
-Clone the repository as follows and cd into it:
+Please clone the repository as follows and cd into it:
 
 .. code-block:: console
 
@@ -44,10 +44,9 @@ Clone the repository as follows and cd into it:
 
 Configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^
-While completing this task refer to `Terraform's documentation <https://www.terraform.io/docs/providers/>`_ in order to complete it successfully as some parts are provider
-specific and differ from one provider to another.
-You will find on the root of the cloned repository a file named *configs_raw.yaml*. You must rename it *configs.yaml* and fill it to match your requirements. **A filled example can be
-found in */config_examples***. This file has different sections:
+While completing this task, please refer to `Terraform's documentation <https://www.terraform.io/docs/providers/>`_ in order to complete it successfully as some parts are provider specific and differ from one provider to another.
+You will find at the root of the cloned repository a file named *configs_raw.yaml*. You must rename it *configs.yaml* and fill it to match your requirements. **A filled example can be
+found in */config_examples***. This file contains different sections:
 
 ``general``
 
@@ -71,8 +70,7 @@ For specifying general variables:
 |kubernetes             | Version of Kubernetes to be installed. Leave empty for latest.                      |
 +-----------------------+-------------------------------------------------------------------------------------+
 
-Note that it's possible to chose between Docker Community Edition and Docker Engine (older Docker packages), however it is **highly recommended** to leave these variables empty to create a
-cluster with the latest stack.
+Note that it's possible to choose between "Docker Community Edition" and "Docker Engine" (older Docker packages). However it's **highly recommended** to leave these variables empty to create a cluster with the latest stack.
 
 ``auth``
 
@@ -88,13 +86,12 @@ For specifying the credentials to connect to the provider and deploy resources.
 
 ``instanceDefinition``
 
-In this section you should write all the key-pair values that would be written on the body of an instance declaration resource on Terraform, according to the provider you want to test.
-Refer to the documentation of the provider to check which pairs you need to specify and in any case you can run the test-suite (next steps) and if there is any missing pair a message
-will be shown on the terminal telling you which ones these are. This is how you must specify each pair::
+In this section you should write all the key-pair values that would be written on the body of an instance declaration resource on Terraform, according to the cloud you want to test.
+Refer to the documentation of the cloud provider to check which pairs you need to specify. In any case, you can run the Test-Suite (next steps) and if there is any missing pair a message will be shown in the terminal telling you which ones are these. This is how you must specify each pair::
 
   <YOUR_PROVIDER'S_STRING_FOR_A_KEY> = "<VALUE_GIVEN_FOR_THAT_KEY>"
 
-An example (Exoscale)::
+An example (Exoscale cloud provider)::
 
   display_name = "kubenode"#NAME
   template = "Linux CentOS 7.5 64-bit"
@@ -104,29 +101,26 @@ An example (Exoscale)::
   disk_size = 50
   zone = "ch-gva-2"
 
-Pay attention on this section to the name for the instance. A random string will be added later to the name given to the instance in order to avoid DNS issues when running
-the test-suite several times. For this, the block must contain the '#NAME' placeholder. When specifying the name for the instance, follow this structure::
+Please pay attention in this section to the name for the instance. A random string will be added later to the name given to the instance in order to avoid DNS issues when running the test-suite several times. To achieve this, the block must contain the '#NAME' placeholder. When specifying the name for the instance, please follow this structure::
 
   <YOUR_PROVIDER'S_STRING_FOR_NAME> = "<NAME_FOR_YOUR_INSTANCES>"#NAME
 
-So lets image you provider's string for the instance name is "display_name", and you want to call your instances "kubenode" then you should write::
+Now, lets image you provider's string for the instance name is "display_name", and you want to call your instances "kubenode" then you should write::
 
   display_name = "kubenode"#NAME
 
 Note the '#NAME'!
 
-| [**NOTE**: Even though this is a yaml file, '=' is used on this section instead of ':' as that is required on Terraform files and this will be taken as a whole block and placed directly on a .tf file]
-| [**NOTE2**: providers that do not support resource creation with Terraform or k8saaS can't be tested with this test-suite currently]
+| [**NOTE 1**: Even though this is a yaml file, '=' is used on this section instead of ':' as that's required by Terraform files and this will be taken as a whole block and placed directly on a .tf file]
+| [**NOTE 2**: Clouds that don't support resource creation with Terraform or k8saaS can't currently be tested with this Test-Suite]
 |
 
 Tests Catalog
 ^^^^^^^^^^^^^^^^^^^
 
-On the section ``testsCatalog`` of the *configs.yaml* file, you have to specify which tests you want to run. If you want to run certain test simply
-set its *run* variable to the True Boolean value. On the other
-hand if you don't want it to be run set this value to False. Following find a description of each test:
+In the section ``testsCatalog`` of *configs.yaml*, you have to specify which tests you want to run. If you want to run a certain test simply set its *run* variable to the True Boolean value. On the other hand, if you don't want it to be run set this value to False. Please find below, a description of each test that has already been integrated in the Test-Suite:
 
-**Deep Learning using GPU: trains a GAN making use of a Kubernetes cluster (GPU flavored) with Kubeflow and MPI.**
+**Deep Learning using GPUs: It trains a Generative Adversarial Network (GAN) using a Kubernetes cluster (GPU flavored) with Kubeflow and MPI.**
 
 Note that for this test a cluster with GPU flavor is required.
 For this test, besides the *run* variable, the following one can be set on the configs.yaml file:
@@ -137,9 +131,10 @@ For this test, besides the *run* variable, the following one can be set on the c
 |nodes         | Number of nodes to be used for the deployment. If not set, the max number of nodes available will be used.     |
 +--------------+----------------------------------------------------------------------------------------------------------------+
 
-Currently this test is still undergoing development and testing, hence it cant be deployed.
+Tthis test is currently undergoing development and testing, hence it can't be fully deployed.
 
-(Contributor/owner: Sofia Vallecorsa - sofia.vallecorsa@cern.ch)
+Contributors/owners: Sofia Vallecorsa (CERN) - sofia.vallecorsa@cern.ch; Jean-Roch Vlimant (California Institute of Technology)
+Repository: https://github.com/svalleco/mpi_learn
 
 |
 
