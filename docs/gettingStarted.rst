@@ -52,23 +52,23 @@ found in */config_examples***. This file contains different sections:
 
 For specifying general variables:
 
-+-----------------------+-------------------------------------------------------------------------------------+
-| Name	                | Explanation / Values                                                                |
-+=======================+=====================================================================================+
-|clusterNodes           | Indicate the number of nodes the cluster must contain, including master node.       |
-+-----------------------+-------------------------------------------------------------------------------------+
-|providerName           | Name of the provider for Terraform.                                                 |
-+-----------------------+-------------------------------------------------------------------------------------+
-|providerInstanceName   | Compute instance name for Terraform. This is provider specific.                     |
-+-----------------------+-------------------------------------------------------------------------------------+
-|pathToKey              | Path to the location of your private key                                            |
-+-----------------------+-------------------------------------------------------------------------------------+
-|dockerCE               | Version of docker-ce to be installed. Leave empty for latest.                       |
-+-----------------------+-------------------------------------------------------------------------------------+
-|dockerEngine           | Version of docker-engine to be installed. Leave empty for latest.                   |
-+-----------------------+-------------------------------------------------------------------------------------+
-|kubernetes             | Version of Kubernetes to be installed. Leave empty for latest.                      |
-+-----------------------+-------------------------------------------------------------------------------------+
++-----------------------+------------------------------------------------------------------------------------+
+| Name	                | Explanation / Values                                                               |
++=======================+====================================================================================+
+|clusterNodes           | Indicate the number of nodes the cluster must contain, including master node.      |
++-----------------------+------------------------------------------------------------------------------------+
+|providerName           | Name of the provider for Terraform.                                                |
++-----------------------+------------------------------------------------------------------------------------+
+|providerInstanceName   | Compute instance name for Terraform. This is provider specific.                    |
++-----------------------+------------------------------------------------------------------------------------+
+|pathToKey              | Path to the location of your private key                                           |
++-----------------------+------------------------------------------------------------------------------------+
+|dockerCE               | Version of docker-ce to be installed. Leave empty for latest.                      |
++-----------------------+------------------------------------------------------------------------------------+
+|dockerEngine           | Version of docker-engine to be installed. Leave empty for latest.                  |
++-----------------------+------------------------------------------------------------------------------------+
+|kubernetes             | Version of Kubernetes to be installed. Leave empty for latest.                     |
++-----------------------+------------------------------------------------------------------------------------+
 
 Note that it's possible to choose between "Docker Community Edition" and "Docker Engine" (older Docker packages). However it's **highly recommended** to leave these variables empty to create a cluster with the latest stack.
 
@@ -76,14 +76,14 @@ Note that it's possible to choose between "Docker Community Edition" and "Docker
 
 For specifying the credentials to connect to the provider and deploy resources.
 
-+-------------+------------------------------------------------------------------------------------------------+
-| Name	      | Explanation / Values                                                                           |
-+=============+================================================================================================+
-|useFile      | Indicate if a credentials file is used instead of secret-key pair (Boolean). Required property.|
-+-------------+------------------------------------------------------------------------------------------------+
-|credentials  | String block with the required credentials.                                                    | 
-|             | This is not yaml but string, therefore use '=' and ' " '. (cloud provider specific).           |
-+-------------+------------------------------------------------------------------------------------------------+
++-------------+----------------------------------------------------------------------------------------------+
+| Name	      | Explanation / Values                                                                         |
++=============+==============================================================================================+
+|useFile      | Indicate if a credentials file is used instead of secret-key pair (Boolean). Required.       |
++-------------+----------------------------------------------------------------------------------------------+
+|credentials  | String block with the required credentials.                                                  | 
+|             | This is not yaml but string, therefore use '=' and ' " '. (cloud provider specific).         |
++-------------+----------------------------------------------------------------------------------------------+
 
 ``instanceDefinition``
 
