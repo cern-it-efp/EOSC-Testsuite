@@ -76,13 +76,14 @@ Note that it's possible to choose between "Docker Community Edition" and "Docker
 
 For specifying the credentials to connect to the provider and deploy resources.
 
-+-------------+---------------------------------------------------------------------------------------------------------------------------------+
-| Name	      | Explanation / Values                                                                                                            |
-+=============+=================================================================================================================================+
-|useFile      | Indicate if a credentials file is used instead of secret-key pair (Boolean). Required property.                                 |
-+-------------+---------------------------------------------------------------------------------------------------------------------------------+
-|credentials  | String block containing the required credentials. This is not yaml but string, therefore use '=' and ' " '. (Provider specific).|
-+-------------+---------------------------------------------------------------------------------------------------------------------------------+
++-------------+------------------------------------------------------------------------------------------------+
+| Name	      | Explanation / Values                                                                           |
++=============+================================================================================================+
+|useFile      | Indicate if a credentials file is used instead of secret-key pair (Boolean). Required property.|
++-------------+------------------------------------------------------------------------------------------------+
+|credentials  | String block with the required credentials.                                                    | 
+|             | This is not yaml but string, therefore use '=' and ' " '. (cloud provider specific).           |
++-------------+------------------------------------------------------------------------------------------------+
 
 ``instanceDefinition``
 
@@ -114,7 +115,6 @@ Note the '#NAME'!
 | [**NOTE 1**: Even though this is a yaml file, '=' is used on this section instead of ':' as that's required by Terraform files and this will be taken as a whole block and placed directly on a .tf file]
 | [**NOTE 2**: Clouds that don't support resource creation with Terraform or k8saaS can't currently be tested with this Test-Suite]
 |
-
 Tests Catalog
 ^^^^^^^^^^^^^^^^^^^
 
@@ -123,30 +123,23 @@ In the section ``testsCatalog`` of *configs.yaml*, you have to specify which tes
 **Deep Learning using GPUs: It trains a Generative Adversarial Network (GAN) using a Kubernetes cluster (GPU flavored) with Kubeflow and MPI.**
 
 Note that for this test a cluster with GPU flavor is required.
-For this test, apart from the *run* variable, the following one can be set on the configs.yaml file:
+For this test, apart from the *run* variable, the following can be set in the configs.yaml file:
 
 +--------------+----------------------------------------------------------------------------------------------------------------+
-| Name	       | Explanation / Values                                                                                           |
+|Name	       | Explanation / Values                                                                                           |
 +==============+================================================================================================================+
 |nodes         | Number of nodes to be used for the deployment. If not set, the max number of nodes available will be used.     |
 +--------------+----------------------------------------------------------------------------------------------------------------+
 
-Tthis test is currently undergoing development and testing, hence it can't be fully deployed.
+This test is currently undergoing development and testing, hence it can't be fully deployed.
 
-Contributors/owners: Sofia Vallecorsa (CERN) - sofia.vallecorsa@cern.ch; Jean-Roch Vlimant (California Institute of Technology)
-Repository: https://github.com/svalleco/mpi_learn
-
+- Contributors/owners: Sofia Vallecorsa (CERN) - sofia.vallecorsa@cern.ch; Jean-Roch Vlimant (Caltech)
+- Repository: https://github.com/svalleco/mpi_learn
 |
-
 **S3 endpoint tests: A simple S3 test script to test functionality of S3-like endpoints, checking the following:**
 
-- S3 authentication (access key + secret key)
-- PUT
-- GET
-- GET with prefix matching
-- GET chunk
-- GET multiple chunks
-
+S3 authentication (access key + secret key, PUT, GET, GET with prefix matching, GET chunk, GET multiple chunks
+|
 For this test, apart from the *run* variable, the following ones must be set on the configs.yaml file:
 
 +----------------+----------------------------------------------------------------------------------------------------------------+
@@ -159,8 +152,8 @@ For this test, apart from the *run* variable, the following ones must be set on 
 |secretKey       | Secret key for S3 resource management.                                                                         |
 +----------------+----------------------------------------------------------------------------------------------------------------+
 
-Contributors/owners: Oliver Keeble (CERN) - oliver.keeble@cern.ch
-Repository: https://gitlab.cern.ch/okeeble/s3test
+- Contributors/Owners: Oliver Keeble (CERN) - oliver.keeble@cern.ch
+- Repository: https://gitlab.cern.ch/okeeble/s3test
 
 |
 
@@ -241,8 +234,8 @@ Options
 ^^^^^^^^^
 The following table describes all the available options:
 
-+------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Name	           | Explanation / Values                                                                                                                                  |
++------------------+------------------------------------------------------------------------------------------------------------------+
+| Name	           | Explanation / Values                                                                                             |
 +==================+=======================================================================================================================================================+
 |--only-test       | Run without creating the infrastructure (VMs and cluster), only deploy tests. Not valid for the first run.                                            |
 +------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+
