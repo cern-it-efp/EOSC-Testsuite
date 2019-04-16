@@ -39,4 +39,4 @@ testsCatalog:
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:
   instancePrice:
-  s3bucketPrice: 
+  s3bucketPrice:
