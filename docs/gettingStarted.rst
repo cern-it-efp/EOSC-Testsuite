@@ -1,27 +1,25 @@
 1. Getting started
 ---------------------------------------------
-Follow these steps to test a cloud provider:
+Please follow the following steps in order to test a cloud provider:
 
 1.1 Install Terraform
 ==========================
 Terraform is the tool that creates the VMs that will later become a Kubernetes cluster. The test-suite makes use of it so download and
 install `Terraform <https://learn.hashicorp.com/terraform/getting-started/install.html>`_ on your machine.
-In some cases, providers are not fully supported by Terraform but these provide plugins to gap this bridge. In such cases, refer to the documentation of the provider
-to download the plugin. Once downloaded, this must be placed at *~/.terraform.d/plugins* and execution permissions must be given to it (*+x*).
+In some cases, providers are not fully supported by Terraform, however they might provide plugins to bridge this gap. In such cases, please refer to the documentation of the provider to download the plugin. 
+Once downloaded, this must be placed at *~/.terraform.d/plugins* and execution permissions must be given to it (*+x*).
 
 1.2 Manage ssh keys
 ==========================
-A ssh key pair is needed to establish connections to the VMs that will be created later. Therefore you must create (or import) this key on your provider beforehand
-and place the private key at *~/.ssh/id_rsa*. Note errors may occur if your key doesn't have the right permissions. Set these to the right value using the following command:
+A ssh key pair is needed to establish connections to the VMs to be created later. Therefore, you must create (or import) this key on your provider beforehand and place the private key at *~/.ssh/id_rsa*. Note errors may occur if your key doesn't have the right permissions. Set these to the right value using the following command:
 
 .. code-block:: console
 
     $ chmod 600 path/to/key
 
-
 1.3 Dependencies
 ==========================
-This test-suite requires some packages to work properly and these must be installed by yourself.
+This test-suite requires some packages to work properly and these must be installed by yourself directly.
 
 Kubernetes client
 ^^^^^^^^^^^^^^^^^^^^^
