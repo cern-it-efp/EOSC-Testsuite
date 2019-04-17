@@ -1,4 +1,5 @@
-.. include:: header.rst
+.. include:: ../README.rst
+   :end-before: header-end
 
 .. toctree::
    :hidden:
@@ -11,4 +12,6 @@
    verification
    costs
 
-.. include:: license.rst
+.. include:: ../README.rst
+   :start-after: license-start
+   :end-before: license-end

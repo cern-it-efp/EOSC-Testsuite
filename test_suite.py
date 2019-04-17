@@ -23,6 +23,7 @@ backend = "188.185.73.119:9000"
 randomId = ''.join(random.SystemRandom().choice(
     string.ascii_uppercase + string.digits) for _ in range(4))
 configs = ""
+testsCatalog = ""
 repo = "https://github.com/cern-it-efp/OCRE-Testsuite"
 
 
@@ -60,11 +61,15 @@ def initAndChecks():
 
     # --------File check
     global configs
+    global testsCatalog
     selected = 0
     # delete join.sh file from previous run
     os.system("rm -f terraform/join.sh")
     if os.path.exists("configs.yaml") is False:
         print("Configuration file not found")
+        sys.exit(1)
+    if os.path.exists("testsCatalog.yaml") is False:
+        print("Tests Catalog file not found")
         sys.exit(1)
     with open("configs.yaml", 'r') as stream:
         try:
@@ -75,6 +80,18 @@ def initAndChecks():
         except:
             try:
                 configs = yaml.load(stream)
+            except yaml.YAMLError:
+                print("Error loading yaml file")
+                sys.exit(1)
+    with open("testsCatalog.yaml", 'r') as stream:
+        try:
+            testsCatalog = yaml.load(stream, Loader=yaml.FullLoader)
+        except yaml.YAMLError:
+            print("Error loading yaml file")
+            sys.exit(1)
+        except:
+            try:
+                testsCatalog = yaml.load(stream)
             except yaml.YAMLError:
                 print("Error loading yaml file")
                 sys.exit(1)
@@ -90,22 +107,21 @@ def initAndChecks():
     checker(configs, ['instanceDefinition'])
 
     # --------Tests config checks (only few tests have var besides 'run')
-    tc = configs["testsCatalog"]
-    if tc["s3Test"]["run"] and tc["s3Test"]["run"] is True:
+    if testsCatalog["s3Test"]["run"] and testsCatalog["s3Test"]["run"] is True:
         selected += 1
-        checker(configs, ['testsCatalog', 's3Test', 'endpoint'])
-        checker(configs, ['testsCatalog', 's3Test', 'accessKey'])
-        checker(configs, ['testsCatalog', 's3Test', 'secretKey'])
-    if tc["perfsonarTest"]["run"] and tc["perfsonarTest"]["run"] is True:
+        checker(testsCatalog, ['s3Test', 'endpoint'])
+        checker(testsCatalog, ['s3Test', 'accessKey'])
+        checker(testsCatalog, ['s3Test', 'secretKey'])
+    if testsCatalog["perfsonarTest"]["run"] and testsCatalog["perfsonarTest"]["run"] is True:
         selected += 1
-        checker(configs, ['testsCatalog', 'perfsonarTest', 'endpoint'])
-    if tc["mlTest"]["run"] and tc["mlTest"]["run"] is True:
+        checker(testsCatalog, ['perfsonarTest', 'endpoint'])
+    if testsCatalog["mlTest"]["run"] and testsCatalog["mlTest"]["run"] is True:
         selected += 1
-    if tc["dataRepatriationTest"]["run"] and tc["dataRepatriationTest"]["run"] is True:
+    if testsCatalog["dataRepatriationTest"]["run"] and testsCatalog["dataRepatriationTest"]["run"] is True:
         selected += 1
-    if tc["cpuBenchmarking"]["run"] and tc["cpuBenchmarking"]["run"] is True:
+    if testsCatalog["cpuBenchmarking"]["run"] and testsCatalog["cpuBenchmarking"]["run"] is True:
         selected += 1
-    if tc["hpcTest"]["run"] and tc["hpcTest"]["run"] is True:
+    if testsCatalog["hpcTest"]["run"] and testsCatalog["hpcTest"]["run"] is True:
         selected += 1
 
     return selected

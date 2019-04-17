@@ -14,16 +14,25 @@ The test-suite executes four main steps:
 
 4) Through a verification system, the Test-Suite can also be triggered from a service running at CERN. In this case, results are then pushed to a S3 Bucket at CERN.
 
-The test set described below is based on the tests used in `Helix Nebula The Science Cloud <https://www.hnscicloud.eu/>`_ PCP project funded by the European Commission. 
+The test set described below is based on the tests used in `Helix Nebula The Science Cloud <https://www.hnscicloud.eu/>`_ PCP project funded by the European Commission.
 
 The developers would like to thank to all test owners and contributors to this project.
 
 **This test-suite has been tested on:**
 
-| Python: 3
-| Linux distros: Ubuntu, Centos, Coreos, Debian, RedHat, Fedora
-| OS running on provider's VMs : Centos
-| Providers:  Exoscale (Cloudstack), CERN Private Cloud (OpenStack), Cloudscale (OpenStack). The test suite is being tested in additional cloud providers. As tests are concluded the cloud providers names will be added here  
++------------------------------+---------------------------------------------------------------------------------+
+|Python                        | 3                                                                               |
++------------------------------+---------------------------------------------------------------------------------+
+|Linux distros                 | Ubuntu, Centos, Coreos, Debian, RedHat, Fedora                                  |
++------------------------------+---------------------------------------------------------------------------------+
+|OS running on provider's VMs  | Centos7                                                                         |
++------------------------------+---------------------------------------------------------------------------------+
+|Providers                     | | Exoscale (Cloudstack)                                                         |
+|                              | | CERN Private Cloud (OpenStack)                                                |
+|                              | | Cloudscale (OpenStack)                                                        |
++------------------------------+---------------------------------------------------------------------------------+
+
+The test suite is being tested in additional cloud providers. As tests are concluded the cloud providers names will be added here
 
 .. header-end
 

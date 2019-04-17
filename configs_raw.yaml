@@ -16,26 +16,6 @@ auth:
 instanceDefinition:
 
 
-#---------------TEST CATALOG----------------------------------------------------
-testsCatalog:
-  s3Test:
-    run:
-    endpoint:
-    accessKey:
-    secretKey:
-  mlTest:
-    run:
-    nodes:
-  dataRepatriationTest:
-    run:
-  cpuBenchmarking:
-    run:
-  perfsonarTest:
-    run:
-    endpoint:
-  hpcTest:
-    run:
-
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:
   instancePrice:

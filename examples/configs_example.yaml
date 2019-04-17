@@ -23,25 +23,6 @@ instanceDefinition:
   disk_size = 50
   zone = "ch-gva-2"
 
-#---------------TEST CATALOG----------------------------------------------------
-testsCatalog:
-  s3Test:
-    run: True
-    endpoint: https://sos-ch-dk-2.exo.io
-    accessKey: abcdefg123456789
-    secretKey: abcdefg123456789
-  mlTest:
-    run: False
-    nodes:
-  dataRepatriationTest:
-    run: True
-  cpuBenchmarking:
-    run: False
-  perfsonarTest:
-    run: True
-    endpoint: psb01-gva.cern.ch
-  hpcTest:
-    run: False
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:

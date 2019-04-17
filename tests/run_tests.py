@@ -14,6 +14,7 @@ from aux_functions import logger
 onlyTest = False
 viaBackend = False
 configs = ""
+testsCatalog = ""
 masterIP = ""
 totalCost = 0
 start = time.time()
@@ -23,15 +24,24 @@ def initAndChecks():
     """Initial checks and initialization of variables."""
 
     global configs
+    global testsCatalog
     global masterIP
     with open("../configs.yaml", 'r') as stream:
         try:
             configs = yaml.load(stream, Loader=yaml.FullLoader)
         except yaml.YAMLError as exc:
             print(exc)
-            sys.exit(2)
+            sys.exit(1)
         except AttributeError:
             configs = yaml.load(stream)
+    with open("../testsCatalog.yaml", 'r') as stream:
+        try:
+            testsCatalog = yaml.load(stream, Loader=yaml.FullLoader)
+        except yaml.YAMLError as exc:
+            print(exc)
+            sys.exit(1)
+        except AttributeError:
+            testsCatalog = yaml.load(stream)
     if viaBackend is not True:
         try:
             with open('../master_ip', 'r') as infile:
@@ -127,7 +137,7 @@ def checkRequiredCosts():
     res = True
     # No calculation at all in case of missing VM price
     if correctlySet(configs["costCalculation"]["instancePrice"]):
-        if configs["testsCatalog"]["s3Test"]["run"] is True:
+        if testsCatalog["s3Test"]["run"] is True:
             res = correctlySet(configs["costCalculation"]["s3bucketPrice"])
         # check here for other tests requiring additional resources besides VMs
     else:
@@ -144,9 +154,9 @@ def s3Test():
 
     with open('s3/raw/s3pod_raw.yaml', 'r') as infile:
         s3pod = infile.read().replace(
-            "ENDPOINT_PH", configs["testsCatalog"]["s3Test"]["endpoint"])
-        s3pod = s3pod.replace("ACCESS_PH", configs["testsCatalog"]["s3Test"]["accessKey"]).replace(
-            "SECRET_PH", configs["testsCatalog"]["s3Test"]["secretKey"])
+            "ENDPOINT_PH", testsCatalog["s3Test"]["endpoint"])
+        s3pod = s3pod.replace("ACCESS_PH", testsCatalog["s3Test"]["accessKey"]).replace(
+            "SECRET_PH", testsCatalog["s3Test"]["secretKey"])
     with open("s3/s3pod.yaml", 'w') as outfile:
         outfile.write(s3pod)
     start = time.time()  # create bucket
@@ -186,7 +196,7 @@ def mlTest():
     kubectl("create", "ml/pv-volume.yaml", None, None, True)
 
     # 2) Deploy the required files
-    ml = configs["testsCatalog"]["mlTest"]
+    ml = testsCatalog["mlTest"]
     if ml["nodes"] and isinstance(ml["nodes"], int) and ml["nodes"] > 1 and ml["nodes"] <= configs["general"]["clusterNodes"]:
         nodesToUse = ml["nodes"]
     else:
@@ -272,7 +282,7 @@ def perfsonarTest():
     with open('perfsonar/raw/ps_pod_raw.yaml', 'r') as infile:
         with open("perfsonar/ps_pod.yaml", 'w') as outfile:
             outfile.write(infile.read().replace(
-                "ENDPOINT_PH", configs["testsCatalog"]["perfsonarTest"]["endpoint"]))
+                "ENDPOINT_PH", testsCatalog["perfsonarTest"]["endpoint"]))
 
     if kubectl("create", "perfsonar/ps_pod.yaml", None, " && echo Waiting for perfSONAR test results file... ", False) != 0:
         writeFail("perfsonar_results.json", "Error deploying perfsonar pod.")
@@ -331,8 +341,8 @@ generalResults = {
 # ----------------RUN THE TESTS AND CALCULATE COSTS-----------------------------
 totalCost = 0
 doCalc = checkRequiredCosts()
-for key, value in configs["testsCatalog"].items():
-    if configs["testsCatalog"][key]["run"] is True:
+for key, value in testsCatalog.items():
+    if testsCatalog[key]["run"] is True:
         # This is where the test is run
         testPass, testCost = eval(key+"()")
         generalResults["testing"].append({"test": key, "deployed": testPass})

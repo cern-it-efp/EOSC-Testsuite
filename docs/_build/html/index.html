@@ -152,22 +152,43 @@
             
   <div class="section" id="ocre-test-suite-for-cloud-validation-cern">
 <h1>OCRE Test-Suite for cloud validation - CERN<a class="headerlink" href="#ocre-test-suite-for-cloud-validation-cern" title="Permalink to this headline">¶</a></h1>
-<p>This tool is intended to be used for cloud services validation and testing.
-When applicable, the test-suite executes four main steps:</p>
+<p>This tool is intended to be used for cloud services validation and testing across the stack.</p>
+<p>The test-suite executes four main steps:</p>
 <ol class="arabic simple">
 <li>Infrastructure provisioning: VMs are created using Terraform and then Kubernetes and Docker are installed on them to create a k8s cluster.</li>
 <li>Deploy the tests: Kubernetes resource definition files (YAML) are used to deploy the tests, either as single pods or deployments.</li>
 <li>Harvest results: at the end of each test run a result file -written in JSON- is created. This file is stored locally.</li>
-<li>Through the verification system, the TS is triggered from a service running at CERN. In this case results are then pushed to a S3 Bucket at CERN.</li>
+<li>Through a verification system, the Test-Suite can also be triggered from a service running at CERN. In this case, results are then pushed to a S3 Bucket at CERN.</li>
 </ol>
-<p>The test set described below available derives from the tests used in <a class="reference external" href="https://www.hnscicloud.eu/">Helix Nebula The Science Cloud</a> PCP project funded by the European Commission.</p>
+<p>The test set described below is based on the tests used in <a class="reference external" href="https://www.hnscicloud.eu/">Helix Nebula The Science Cloud</a> PCP project funded by the European Commission.</p>
+<p>The developers would like to thank to all test owners and contributors to this project.</p>
 <p><strong>This test-suite has been tested on:</strong></p>
-<div class="line-block">
-<div class="line">Python: 3</div>
-<div class="line">Linux distros: Ubuntu, Centos, Coreos, Debian, RedHat, Fedora</div>
-<div class="line">OS running on provider’s VMs : Centos</div>
-<div class="line">Providers:  Exoscale (Cloudstack), CERN Private Cloud (OpenStack), Cloudscale (OpenStack)</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="73%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>Python</td>
+<td>3</td>
+</tr>
+<tr class="row-even"><td>Linux distros</td>
+<td>Ubuntu, Centos, Coreos, Debian, RedHat, Fedora</td>
+</tr>
+<tr class="row-odd"><td>OS running on provider’s VMs</td>
+<td>Centos7</td>
+</tr>
+<tr class="row-even"><td>Providers</td>
+<td><div class="first last line-block">
+<div class="line">Exoscale (Cloudstack)</div>
+<div class="line">CERN Private Cloud (OpenStack)</div>
+<div class="line">Cloudscale (OpenStack)</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The test suite is being tested in additional cloud providers. As tests are concluded the cloud providers names will be added here</p>
 <div class="toctree-wrapper compound">
 </div>
 <div class="section" id="license">

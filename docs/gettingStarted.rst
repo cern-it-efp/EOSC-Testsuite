@@ -5,13 +5,18 @@ Please follow the steps below in order to deploy and test a cloud provider:
 1.1 Install Terraform
 ==========================
 Terraform is the tool that creates the VMs that will later become a Kubernetes cluster. The test-suite makes use of it so download and
-install `Terraform <https://learn.hashicorp.com/terraform/getting-started/install.html>`_ on your machine.
-In some cases, providers are not fully supported by Terraform, however they might provide plugins to bridge this gap. In such cases, please refer to the documentation of the provider to download the plugin. 
+install |Terraform_link| on your machine.
+In some cases, providers are not fully supported by Terraform, however they might provide plugins to bridge this gap. In such cases, please refer to the documentation of the provider to download the plugin.
 Once downloaded, this must be placed at *~/.terraform.d/plugins* and execution permissions must be given to it (*+x*).
+
+.. |Terraform_link| raw:: html
+
+  <a href="https://learn.hashicorp.com/terraform/getting-started/install.html" target="_blank">Terraform</a>
 
 1.2 Manage ssh keys
 ==========================
-A ssh key pair is needed to establish connections to the VMs to be created later. Therefore, you must create (or import) this key on your provider beforehand and place the private key at *~/.ssh/id_rsa*. Note errors may occur if your key doesn't have the right permissions. Set these to the right value using the following command:
+A ssh key pair is needed to establish connections to the VMs to be created later. Therefore, you must create (or import) this key on your provider
+beforehand and place the private key at *~/.ssh/id_rsa*. Note errors may occur if your key doesn't have the right permissions. Set these to the right value using the following command:
 
 .. code-block:: console
 
@@ -23,7 +28,11 @@ This test-suite requires some packages to work properly and these must be instal
 
 Kubernetes client
 ^^^^^^^^^^^^^^^^^^^^^
-In order to manage the Kubernetes cluster locally instead of using the master node, install `kubectl <https://kubernetes.io/docs/tasks/tools/install-kubectl/>`_ on your machine.
+In order to manage the Kubernetes cluster locally instead of using the master node, install |kubectl_link| on your machine.
+
+.. |kubectl_link| raw:: html
+
+  <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/" target="_blank">kubectl</a>
 
 Python
 ^^^^^^^^^
@@ -44,51 +53,58 @@ Please clone the repository as follows and cd into it:
 
 Configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^
-While completing this task, please refer to `Terraform's documentation <https://www.terraform.io/docs/providers/>`_ in order to complete it successfully as some parts are provider specific and differ from one provider to another.
-You will find at the root of the cloned repository a file named *configs_raw.yaml*. You must rename it *configs.yaml* and fill it to match your requirements. **A filled example can be
-found in */config_examples***. This file contains different sections:
+While completing this task, please refer to |Terraform_docs_link| in order to complete it successfully as some parts are
+provider specific and differ from one provider to another.
+You will find in the root of the cloned repository a file named *configs_raw.yaml*. You must rename it *configs.yaml* and fill it to match your requirements. **A filled example can be
+found in */examples***. This file contains different sections:
+
+.. |Terraform_docs_link| raw:: html
+
+  <a href="https://www.terraform.io/docs/providers/" target="_blank">Terraform's documentation</a>
 
 ``general``
 
 For specifying general variables:
 
-+-----------------------+------------------------------------------------------------------------------------+
-| Name	                | Explanation / Values                                                               |
-+=======================+====================================================================================+
-|clusterNodes           | Indicate the number of nodes the cluster must contain, including master node.      |
-+-----------------------+------------------------------------------------------------------------------------+
-|providerName           | Name of the provider for Terraform.                                                |
-+-----------------------+------------------------------------------------------------------------------------+
-|providerInstanceName   | Compute instance name for Terraform. This is provider specific.                    |
-+-----------------------+------------------------------------------------------------------------------------+
-|pathToKey              | Path to the location of your private key                                           |
-+-----------------------+------------------------------------------------------------------------------------+
-|dockerCE               | Version of docker-ce to be installed. Leave empty for latest.                      |
-+-----------------------+------------------------------------------------------------------------------------+
-|dockerEngine           | Version of docker-engine to be installed. Leave empty for latest.                  |
-+-----------------------+------------------------------------------------------------------------------------+
-|kubernetes             | Version of Kubernetes to be installed. Leave empty for latest.                     |
-+-----------------------+------------------------------------------------------------------------------------+
++-----------------------+-----------------------------------------------------------------------+
+|Name                   | Explanation / Values                                                  |
++=======================+=======================================================================+
+|clusterNodes           | Number of nodes the cluster must contain, including master node.      |
++-----------------------+-----------------------------------------------------------------------+
+|providerName           | Name of the provider for Terraform.                                   |
++-----------------------+-----------------------------------------------------------------------+
+|providerInstanceName   | Compute instance name for Terraform. This is provider specific.       |
++-----------------------+-----------------------------------------------------------------------+
+|pathToKey              | Path to the location of your private key                              |
++-----------------------+-----------------------------------------------------------------------+
+|dockerCE               | Version of docker-ce to be installed. Leave empty for latest.         |
++-----------------------+-----------------------------------------------------------------------+
+|dockerEngine           | Version of docker-engine to be installed. Leave empty for latest.     |
++-----------------------+-----------------------------------------------------------------------+
+|kubernetes             | Version of Kubernetes to be installed. Leave empty for latest.        |
++-----------------------+-----------------------------------------------------------------------+
 
-Note that it's possible to choose between "Docker Community Edition" and "Docker Engine" (older Docker packages). However it's **highly recommended** to leave these variables empty to create a cluster with the latest stack.
+Note that it's possible to choose between "Docker Community Edition" and "Docker Engine" (older Docker packages). However it's **highly recommended** to leave these
+variables empty to create a cluster with the latest stack.
 
 ``auth``
 
 For specifying the credentials to connect to the provider and deploy resources.
 
 +-------------+----------------------------------------------------------------------------------------------+
-| Name	      | Accepted Values                                                                             |
+|Name         | Accepted Values                                                                              |
 +=============+==============================================================================================+
 |useFile      | Indicate if a credentials file is used instead of secret-key pair (Boolean). Required.       |
 +-------------+----------------------------------------------------------------------------------------------+
-|credentials  | String block with the required credentials.                                                  | 
-|             | - This is not yaml but string, therefore use '=' and ' " '. (cloud provider specific).       |
+|credentials  | | String block with the required credentials.                                                |
+|             | | This is not yaml but string, therefore use '=' and ' " '. (cloud provider specific).       |
 +-------------+----------------------------------------------------------------------------------------------+
 
 ``instanceDefinition``
 
 In this section you should write all the key-pair values that would be written on the body of an instance declaration resource on Terraform, according to the cloud you want to test.
-Refer to the documentation of the cloud provider to check which pairs you need to specify. In any case, you can run the Test-Suite (next steps) and if there is any missing pair a message will be shown in the terminal telling you which ones are these. This is how you must specify each pair::
+Refer to the documentation of the cloud provider to check which pairs you need to specify. In any case, you can run the Test-Suite (next steps) and if there is any missing
+pair a message will be shown in the terminal telling you which ones are these. This is how you must specify each pair::
 
   <YOUR_PROVIDER'S_STRING_FOR_A_KEY> = "<VALUE_GIVEN_FOR_THAT_KEY>"
 
@@ -102,7 +118,8 @@ An example (Exoscale cloud provider)::
   disk_size = 50
   zone = "ch-gva-2"
 
-Please pay attention in this section to the name for the instance. A random string will be added later to the name given to the instance in order to avoid DNS issues when running the test-suite several times. To achieve this, the block must contain the '#NAME' placeholder. When specifying the name for the instance, please follow this structure::
+Please pay attention in this section to the name for the instance. A random string will be added later to the name given to the instance in order to avoid DNS issues when
+running the test-suite several times. To achieve this, the block must contain the '#NAME' placeholder. When specifying the name for the instance, please follow this structure::
 
   <YOUR_PROVIDER'S_STRING_FOR_NAME> = "<NAME_FOR_YOUR_INSTANCES>"#NAME
 
@@ -115,37 +132,51 @@ Note the '#NAME'!
 | [**NOTE 1**: Even though this is a yaml file, '=' is used on this section instead of ':' as that's required by Terraform files and this will be taken as a whole block and placed directly on a .tf file]
 | [**NOTE 2**: Clouds that don't support resource creation with Terraform or k8saaS can't currently be tested with this Test-Suite]
 |
-Tests Catalog
-^^^^^^^^^^^^^^^^^^^
 
-In the section ``testsCatalog`` of *configs.yaml*, you have to specify which tests you want to run. If you want to run a certain test simply set its *run* variable to the True Boolean value. On the other hand, if you don't want it to be run set this value to False. Please find below, a description of each test that has already been integrated in the Test-Suite:
 
-**Deep Learning using GPUs: It trains a Generative Adversarial Network (GAN) using a Kubernetes cluster (GPU flavored) with Kubeflow and MPI.**
+1.5 Tests Catalog
+========================
 
+In the root of the cloned repository you will also find a file named *testsCatalog.yaml*, in which you have to specify the tests you want to run. If you want to run a certain
+test simply set its *run* variable to the True Boolean value. On the other hand, if you don't want it to be run set this value to False. Please find below, a description of each
+test that has already been integrated in the Test-Suite:
+
+Deep Learning using GPUs
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Training of a Generative Adversarial Network (GAN) using a Kubernetes cluster (GPU flavored) with Kubeflow and MPI.
 Note that for this test a cluster with GPU flavor is required.
-For this test, apart from the *run* variable, the following can be set in the configs.yaml file:
+For this test, apart from the *run* variable, the following can be set in the *testsCatalog.yaml* file:
 
-+--------------+----------------------------------------------------------------------------------------------------------------+
-|Name	       | Explanation / Values                                                                                           |
-+==============+================================================================================================================+
-|nodes         | Number of nodes to be used for the deployment. If not set, the max number of nodes available will be used.     |
-+--------------+----------------------------------------------------------------------------------------------------------------+
++--------------+--------------------------------------------------------------------------------------------+
+|Name          | Explanation / Values                                                                       |
++==============+============================================================================================+
+|nodes         | Number of nodes to be used for the deployment. Default: max number of nodes available.     |
++--------------+--------------------------------------------------------------------------------------------+
 
 This test is currently undergoing development and testing, hence it can't be fully deployed.
 
-- Contributors/owners: Sofia Vallecorsa (CERN) - sofia.vallecorsa@cern.ch; Jean-Roch Vlimant (Caltech)
-- Repository: https://github.com/svalleco/mpi_learn
-|
-**S3 endpoint tests: A simple S3 test script to test functionality of S3-like endpoints, checking the following:**
+- Contributors/Owners: Sofia Vallecorsa (CERN) - sofia.vallecorsa@cern.ch; Jean-Roch Vlimant (Caltech)
+- |Repository_mpi|
 
-S3 authentication (access key + secret key, PUT, GET, GET with prefix matching, GET chunk, GET multiple chunks
+.. |Repository_mpi| raw:: html
+
+  <a href="https://github.com/svalleco/mpi_learn" target="_blank">Repository</a>
+
 |
-For this test, apart from the *run* variable, the following ones must be set on the configs.yaml file:
+
+S3 endpoint tests
+^^^^^^^^^^^^^^^^^^^^^^
+A simple S3 test script to test functionality of S3-like endpoints, checking the following:
+
+S3 authentication (access key + secret key), PUT, GET, GET with prefix matching, GET chunk, GET multiple chunks.
+
+For this test, apart from the *run* variable, the following ones must be set on the *testsCatalog.yaml* file:
 
 +----------------+----------------------------------------------------------------------------------------------------------------+
-| Name	         | Explanation / Values                                                                                           |
+|Name            | Explanation / Values                                                                                           |
 +================+================================================================================================================+
-|endpoint        | Endpoint under which your S3 bucket is reachable. This URL must not include the bucket name but only the host. |
+|endpoint        | | Endpoint under which your S3 bucket is reachable.                                                            |
+|                | | This URL must not include the bucket name but only the host.                                                 |
 +----------------+----------------------------------------------------------------------------------------------------------------+
 |accessKey       | Access key for S3 resource management.                                                                         |
 +----------------+----------------------------------------------------------------------------------------------------------------+
@@ -153,39 +184,56 @@ For this test, apart from the *run* variable, the following ones must be set on 
 +----------------+----------------------------------------------------------------------------------------------------------------+
 
 - Contributors/Owners: Oliver Keeble (CERN) - oliver.keeble@cern.ch
-- Repository: https://gitlab.cern.ch/okeeble/s3test
+- |Repository_s3|
+
+.. |Repository_s3| raw:: html
+
+  <a href="https://gitlab.cern.ch/okeeble/s3test" target="_blank">Repository</a>
 
 |
 
-**Data Export: Move data from a VM running on a cloud provider to Zenodo.**
+Data Export: cloud to Zenodo
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+When using cloud credits, when credit is exhausted cloud, data can be repatriated or moved to a long-term data storage service. The example used in this test uses
+|Zenodo_link| service maintained by CERN, verifying that the output data can be taken from the cloud provider to Zenodo.
 
-When using cloud credits, when credit is exhausted cloud, data can be repatriated or moved to a long-term data storage service. The example used in this test uses Zenodo service maintained by CERN: https://zenodo.org/, verifying that the output data can be taken from the cloud provider to Zenodo.
+- Contributors/Owners: Ignacio Peluaga - ignacio.peluaga.lozada@cern.ch
+- |Repository_ce|
 
-Contributors/owners: Ignacio Peluaga - ignacio.peluaga.lozada@cern.ch
-Repository: https://github.com/ignpelloz/cloud-exporter
+.. |Repository_ce| raw:: html
+
+  <a href="https://github.com/ignpelloz/cloud-exporter" target="_blank">Repository</a>
+
+.. |Zenodo_link| raw:: html
+
+  <a href="https://zenodo.org/" target="_blank">Zenodo</a>
 
 |
 
-**CPU Benchmarking: Containerised benchmarking tools.**
-
+Containerised CPU Benchmarking
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Suite contanining several CPU benchmarks used at CERN.
 The following benchmarks are run on the cloud provider, using a containerised approach:
 
-- DIRAC Benchmark
-- ATLAS Kit Validation
-- Whetstone: from the UnixBench benchmark suite.
-- Hyper-benchmark: A pre-defined sequence of measurements and fast benchmarks.
+* DIRAC Benchmark
+* ATLAS Kit Validation
+* Whetstone: from the UnixBench benchmark suite.
+* Hyper-benchmark: A pre-defined sequence of measurements and fast benchmarks.
 
-Contributors/Owners: Domenico Giordano (CERN) - domenico.giordano@cern.ch
-Repository:  https://gitlab.cern.ch/cloud-infrastructure/cloud-benchmark-suite 
+- Contributors/Owners: Domenico Giordano (CERN) - domenico.giordano@cern.ch
+- |Repository_cpu|
+
+.. |Repository_cpu| raw:: html
+
+  <a href="https://gitlab.cern.ch/cloud-infrastructure/cloud-benchmark-suite" target="_blank">Repository</a>
 
 |
 
-**perfSONAR: Networking performance measurements.**
-
+Networking performance measurements
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 perfSONAR is a network measurement toolkit designed to provide federated coverage of paths, and help to establish end-to-end usage expectations.
 
-In this test, a perfSONAR testpoint is created using a containerised approach on the cloud provider infrastructure. 
+In this test, a perfSONAR testpoint is created using a containerised approach on the cloud provider infrastructure.
 The following tests are launched end to end:
 
 - throughput: A test to measure the observed speed of a data transfer and associated statistics between two endpoints.
@@ -195,24 +243,46 @@ The following tests are launched end to end:
 
 The endpoint for these tests must be specified at configs' *endpoint* variable. Use endpoints from:
 
-- `List of throughput hosts <https://fasterdata.es.net/performance-testing/perfsonar/esnet-perfsonar-services/esnet-iperf-hosts/>`_
-- `perfSONAR Toolkit <http://perfsonar-otc.hnsc.otc-service.com/toolkit/>`_
-- `Lookup Services Directory <http://stats.es.net/ServicesDirectory/>`_
+* |link1|
+* |link2|
+* |link3|
 
-Contributors/Owners: Shawn Mckee (University of Michigan) - smckee@umich.edu; Marian Babik CERN) - marian.babik@cern.ch
-Repository: https://github.com/perfsonar/perfsonar-testpoint-docker
+.. |link1| raw:: html
+
+  <a href="https://fasterdata.es.net/performance-testing/perfsonar/esnet-perfsonar-services/esnet-iperf-hosts/" target="_blank">List of throughput hosts</a>
+
+.. |link2| raw:: html
+
+  <a href="http://perfsonar-otc.hnsc.otc-service.com/toolkit/" target="_blank">perfSONAR Toolkit</a>
+
+.. |link3| raw:: html
+
+  <a href="http://stats.es.net/ServicesDirectory/" target="_blank">Lookup Services Directory</a>
+
+- Contributors/Owners: Shawn Mckee (University of Michigan) - smckee@umich.edu; Marian Babik CERN) - marian.babik@cern.ch
+- |Repository_perf|
+
+.. |Repository_perf| raw:: html
+
+  <a href="https://github.com/perfsonar/perfsonar-testpoint-docker" target="_blank">Repository</a>
 
 |
 
-**FDMNES: Simulation of X-ray spectroscopies.**
+FDMNES: Simulation of X-ray spectroscopies
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The aim of the FDMNES project is to supply to the community a user friendly code to simulate x-ray spectroscopies, linked to the real absorption (XANES, XMCD) or resonant scattering (RXD in bulk or SRXRD for surfaces) of the synchrotron radiation.
+The aim of the FDMNES project is to supply to the community a user friendly code to simulate x-ray spectroscopies, linked to the real absorption (XANES, XMCD) or
+resonant scattering (RXD in bulk or SRXRD for surfaces) of the synchrotron radiation.
 IT uses parallel calculations using OpenMPI. As an HPC test FDMNES is rather heavy on CPU and Memory and light on I/O.
 
 This test is currently under development and will be available on the next release of the Test-Suite.
 
-Contributors/Owners: Rainer Wilcke (ESRF) - wilcke@esrf.fr
-Repository: http://neel.cnrs.fr/spip.php?article3137&lang=en
+- Contributors/Owners: Rainer Wilcke (ESRF) - wilcke@esrf.fr
+- |Repository_fdmnes|
+
+.. |Repository_fdmnes| raw:: html
+
+  <a href="http://neel.cnrs.fr/spip.php?article3137&lang=en" target="_blank">Repository</a>
 
 |
 
@@ -220,7 +290,7 @@ Repository: http://neel.cnrs.fr/spip.php?article3137&lang=en
 
 |
 
-1.5 Run the test-suite
+1.6 Run the test-suite
 ========================
 Once the previous steps are completed, the Test-Suite is ready to be run:
 
@@ -234,12 +304,15 @@ Options
 ^^^^^^^^^
 The following table describes all the available options:
 
-+------------------+------------------------------------------------------------------------------------------------------------------+
-| Name	           | Explanation / Values                                                                                             |
-+==================+=======================================================================================================================================================+
-|--only-test       | Run without creating the infrastructure (VMs and cluster), only deploy tests. Not valid for the first run.                                            |
-+------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+
-|--auto-retry      | Automatically retry in case of errors on the Terraform phase. Note that in the case errors occur, the user will have to stop the run using Ctrl+Z.    |
-+------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+
-|--via-backend     | Runs the Test-Suite using CERN's backend service instead of the cloned local version. This option must be used for verification purposes (2nd or later runs).  |
-+------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------+
++------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|Name              | Explanation / Values                                                                                                                                           |
++==================+================================================================================================================================================================+
+|--only-test       | | Run without creating the infrastructure (VMs and cluster), only deploy tests.                                                                                |
+|                  | | Not valid for the first run.                                                                                                                                 |
++------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|--auto-retry      | | Automatically retry in case of errors on the Terraform phase.                                                                                                |
+|                  | | Note that in the case errors occur, the user will have to stop the run using Ctrl+Z.                                                                         |
++------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|--via-backend     | | Runs the Test-Suite using CERN's backend service instead of the cloned local version.                                                                        |
+|                  | | This option must be used for verification purposes (2nd or later runs).                                                                                      |
++------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
