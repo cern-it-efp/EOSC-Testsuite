@@ -189,7 +189,7 @@ For this test, apart from the *run* variable, the following ones must be set on 
 
 |
 
-Data Export: cloud to Zenodo
+Data Export: From the commercial cloud provider to Zenodo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 When using cloud credits, when teh credit is exhausted, data can be repatriated or moved to a long-term data storage service. The example used in this test uses
 |Zenodo_link| service maintained by CERN, verifying that the output data can be taken from the cloud provider to Zenodo.
