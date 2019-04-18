@@ -3,7 +3,9 @@ OCRE Test-Suite for cloud validation - CERN
 ================================================
 
 This tool is intended to be used for cloud services validation and testing across the stack.
+
 Please find the the repository here: https://github.com/cern-it-efp/OCRE-Testsuite
+
 The latest documentation can be found here: https://ocre-testsuite.readthedocs.io/en/latest/
 
 The test-suite executes four main steps:
