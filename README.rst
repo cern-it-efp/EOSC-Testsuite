@@ -10,7 +10,7 @@ Please find the the repository here: https://github.com/cern-it-efp/OCRE-Testsui
 
 Documentation
 ---------------------------------------------
-The full documentation of in this website can be found at: `http://ocre-testsuite.rtfd.io <https://ocre-testsuite.readthedocs.io/en/latest/>`_
+Full documentation can be found at: `http://ocre-testsuite.rtfd.io <https://ocre-testsuite.readthedocs.io/en/latest/>`_
 
 The test-suite executes four main steps:
 
