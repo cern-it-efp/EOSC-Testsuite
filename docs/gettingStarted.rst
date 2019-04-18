@@ -129,6 +129,7 @@ Note the '#NAME'!
 
 | [**NOTE 1**: Even though this is a yaml file, '=' is used on this section instead of ':' as that's required by Terraform files and this will be taken as a whole block and placed directly on a .tf file]
 | [**NOTE 2**: Clouds that don't support resource creation with Terraform or k8saaS can't currently be tested with this Test-Suite]
+
 |
 
 1.5 Tests Catalog
@@ -138,9 +139,9 @@ In the root of the cloned repository, you will find a file named *testsCatalog.y
 
 Deep Learning using GPUs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The 3DGAN application is the first prototype developed to investigate the possibility to use a Deep Learning approaches to speed-up the simulation of particle physics detectors. The benchmark measures the total time needed to train a 3D convolutional Generative Adversarial Network using a data-parallel approach on distributed systems. 
-It is based on MPI for communication. As such, it tests the performance of single nodes (GPUs cards) but also latency and bandwidth of nodes interconnects and data access. 
-The training of the Generative Adversarial Network (GAN) uses a Kubernetes cluster (GPU flavored) with Kubeflow and MPI.
+The 3DGAN application is a prototype developed to investigate the possibility to use a Deep Learning approach to speed-up the simulation of particle physics detectors. The benchmark measures the total time needed to train a 3D convolutional Generative Adversarial Network (GAN) using a data-parallel approach on distributed systems. 
+It is based on MPI for communication. As such, it tests the performance of single nodes (GPUs cards) but also latency and bandwidth of nodes interconnects and data access. The training uses a Kubernetes cluster (GPU flavored) with Kubeflow and MPI.
+
 Note that for this test a cluster with GPU flavor is required.
 For this test, apart from the *run* variable, the following can be set in the *testsCatalog.yaml* file:
 
@@ -164,7 +165,6 @@ This test is currently undergoing development and testing, hence it can't be ful
 S3 endpoint tests
 ^^^^^^^^^^^^^^^^^^^^^^
 A simple S3 test script to test functionality of S3-like endpoints, checking the following:
-
 S3 authentication (access key + secret key), PUT, GET, GET with prefix matching, GET chunk, GET multiple chunks.
 
 For this test, apart from the *run* variable, the following ones must be set on the *testsCatalog.yaml* file:
@@ -191,7 +191,7 @@ For this test, apart from the *run* variable, the following ones must be set on 
 
 Data Export: cloud to Zenodo
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-When using cloud credits, when credit is exhausted cloud, data can be repatriated or moved to a long-term data storage service. The example used in this test uses
+When using cloud credits, when teh credit is exhausted, data can be repatriated or moved to a long-term data storage service. The example used in this test uses
 |Zenodo_link| service maintained by CERN, verifying that the output data can be taken from the cloud provider to Zenodo.
 
 - Contributors/Owners: Ignacio Peluaga - ignacio.peluaga.lozada@cern.ch
@@ -209,7 +209,7 @@ When using cloud credits, when credit is exhausted cloud, data can be repatriate
 
 Containerised CPU Benchmarking
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Suite contanining several CPU benchmarks used at CERN.
+Suite contanining several CPU benchmarks used for High Energy Physics (HEP).
 The following benchmarks are run on the cloud provider, using a containerised approach:
 
 * DIRAC Benchmark
@@ -268,9 +268,9 @@ The endpoint for these tests must be specified at configs' *endpoint* variable. 
 FDMNES: Simulation of X-ray spectroscopies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The aim of the FDMNES project is to supply to the community a user friendly code to simulate x-ray spectroscopies, linked to the real absorption (XANES, XMCD) or
-resonant scattering (RXD in bulk or SRXRD for surfaces) of the synchrotron radiation.
-IT uses parallel calculations using OpenMPI. As an HPC test FDMNES is rather heavy on CPU and Memory and light on I/O.
+he FDMNES project provides the research the community a user friendly code to simulate x-ray spectroscopies, linked to the real absorption (XANES, XMCD) or resonant scattering (RXD in bulk or SRXRD for surfaces) of synchrotron radiation.
+It uses parallel calculations using OpenMPI. As an HPC test FDMNES is rather heavy on CPU and Memory and light on I/O.
+The objective of this test is to understand which configuration of FDMNES is the most efficient and which type of tasks and calculations can be done in a give cloud provider.
 
 This test is currently under development and will be available on the next release of the Test-Suite.
 
@@ -289,7 +289,7 @@ This test is currently under development and will be available on the next relea
 
 1.6 Run the test-suite
 ========================
-Once the previous steps are completed, the Test-Suite is ready to be run:
+Once the previous configuration steps are completed, the Test-Suite is ready to be run:
 
 .. code-block:: console
 
