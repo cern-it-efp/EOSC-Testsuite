@@ -1,6 +1,6 @@
 1. Getting started
 ---------------------------------------------
-Please follow the steps below in order to deploy and test a cloud provider:
+Please follow the steps below in order to deploy tests in a cloud provider:
 
 1.1 Install Terraform
 ==========================
@@ -84,8 +84,7 @@ For specifying general variables:
 |kubernetes             | Version of Kubernetes to be installed. Leave empty for latest.        |
 +-----------------------+-----------------------------------------------------------------------+
 
-Note that it's possible to choose between "Docker Community Edition" and "Docker Engine" (older Docker packages). However it's **highly recommended** to leave these
-variables empty to create a cluster with the latest stack.
+Note that it's possible to choose between "Docker Community Edition" and "Docker Engine" (older Docker packages). However it's **highly recommended** to leave these variables empty to create a cluster with the latest stack.
 
 ``auth``
 
@@ -102,9 +101,8 @@ For specifying the credentials to connect to the provider and deploy resources.
 
 ``instanceDefinition``
 
-In this section you should write all the key-pair values that would be written on the body of an instance declaration resource on Terraform, according to the cloud you want to test.
-Refer to the documentation of the cloud provider to check which pairs you need to specify. In any case, you can run the Test-Suite (next steps) and if there is any missing
-pair a message will be shown in the terminal telling you which ones are these. This is how you must specify each pair::
+In this section one should write all the key-pair values that would be written on the body of an instance declaration resource on Terraform, according to the cloud one wants to test.
+Please refer to the documentation of the cloud provider to check which pairs you need to specify. In any case, you can run the Test-Suite (next steps) and if there is any missing pair a message will be shown in the terminal telling you which ones are these. This is how you must specify each pair::
 
   <YOUR_PROVIDER'S_STRING_FOR_A_KEY> = "<VALUE_GIVEN_FOR_THAT_KEY>"
 
@@ -133,17 +131,16 @@ Note the '#NAME'!
 | [**NOTE 2**: Clouds that don't support resource creation with Terraform or k8saaS can't currently be tested with this Test-Suite]
 |
 
-
 1.5 Tests Catalog
 ========================
 
-In the root of the cloned repository you will also find a file named *testsCatalog.yaml*, in which you have to specify the tests you want to run. If you want to run a certain
-test simply set its *run* variable to the True Boolean value. On the other hand, if you don't want it to be run set this value to False. Please find below, a description of each
-test that has already been integrated in the Test-Suite:
+In the root of the cloned repository, you will find a file named *testsCatalog.yaml*, in which you have to specify the tests you want to run. To run a certain test simply set its *run* variable to the True Boolean value. On the other hand, if you don't want it to be run set this value to False. Please find below, a description of each test that has already been integrated in the Test-Suite:
 
 Deep Learning using GPUs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Training of a Generative Adversarial Network (GAN) using a Kubernetes cluster (GPU flavored) with Kubeflow and MPI.
+The 3DGAN application is the first prototype developed to investigate the possibility to use a Deep Learning approaches to speed-up the simulation of particle physics detectors. The benchmark measures the total time needed to train a 3D convolutional Generative Adversarial Network using a data-parallel approach on distributed systems. 
+It is based on MPI for communication. As such, it tests the performance of single nodes (GPUs cards) but also latency and bandwidth of nodes interconnects and data access. 
+The training of the Generative Adversarial Network (GAN) uses a Kubernetes cluster (GPU flavored) with Kubeflow and MPI.
 Note that for this test a cluster with GPU flavor is required.
 For this test, apart from the *run* variable, the following can be set in the *testsCatalog.yaml* file:
 
