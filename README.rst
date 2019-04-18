@@ -6,7 +6,11 @@ This tool is intended to be used for cloud services validation and testing acros
 
 Please find the the repository here: https://github.com/cern-it-efp/OCRE-Testsuite
 
-The latest documentation can be found here: https://ocre-testsuite.readthedocs.io/en/latest/
+*****
+
+Documentation
+---------------------------------------------
+Find the full documentation at `ocre-testsuite.rtfd.io <https://ocre-testsuite.readthedocs.io/en/latest/>`_
 
 The test-suite executes four main steps:
 
@@ -39,12 +43,6 @@ The developers would like to thank to all test owners and contributors to this p
 The test suite is being tested in several additional cloud providers. As tests are concluded the cloud providers names will be added in the table above.
 
 .. header-end
-
-*****
-
-Documentation
----------------------------------------------
-Find the full documentation at `ocre-testsuite.rtfd.io <https://ocre-testsuite.readthedocs.io/en/latest/>`_
 
 .. license-start
 
