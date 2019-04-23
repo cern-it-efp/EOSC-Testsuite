@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>5. Cost of run calculation &mdash; Cloud Test Suite - CERN IT  documentation</title>
+  <title>7. Cost of run calculation &mdash; Cloud Test Suite - CERN IT  documentation</title>
   
 
   
@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="4. Verification" href="verification.html" /> 
+    <link rel="prev" title="6. Verification" href="verification.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -82,10 +82,12 @@
               <p class="caption"><span class="caption-text">Cloud Test Suite Documentation</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="gettingStarted.html">1. Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="existingClusters.html">2. Using existing clusters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="results.html">3. Results</a></li>
-<li class="toctree-l1"><a class="reference internal" href="verification.html">4. Verification</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">5. Cost of run calculation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testsCatalog.html">2. Tests Catalog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run.html">3. Run the test-suite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="existingClusters.html">4. Using existing clusters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="results.html">5. Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="verification.html">6. Verification</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">7. Cost of run calculation</a></li>
 </ul>
 
             
@@ -131,7 +133,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>5. Cost of run calculation</li>
+      <li>7. Cost of run calculation</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -151,9 +153,9 @@
            <div itemprop="articleBody">
             
   <div class="section" id="cost-of-run-calculation">
-<h1>5. Cost of run calculation<a class="headerlink" href="#cost-of-run-calculation" title="Permalink to this headline">¶</a></h1>
-<p>An approximation of the cost of running the test-suite will be calculated in case the prices are specified at configs.yaml under the <em>costCalculation</em> section.
-There you must specify the price per hour for the different resources:</p>
+<h1>7. Cost of run calculation<a class="headerlink" href="#cost-of-run-calculation" title="Permalink to this headline">¶</a></h1>
+<p>An approximative cost of running the test-suite will be calculated in case the prices are specified at configs.yaml under the <em>costCalculation</em> section.
+In this configuration file, one must specify the price per hour for the different resources:</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="13%" />
@@ -173,18 +175,16 @@ There you must specify the price per hour for the different resources:</p>
 </tr>
 </tbody>
 </table>
-<p>If a price is required for the cost calculation but the <em>costCalculation</em> section is not properly filled (For example, S3 Endpoint test was set
-to True but <em>s3bucketPrice</em> was not set), no approximation will be given.</p>
-<p>At the end of the run, the resulting approximated cost will be added to the results json file.
-In case you do not want this information, simply leave the values on the section <em>costCalculation</em> empty.
-Note that this is an approximation and not an exact value. Therefore the value provided here might vary to the real one.
-The formula used is as follows:</p>
+<p>If a price value is required for the cost calculation but the <em>costCalculation</em> section is not properly filled (For example, S3 Endpoint test was set to True but <em>s3bucketPrice</em> was not set), no approximation will be given.</p>
+<p>At the end of the run, the resulting approximated cost will be added to the file containing the results.
+In case this information isn’t needed, simply leave the values on the section <em>costCalculation</em> empty.
+Note that this is a cost estimate and not an exact price.</p>
+<p>The formula used is as follows:</p>
 <p><em>(Number of VMs created) x (Price of a VM per hour) x (Time in hours the VMs were used for the test-suite run) + (Cost of other resources)</em></p>
-<p>Where “Cost of other resources” are the cost of resources which are not compute resources, like storage. For example in the case of the S3 Endpoint test:</p>
+<p>Where “Cost of other resources” are the cost of resources which are not simple compute, like storage. For example in the case of the S3 Endpoint test:</p>
 <p><em>(Price of a S3 bucket per hour) x (Time in hours the bucket was used for the test)</em></p>
 <p>Note that the price per request or data amount (GB) are not considered here as these are not significant since less than 10 requests are done for this test and for very small data sets.
-Note also that here only the cost of the running time of the VM is considered, so if your provider charges also for creating a VM and not only for the time it is running, the cost
-here obtained will vary to the real one.</p>
+Note also that only the cost of the running time of the VM is considered, so if your provider charges for VM creation and not only for the time it is running, the cost obtained will vary to the real one.</p>
 </div>
 
 
@@ -196,7 +196,7 @@ here obtained will vary to the real one.</p>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="verification.html" class="btn btn-neutral float-left" title="4. Verification" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="verification.html" class="btn btn-neutral float-left" title="6. Verification" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="2. Using existing clusters" href="existingClusters.html" />
+    <link rel="next" title="2. Tests Catalog" href="testsCatalog.html" />
     <link rel="prev" title="OCRE Test-Suite for cloud validation - CERN" href="index.html" /> 
 </head>
 
@@ -95,25 +95,14 @@
 <li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#tests-catalog">1.5 Tests Catalog</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#deep-learning-using-gpus">Deep Learning using GPUs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#s3-endpoint-tests">S3 endpoint tests</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#data-export-cloud-to-zenodo">Data Export: cloud to Zenodo</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#containerised-cpu-benchmarking">Containerised CPU Benchmarking</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#networking-performance-measurements">Networking performance measurements</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#fdmnes-simulation-of-x-ray-spectroscopies">FDMNES: Simulation of X-ray spectroscopies</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#run-the-test-suite">1.6 Run the test-suite</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#options">Options</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="existingClusters.html">2. Using existing clusters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="results.html">3. Results</a></li>
-<li class="toctree-l1"><a class="reference internal" href="verification.html">4. Verification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="costs.html">5. Cost of run calculation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testsCatalog.html">2. Tests Catalog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run.html">3. Run the test-suite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="existingClusters.html">4. Using existing clusters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="results.html">5. Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="verification.html">6. Verification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="costs.html">7. Cost of run calculation</a></li>
 </ul>
 
             
@@ -180,7 +169,7 @@
             
   <div class="section" id="getting-started">
 <h1>1. Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
-<p>Please follow the steps below in order to deploy and test a cloud provider:</p>
+<p>Please follow the steps below in order to deploy tests in a cloud provider:</p>
 <div class="section" id="install-terraform">
 <h2>1.1 Install Terraform<a class="headerlink" href="#install-terraform" title="Permalink to this headline">¶</a></h2>
 <p>Terraform is the tool that creates the VMs that will later become a Kubernetes cluster. The test-suite makes use of it so download and
@@ -261,8 +250,7 @@ found in */examples*</strong>. This file contains different sections:</p>
 </tr>
 </tbody>
 </table>
-<p>Note that it’s possible to choose between “Docker Community Edition” and “Docker Engine” (older Docker packages). However it’s <strong>highly recommended</strong> to leave these
-variables empty to create a cluster with the latest stack.</p>
+<p>Note that it’s possible to choose between “Docker Community Edition” and “Docker Engine” (older Docker packages). However it’s <strong>highly recommended</strong> to leave these variables empty to create a cluster with the latest stack.</p>
 <p><code class="docutils literal notranslate"><span class="pre">auth</span></code></p>
 <p>For specifying the credentials to connect to the provider and deploy resources.</p>
 <table border="1" class="docutils">
@@ -289,9 +277,8 @@ variables empty to create a cluster with the latest stack.</p>
 </tbody>
 </table>
 <p><code class="docutils literal notranslate"><span class="pre">instanceDefinition</span></code></p>
-<p>In this section you should write all the key-pair values that would be written on the body of an instance declaration resource on Terraform, according to the cloud you want to test.
-Refer to the documentation of the cloud provider to check which pairs you need to specify. In any case, you can run the Test-Suite (next steps) and if there is any missing
-pair a message will be shown in the terminal telling you which ones are these. This is how you must specify each pair:</p>
+<p>In this section one should write all the key-pair values that would be written on the body of an instance declaration resource on Terraform, according to the cloud one wants to test.
+Please refer to the documentation of the cloud provider to check which pairs you need to specify. In any case, you can run the Test-Suite (next steps) and if there is any missing pair a message will be shown in the terminal telling you which ones are these. This is how you must specify each pair:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">YOUR_PROVIDER</span><span class="s1">&#39;S_STRING_FOR_A_KEY&gt; = &quot;&lt;VALUE_GIVEN_FOR_THAT_KEY&gt;&quot;</span>
 </pre></div>
 </div>
@@ -318,202 +305,7 @@ running the test-suite several times. To achieve this, the block must contain th
 <div class="line-block">
 <div class="line">[<strong>NOTE 1</strong>: Even though this is a yaml file, ‘=’ is used on this section instead of ‘:’ as that’s required by Terraform files and this will be taken as a whole block and placed directly on a .tf file]</div>
 <div class="line">[<strong>NOTE 2</strong>: Clouds that don’t support resource creation with Terraform or k8saaS can’t currently be tested with this Test-Suite]</div>
-<div class="line"><br /></div>
 </div>
-</div>
-</div>
-<div class="section" id="tests-catalog">
-<h2>1.5 Tests Catalog<a class="headerlink" href="#tests-catalog" title="Permalink to this headline">¶</a></h2>
-<p>In the root of the cloned repository you will also find a file named <em>testsCatalog.yaml</em>, in which you have to specify the tests you want to run. If you want to run a certain
-test simply set its <em>run</em> variable to the True Boolean value. On the other hand, if you don’t want it to be run set this value to False. Please find below, a description of each
-test that has already been integrated in the Test-Suite:</p>
-<div class="section" id="deep-learning-using-gpus">
-<h3>Deep Learning using GPUs<a class="headerlink" href="#deep-learning-using-gpus" title="Permalink to this headline">¶</a></h3>
-<p>Training of a Generative Adversarial Network (GAN) using a Kubernetes cluster (GPU flavored) with Kubeflow and MPI.
-Note that for this test a cluster with GPU flavor is required.
-For this test, apart from the <em>run</em> variable, the following can be set in the <em>testsCatalog.yaml</em> file:</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="13%" />
-<col width="87%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Name</th>
-<th class="head">Explanation / Values</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>nodes</td>
-<td>Number of nodes to be used for the deployment. Default: max number of nodes available.</td>
-</tr>
-</tbody>
-</table>
-<p>This test is currently undergoing development and testing, hence it can’t be fully deployed.</p>
-<ul class="simple">
-<li>Contributors/Owners: Sofia Vallecorsa (CERN) - <a class="reference external" href="mailto:sofia&#46;vallecorsa&#37;&#52;&#48;cern&#46;ch">sofia<span>&#46;</span>vallecorsa<span>&#64;</span>cern<span>&#46;</span>ch</a>; Jean-Roch Vlimant (Caltech)</li>
-<li><a href="https://github.com/svalleco/mpi_learn" target="_blank">Repository</a></li>
-</ul>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-</div>
-<div class="section" id="s3-endpoint-tests">
-<h3>S3 endpoint tests<a class="headerlink" href="#s3-endpoint-tests" title="Permalink to this headline">¶</a></h3>
-<p>A simple S3 test script to test functionality of S3-like endpoints, checking the following:</p>
-<p>S3 authentication (access key + secret key), PUT, GET, GET with prefix matching, GET chunk, GET multiple chunks.</p>
-<p>For this test, apart from the <em>run</em> variable, the following ones must be set on the <em>testsCatalog.yaml</em> file:</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="13%" />
-<col width="88%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Name</th>
-<th class="head">Explanation / Values</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>endpoint</td>
-<td><div class="first last line-block">
-<div class="line">Endpoint under which your S3 bucket is reachable.</div>
-<div class="line">This URL must not include the bucket name but only the host.</div>
-</div>
-</td>
-</tr>
-<tr class="row-odd"><td>accessKey</td>
-<td>Access key for S3 resource management.</td>
-</tr>
-<tr class="row-even"><td>secretKey</td>
-<td>Secret key for S3 resource management.</td>
-</tr>
-</tbody>
-</table>
-<ul class="simple">
-<li>Contributors/Owners: Oliver Keeble (CERN) - <a class="reference external" href="mailto:oliver&#46;keeble&#37;&#52;&#48;cern&#46;ch">oliver<span>&#46;</span>keeble<span>&#64;</span>cern<span>&#46;</span>ch</a></li>
-<li><a href="https://gitlab.cern.ch/okeeble/s3test" target="_blank">Repository</a></li>
-</ul>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-</div>
-<div class="section" id="data-export-cloud-to-zenodo">
-<h3>Data Export: cloud to Zenodo<a class="headerlink" href="#data-export-cloud-to-zenodo" title="Permalink to this headline">¶</a></h3>
-<p>When using cloud credits, when credit is exhausted cloud, data can be repatriated or moved to a long-term data storage service. The example used in this test uses
-<a href="https://zenodo.org/" target="_blank">Zenodo</a> service maintained by CERN, verifying that the output data can be taken from the cloud provider to Zenodo.</p>
-<ul class="simple">
-<li>Contributors/Owners: Ignacio Peluaga - <a class="reference external" href="mailto:ignacio&#46;peluaga&#46;lozada&#37;&#52;&#48;cern&#46;ch">ignacio<span>&#46;</span>peluaga<span>&#46;</span>lozada<span>&#64;</span>cern<span>&#46;</span>ch</a></li>
-<li><a href="https://github.com/ignpelloz/cloud-exporter" target="_blank">Repository</a></li>
-</ul>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-</div>
-<div class="section" id="containerised-cpu-benchmarking">
-<h3>Containerised CPU Benchmarking<a class="headerlink" href="#containerised-cpu-benchmarking" title="Permalink to this headline">¶</a></h3>
-<p>Suite contanining several CPU benchmarks used at CERN.
-The following benchmarks are run on the cloud provider, using a containerised approach:</p>
-<ul class="simple">
-<li>DIRAC Benchmark</li>
-<li>ATLAS Kit Validation</li>
-<li>Whetstone: from the UnixBench benchmark suite.</li>
-<li>Hyper-benchmark: A pre-defined sequence of measurements and fast benchmarks.</li>
-</ul>
-<ul class="simple">
-<li>Contributors/Owners: Domenico Giordano (CERN) - <a class="reference external" href="mailto:domenico&#46;giordano&#37;&#52;&#48;cern&#46;ch">domenico<span>&#46;</span>giordano<span>&#64;</span>cern<span>&#46;</span>ch</a></li>
-<li><a href="https://gitlab.cern.ch/cloud-infrastructure/cloud-benchmark-suite" target="_blank">Repository</a></li>
-</ul>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-</div>
-<div class="section" id="networking-performance-measurements">
-<h3>Networking performance measurements<a class="headerlink" href="#networking-performance-measurements" title="Permalink to this headline">¶</a></h3>
-<p>perfSONAR is a network measurement toolkit designed to provide federated coverage of paths, and help to establish end-to-end usage expectations.</p>
-<p>In this test, a perfSONAR testpoint is created using a containerised approach on the cloud provider infrastructure.
-The following tests are launched end to end:</p>
-<ul class="simple">
-<li>throughput: A test to measure the observed speed of a data transfer and associated statistics between two endpoints.</li>
-<li>rtt: Measure the round trip time and related statistics between hosts.</li>
-<li>trace: Trace the path between IP hosts.</li>
-<li>latencybg: Continuously measure one-way latency and associated statistics between hosts and report back results periodically.</li>
-</ul>
-<p>The endpoint for these tests must be specified at configs’ <em>endpoint</em> variable. Use endpoints from:</p>
-<ul class="simple">
-<li><a href="https://fasterdata.es.net/performance-testing/perfsonar/esnet-perfsonar-services/esnet-iperf-hosts/" target="_blank">List of throughput hosts</a></li>
-<li><a href="http://perfsonar-otc.hnsc.otc-service.com/toolkit/" target="_blank">perfSONAR Toolkit</a></li>
-<li><a href="http://stats.es.net/ServicesDirectory/" target="_blank">Lookup Services Directory</a></li>
-</ul>
-<ul class="simple">
-<li>Contributors/Owners: Shawn Mckee (University of Michigan) - <a class="reference external" href="mailto:smckee&#37;&#52;&#48;umich&#46;edu">smckee<span>&#64;</span>umich<span>&#46;</span>edu</a>; Marian Babik CERN) - <a class="reference external" href="mailto:marian&#46;babik&#37;&#52;&#48;cern&#46;ch">marian<span>&#46;</span>babik<span>&#64;</span>cern<span>&#46;</span>ch</a></li>
-<li><a href="https://github.com/perfsonar/perfsonar-testpoint-docker" target="_blank">Repository</a></li>
-</ul>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-</div>
-<div class="section" id="fdmnes-simulation-of-x-ray-spectroscopies">
-<h3>FDMNES: Simulation of X-ray spectroscopies<a class="headerlink" href="#fdmnes-simulation-of-x-ray-spectroscopies" title="Permalink to this headline">¶</a></h3>
-<p>The aim of the FDMNES project is to supply to the community a user friendly code to simulate x-ray spectroscopies, linked to the real absorption (XANES, XMCD) or
-resonant scattering (RXD in bulk or SRXRD for surfaces) of the synchrotron radiation.
-IT uses parallel calculations using OpenMPI. As an HPC test FDMNES is rather heavy on CPU and Memory and light on I/O.</p>
-<p>This test is currently under development and will be available on the next release of the Test-Suite.</p>
-<ul class="simple">
-<li>Contributors/Owners: Rainer Wilcke (ESRF) - <a class="reference external" href="mailto:wilcke&#37;&#52;&#48;esrf&#46;fr">wilcke<span>&#64;</span>esrf<span>&#46;</span>fr</a></li>
-<li><a href="http://neel.cnrs.fr/spip.php?article3137&lang=en" target="_blank">Repository</a></li>
-</ul>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-<p>[<strong>NOTE</strong>: If no test’s <em>run</em> is set to True, this tool will simply create a raw Kubernetes cluster]</p>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
-</div>
-</div>
-<div class="section" id="run-the-test-suite">
-<h2>1.6 Run the test-suite<a class="headerlink" href="#run-the-test-suite" title="Permalink to this headline">¶</a></h2>
-<p>Once the previous steps are completed, the Test-Suite is ready to be run:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ./test_suite.py &lt;options&gt;
-</pre></div>
-</div>
-<p>Terraform will first show the user what will be done and what to create. If agreed, type “yes” and press enter.</p>
-<div class="section" id="options">
-<h3>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h3>
-<p>The following table describes all the available options:</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Name</th>
-<th class="head">Explanation / Values</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>–only-test</td>
-<td><div class="first last line-block">
-<div class="line">Run without creating the infrastructure (VMs and cluster), only deploy tests.</div>
-<div class="line">Not valid for the first run.</div>
-</div>
-</td>
-</tr>
-<tr class="row-odd"><td>–auto-retry</td>
-<td><div class="first last line-block">
-<div class="line">Automatically retry in case of errors on the Terraform phase.</div>
-<div class="line">Note that in the case errors occur, the user will have to stop the run using Ctrl+Z.</div>
-</div>
-</td>
-</tr>
-<tr class="row-even"><td>–via-backend</td>
-<td><div class="first last line-block">
-<div class="line">Runs the Test-Suite using CERN’s backend service instead of the cloned local version.</div>
-<div class="line">This option must be used for verification purposes (2nd or later runs).</div>
-</div>
-</td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
 </div>
@@ -526,7 +318,7 @@ IT uses parallel calculations using OpenMPI. As an HPC test FDMNES is rather hea
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="existingClusters.html" class="btn btn-neutral float-right" title="2. Using existing clusters" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="testsCatalog.html" class="btn btn-neutral float-right" title="2. Tests Catalog" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral float-left" title="OCRE Test-Suite for cloud validation - CERN" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

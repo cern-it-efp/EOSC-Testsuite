@@ -82,10 +82,12 @@
               <p class="caption"><span class="caption-text">Cloud Test Suite Documentation</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="gettingStarted.html">1. Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="existingClusters.html">2. Using existing clusters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="results.html">3. Results</a></li>
-<li class="toctree-l1"><a class="reference internal" href="verification.html">4. Verification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="costs.html">5. Cost of run calculation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testsCatalog.html">2. Tests Catalog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run.html">3. Run the test-suite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="existingClusters.html">4. Using existing clusters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="results.html">5. Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="verification.html">6. Verification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="costs.html">7. Cost of run calculation</a></li>
 </ul>
 
             
@@ -152,7 +154,13 @@
             
   <div class="section" id="ocre-test-suite-for-cloud-validation-cern">
 <h1>OCRE Test-Suite for cloud validation - CERN<a class="headerlink" href="#ocre-test-suite-for-cloud-validation-cern" title="Permalink to this headline">¶</a></h1>
-<p>This tool is intended to be used for cloud services validation and testing across the stack.</p>
+<p>This tool is intended to be used to test and validate commercial cloud services across the stack for research and education environments.
+This Test-Suite is being used as a validation tool for commercial cloud services procurement in OCRE (Open Clouds for Research Environments) project sponsored by the European Commission.</p>
+<p>More information at: <a class="reference external" href="http://ocre-project.eu">http://ocre-project.eu</a>.</p>
+<p>Please find the the repository here: <a class="reference external" href="https://github.com/cern-it-efp/OCRE-Testsuite">https://github.com/cern-it-efp/OCRE-Testsuite</a></p>
+<hr class="docutils" />
+<div class="toctree-wrapper compound">
+</div>
 <p>The test-suite executes four main steps:</p>
 <ol class="arabic simple">
 <li>Infrastructure provisioning: VMs are created using Terraform and then Kubernetes and Docker are installed on them to create a k8s cluster.</li>
@@ -188,9 +196,7 @@
 </tr>
 </tbody>
 </table>
-<p>The test suite is being tested in additional cloud providers. As tests are concluded the cloud providers names will be added here</p>
-<div class="toctree-wrapper compound">
-</div>
+<p>The test suite is being tested in several additional cloud providers. As tests are concluded the cloud providers names will be added in the table above.</p>
 <div class="section" id="license">
 <h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
 <p>Copyright (C) CERN.</p>

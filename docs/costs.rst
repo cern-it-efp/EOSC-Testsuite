@@ -1,4 +1,4 @@
-5. Cost of run calculation
+7. Cost of run calculation
 ---------------------------------------------
 
 An approximative cost of running the test-suite will be calculated in case the prices are specified at configs.yaml under the *costCalculation* section.
@@ -15,7 +15,7 @@ In this configuration file, one must specify the price per hour for the differen
 If a price value is required for the cost calculation but the *costCalculation* section is not properly filled (For example, S3 Endpoint test was set to True but *s3bucketPrice* was not set), no approximation will be given.
 
 At the end of the run, the resulting approximated cost will be added to the file containing the results.
-In case this information insn't needed, simply leave the values on the section *costCalculation* empty.
+In case this information isn't needed, simply leave the values on the section *costCalculation* empty.
 Note that this is a cost estimate and not an exact price.
 
 The formula used is as follows:

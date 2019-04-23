@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>6. Verification &mdash; Cloud Test Suite - CERN IT  documentation</title>
+  <title>3. Run the test-suite &mdash; Cloud Test Suite - CERN IT  documentation</title>
   
 
   
@@ -35,8 +35,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="7. Cost of run calculation" href="costs.html" />
-    <link rel="prev" title="5. Results" href="results.html" /> 
+    <link rel="next" title="4. Using existing clusters" href="existingClusters.html" />
+    <link rel="prev" title="2. Tests Catalog" href="testsCatalog.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -84,10 +84,13 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="gettingStarted.html">1. Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testsCatalog.html">2. Tests Catalog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run.html">3. Run the test-suite</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. Run the test-suite</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#options">Options</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="existingClusters.html">4. Using existing clusters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="results.html">5. Results</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">6. Verification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="verification.html">6. Verification</a></li>
 <li class="toctree-l1"><a class="reference internal" href="costs.html">7. Cost of run calculation</a></li>
 </ul>
 
@@ -134,13 +137,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>6. Verification</li>
+      <li>3. Run the test-suite</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/verification.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/run.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -153,11 +156,51 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="verification">
-<h1>6. Verification<a class="headerlink" href="#verification" title="Permalink to this headline">¶</a></h1>
-<p>In order to verify results, please run using <em>–via-backend</em> so that the proxy at CERN runs the Test-Suite (only deploys tests, no provisioning), harvests results and push them to CERN’s S3 bucket.
-Before starting the run, a message will be shown asking for yes/no answer. It warns the user that backend runs publish results to the CERN bucket.</p>
-<p><strong>Note that this feature is still under development and testing and will be available on next releases.</strong></p>
+  <div class="section" id="run-the-test-suite">
+<h1>3. Run the test-suite<a class="headerlink" href="#run-the-test-suite" title="Permalink to this headline">¶</a></h1>
+<p>Once the previous configuration steps are completed, the Test-Suite is ready to be run:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ./test_suite.py &lt;options&gt;
+</pre></div>
+</div>
+<p>Terraform will first show the user what will be done and what to create. If agreed, type “yes” and press enter.</p>
+<div class="section" id="options">
+<h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
+<p>The following table describes all the available options:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Explanation / Values</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>–only-test</td>
+<td><div class="first last line-block">
+<div class="line">Run without creating the infrastructure (VMs and cluster), only deploy tests.</div>
+<div class="line">Not valid for the first run.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td>–auto-retry</td>
+<td><div class="first last line-block">
+<div class="line">Automatically retry in case of errors on the Terraform phase.</div>
+<div class="line">Note that in the case errors occur, the user will have to stop the run using Ctrl+Z.</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td>–via-backend</td>
+<td><div class="first last line-block">
+<div class="line">Runs the Test-Suite using CERN’s backend service instead of the cloned local version.</div>
+<div class="line">This option must be used for verification purposes (2nd or later runs).</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 
 
@@ -168,10 +211,10 @@ Before starting the run, a message will be shown asking for yes/no answer. It wa
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="costs.html" class="btn btn-neutral float-right" title="7. Cost of run calculation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="existingClusters.html" class="btn btn-neutral float-right" title="4. Using existing clusters" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="results.html" class="btn btn-neutral float-left" title="5. Results" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="testsCatalog.html" class="btn btn-neutral float-left" title="2. Tests Catalog" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -3,17 +3,17 @@ OCRE Test-Suite for cloud validation - CERN
 ================================================
 
 This tool is intended to be used to test and validate commercial cloud services across the stack for research and education environments.
-This Test-Suite is being used as a validation tool for commercial cloud services procurement in OCRE (Open Clouds for Research Environments) project sponsored by the European Commission. 
+This Test-Suite is being used as a validation tool for commercial cloud services procurement in OCRE (Open Clouds for Research Environments) project sponsored by the European Commission.
 
 More information at: http://ocre-project.eu.
 
-Please find the the repository here: https://github.com/cern-it-efp/OCRE-Testsuite
-
-*****
+.. header-end
 
 Documentation
 ---------------------------------------------
 Full documentation can be found at: `http://ocre-testsuite.rtfd.io <https://ocre-testsuite.readthedocs.io/en/latest/>`_
+
+.. body
 
 The test-suite executes four main steps:
 
@@ -45,10 +45,6 @@ The developers would like to thank to all test owners and contributors to this p
 
 The test suite is being tested in several additional cloud providers. As tests are concluded the cloud providers names will be added in the table above.
 
-.. header-end
-
-.. license-start
-
 License
 ---------------------------------------------
 Copyright (C) CERN.
@@ -56,7 +52,7 @@ Copyright (C) CERN.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see `gnu.org/licenses <https://www.gnu.org/licenses/>`_.
 
-.. license-end
+.. body-end
 
 .. image:: img/logo.jpg
    :height: 20px
