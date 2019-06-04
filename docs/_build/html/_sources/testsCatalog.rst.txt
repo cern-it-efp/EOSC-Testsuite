@@ -19,7 +19,7 @@ For this test, apart from the *run* variable, the following can be set in the *t
 
 This test is currently undergoing development and testing, hence it can't be fully deployed.
 
-- Contributors/Owners: Sofia Vallecorsa (CERN) - sofia.vallecorsa@cern.ch; Jean-Roch Vlimant (Caltech)
+- Contributors/Owners: Sofia Vallecorsa (CERN) - sofia.vallecorsa AT cern.ch; Jean-Roch Vlimant (Caltech)
 - |Repository_mpi|
 
 .. |Repository_mpi| raw:: html
@@ -45,7 +45,7 @@ For this test, apart from the *run* variable, the following ones must be set on 
 |secretKey       | Secret key for S3 resource management.                                                                         |
 +----------------+----------------------------------------------------------------------------------------------------------------+
 
-- Contributors/Owners: Oliver Keeble (CERN) - oliver.keeble@cern.ch
+- Contributors/Owners: Oliver Keeble (CERN) - oliver.keeble AT cern.ch
 - |Repository_s3|
 
 .. |Repository_s3| raw:: html
@@ -58,7 +58,7 @@ Data Export: From the commercial cloud provider to Zenodo
 When using cloud credits, when the credit is exhausted, data can be repatriated or moved to a long-term data storage service. The example used in this test uses
 |Zenodo_link| service maintained by CERN, verifying that the output data can be taken from the cloud provider to Zenodo.
 
-- Contributors/Owners: Ignacio Peluaga (CERN) - ignacio.peluaga.lozada@cern.ch
+- Contributors/Owners: Ignacio Peluaga (CERN) - ignacio.peluaga.lozada AT cern.ch
 - |Repository_ce|
 
 .. |Repository_ce| raw:: html
@@ -80,7 +80,7 @@ The following benchmarks are run on the cloud provider, using a containerised ap
 * Whetstone: from the UnixBench benchmark suite.
 * Hyper-benchmark: A pre-defined sequence of measurements and fast benchmarks.
 
-- Contributors/Owners: Domenico Giordano (CERN) - domenico.giordano@cern.ch
+- Contributors/Owners: Domenico Giordano (CERN) - domenico.giordano AT cern.ch
 - |Repository_cpu|
 
 .. |Repository_cpu| raw:: html
@@ -118,7 +118,7 @@ The endpoint for these tests must be specified at configs' *endpoint* variable. 
 
   <a href="http://stats.es.net/ServicesDirectory/" target="_blank">Lookup Services Directory</a>
 
-- Contributors/Owners: Shawn Mckee (University of Michigan) - smckee@umich.edu; Marian Babik CERN) - marian.babik@cern.ch
+- Contributors/Owners: Shawn Mckee (University of Michigan) - smckee AT umich.edu; Marian Babik CERN) - marian.babik AT cern.ch
 - |Repository_perf|
 
 .. |Repository_perf| raw:: html
@@ -135,7 +135,7 @@ The objective of this test is to understand which configuration of FDMNES is the
 
 This test is currently under development and will be available on the next release of the Test-Suite.
 
-- Contributors/Owners: Rainer Wilcke (ESRF) - wilcke@esrf.fr
+- Contributors/Owners: Rainer Wilcke (ESRF) - wilcke AT esrf.fr
 - |Repository_fdmnes|
 
 .. |Repository_fdmnes| raw:: html

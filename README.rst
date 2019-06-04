@@ -45,6 +45,10 @@ The developers would like to thank to all test owners and contributors to this p
 
 The test suite is being tested in several additional cloud providers. As tests are concluded the cloud providers names will be added in the table above.
 
+Contact
+---------------------------------------------
+For more information contact ignacio.peluaga.lozada AT cern.ch
+
 License
 ---------------------------------------------
 Copyright (C) CERN.
