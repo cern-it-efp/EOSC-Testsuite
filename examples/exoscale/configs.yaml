@@ -1,0 +1,16 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: "exoscale"
+providerInstanceName: "exoscale_compute"
+pathToKey: "/root/.ssh/id_rsa"
+dockerCE:
+dockerEngine:
+kubernetes:
+openUser:
+flavor: size = "Medium"
+
+#---------------COST CALCULATION------------------------------------------------
+costCalculation:
+  generalInstancePrice:
+  GPUInstancePrice:
+  HPCInstancePrice:
+  s3bucketPrice:

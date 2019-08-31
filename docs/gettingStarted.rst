@@ -1,7 +1,7 @@
 1. Getting started
 ---------------------------------------------
-
 Please follow the steps below in order to deploy tests in a cloud provider:
+Refer to section X to use the Docker image we provide to avoid dealing with required packages and dependencies.
 
 1.1 Install Terraform
 ==========================
@@ -37,11 +37,23 @@ In order to manage the Kubernetes cluster locally instead of using the master no
 
 Python
 ^^^^^^^^^
-Version python3 is required. In some Linux distributions, it has been noticed that not all the python required packages are included by default, like pyyaml.
-In such cases, please install the missing packages according to the error messages when running the Test-Suite.
+Version python3 is required. In some Linux distributions, it has been noticed that not all the python required packages are included by default, like pyyaml, jsonschema and kubernetes
+In such cases, please use pip3 to install the missing packages according to the error messages when running the Test-Suite.
+
+1.4 Security groups
+==========================================
+The following ports have to be opened:
+
+- 22/TCP (SSH)
+
+- 6443/TCP (Kubernetes API)
+
+- 10250/TCP	(API which allows node access)
+
+- 8472/UDP (Flannel overlay network, k8s pods communication)
 
 
-1.4 Download and preparation
+1.5 Download and preparation
 ==========================================
 Cloning repository
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -56,54 +68,58 @@ Configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^
 While completing this task, please refer to |Terraform_docs_link| in order to complete it successfully as some parts are
 provider specific and differ from one provider to another.
-You will find in the root of the cloned repository a file named *configs_raw.yaml*. You must rename it *configs.yaml* and fill it to match your requirements. **A filled example can be
-found in */examples***. This file contains different sections:
 
 .. |Terraform_docs_link| raw:: html
 
   <a href="https://www.terraform.io/docs/providers/" target="_blank">Terraform's documentation</a>
 
-``general``
+You will find in the root of the cloned repository a folder named *configurations* containing the following files:
 
-For specifying general variables:
+``configs.yaml``
 
-+-----------------------+-----------------------------------------------------------------------+
-|Name                   | Explanation / Values                                                  |
-+=======================+=======================================================================+
-|clusterNodes           | Number of nodes the cluster must contain, including master node.      |
-+-----------------------+-----------------------------------------------------------------------+
-|providerName           | Name of the provider for Terraform.                                   |
-+-----------------------+-----------------------------------------------------------------------+
-|providerInstanceName   | Compute instance name for Terraform. This is provider specific.       |
-+-----------------------+-----------------------------------------------------------------------+
-|pathToKey              | Path to the location of your private key                              |
-+-----------------------+-----------------------------------------------------------------------+
-|dockerCE               | Version of docker-ce to be installed. Leave empty for latest.         |
-+-----------------------+-----------------------------------------------------------------------+
-|dockerEngine           | Version of docker-engine to be installed. Leave empty for latest.     |
-+-----------------------+-----------------------------------------------------------------------+
-|kubernetes             | Version of Kubernetes to be installed. Leave empty for latest.        |
-+-----------------------+-----------------------------------------------------------------------+
+Its variables:
 
-Note that it's possible to choose between "Docker Community Edition" and "Docker Engine" (older Docker packages). However it's **highly recommended** to leave these variables empty to create a cluster with the latest stack.
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|Name                   | Explanation / Values                                                                                                        |
++=======================+=============================================================================================================================+
+|providerName           | Name of the provider for Terraform. (required)                                                                              |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|providerInstanceName   | Compute instance name for Terraform. This is provider specific. (required)                                                  |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|pathToKey              | Path to the location of your private key (required)                                                                         |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|flavor                 | Flavor to be used for the main cluster. This has to be specified as a key-value par according to the provider. (required)   |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|openUser               | User to be used in case the provider doesn't allow root ssh. If not speficied, root will be used for ssh connections        |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|dockerCE               | Version of docker-ce to be installed. Leave empty for latest.                                                               |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|dockerEngine           | Version of docker-engine to be installed. Leave empty for latest.                                                           |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|kubernetes             | Version of Kubernetes to be installed. Leave empty for latest.                                                              |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 
-``auth``
 
-For specifying the credentials to connect to the provider and deploy resources.
+Note that it's possible to choose between "Docker Community Edition" and "Docker Engine" (older Docker packages). However it's **highly recommended** to leave these
+variables empty to create a cluster with the latest stack.
 
-+-------------+----------------------------------------------------------------------------------------------+
-|Name         | Accepted Values                                                                              |
-+=============+==============================================================================================+
-|useFile      | Indicate if a credentials file is used instead of secret-key pair (Boolean). Required.       |
-+-------------+----------------------------------------------------------------------------------------------+
-|credentials  | | String block with the required credentials.                                                |
-|             | | This is not yaml but string, therefore use '=' and ' " '. (cloud provider specific).       |
-+-------------+----------------------------------------------------------------------------------------------+
+The file also contains a section named *costCalculation*. Refer to the section "Cost of run calculation" to understand how to fill that part.
+
+
+``testsCatalog.yaml``
+
+Refer to the section "Test Catalog" to learn how to fill this file.
+
+``credentials``
+
+This file must contains .tf (HCL) code that goes on the provider definition section of a Terraform configuration file. In case this file is empty, the TS asumes an external authentication method: like env variables (i.e Openstack) or CLI (i.e Azure).
+Note that if you aim to use external authentication but you need something inside the provider section of the Terraform configuration file (i.e AWS region), this file is the place to define that.
 
 ``instanceDefinition``
 
-In this section one should write all the key-pair values that would be written on the body of an instance declaration resource on Terraform, according to the cloud one wants to test.
-Please refer to the documentation of the cloud provider to check which pairs you need to specify. In any case, you can run the Test-Suite (next steps) and if there is any missing pair a message will be shown in the terminal telling you which ones are these. This is how you must specify each pair::
+In this file one should write all the key-pair values that would be written on the body of an instance declaration resource on Terraform, according to the cloud one wants to test.
+Please refer to the documentation of the cloud provider to check which pairs you need to specify. In any case, you can run the Test-Suite (next steps) and if there is any missing
+pair a message will be shown in the terminal telling you which ones are these. This is how you must specify each pair::
 
   <YOUR_PROVIDER'S_STRING_FOR_A_KEY> = "<VALUE_GIVEN_FOR_THAT_KEY>"
 
@@ -111,22 +127,81 @@ An example (Exoscale cloud provider)::
 
   display_name = "kubenode"#NAME
   template = "Linux CentOS 7.5 64-bit"
-  size = "Medium"
   key_pair = "k_cl"
   security_groups = ["kgroup"]
   disk_size = 50
   zone = "ch-gva-2"
+
+One of the properties specified on the block that defines a compute node (VM) is the flavor or machine type. This property must not be specified on instanceDefinition but on configs.yaml's flavor.
 
 Please pay attention in this section to the name for the instance. A random string will be added later to the name given to the instance in order to avoid DNS issues when
 running the test-suite several times. To achieve this, the block must contain the '#NAME' placeholder. When specifying the name for the instance, please follow this structure::
 
   <YOUR_PROVIDER'S_STRING_FOR_NAME> = "<NAME_FOR_YOUR_INSTANCES>"#NAME
 
-Now, lets image you provider's string for the instance name is "display_name", and you want to call your instances "kubenode" then you should write::
+Now, lets assume your provider's string for the instance name is "display_name", and you want to call your instances "kubenode" then you should write::
 
   display_name = "kubenode"#NAME
 
 Note the '#NAME'!
 
-| [**NOTE 1**: Even though this is a yaml file, '=' is used on this section instead of ':' as that's required by Terraform files and this will be taken as a whole block and placed directly on a .tf file]
+| [**NOTE 1**: This will be taken as a whole block and placed directly on a .tf file]
 | [**NOTE 2**: Clouds that don't support resource creation with Terraform or k8saaS can't currently be tested with this Test-Suite]
+|
+
+
+``Dependencies``
+
+This file takes also HCL code. There are providers for which dependencies are required, for example Azure: terraform can't create a VM if there is no NIC for it.
+Then this is the file to define those dependencies needed by the VMs.
+
+
+Configuration examples
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Some providers do not allocate public IPs to the VMs but use NAT. Hence the VM can be reached from outside but that IP is not really residing on the VM. This causes conflicts when creating the Kubernetes cluster.
+If one wants to run the Test-Suite on a provider of this case, then the suite must be launched from within the network the nodes will be connected to, this is a private network.
+In other words, a VM will have to be created first manually and the Test Suite will have to be triggered from there.
+
+Note that some providers offer Kubernetes service, meaning it is possible to create a Kubernetes cluster on a few clicks. In these cases, the cluster can be reached through the internet even though the VMs do not have
+public IPs. For this case refer to the section "4. Using existing clusters".
+
+Examples of all configuration files for several public cloud providers can be found inside *examples*.
+Find below these lines details on how to run the suite on some of the main providers:
+
+``Azure``
+Find the example files at *examples/azure*.
+It is also possible to use AKS to provision the cluster. In this case, create the cluster, fetch kube/config and run the Test-Suite using the option '--only-test'.
+
+``AWS``
+Find the example files at *examples/aws*.
+It is also possible to use EKS to provision the cluster. In this case, create the cluster, fetch kube/config and run the Test-Suite using the option '--only-test'.
+
+``GCP``
+Find the example files at *examples/gcp*.
+The VMs need public IP's (NAT) to connect to the internet if the network used it the "default" one and differing to other providers these are
+not allocated unless specified, using network_interface.access_config{} in the instance definition.
+By default, GCP VMs can't be ssh'd using the root user, but the TS requires this to be possible in order to install the required packages on each VM. Therefore, you have to create beforehand this user and specify it at configs.yaml's openUser.
+
+It is also possible to use GKE to provision the cluster. In this case, create the cluster, |use_gke| and run the Test-Suite using the option '--only-test'.
+
+.. |use_gke| raw:: html
+
+  <a href="https://cloud.google.com/sdk/gcloud/reference/container/clusters/get-credentials?hl=en_US&_ga=2.141757301.-616534808.1554462142" target="_blank">fetch the kubectl kubeconfig file</a>
+
+
+1.6 Using Docker
+===================
+A Docker image has been built and pushed to Docker hub. This image avoids requiring installation of packages defined on previous sections: Terraform, kubectl, Python3 and modules, etc.
+
+Run the container (pulls the image first):
+
+.. code-block:: console
+
+    $ docker run --net=host -it ipeluaga/tslauncher bash
+
+Note the option '--net=host'. Without it, the container wouldn't be able to connect to the nodes, as it would not be in the same network as them and it is likely the nodes will not have public IPs. With that option, the container will use the network used by its host, which will be sharing the network with the nodes.
+
+You will get a session on the container, directly inside the cloned repo.
+Following you must complete the configurations following sections "Configurations" from 1.5 and "1.2 Manage ssh keys".
+Note that as soon as you exit the container it will be killed and the results will be destroyed with it. Therefore, if you want to keep the suite results, copy them to your machine using "docker cp".

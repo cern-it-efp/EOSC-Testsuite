@@ -142,6 +142,24 @@ This test is currently under development and will be available on the next relea
 
   <a href="http://neel.cnrs.fr/spip.php?article3137&lang=en" target="_blank">Repository</a>
 
+
+DODAS: Dynamic On Demand Analysis Services test
+====================================================
+
+DODAS is a system designed to provide a high level of automation in terms of provisioning, creating, managing and accessing a pool of heterogeneous computing
+and storage resources, by generating clusters on demand for the execution of HTCondor workload management system. DODAS allows to seamlessly join the
+HTCondor Global Pool of CMS to enable the dynamic extension of existing computing resources. A benefit of such an architecture is that it provides high
+scaling capabilities and self-healing support that results in a drastic reduction of time and cost, through setup and operational efficiency increases.
+
+If one wants to deploy this test, the machines in the general cluster (to which such test is deployed), should have at least 50 gb disk as the image for this test is 16GB.
+
+- Contributors/Owners: Daniele Spiga (INFN) - daniele.spiga@pg.infn.it ; Diego Ciangottini (INFN) - diego.ciangottini@cern.ch
+- |Repository_dodas|
+
+.. |Repository_dodas| raw:: html
+
+  <a href="https://dodas-ts.github.io/dodas-doc/" target="_blank">Repository</a>
+
 *****
 
 [**NOTE**: If no test's *run* is set to True, this tool will simply create a raw Kubernetes cluster]

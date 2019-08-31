@@ -28,7 +28,7 @@ while [[ "$1" != "" ]]; do
     shift
 done
 
-#TODO: Fix this workaround: use && instead
+#Change this, use && instead
 if [[ $master = "true" ]]; then
 	if [[ -e $HOME/.ssh/id_rsa ]]; then
 		echo "Private key found..."
@@ -130,8 +130,6 @@ install_kubernetes()
   	echo "Kubernetes version $K8S_VER will be installed"
   	yum install -y kubelet-$K8S_VER kubeadm-$K8S_VER kubectl-$K8S_VER --disableexcludes=kubernetes
   fi
-
-  sed -i 's/cgroup-driver=systemd/cgroup-driver=cgroupfs/g' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 
   systemctl enable kubelet
   systemctl start kubelet

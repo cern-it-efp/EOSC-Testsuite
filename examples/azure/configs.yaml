@@ -1,0 +1,15 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: azurerm
+providerInstanceName: azurerm_virtual_machine
+pathToKey: "/root/.ssh/id_rsa"
+dockerCE:
+dockerEngine:
+kubernetes:
+openUser: uroot
+flavor: vm_size = "Standard_D2s_v3"
+
+costCalculation:
+  generalInstancePrice:
+  GPUInstancePrice:
+  HPCInstancePrice:
+  s3bucketPrice:

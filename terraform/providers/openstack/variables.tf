@@ -34,11 +34,11 @@ variable "path_to_key" {
 } #must be same key! tf-key.
 
 variable "api_key" {
-  default = "1ac0fb0095f3411581cf86aed9b9b22b"
+  default = ""
 }
 
 variable "secret_key" {
-  default = "3a8da6a013874774916b70a8a6674171"
+  default = ""
 }
 
 variable "auth_url" {
@@ -46,6 +46,6 @@ variable "auth_url" {
 }
 
 variable "token" {
-  default = "3a8da6a013874774916b70a8a6674171"
+  default = ""
 }
 #---------------------

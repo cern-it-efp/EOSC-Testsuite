@@ -17,13 +17,13 @@ Full documentation can be found at: `http://ocre-testsuite.rtfd.io <https://ocre
 
 The test-suite executes four main steps:
 
-1) Infrastructure provisioning: VMs are created using Terraform and then Kubernetes and Docker are installed on them to create a k8s cluster.
+1) Infrastructure provisioning: VMs are created using Terraform and then Kubernetes and Docker are installed on them to create several k8s cluster according to the selected tests.
 
 2) Deploy the tests: Kubernetes resource definition files (YAML) are used to deploy the tests, either as single pods or deployments.
 
-3) Harvest results: at the end of each test run a result file -written in JSON- is created. This file is stored locally.
+3) Harvest results: at the end of each test run a result file -written in JSON- is created. This file is harvested from the cluster and stored locally.
 
-4) Through a verification system, the Test-Suite can also be triggered from a service running at CERN. In this case, results are then pushed to a S3 Bucket at CERN.
+4) Through a verification system, the Test-Suite can also be triggered from a service running at CERN. In this case, results are then pushed to a S3 Bucket at CERN. (Under development)
 
 The test set described below is based on the tests used in `Helix Nebula The Science Cloud <https://www.hnscicloud.eu/>`_ PCP project funded by the European Commission.
 
@@ -38,12 +38,48 @@ The developers would like to thank to all test owners and contributors to this p
 +------------------------------+---------------------------------------------------------------------------------+
 |OS running on provider's VMs  | Centos7                                                                         |
 +------------------------------+---------------------------------------------------------------------------------+
-|Providers                     | | Exoscale (Cloudstack)                                                         |
+|Providers                     | | AWS                                                                           |
+|                              | | Google Cloud                                                                  |
+|                              | | Microsoft Azure                                                               |
+|                              | | Exoscale (Cloudstack)                                                         |
 |                              | | CERN Private Cloud (OpenStack)                                                |
+|                              | | CloudFerro (OpenStack)                                                        |
 |                              | | Cloudscale (OpenStack)                                                        |
 +------------------------------+---------------------------------------------------------------------------------+
 
 The test suite is being tested in several additional cloud providers. As tests are concluded the cloud providers names will be added in the table above.
+
+Release notes
+---------------------------------------------
+(Note the versions are numbered with the date of the release: YEAR.MONTH)
+
+``19.8``
+
+-Parallel creation of clusters, with different flavors according to tests needs.
+
+-New logging system to keep parallel running tests logs sorted.
+
+-Restructured configuration: moved configuration files to */configurations* and created new files taking HCL code (terraform configuration code) to keep *configs.yaml* clean.
+
+-Automated allowance of root ssh by copying open user's authorized_keys to root's ~/.ssh as well as *sshd_config* modification.
+
+-Usage of Kubernetes API instead of Kubernetes CLI.
+
+-For network test (perfSONAR), usage of API instead of pscheduler CLI.
+
+-New test: Dynamic On Demand Analysis Service, provided by INFN.
+
+-Added configurations validation with jsonschema.
+
+-Created Docker image to run a Test-Suite launcher container: rapidly creates a ready to use Test-Suite launcher.
+
+``19.4``
+
+-New tests: perfsonar and cpu-benchmarking
+
+``19.2``
+
+-First release.
 
 Contact
 ---------------------------------------------

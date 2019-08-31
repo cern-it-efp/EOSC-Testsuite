@@ -90,6 +90,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#containerised-cpu-benchmarking">Containerised CPU Benchmarking</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#networking-performance-measurements">Networking performance measurements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#fdmnes-simulation-of-x-ray-spectroscopies">FDMNES: Simulation of X-ray spectroscopies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dodas-dynamic-on-demand-analysis-services-test">DODAS: Dynamic On Demand Analysis Services test</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="run.html">3. Run the test-suite</a></li>
@@ -283,6 +284,18 @@ The objective of this test is to understand which configuration of FDMNES is the
 <ul class="simple">
 <li>Contributors/Owners: Rainer Wilcke (ESRF) - wilcke AT esrf.fr</li>
 <li><a href="http://neel.cnrs.fr/spip.php?article3137&lang=en" target="_blank">Repository</a></li>
+</ul>
+</div>
+<div class="section" id="dodas-dynamic-on-demand-analysis-services-test">
+<h2>DODAS: Dynamic On Demand Analysis Services test<a class="headerlink" href="#dodas-dynamic-on-demand-analysis-services-test" title="Permalink to this headline">¶</a></h2>
+<p>DODAS is a system designed to provide a high level of automation in terms of provisioning, creating, managing and accessing a pool of heterogeneous computing
+and storage resources, by generating clusters on demand for the execution of HTCondor workload management system. DODAS allows to seamlessly join the
+HTCondor Global Pool of CMS to enable the dynamic extension of existing computing resources. A benefit of such an architecture is that it provides high
+scaling capabilities and self-healing support that results in a drastic reduction of time and cost, through setup and operational efficiency increases.</p>
+<p>If one wants to deploy this test, the machines in the general cluster (to which such test is deployed), should have at least 50 gb disk as the image for this test is 16GB.</p>
+<ul class="simple">
+<li>Contributors/Owners: Daniele Spiga (INFN) - <a class="reference external" href="mailto:daniele&#46;spiga&#37;&#52;&#48;pg&#46;infn&#46;it">daniele<span>&#46;</span>spiga<span>&#64;</span>pg<span>&#46;</span>infn<span>&#46;</span>it</a> ; Diego Ciangottini (INFN) - <a class="reference external" href="mailto:diego&#46;ciangottini&#37;&#52;&#48;cern&#46;ch">diego<span>&#46;</span>ciangottini<span>&#64;</span>cern<span>&#46;</span>ch</a></li>
+<li><a href="https://dodas-ts.github.io/dodas-doc/" target="_blank">Repository</a></li>
 </ul>
 <hr class="docutils" />
 <p>[<strong>NOTE</strong>: If no test’s <em>run</em> is set to True, this tool will simply create a raw Kubernetes cluster]</p>

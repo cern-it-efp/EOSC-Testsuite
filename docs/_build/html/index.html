@@ -163,10 +163,10 @@ This Test-Suite is being used as a validation tool for commercial cloud services
 </div>
 <p>The test-suite executes four main steps:</p>
 <ol class="arabic simple">
-<li>Infrastructure provisioning: VMs are created using Terraform and then Kubernetes and Docker are installed on them to create a k8s cluster.</li>
+<li>Infrastructure provisioning: VMs are created using Terraform and then Kubernetes and Docker are installed on them to create several k8s cluster according to the selected tests.</li>
 <li>Deploy the tests: Kubernetes resource definition files (YAML) are used to deploy the tests, either as single pods or deployments.</li>
-<li>Harvest results: at the end of each test run a result file -written in JSON- is created. This file is stored locally.</li>
-<li>Through a verification system, the Test-Suite can also be triggered from a service running at CERN. In this case, results are then pushed to a S3 Bucket at CERN.</li>
+<li>Harvest results: at the end of each test run a result file -written in JSON- is created. This file is harvested from the cluster and stored locally.</li>
+<li>Through a verification system, the Test-Suite can also be triggered from a service running at CERN. In this case, results are then pushed to a S3 Bucket at CERN. (Under development)</li>
 </ol>
 <p>The test set described below is based on the tests used in <a class="reference external" href="https://www.hnscicloud.eu/">Helix Nebula The Science Cloud</a> PCP project funded by the European Commission.</p>
 <p>The developers would like to thank to all test owners and contributors to this project.</p>
@@ -188,8 +188,12 @@ This Test-Suite is being used as a validation tool for commercial cloud services
 </tr>
 <tr class="row-even"><td>Providers</td>
 <td><div class="first last line-block">
+<div class="line">AWS</div>
+<div class="line">Google Cloud</div>
+<div class="line">Microsoft Azure</div>
 <div class="line">Exoscale (Cloudstack)</div>
 <div class="line">CERN Private Cloud (OpenStack)</div>
+<div class="line">CloudFerro (OpenStack)</div>
 <div class="line">Cloudscale (OpenStack)</div>
 </div>
 </td>
@@ -197,6 +201,24 @@ This Test-Suite is being used as a validation tool for commercial cloud services
 </tbody>
 </table>
 <p>The test suite is being tested in several additional cloud providers. As tests are concluded the cloud providers names will be added in the table above.</p>
+<div class="section" id="release-notes">
+<h2>Release notes<a class="headerlink" href="#release-notes" title="Permalink to this headline">¶</a></h2>
+<p>(Note the versions are numbered with the date of the release: YEAR.MONTH)</p>
+<p><code class="docutils literal notranslate"><span class="pre">19.8</span></code></p>
+<p>-Parallel creation of clusters, with different flavors according to tests needs.</p>
+<p>-New logging system to keep parallel running tests logs sorted.</p>
+<p>-Restructured configuration: moved configuration files to <em>/configurations</em> and created new files taking HCL code (terraform configuration code) to keep <em>configs.yaml</em> clean.</p>
+<p>-Automated allowance of root ssh by copying open user’s authorized_keys to root’s ~/.ssh as well as <em>sshd_config</em> modification.</p>
+<p>-Usage of Kubernetes API instead of Kubernetes CLI.</p>
+<p>-For network test (perfSONAR), usage of API instead of pscheduler CLI.</p>
+<p>-New test: Dynamic On Demand Analysis Service, provided by INFN.</p>
+<p>-Added configurations validation with jsonschema.</p>
+<p>-Created Docker image to run a Test-Suite launcher container: rapidly creates a ready to use Test-Suite launcher.</p>
+<p><code class="docutils literal notranslate"><span class="pre">19.4</span></code></p>
+<p>-New tests: perfsonar and cpu-benchmarking</p>
+<p><code class="docutils literal notranslate"><span class="pre">19.2</span></code></p>
+<p>-First release.</p>
+</div>
 <div class="section" id="contact">
 <h2>Contact<a class="headerlink" href="#contact" title="Permalink to this headline">¶</a></h2>
 <p>For more information contact ignacio.peluaga.lozada AT cern.ch</p>

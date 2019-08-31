@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 # Some setup
 export bucket="s3://ts-s3-bucket"

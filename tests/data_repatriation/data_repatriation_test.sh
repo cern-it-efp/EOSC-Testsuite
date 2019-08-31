@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 # 1) clone repo
 git clone https://github.com/ignpelloz/cloud-exporter.git ; cd cloud-exporter
@@ -17,16 +17,15 @@ echo "Uploaded from Cloud Validation Test-Suite" > dir1/file1
 echo "Uploaded from Cloud Validation Test-Suite" > dir1/dir2/file1
 echo "Uploaded from Cloud Validation Test-Suite" > dir1/dir2/dir3/file1
 
-#create a simple json file informing maybe of what was uploaded, to which endpoint, the output of the previous point, provider tested and the like
-fail(){
-	echo "{ \"provider\":\"$PROVIDER\",	\"result\":\"fail\", \"logs\":\"$logs\" }" > /home/data_repatriation_test.json
-}
+logs=$(./cloud-exporter.py) ; if [ $? -ne 0 ] ; then result=fail ; else result=success ; fi
 
-success(){
-	echo "{ \"provider\":\"$PROVIDER\",	\"result\":\"success\", \"logs\":\"$logs\" }" > /home/data_repatriation_test.json
+#create a simple json result file
+cat > "/home/data_repatriation_test.json" <<EOF
+{
+	"provider":"$PROVIDER",
+	"result":"$result"
 }
-
-logs=$(./cloud-exporter.py) ; if [ $? -ne 0 ] ; then fail ; else success ; fi
+EOF
 
 #WORKAROUND: Needed this to keep pod alive to fetch logs file
 while true; do echo "keeping this alive..."; done

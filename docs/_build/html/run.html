@@ -86,6 +86,7 @@
 <li class="toctree-l1"><a class="reference internal" href="testsCatalog.html">2. Tests Catalog</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">3. Run the test-suite</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#options">Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#other-commands">Other commands</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="existingClusters.html">4. Using existing clusters</a></li>
@@ -158,11 +159,10 @@
             
   <div class="section" id="run-the-test-suite">
 <h1>3. Run the test-suite<a class="headerlink" href="#run-the-test-suite" title="Permalink to this headline">¶</a></h1>
-<p>Once the previous configuration steps are completed, the Test-Suite is ready to be run:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ./test_suite.py &lt;options&gt;
+<p>Once the configuration steps are completed, the Test-Suite is ready to be run:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ./test_suite &lt;options&gt;
 </pre></div>
 </div>
-<p>Terraform will first show the user what will be done and what to create. If agreed, type “yes” and press enter.</p>
 <div class="section" id="options">
 <h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
 <p>The following table describes all the available options:</p>
@@ -184,22 +184,31 @@
 </div>
 </td>
 </tr>
-<tr class="row-odd"><td>–auto-retry</td>
+<tr class="row-odd"><td>–retry</td>
 <td><div class="first last line-block">
-<div class="line">Automatically retry in case of errors on the Terraform phase.</div>
-<div class="line">Note that in the case errors occur, the user will have to stop the run using Ctrl+Z.</div>
-</div>
-</td>
-</tr>
-<tr class="row-even"><td>–via-backend</td>
-<td><div class="first last line-block">
-<div class="line">Runs the Test-Suite using CERN’s backend service instead of the cloned local version.</div>
-<div class="line">This option must be used for verification purposes (2nd or later runs).</div>
+<div class="line">In case of errors on the first run, use this option for retrying. This will make the test-suite try and reuse already provisioned infrastructure.</div>
+<div class="line">Not valid for the first run. Use only when VMs have been provisioned but kubernetes bootstrapping has failed.</div>
 </div>
 </td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="section" id="other-commands">
+<h2>Other commands<a class="headerlink" href="#other-commands" title="Permalink to this headline">¶</a></h2>
+<p>You can view the terraform logs by doing:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> tail -f logs
+</pre></div>
+</div>
+<p>Once the provisioning has completed and tests are deployed, you can see the pods statuses by doing:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> watch kubectl get pods
+</pre></div>
+</div>
+<p>If GPU and HPC tests were deployed, see their pods by doing:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> watch kubectl --kubeconfig tests/dlTest/config get pods <span class="c1"># For GPU cluster</span>
+<span class="gp">$</span> watch kubectl --kubeconfig tests/hpcTest/config get pods <span class="c1"># For HPC cluster</span>
+</pre></div>
+</div>
 </div>
 </div>
 

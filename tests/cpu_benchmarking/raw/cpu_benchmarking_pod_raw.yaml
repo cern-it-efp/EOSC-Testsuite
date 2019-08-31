@@ -2,7 +2,20 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: cpu-benchmarking-pod
+  labels:
+    test: test-pod
 spec:
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: test
+            operator: In
+            values:
+            - test-pod
+        topologyKey: kubernetes.io/hostname
+  hostNetwork: true
   containers:
   - name: cpu-benchmarking-cont
     image: gitlab-registry.cern.ch/cloud-infrastructure/cloud-benchmark-suite/cloud-benchmark-suite-standalone:1.8
