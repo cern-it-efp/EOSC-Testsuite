@@ -34,9 +34,9 @@ The developers would like to thank to all test owners and contributors to this p
 +------------------------------+---------------------------------------------------------------------------------+
 |Python                        | 3                                                                               |
 +------------------------------+---------------------------------------------------------------------------------+
-|Linux distros                 | Ubuntu, Centos, Coreos, Debian, RedHat, Fedora                                  |
+|Linux distros                 | Ubuntu, CentOS, CoreOS, Debian, RedHat, Fedora                                  |
 +------------------------------+---------------------------------------------------------------------------------+
-|OS running on provider's VMs  | Centos7                                                                         |
+|OS running on provider's VMs  | CentOS7                                                                         |
 +------------------------------+---------------------------------------------------------------------------------+
 |Providers                     | | AWS                                                                           |
 |                              | | Google Cloud                                                                  |
