@@ -5,10 +5,13 @@ In the root of the cloned repository, you will find a file named *testsCatalog.y
 
 Deep Learning using GPUs
 =============================
+
+(This test is currently under development and will be available if following versions)
+
 The 3DGAN application is a prototype developed to investigate the possibility to use a Deep Learning approach to speed-up the simulation of particle physics detectors. The benchmark measures the total time needed to train a 3D convolutional Generative Adversarial Network (GAN) using a data-parallel approach on distributed systems.
 It is based on MPI for communication. As such, it tests the performance of single nodes (GPUs cards) but also latency and bandwidth of nodes interconnects and data access. The training uses a Kubernetes cluster (GPU flavored) with Kubeflow and MPI.
 
-Note that for this test a cluster with GPU flavor is required.
+If selected, the suite will provision a Kubernetes cluster -GPU flavored- specifically for this test.
 For this test, apart from the *run* variable, the following can be set in the *testsCatalog.yaml* file:
 
 +--------------+--------------------------------------------------------------------------------------------+
@@ -16,8 +19,8 @@ For this test, apart from the *run* variable, the following can be set in the *t
 +==============+============================================================================================+
 |nodes         | Number of nodes to be used for the deployment. Default: max number of nodes available.     |
 +--------------+--------------------------------------------------------------------------------------------+
-
-This test is currently undergoing development and testing, hence it can't be fully deployed.
+|flavor        | Terraform definition of the flavor to be used for this test's cluster. (required)          |
++--------------+--------------------------------------------------------------------------------------------+
 
 - Contributors/Owners: Sofia Vallecorsa (CERN) - sofia.vallecorsa AT cern.ch; Jean-Roch Vlimant (Caltech)
 - |Repository_mpi|
@@ -100,7 +103,7 @@ The following tests are launched end to end:
 - trace: Trace the path between IP hosts.
 - latencybg: Continuously measure one-way latency and associated statistics between hosts and report back results periodically.
 
-The endpoint for these tests must be specified at configs' *endpoint* variable. Use endpoints from:
+The endpoint for these tests must be specified at testsCatalog.yaml's *perfsonarTest.endpoint* variable. Use endpoints from:
 
 * |link1|
 * |link2|
@@ -129,11 +132,22 @@ The endpoint for these tests must be specified at configs' *endpoint* variable. 
 FDMNES: Simulation of X-ray spectroscopies
 =================================================
 
+(This test is currently under development and will be available if following versions)
+
 The FDMNES project provides the research the community a user friendly code to simulate x-ray spectroscopies, linked to the real absorption (XANES, XMCD) or resonant scattering (RXD in bulk or SRXRD for surfaces) of synchrotron radiation.
 It uses parallel calculations using OpenMPI. As an HPC test FDMNES is rather heavy on CPU and Memory and light on I/O.
 The objective of this test is to understand which configuration of FDMNES is the most efficient and which type of tasks and calculations can be done in a give cloud provider.
 
-This test is currently under development and will be available on the next release of the Test-Suite.
+If selected, the suite will provision a Kubernetes cluster -HPC flavored- specifically for this test.
+For this test, apart from the *run* variable, the following can be set in the *testsCatalog.yaml* file:
+
++--------------+--------------------------------------------------------------------------------------------+
+|Name          | Explanation / Values                                                                       |
++==============+============================================================================================+
+|nodes         | Number of nodes to be used for the deployment.                                             |
++--------------+--------------------------------------------------------------------------------------------+
+|flavor        | Terraform definition of the flavor to be used for this test's cluster. (required)          |
++--------------+--------------------------------------------------------------------------------------------+
 
 - Contributors/Owners: Rainer Wilcke (ESRF) - wilcke AT esrf.fr
 - |Repository_fdmnes|
@@ -159,7 +173,3 @@ If one wants to deploy this test, the machines in the general cluster (to which 
 .. |Repository_dodas| raw:: html
 
   <a href="https://dodas-ts.github.io/dodas-doc/" target="_blank">Repository</a>
-
-*****
-
-[**NOTE**: If no test's *run* is set to True, this tool will simply create a raw Kubernetes cluster]

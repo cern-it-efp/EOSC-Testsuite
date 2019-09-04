@@ -13,6 +13,8 @@
 
   
   
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
   
   
 
@@ -158,8 +160,8 @@
 In this configuration file, one must specify the price per hour for the different resources:</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="13%" />
-<col width="88%" />
+<col width="18%" />
+<col width="82%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Name</th>
@@ -167,16 +169,23 @@ In this configuration file, one must specify the price per hour for the differen
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>instancePrice</td>
-<td>Price of a VM per hour.</td>
+<tr class="row-even"><td>generalInstancePrice</td>
+<td>Price per hour of VM with the flavor chosen for the general cluster.</td>
+</tr>
+<tr class="row-odd"><td>GPUInstancePrice</td>
+<td>Price per hour of VM with the flavor chosen for the GPU cluster.</td>
+</tr>
+<tr class="row-even"><td>HPCInstancePrice</td>
+<td>Price per hour of VM with the flavor chosen for the HPC cluster.</td>
 </tr>
 <tr class="row-odd"><td>s3bucketPrice</td>
 <td>S3 bucket price.</td>
 </tr>
 </tbody>
 </table>
-<p>If a price value is required for the cost calculation but the <em>costCalculation</em> section is not properly filled (For example, S3 Endpoint test was set to True but <em>s3bucketPrice</em> was not set), no approximation will be given.</p>
-<p>At the end of the run, the resulting approximated cost will be added to the file containing the results.
+<p>If a price value is required for the cost calculation but the <em>costCalculation</em> section is not properly filled (For example, S3 Endpoint test was set to True
+but <em>s3bucketPrice</em> was not set), no approximation will be given at all.</p>
+<p>At the end of the run, the resulting approximated cost will be added to the file containing general test suit run results.
 In case this information isn’t needed, simply leave the values on the section <em>costCalculation</em> empty.
 Note that this is a cost estimate and not an exact price.</p>
 <p>The formula used is as follows:</p>

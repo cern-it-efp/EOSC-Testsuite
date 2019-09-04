@@ -13,6 +13,8 @@
 
   
   
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
   
   
 
@@ -186,8 +188,10 @@
 </tr>
 <tr class="row-odd"><td>–retry</td>
 <td><div class="first last line-block">
-<div class="line">In case of errors on the first run, use this option for retrying. This will make the test-suite try and reuse already provisioned infrastructure.</div>
-<div class="line">Not valid for the first run. Use only when VMs have been provisioned but kubernetes bootstrapping has failed.</div>
+<div class="line">In case of errors on the first run, use this option for retrying. This will make the test-suite</div>
+<div class="line">try and reuse already provisioned infrastructure.</div>
+<div class="line">Not valid for the first run, use only when VMs were provisioned but kubernetes</div>
+<div class="line">bootstrapping failed.</div>
 </div>
 </td>
 </tr>
@@ -196,7 +200,7 @@
 </div>
 <div class="section" id="other-commands">
 <h2>Other commands<a class="headerlink" href="#other-commands" title="Permalink to this headline">¶</a></h2>
-<p>You can view the terraform logs by doing:</p>
+<p>Once the test suite is running, you can view the Terraform logs by doing:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> tail -f logs
 </pre></div>
 </div>

@@ -17,14 +17,16 @@ The following table describes all the available options:
 |--only-test       | | Run without creating the infrastructure (VMs and cluster), only deploy tests.                                                                                |
 |                  | | Not valid for the first run.                                                                                                                                 |
 +------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|--retry           | | In case of errors on the first run, use this option for retrying. This will make the test-suite try and reuse already provisioned infrastructure.            |
-|                  | | Not valid for the first run. Use only when VMs have been provisioned but kubernetes bootstrapping has failed.                                                |
+|--retry           | | In case of errors on the first run, use this option for retrying. This will make the test-suite                                                              |
+|                  | | try and reuse already provisioned infrastructure.                                                                                                            |
+|                  | | Not valid for the first run, use only when VMs were provisioned but kubernetes                                                                               |
+|                  | | bootstrapping failed.                                                                                                                                        |
 +------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 Other commands
 ==================
 
-You can view the terraform logs by doing:
+Once the test suite is running, you can view the Terraform logs by doing:
 
 .. code-block:: console
 

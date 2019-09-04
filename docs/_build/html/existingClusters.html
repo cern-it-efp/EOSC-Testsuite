@@ -13,6 +13,8 @@
 
   
   
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
   
   
 
@@ -156,7 +158,7 @@
   <div class="section" id="using-existing-clusters">
 <h1>4. Using existing clusters<a class="headerlink" href="#using-existing-clusters" title="Permalink to this headline">¶</a></h1>
 <p>It’s possible to use this tool for testing providers that support Kubernetes as a Service. This means the provider offers the user a way for simply creating a cluster.
-In case one wants to validate a provider that offers this and want to take advantage of it, simply skip steps 1.1 and 1.2 (install Terraform and manage ssh keys) and when running the test-suite, use option <em>–only-test</em> for normal -local results- run and <em>–via-backend</em> for verification runs.</p>
+In case one wants to validate a provider that offers this and want to take advantage of it, simply skip steps 1.1 and 1.2 (install Terraform and manage ssh keys) and when running the test-suite, use option <em>–only-test</em>.</p>
 <p><strong>Note that you must have the file *~/.kube/config* for the previously provisioned cluster on your local machine so that it can be managed from there.</strong></p>
 </div>
 

@@ -1,10 +1,15 @@
 1. Getting started
 ---------------------------------------------
 Please follow the steps below in order to deploy tests in a cloud provider:
-Refer to section X to use the Docker image we provide to avoid dealing with required packages and dependencies.
 
-1.1 Install Terraform
+Refer to section "Using Docker" to use the Docker image we provide to avoid dealing with required packages and dependencies.
+
+1.1 Dependencies
 ==========================
+This test-suite requires some packages to work properly and these must be installed by yourself directly. Please see below.
+
+Terraform
+^^^^^^^^^^^^^^^^
 Terraform is the tool that creates the VMs that will later become a Kubernetes cluster. The test-suite makes use of it so download and
 install |Terraform_link| on your machine.
 In some cases, providers are not fully supported by Terraform, however they might provide plugins to bridge this gap. In such cases, please refer to the documentation of the provider to download the plugin.
@@ -13,19 +18,6 @@ Once downloaded, this must be placed at *~/.terraform.d/plugins* and execution p
 .. |Terraform_link| raw:: html
 
   <a href="https://learn.hashicorp.com/terraform/getting-started/install.html" target="_blank">Terraform</a>
-
-1.2 Manage ssh keys
-==========================
-A ssh key pair is needed to establish connections to the VMs to be created later. Therefore, you must create (or import) this key on your provider
-beforehand and place the private key at *~/.ssh/id_rsa*. Note errors may occur if your key doesn't have the right permissions. Set these to the right value using the following command:
-
-.. code-block:: console
-
-    $ chmod 600 path/to/key
-
-1.3 Dependencies
-==========================
-This test-suite requires some packages to work properly and these must be installed by yourself directly. Please see below.
 
 Kubernetes client
 ^^^^^^^^^^^^^^^^^^^^^
@@ -37,10 +29,30 @@ In order to manage the Kubernetes cluster locally instead of using the master no
 
 Python
 ^^^^^^^^^
-Version python3 is required. In some Linux distributions, it has been noticed that not all the python required packages are included by default, like pyyaml, jsonschema and kubernetes
-In such cases, please use pip3 to install the missing packages according to the error messages when running the Test-Suite.
+Python version 3 is required.
+The following python packages are required:
 
-1.4 Security groups
+- pyyaml
+
+- jsonschema
+
+- kubernetes
+
+- requests
+
+Please install them with pip3.
+
+1.2 SSH key
+==================
+A ssh key pair is needed to establish connections to the VMs to be created later. Therefore, you must create (or import) this key on your provider
+beforehand and place the private key at *~/.ssh/id_rsa*.
+Note errors may occur if your key doesn't have the right permissions. Set these to the right value using the following command:
+
+.. code-block:: console
+
+    $ chmod 600 path/to/key
+
+1.3 Security groups
 ==========================================
 The following ports have to be opened:
 
@@ -52,6 +64,12 @@ The following ports have to be opened:
 
 - 8472/UDP (Flannel overlay network, k8s pods communication)
 
+1.4 Networking and IPs
+==========================================
+Some providers do not allocate public IPs to the VMs but use NAT. Hence the VM can be reached from outside but that IP is not really residing on the VM. This causes
+conflicts when creating the Kubernetes cluster. If one wants to run the Test-Suite on a provider of this case, then the suite must be launched from within the
+network the nodes will be connected to, this is a private network. In other words, **a VM will have to be created first manually** and the Test Suite will have to be
+triggered from there.
 
 1.5 Download and preparation
 ==========================================
@@ -73,9 +91,9 @@ provider specific and differ from one provider to another.
 
   <a href="https://www.terraform.io/docs/providers/" target="_blank">Terraform's documentation</a>
 
-You will find in the root of the cloned repository a folder named *configurations* containing the following files:
+You will find in the root of the cloned repository a folder named *configurations*. That folder must containing the following files:
 
-``configs.yaml``
+``configs.yaml (required)``
 
 Its variables:
 
@@ -88,9 +106,11 @@ Its variables:
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 |pathToKey              | Path to the location of your private key (required)                                                                         |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|flavor                 | Flavor to be used for the main cluster. This has to be specified as a key-value par according to the provider. (required)   |
+|flavor                 | | Flavor to be used for the main cluster. This has to be specified as a key-value                                           |
+|                       | | pair according to the provider. (required)                                                                                |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|openUser               | User to be used in case the provider doesn't allow root ssh. If not speficied, root will be used for ssh connections        |
+|openUser               | | User to be used in case the provider doesn't allow root ssh. If not specified,                                            |
+|                       | | root will be used for ssh connections.                                                                                    |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 |dockerCE               | Version of docker-ce to be installed. Leave empty for latest.                                                               |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
@@ -106,20 +126,21 @@ variables empty to create a cluster with the latest stack.
 The file also contains a section named *costCalculation*. Refer to the section "Cost of run calculation" to understand how to fill that part.
 
 
-``testsCatalog.yaml``
+``testsCatalog.yaml (required)``
 
 Refer to the section "Test Catalog" to learn how to fill this file.
 
 ``credentials``
 
-This file must contains .tf (HCL) code that goes on the provider definition section of a Terraform configuration file. In case this file is empty, the TS asumes an external authentication method: like env variables (i.e Openstack) or CLI (i.e Azure).
+This file must contains .tf (HCL) code for authentication that goes on the provider definition section of a Terraform configuration file (i.e AWS)
+In case this file is empty, the TS assumes an external authentication method: like env variables (i.e Openstack) or CLI (i.e Azure).
 Note that if you aim to use external authentication but you need something inside the provider section of the Terraform configuration file (i.e AWS region), this file is the place to define that.
 
-``instanceDefinition``
+``instanceDefinition (required)``
 
-In this file one should write all the key-pair values that would be written on the body of an instance declaration resource on Terraform, according to the cloud one wants to test.
+In this file one should write all the key-pair values that would be written on the body of an instance definition resource on Terraform, according to the cloud one wants to test.
 Please refer to the documentation of the cloud provider to check which pairs you need to specify. In any case, you can run the Test-Suite (next steps) and if there is any missing
-pair a message will be shown in the terminal telling you which ones are these. This is how you must specify each pair::
+pair a message will be shown in the terminal telling you which ones these are. This is how you must specify each pair::
 
   <YOUR_PROVIDER'S_STRING_FOR_A_KEY> = "<VALUE_GIVEN_FOR_THAT_KEY>"
 
@@ -147,43 +168,41 @@ Note the '#NAME'!
 
 | [**NOTE 1**: This will be taken as a whole block and placed directly on a .tf file]
 | [**NOTE 2**: Clouds that don't support resource creation with Terraform or k8saaS can't currently be tested with this Test-Suite]
-|
 
 
 ``Dependencies``
 
-This file takes also HCL code. There are providers for which dependencies are required, for example Azure: terraform can't create a VM if there is no NIC for it.
+This file takes also HCL code. There are providers for which dependencies are required, for example Azure: Terraform can't create a VM if there is no NIC for it.
 Then this is the file to define those dependencies needed by the VMs.
 
 
 Configuration examples
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Some providers do not allocate public IPs to the VMs but use NAT. Hence the VM can be reached from outside but that IP is not really residing on the VM. This causes conflicts when creating the Kubernetes cluster.
-If one wants to run the Test-Suite on a provider of this case, then the suite must be launched from within the network the nodes will be connected to, this is a private network.
-In other words, a VM will have to be created first manually and the Test Suite will have to be triggered from there.
-
-Note that some providers offer Kubernetes service, meaning it is possible to create a Kubernetes cluster on a few clicks. In these cases, the cluster can be reached through the internet even though the VMs do not have
-public IPs. For this case refer to the section "4. Using existing clusters".
-
 Examples of all configuration files for several public cloud providers can be found inside *examples*.
 Find below these lines details on how to run the suite on some of the main providers:
 
 ``Azure``
-Find the example files at *examples/azure*.
-It is also possible to use AKS to provision the cluster. In this case, create the cluster, fetch kube/config and run the Test-Suite using the option '--only-test'.
+
+(Find the example files at *examples/azure*. It is also possible to use AKS to provision the cluster, for this refer to section "Using existing clusters".)
+
+Install az CLI and configure credentials with 'az login'.
 
 ``AWS``
-Find the example files at *examples/aws*.
-It is also possible to use EKS to provision the cluster. In this case, create the cluster, fetch kube/config and run the Test-Suite using the option '--only-test'.
+
+(Find the example files at *examples/aws*. It is also possible to use EKS to provision the cluster, for this refer to section "Using existing clusters".)
+
+Region, access key and secret key must be hardcoded in the file *configurations/credentials*.
 
 ``GCP``
-Find the example files at *examples/gcp*.
+
+(Example files at *examples/gcp*. It is also possible to use GKE to provision the cluster, for this refer to section "Using existing clusters".)
+
+For authentication, donwload the JSON file with the credentials from the Google Cloud console. Then, the file *configurations/credentials* must contain *credentials = "${file("CREDENTIALS_FILE")}"* and
+*project = "PROJECT_ID"*, where CREDENTIALS_FILE should be the path to the downloaded file and PROJECT_ID the id of your GCP project.
+
 The VMs need public IP's (NAT) to connect to the internet if the network used it the "default" one and differing to other providers these are
 not allocated unless specified, using network_interface.access_config{} in the instance definition.
-By default, GCP VMs can't be ssh'd using the root user, but the TS requires this to be possible in order to install the required packages on each VM. Therefore, you have to create beforehand this user and specify it at configs.yaml's openUser.
-
-It is also possible to use GKE to provision the cluster. In this case, create the cluster, |use_gke| and run the Test-Suite using the option '--only-test'.
 
 .. |use_gke| raw:: html
 
@@ -192,7 +211,7 @@ It is also possible to use GKE to provision the cluster. In this case, create th
 
 1.6 Using Docker
 ===================
-A Docker image has been built and pushed to Docker hub. This image avoids requiring installation of packages defined on previous sections: Terraform, kubectl, Python3 and modules, etc.
+A Docker image has been built and pushed to Docker hub. This image allows you to skip section "1.1 Dependencies" and jump to "1.2 SSH key".
 
 Run the container (pulls the image first):
 
@@ -202,6 +221,4 @@ Run the container (pulls the image first):
 
 Note the option '--net=host'. Without it, the container wouldn't be able to connect to the nodes, as it would not be in the same network as them and it is likely the nodes will not have public IPs. With that option, the container will use the network used by its host, which will be sharing the network with the nodes.
 
-You will get a session on the container, directly inside the cloned repo.
-Following you must complete the configurations following sections "Configurations" from 1.5 and "1.2 Manage ssh keys".
-Note that as soon as you exit the container it will be killed and the results will be destroyed with it. Therefore, if you want to keep the suite results, copy them to your machine using "docker cp".
+You will get a session on the container, directly inside the cloned repository.

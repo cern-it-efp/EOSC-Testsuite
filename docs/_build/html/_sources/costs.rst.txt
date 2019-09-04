@@ -4,17 +4,22 @@
 An approximative cost of running the test-suite will be calculated in case the prices are specified at configs.yaml under the *costCalculation* section.
 In this configuration file, one must specify the price per hour for the different resources:
 
-+----------------+----------------------------------------------------------------------------------------------------------------+
-| Name	         | Explanation / Values                                                                                           |
-+================+================================================================================================================+
-|instancePrice   | Price of a VM per hour.                                                                                        |
-+----------------+----------------------------------------------------------------------------------------------------------------+
-|s3bucketPrice   | S3 bucket price.                                                                                               |
-+----------------+----------------------------------------------------------------------------------------------------------------+
++-----------------------+---------------------------------------------------------------------------------------------------------+
+| Name	                | Explanation / Values                                                                                    |
++=======================+=========================================================================================================+
+|generalInstancePrice   | Price per hour of VM with the flavor chosen for the general cluster.                                    |
++-----------------------+---------------------------------------------------------------------------------------------------------+
+|GPUInstancePrice       | Price per hour of VM with the flavor chosen for the GPU cluster.                                        |
++-----------------------+---------------------------------------------------------------------------------------------------------+
+|HPCInstancePrice       | Price per hour of VM with the flavor chosen for the HPC cluster.                                        |
++-----------------------+---------------------------------------------------------------------------------------------------------+
+|s3bucketPrice          | S3 bucket price.                                                                                        |
++-----------------------+---------------------------------------------------------------------------------------------------------+
 
-If a price value is required for the cost calculation but the *costCalculation* section is not properly filled (For example, S3 Endpoint test was set to True but *s3bucketPrice* was not set), no approximation will be given.
+If a price value is required for the cost calculation but the *costCalculation* section is not properly filled (For example, S3 Endpoint test was set to True
+but *s3bucketPrice* was not set), no approximation will be given at all.
 
-At the end of the run, the resulting approximated cost will be added to the file containing the results.
+At the end of the run, the resulting approximated cost will be added to the file containing general test suit run results.
 In case this information isn't needed, simply leave the values on the section *costCalculation* empty.
 Note that this is a cost estimate and not an exact price.
 
