@@ -120,6 +120,13 @@ provDict = {
     'cloudscale': '',
     'ibm': ''
 }
+extraSupported = {
+    'azurerm': 'azureProvision',
+    'google': 'googleProvision',
+    'aws': 'awsProvision',
+    'exoscale': 'awsExoscale',
+    'openstack': 'openstackProvision'
+}
 obtainCost = True
 retry = None
 publicRepo = "https://github.com/cern-it-efp/OCRE-Testsuite"
@@ -511,6 +518,9 @@ def terraformProvisionment(test, nodes, flavor, extraInstanceConfig, toLog):
         bool: True in case the cluster was succesfully provisioned. False otherwise.
         str: Message informing of the provisionment task result.
     """
+
+    if configs["providerName"] in extraSupported:
+        return eval(extraSupported[configs["providerName"](test, nodes, flavor, extraInstanceConfig, toLog))
 
     kubeconfig = "config"
     mainTfDir = testsRoot + test
