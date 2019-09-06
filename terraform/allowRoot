@@ -6,7 +6,7 @@ resource null_resource "allow_root" {
       type        = "ssh"
       user        = var.openUser
       private_key = file("~/.ssh/id_rsa")
-      timeout     = "10m"
+      timeout     = "20m"
     }
     inline = [
       "sudo mkdir /root/.ssh",

@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Some setup
-export bucket="s3://ts-s3-bucket"
+bucketBase="ocrets-s3-bucket"
+export bucket="s3://"$bucketBase
 opts="--endpoint-url=$ENDPOINT"
 fail="\e[31mFailure\e[39;49m"
 succeed="\e[32mSuccess\e[39;49m"
@@ -140,7 +141,7 @@ echo
 # Can we get a byte range?
 testinfo="Trying Range request 1"
 test_start
-timeout ${timeout} aws s3api get-object ${opts} --bucket ts-s3-bucket --key tf01 --range bytes=2048-2053 ${tdir}/1M.get.r1
+timeout ${timeout} aws s3api get-object ${opts} --bucket $bucketBase --key tf01 --range bytes=2048-2053 ${tdir}/1M.get.r1
 test_end $?
 testinfo="Checking Range request"
 test_start
@@ -150,7 +151,7 @@ test_end $?
 
 testinfo="Trying Range request 2"
 test_start
-timeout ${timeout} aws s3api get-object ${opts} --bucket ts-s3-bucket --key tf01 --range bytes=4096-4101 ${tdir}/1M.get.r2
+timeout ${timeout} aws s3api get-object ${opts} --bucket $bucketBase --key tf01 --range bytes=4096-4101 ${tdir}/1M.get.r2
 test_end $?
 testinfo="Checking Range request"
 test_start
@@ -162,7 +163,7 @@ echo
 # Can we get a double byte range?
 testinfo="Trying double range request"
 test_start
-timeout ${timeout} aws s3api get-object ${opts} --bucket ts-s3-bucket --key tf01 --range bytes=2048-2054,4096-4101 ${tdir}/1M.get.rr
+timeout ${timeout} aws s3api get-object ${opts} --bucket $bucketBase --key tf01 --range bytes=2048-2054,4096-4101 ${tdir}/1M.get.rr
 test_end $?
 testinfo="Checking first chunk"
 test_start
