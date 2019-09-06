@@ -1,0 +1,16 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: azurerm
+pathToKey: "/root/.ssh/id_rsa"
+dockerCE:
+dockerEngine:
+kubernetes:
+openUser: uroot
+flavor: "Standard_D2s_v3"
+location: "US East" #azure specific
+resourceGroupName: "ocrets" #azure specific
+
+costCalculation:
+  generalInstancePrice:
+  GPUInstancePrice:
+  HPCInstancePrice:
+  s3bucketPrice:
