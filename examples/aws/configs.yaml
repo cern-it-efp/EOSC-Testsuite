@@ -1,0 +1,16 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: "aws"
+providerInstanceName: "aws_instance"
+pathToKey: "/root/.ssh/id_rsa"
+dockerCE:
+dockerEngine:
+kubernetes:
+openUser: centos
+flavor: instance_type = "t2.medium"
+
+#---------------COST CALCULATION------------------------------------------------
+costCalculation:
+  generalInstancePrice:
+  GPUInstancePrice:
+  HPCInstancePrice:
+  s3bucketPrice: 
