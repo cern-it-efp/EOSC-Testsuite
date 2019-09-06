@@ -149,7 +149,11 @@ def loadFile(loadThis, required=None):
             try:
                 return yaml.load(inputfile, Loader=yaml.FullLoader)
             except AttributeError:
-                return yaml.load(inputfile)
+                try:
+                    return yaml.load(inputfile)
+                except yaml.scanner.ScannerError:
+                    print("Error loading yaml file " + loadThis)
+                    stop(1)
             except yaml.scanner.ScannerError:
                 print("Error loading yaml file " + loadThis)
                 stop(1)
@@ -911,7 +915,7 @@ except getopt.GetoptError as err:
 for arg in args[1:len(args)]:
     if arg == '--only-test':
         writeToFile("logging/header", "(ONLY TEST EXECUTION)", True)
-        runCMD("kubectl delete pods --all", hideLogs=True)
+        #runCMD("kubectl delete pods --all", hideLogs=True)
         onlyTest = True
     elif arg == '--retry':
         retry = True
