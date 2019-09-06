@@ -1,0 +1,7 @@
+guest_accelerator {
+  type = "nvidia-tesla-p100"
+  count = 1
+}
+scheduling {
+  on_host_maintenance = "TERMINATE"
+}

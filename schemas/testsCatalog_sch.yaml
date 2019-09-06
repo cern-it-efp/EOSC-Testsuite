@@ -1,0 +1,126 @@
+type: object
+required:
+    - s3Test
+    - dataRepatriationTest
+    - cpuBenchmarking
+    - perfsonarTest
+    - dlTest
+    - hpcTest
+    - dodasTest
+properties:
+    s3Test:
+        type: object
+        required:
+            - run
+        properties:
+            run:
+                type:
+                    - boolean
+                    - "null"
+        if:
+            properties:
+                run:
+                    const: true
+        then:
+            required:
+                - endpoint
+                - accessKey
+                - secretKey
+            properties:
+                endpoint:
+                    type: string
+                accessKey:
+                    type: string
+                secretKey:
+                    type: string
+    dataRepatriationTest:
+        type: object
+        required:
+            - run
+        properties:
+            run:
+                type:
+                    - boolean
+                    - "null"
+    cpuBenchmarking:
+        type: object
+        required:
+            - run
+        properties:
+            run:
+                type:
+                    - boolean
+                    - "null"
+    perfsonarTest:
+        type: object
+        required:
+            - run
+        properties:
+            run:
+                type:
+                    - boolean
+                    - "null"
+        if:
+            properties:
+                run:
+                    const: true
+        then:
+            required:
+                - endpoint
+            properties:
+                endpoint:
+                    type: string
+    dlTest:
+        type: object
+        required:
+            - run
+        properties:
+            run:
+                type:
+                    - boolean
+                    - "null"
+        if:
+            properties:
+                run:
+                    const: true
+        then:
+            required:
+                - nodes
+                - flavor
+            properties:
+                nodes:
+                    type: integer
+                flavor:
+                    type: string
+    hpcTest:
+        type: object
+        required:
+            - run
+        properties:
+            run:
+                type:
+                    - boolean
+                    - "null"
+        if:
+            properties:
+                run:
+                    const: true
+        then:
+            required:
+                - nodes
+                - flavor
+            properties:
+                nodes:
+                    type: integer
+                flavor:
+                    type: string
+    dodasTest:
+        type: object
+        required:
+            - run
+        properties:
+            run:
+                type:
+                    - boolean
+                    - "null"
+additionalProperties: false

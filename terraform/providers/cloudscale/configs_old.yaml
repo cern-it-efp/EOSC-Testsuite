@@ -1,0 +1,40 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+general:
+  cluster_nodes: 4
+  provider_name: "cloudscale"
+  provider_instance_name: "cloudscale_server"
+  path_to_key: "~/.ssh/id_rsa"
+  docker-ce:
+  docker-engine:
+  kubernetes:
+
+credentials:
+  use_file: false
+  key: 
+  secret:
+
+instance_definition:
+  name = "kubenode"#NAME
+  image_slug = "centos-7"
+  flavor_slug = "flex-2"
+
+#---------------TEST CATALOG----------------------------------------------------
+tests_catalog:
+  s3_test:
+    run: false
+    endpoint: https://s3.cern.ch
+  ml_test:
+    run: false
+    nodes:
+  data_repatriation_test:
+    run: false
+  cpu_benchmarking:
+    run: false
+  perfsonar_test:
+    run: false
+    endpoint: psmp-gn-bw-01-gen-ch.geant.net
+
+#---------------COST CALCULATION------------------------------------------------
+cost_calculation:
+  instance_price:
+  s3bucket_price:

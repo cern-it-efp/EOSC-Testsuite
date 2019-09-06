@@ -1,0 +1,16 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: "openstack"
+providerInstanceName: openstack_compute_instance_v2
+pathToKey: "/root/.ssh/id_rsa"
+dockerCE:
+dockerEngine:
+kubernetes:
+openUser: eouser
+flavor: flavor_name = "eo1.medium"
+
+#---------------COST CALCULATION------------------------------------------------
+costCalculation:
+  generalInstancePrice:
+  GPUInstancePrice:
+  HPCInstancePrice:
+  s3bucketPrice:
