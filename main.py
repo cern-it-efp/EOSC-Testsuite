@@ -283,8 +283,8 @@ def checkCluster(test):
     if test != "shared":
         cmd += " --kubeconfig tests/%s/config" % (test)
     if runCMD(cmd, hideLogs=True) != 0:
-        writeToFile("logging/" + test, test +
-                    " cluster not reachable, was infrastructure created?", True)
+        writeToFile("logging/" + test, test
+                    + " cluster not reachable, was infrastructure created?", True)
         return False
     return True
 
@@ -511,7 +511,6 @@ def terraformProvisionment(test, nodes, flavor, extraInstanceConfig, toLog):
         bool: True in case the cluster was succesfully provisioned. False otherwise.
         str: Message informing of the provisionment task result.
     """
-
 
     kubeconfig = "config"
     mainTfDir = testsRoot + test
