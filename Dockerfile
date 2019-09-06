@@ -22,10 +22,8 @@ RUN mkdir ~/.ssh
 RUN touch ~/.ssh/id_rsa
 RUN chmod 600 ~/.ssh/id_rsa
 
-# ------------------ Clone TS repo ----------------------------------------------------------
-RUN git clone https://github.com/cern-it-efp/OCRE-Testsuite.git
-
+# ------------------ For testing ----------------------------------------------------------
 RUN echo "alias clonepr='git clone https://gitlab.cern.ch/ipeluaga/test-suite-private.git && cd test-suite-private'" >> ~/.bashrc
-RUN . ~/.bashrc
 
-WORKDIR OCRE-Testsuite
+# ------------------ Clone TS repo ----------------------------------------------------------
+RUN echo "git clone https://github.com/cern-it-efp/OCRE-Testsuite.git && cd OCRE-Testsuite" >> ~/.bashrc
