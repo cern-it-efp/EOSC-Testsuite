@@ -11,6 +11,7 @@ RUN apt-get install -y \
     python-pip \
     python3-pip \
     nano \
+    vim \
     python2.7 \
     zip \
     unzip \
