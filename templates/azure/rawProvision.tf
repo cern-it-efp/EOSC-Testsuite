@@ -52,6 +52,7 @@ resource "azurerm_virtual_machine" "kubenode" {
   name                  = "${var.instanceName}"
   location              = "${var.location}"
   resource_group_name   = "${var.resourceGroupName}"
+  vm_size               = "${var.vmSize}"
   network_interface_ids = [element(azurerm_network_interface.terraformnic.*.id, count.index)]
   storage_os_disk {
     name              = "myOsDisk${count.index}-${var.clusterRandomID}"
