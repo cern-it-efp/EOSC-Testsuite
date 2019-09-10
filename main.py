@@ -535,7 +535,7 @@ def terraformProvisionmentAzure(test, nodes, flavor, extraInstanceConfig, toLog)
         "AMOUNT_PH", str(nodes)).replace(
         "RANDOMID_PH", randomId).replace(
         "VM_SIZE_PH", configs['flavor']).replace(
-        "SECGROUPID_PH", configs['secGroupId']).replace(
+        "SECGROUPID_PH", configs['securityGroupID']).replace(
         "SUBNETID_PH", configs['subnetId']).replace(
         "INSTANCE_NAME_PH", nodeName)
 
@@ -551,6 +551,7 @@ def terraformProvisionmentAzure(test, nodes, flavor, extraInstanceConfig, toLog)
     writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
 
     # run terraform
+    writeToFile(toLog, "Provisioning '" + flavor + "' VMs...", True)
     if runTerraform(mainTfDir, baseCWD) != 0:
         return False, "Failed to provision raw VMs. Check 'logs' file for details"
 
