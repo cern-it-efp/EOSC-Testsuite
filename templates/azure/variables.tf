@@ -28,6 +28,12 @@ variable "instanceName" {
 variable "vmSize" {
   default = "VM_SIZE_PH"
 }
+variable "secGroupId" {
+  default = "SECGROUPID_PH"
+}
+variable "subnetId" {
+  default = "SUBNETID_PH"
+}
 
 # ---------------------------------------- FOR DEBUGGING PURPOSES ----------------------------------------
 variable "sshConnect" {
