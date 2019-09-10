@@ -25,6 +25,9 @@ variable "openUser" {
 variable "instanceName" {
   default = "INSTANCE_NAME_PH" # main.py has to generate the name like kubenode-providerX-randomId
 }
+variable "vmSize" {
+  default = "VM_SIZE_PH"
+}
 
 # ---------------------------------------- FOR DEBUGGING PURPOSES ----------------------------------------
 variable "sshConnect" {
