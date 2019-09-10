@@ -1,15 +1,51 @@
 variable "amount" {
-  default = 5
+  default = AMOUNT_PH
 }
 variable "location" {
-  default = "East US"
+  default = "LOCATION_PH"
 }
 variable "resourceGroupName" {
-  default = "ocrets"
+  default = "RGROUP_PH"
 }
 variable "pubSSH" {
-  default = "ssh-rsa ..."
+  default = "PUB_SSH_PH"
 }
-variable "pubSSH" {
-  default = "uroot"
+variable "clusterRandomID" {
+  default = "RANDOMID_PH"
 }
+variable "pathToKey" {
+  default = "PATH_TO_KEY_VALUE"
+}
+variable "kubeconfigDst" {
+  default = "KUBECONFIG_DST"
+}
+variable "openUser" {
+  default = "OPEN_USER_PH"
+}
+variable "instanceName" {
+  default = "INSTANCE_NAME_PH" # main.py has to generate the name like kubenode-providerX-randomId
+}
+
+# ---------------------------------------- FOR DEBUGGING PURPOSES ----------------------------------------
+variable "sshConnect" {
+  default = "../../terraform/ssh_connect.sh"
+}
+variable "clusterCreator" {
+  default = "../../terraform/cluster_creator.sh"
+}
+variable "sshcTimeout" {
+  default = "2000"
+}
+# ------------------------------------------------------------------------------------------------------------------------
+
+# ---------------------------------------- Optional ----------------------------------------
+variable "dockerCeVer" {
+  default = "DOCKER_CE_PH"
+}
+variable "dockerEnVer" {
+  default = "DOCKER_EN_PH"
+}
+variable "k8sVer" {
+  default = "K8S_PH"
+}
+# ------------------------------------------------------------------------------------------------------------------------

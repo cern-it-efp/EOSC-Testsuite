@@ -65,7 +65,6 @@ resource "azurerm_network_interface" "terraformnic" {
 ############################################### CREATE VM ###############################################
 
 resource "azurerm_virtual_machine" "main" {
-  count = 10
   name                  = "launcher" #NAME
   location              = "East US"
   vm_size               = "Standard_D2s_v3"
@@ -95,7 +94,7 @@ resource "azurerm_virtual_machine" "main" {
     disable_password_authentication = true
 
     ssh_keys {
-      key_data = "ssh-rsa "
+      key_data = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCFPaN62APTqDCy3eB6qy+ALngWKg/RHCU0XWlL47JQ/Bj4zjHoyviFQ3+WgRgRxakKSdbpRU28qm0dUT+5Ki72doEmcmmqdzwhTa6H/0XwoeeRc12eIUw/sn2wTgdf/c57ft0deOyxeALVArAZwCXxywNeRcAjGJsvp4LW6jjZFQ=="
       path     = "/home/uroot/.ssh/authorized_keys"
     }
   }
@@ -105,7 +104,7 @@ resource null_resource "allow_root" {
   depends_on = [azurerm_virtual_machine.main]
   provisioner "remote-exec" {
     connection {
-      host        = azurerm_public_ip.myterraformpublicip.ip_address
+      host        = "${azurerm_public_ip.myterraformpublicip.ip_address}" 
       type        = "ssh"
       user        = "uroot"
       private_key = file("~/.ssh/id_rsa")

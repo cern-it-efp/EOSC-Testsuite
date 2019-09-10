@@ -217,17 +217,18 @@ def initAndChecks():
         print("Key permissions must be set to 600")
         stop(1)
 
-    try:
-        jsonschema.validate(configs, loadFile("schemas/configs_sch.yaml"))
-    except jsonschema.exceptions.ValidationError as ex:
-        print("Error validating configs.yaml: \n %s" % ex)
-        stop(1)
+    # disable schema validation for testing
+    #try:
+    #    jsonschema.validate(configs, loadFile("schemas/configs_sch.yaml"))
+    #except jsonschema.exceptions.ValidationError as ex:
+    #    print("Error validating configs.yaml: \n %s" % ex)
+    #    stop(1)
 
-    try:
-        jsonschema.validate(testsCatalog, loadFile("schemas/testsCatalog_sch.yaml"))
-    except jsonschema.exceptions.ValidationError as ex:
-        print("Error validating testsCatalog.yaml: \n %s" % ex)
-        stop(1)
+    #try:
+    #    jsonschema.validate(testsCatalog, loadFile("schemas/testsCatalog_sch.yaml"))
+    #except jsonschema.exceptions.ValidationError as ex:
+    #    print("Error validating testsCatalog.yaml: \n %s" % ex)
+    #    stop(1)
 
     instanceDefinition = loadFile("configurations/instanceDefinition", required=True)
     extraInstanceConfig = loadFile("configurations/extraInstanceConfig")
@@ -492,16 +493,81 @@ def kubectl(action, type=None, name=None, file=None, cmd=None, kubeconfig=None, 
 
     return 0 if res is True else 1
 
+def runTerraform(mainTfDir, baseCWD):
+    """Run Terraform cmds.
 
-def prepareTFconfigCMD():
-    """ Returns the terraform command to beautify .tf scripts.
+    Parameters:
+        mainTfDir (str): Path where the .tf file is.
+        baseCWD (str): Path to go back.
 
     Returns:
-        str: Terraform command to beautify .tf scripts.
-    """
+        int: 0 for success, 1 for failure
 
-    cmd = "terraform fmt > /dev/null &&"
-    return cmd
+    """
+    os.chdir(mainTfDir)
+    beautify = "terraform fmt > /dev/null &&"
+    exitCode = runCMD('terraform init && %s terraform apply -auto-approve' % beautify)
+    os.chdir(baseCWD)
+    return exitCode
+
+
+def terraformProvisionmentAzure(test, nodes, flavor, extraInstanceConfig, toLog, mainTfDir):
+    """Provisions VMs on azure and creates a k8s cluster with them."""
+
+    kubeconfig = "config"
+    mainTfDir = testsRoot + test
+    if test == "shared":
+        flavor = configs["flavor"]
+        mainTfDir = testsRoot + "sharedCluster"
+        os.makedirs(mainTfDir, exist_ok=True)
+        kubeconfig = "~/.kube/config"
+
+    # in order to have a single file for the infrastructure ("main.tf") put variables at the  beginning of it
+    randomId = ''.join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(4))  # A randomId is needed for each cluster
+    newName = ("kubenode-%s${count.index}-%s-%s" %(configs["providerName"], test, str(randomId))).lower()
+    variables = loadFile("templates/azure/variables", required=True).replace(
+        "OPEN_USER_PH", configs['openUser']).replace(
+        "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(
+        "KUBECONFIG_DST", kubeconfig).replace(
+        "LOCATION_PH", configs['location']).replace(
+        "PUB_SSH_PH", configs['pubSSH']).replace(
+        "RGROUP_PH", configs['resourceGroupName']).replace(
+        "AMOUNT_PH", nodes).replace(
+        "RANDOMID_PH", randomId).replace(
+        "INSTANCE_NAME_PH", nodeName)
+
+    # ------------------------- stack versioning
+    variables = variables.replace("DOCKER_CE_PH", str(configs["docker-ce"])) if configs["dockerCE"] else bootstrap.replace("DOCKER_CE_PH", "")
+    variables = variables.replace("DOCKER_EN_PH", str(configs["dockerEngine"])) if configs["dockerEngine"] else bootstrap.replace("DOCKER_EN_PH", "")
+    variables = variables.replace("K8S_PH", str(configs["kubernetes"])) if configs["kubernetes"] else bootstrap.replace("K8S_PH", "")
+
+    writeToFile(mainTfDir + "/main.tf", variables, False)
+
+    # Add VM provisionment to main.tf
+    rawProvisioning = loadFile("templates/azure/rawProvisioning.tf", required=True)
+    writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
+
+    # run terraform
+    if runTerraform(mainTfDir, baseCWD) != 0:
+        return False, "Failed to provision raw VMs. Check 'logs' file for details"
+
+    # On completion of TF, add the bootstraping section to main.tf
+    bootstrap = loadFile("templates/azure/bootstrap.tf", required=True)
+    writeToFile(mainTfDir + "/main.tf", bootstrap, True)
+
+    # Run terraform again
+    writeToFile(toLog, "...bootstraping Kubernetes cluster...", True)
+    if runTerraform(mainTfDir, baseCWD) != 0:
+        return False, "Failed to bootstrap '%s' k8s cluster. Check 'logs' file " % flavor
+
+    # ---------------- wait for default service account to be ready
+    while runCMD('kubectl --kubeconfig %s get sa default' % kubeconfig, hideLogs=True) != 0:
+        time.sleep(1)
+
+    os.chdir(baseCWD)
+
+    writeToFile(toLog, "...'%s' CLUSTER CREATED => STARTING TESTS\n" % flavor, True)
+    return True, ""
 
 
 def terraformProvisionment(test, nodes, flavor, extraInstanceConfig, toLog):
@@ -518,6 +584,12 @@ def terraformProvisionment(test, nodes, flavor, extraInstanceConfig, toLog):
         bool: True in case the cluster was succesfully provisioned. False otherwise.
         str: Message informing of the provisionment task result.
     """
+
+    # if configs["providerName"] in extraSupported:
+    #    return eval(extraSupported[configs["providerName"](test, nodes, flavor, extraInstanceConfig, toLog))
+
+    if configs["providerName"] is "azurerm":
+        return terraformProvisionmentAzure(test, nodes, flavor, exstraInstanceConfig, toLog)
 
     kubeconfig = "config"
     mainTfDir = testsRoot + test
@@ -555,9 +627,7 @@ def terraformProvisionment(test, nodes, flavor, extraInstanceConfig, toLog):
         writeToFile(mainTfDir + "/main.tf", mainStr, False)
 
         writeToFile(toLog, "Provisioning '" + flavor + "' VMs...", True)
-        os.chdir(mainTfDir)
-        if runCMD('terraform init && %s terraform apply -auto-approve' % prepareTFconfigCMD()) != 0:
-            os.chdir(baseCWD)
+        if runTerraform(mainTfDir, baseCWD) != 0:
             return False, "Failed to provision raw VMs. Check 'logs' file for details"
         os.chdir(baseCWD)
 
@@ -589,14 +659,12 @@ def terraformProvisionment(test, nodes, flavor, extraInstanceConfig, toLog):
 
     # ---------------- locate where main.tf is and run terraform, use '-auto-approve'
     writeToFile(toLog, "...bootstraping Kubernetes cluster...", True)
-    os.chdir(mainTfDir)
 
-    if retry is True and os.path.isfile("main.tf") is False:
-        print("ERROR: run with option --retry before normal run.")
-        stop(1)
+    #if retry is True and os.path.isfile("main.tf") is False: # TODO: improve
+    #    print("ERROR: run with option --retry before normal run.")
+    #    stop(1)
 
-    if runCMD('terraform init && %s terraform apply -auto-approve' % prepareTFconfigCMD()) != 0:
-        os.chdir(baseCWD)
+    if runTerraform(mainTfDir, baseCWD) != 0:
         return False, "Failed to bootstrap '%s' k8s cluster. Check 'logs' file " % flavor
 
     # ---------------- wait for default service account to be ready
