@@ -535,6 +535,8 @@ def terraformProvisionmentAzure(test, nodes, flavor, extraInstanceConfig, toLog)
         "AMOUNT_PH", str(nodes)).replace(
         "RANDOMID_PH", randomId).replace(
         "VM_SIZE_PH", configs['flavor']).replace(
+        "SECGROUPID_PH", configs['secGroupId']).replace(
+        "SUBNETID_PH", configs['subnetId']).replace(
         "INSTANCE_NAME_PH", nodeName)
 
     # ------------------------- stack versioning

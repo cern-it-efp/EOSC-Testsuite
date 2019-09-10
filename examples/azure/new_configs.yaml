@@ -6,9 +6,11 @@ dockerEngine:
 kubernetes:
 openUser: uroot
 flavor: "Standard_D2s_v3"
-location: "US East" 
+location: "East US"
 resourceGroupName: "ocrets"
 pubSSH: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCFPaN62APTqDCy3eB6qy+ALngWKg/RHCU0XWlL47JQ/Bj4zjHoyviFQ3+WgRgRxakKSdbpRU28qm0dUT+5Ki72doEmcmmqdzwhTa6H/0XwoeeRc12eIUw/sn2wTgdf/c57ft0deOyxeALVArAZwCXxywNeRcAjGJsvp4LW6jjZFQ=="
+securityGroupID:
+subnetId:
 
 costCalculation:
   generalInstancePrice:
