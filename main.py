@@ -230,18 +230,18 @@ def initAndChecks():
     #    print("Error validating testsCatalog.yaml: \n %s" % ex)
     #    stop(1)
 
-    instanceDefinition = loadFile("configurations/instanceDefinition", required=True)
+    instanceDefinition = loadFile("configurations/instanceDefinition") # this is now only required when not running on main clouds
     extraInstanceConfig = loadFile("configurations/extraInstanceConfig")
     dependencies = loadFile("configurations/dependencies")
     credentials = loadFile("configurations/credentials")
 
     # --------General config checks
-    if "\"#NAME" not in instanceDefinition:
-        writeToFile("logging/header", "The placeholder comment for name at configs.yaml was not found!", True)
-        stop(1)
-    if configs['providerName'] not in provDict:
-        writeToFile("logging/header", "Provider '%s' not supported" % configs['providerName'], True)
-        stop(1)
+    #if "\"#NAME" not in instanceDefinition: # this has to be checked now only when not running on main clouds
+    #    writeToFile("logging/header", "The placeholder comment for name at configs.yaml was not found!", True)
+    #    stop(1)
+    #if configs['providerName'] not in provDict:
+    #    writeToFile("logging/header", "Provider '%s' not supported" % configs['providerName'], True)
+    #    stop(1)
 
     # --------Tests config checks
     selected = []
@@ -511,7 +511,7 @@ def runTerraform(mainTfDir, baseCWD):
     return exitCode
 
 
-def terraformProvisionmentAzure(test, nodes, flavor, extraInstanceConfig, toLog, mainTfDir):
+def terraformProvisionmentAzure(test, nodes, flavor, extraInstanceConfig, toLog):
     """Provisions VMs on azure and creates a k8s cluster with them."""
 
     kubeconfig = "config"
@@ -524,28 +524,28 @@ def terraformProvisionmentAzure(test, nodes, flavor, extraInstanceConfig, toLog,
 
     # in order to have a single file for the infrastructure ("main.tf") put variables at the  beginning of it
     randomId = ''.join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(4))  # A randomId is needed for each cluster
-    newName = ("kubenode-%s${count.index}-%s-%s" %(configs["providerName"], test, str(randomId))).lower()
-    variables = loadFile("templates/azure/variables", required=True).replace(
+    nodeName = ("kubenode-%s-%s-%s" %(configs["providerName"], test, str(randomId))).lower()
+    variables = loadFile("templates/azure/variables.tf", required=True).replace(
         "OPEN_USER_PH", configs['openUser']).replace(
         "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(
         "KUBECONFIG_DST", kubeconfig).replace(
         "LOCATION_PH", configs['location']).replace(
         "PUB_SSH_PH", configs['pubSSH']).replace(
         "RGROUP_PH", configs['resourceGroupName']).replace(
-        "AMOUNT_PH", nodes).replace(
+        "AMOUNT_PH", str(nodes)).replace(
         "RANDOMID_PH", randomId).replace(
         "VM_SIZE_PH", configs['flavor']).replace(
         "INSTANCE_NAME_PH", nodeName)
 
     # ------------------------- stack versioning
-    variables = variables.replace("DOCKER_CE_PH", str(configs["docker-ce"])) if configs["dockerCE"] else bootstrap.replace("DOCKER_CE_PH", "")
-    variables = variables.replace("DOCKER_EN_PH", str(configs["dockerEngine"])) if configs["dockerEngine"] else bootstrap.replace("DOCKER_EN_PH", "")
-    variables = variables.replace("K8S_PH", str(configs["kubernetes"])) if configs["kubernetes"] else bootstrap.replace("K8S_PH", "")
+    variables = variables.replace("DOCKER_CE_PH", str(configs["dockerCE"])) if configs["dockerCE"] else variables.replace("DOCKER_CE_PH", "")
+    variables = variables.replace("DOCKER_EN_PH", str(configs["dockerEngine"])) if configs["dockerEngine"] else variables.replace("DOCKER_EN_PH", "")
+    variables = variables.replace("K8S_PH", str(configs["kubernetes"])) if configs["kubernetes"] else variables.replace("K8S_PH", "")
 
     writeToFile(mainTfDir + "/main.tf", variables, False)
 
     # Add VM provisionment to main.tf
-    rawProvisioning = loadFile("templates/azure/rawProvisioning.tf", required=True)
+    rawProvisioning = loadFile("templates/azure/rawProvision.tf", required=True)
     writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
 
     # run terraform
@@ -589,8 +589,8 @@ def terraformProvisionment(test, nodes, flavor, extraInstanceConfig, toLog):
     # if configs["providerName"] in extraSupported:
     #    return eval(extraSupported[configs["providerName"](test, nodes, flavor, extraInstanceConfig, toLog))
 
-    if configs["providerName"] is "azurerm":
-        return terraformProvisionmentAzure(test, nodes, flavor, exstraInstanceConfig, toLog)
+    if configs["providerName"] == "azurerm":
+        return terraformProvisionmentAzure(test, nodes, flavor, extraInstanceConfig, toLog)
 
     kubeconfig = "config"
     mainTfDir = testsRoot + test
