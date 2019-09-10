@@ -65,6 +65,7 @@ resource "azurerm_network_interface" "terraformnic" {
 ############################################### CREATE VM ###############################################
 
 resource "azurerm_virtual_machine" "main" {
+  count = 10
   name                  = "launcher" #NAME
   location              = "East US"
   vm_size               = "Standard_D2s_v3"
