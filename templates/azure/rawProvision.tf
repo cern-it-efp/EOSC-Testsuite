@@ -49,7 +49,7 @@ resource "azurerm_network_interface" "terraformnic" {
 
 resource "azurerm_virtual_machine" "kubenode" {
   count                 = "${var.amount}"
-  name                  = "${var.instanceName}"
+  name                  = "${var.instanceName}-${count.index}"
   location              = "${var.location}"
   resource_group_name   = "${var.resourceGroupName}"
   vm_size               = "${var.vmSize}"
