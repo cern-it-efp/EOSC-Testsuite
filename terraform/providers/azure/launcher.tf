@@ -8,7 +8,7 @@ variable "avar" {
 resource "azurerm_virtual_network" "myterraformnetwork" {
   name                = "myVnet"
   address_space       = ["10.0.0.0/16"]
-  location            = "France Central"
+  location            = "East US"
   resource_group_name = "ocrets"
 }
 
@@ -23,7 +23,7 @@ resource "azurerm_subnet" "myterraformsubnet" {
 # Create Network Security Group and rule (This can actually be done IN ADVANCE, like on Exoscale or Openstack as it is just one for all the VMs)
 resource "azurerm_network_security_group" "myterraformnsg" {
   name                = "myNetworkSecurityGroup"
-  location            = "France Central"
+  location            = "East US"
   resource_group_name = "ocrets"
 
   security_rule {
@@ -42,7 +42,7 @@ resource "azurerm_network_security_group" "myterraformnsg" {
 # Create public IPs
 resource "azurerm_public_ip" "myterraformpublicip" {
   name                = "myPublicIP"
-  location            = "France Central"
+  location            = "East US"
   resource_group_name = "ocrets"
   allocation_method   = "Dynamic"
 }
@@ -50,7 +50,7 @@ resource "azurerm_public_ip" "myterraformpublicip" {
 # Create network interface (This CAN'T be done in advance, as I need one per VM: too much GUI work)
 resource "azurerm_network_interface" "terraformnic" {
   name                      = "myNIC"
-  location                  = "France Central"
+  location                  = "East US"
   resource_group_name       = "ocrets"
   network_security_group_id = "${azurerm_network_security_group.myterraformnsg.id}"
 
@@ -65,8 +65,9 @@ resource "azurerm_network_interface" "terraformnic" {
 ############################################### CREATE VM ###############################################
 
 resource "azurerm_virtual_machine" "main" {
+  count = 10
   name                  = "launcher" #NAME
-  location              = "France Central"
+  location              = "East US"
   vm_size               = "Standard_D2s_v3"
   resource_group_name   = "ocrets"
   network_interface_ids = ["${azurerm_network_interface.terraformnic.id}"]
@@ -94,8 +95,26 @@ resource "azurerm_virtual_machine" "main" {
     disable_password_authentication = true
 
     ssh_keys {
-      key_data = "ssh-rsa ..."
+      key_data = "ssh-rsa "
       path     = "/home/uroot/.ssh/authorized_keys"
     }
+  }
+}
+
+resource null_resource "allow_root" {
+  depends_on = [azurerm_virtual_machine.main]
+  provisioner "remote-exec" {
+    connection {
+      host        = azurerm_public_ip.myterraformpublicip.ip_address
+      type        = "ssh"
+      user        = "uroot"
+      private_key = file("~/.ssh/id_rsa")
+    }
+    inline = [
+      "sudo mkdir /root/.ssh",
+      "sudo cp /home/uroot/.ssh/authorized_keys /root/.ssh",
+      "sudo sed -i 's/PermitRootLogin no/PermitRootLogin yes/g' /etc/ssh/sshd_config",
+      "sudo systemctl restart sshd"
+    ]
   }
 }

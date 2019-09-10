@@ -1,5 +1,5 @@
 name                  = "kubenode"#NAME
-location              = "France Central"
+location              = "East US"
 resource_group_name   = "ocrets"
 network_interface_ids = [element(azurerm_network_interface.terraformnic.*.id, count.index)]
 storage_os_disk {
