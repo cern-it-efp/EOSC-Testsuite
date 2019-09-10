@@ -519,9 +519,6 @@ def terraformProvisionment(test, nodes, flavor, extraInstanceConfig, toLog):
         str: Message informing of the provisionment task result.
     """
 
-    if configs["providerName"] in extraSupported:
-        return eval(extraSupported[configs["providerName"](test, nodes, flavor, extraInstanceConfig, toLog))
-
     kubeconfig = "config"
     mainTfDir = testsRoot + test
     if test == "shared":
