@@ -358,11 +358,7 @@ not allocated unless specified, using network_interface.access_config{} in the i
 <h2>1.6 Using Docker<a class="headerlink" href="#using-docker" title="Permalink to this headline">¶</a></h2>
 <p>A Docker image has been built and pushed to Docker hub. This image allows you to skip section “1.1 Dependencies” and jump to “1.2 SSH key”.</p>
 <p>Run the container (pulls the image first):</p>
-<<<<<<< HEAD
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> docker run --net<span class="o">=</span>host -it ipeluaga/tslauncher bash
-=======
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> docker run --net<span class="o">=</span>host -it ipeluaga/tslauncher
->>>>>>> development
 </pre></div>
 </div>
 <p>Note the option ‘–net=host’. Without it, the container wouldn’t be able to connect to the nodes, as it would not be in the same network as them and it is likely the nodes will not have public IPs. With that option, the container will use the network used by its host, which will be sharing the network with the nodes.</p>
