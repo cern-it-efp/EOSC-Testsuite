@@ -515,7 +515,7 @@ def terraformProvisionmentAzure(test, nodes, flavor, extraInstanceConfig, toLog)
     """Provisions VMs on azure and creates a k8s cluster with them."""
 
     mainTfDir = testsRoot + test
-    kubeconfig = mainTfDir + "/config"
+    kubeconfig = "config"
     if test == "shared":
         flavor = configs["flavor"]
         mainTfDir = testsRoot + "sharedCluster"
@@ -528,7 +528,7 @@ def terraformProvisionmentAzure(test, nodes, flavor, extraInstanceConfig, toLog)
     variables = loadFile("templates/azure/variables.tf", required=True).replace(
         "OPEN_USER_PH", configs['openUser']).replace(
         "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(
-        #"KUBECONFIG_DST", kubeconfig).replace( # Is this needed? when retrieving the kubeconfig file, ssh_connect.sh is always called from where the config file should be placed
+        "KUBECONFIG_DST", kubeconfig).replace( # Is this needed? when retrieving the kubeconfig file, ssh_connect.sh is always called from where the config file should be placed. TODO: yes it is needed for the general cluster, as in that case ssh_connect is called from tests/sharedCluster but the kubeconfig file has to be places at ~/.kube/config
         "LOCATION_PH", configs['location']).replace(
         "PUB_SSH_PH", configs['pubSSH']).replace(
         "RGROUP_PH", configs['resourceGroupName']).replace(
@@ -565,7 +565,7 @@ def terraformProvisionmentAzure(test, nodes, flavor, extraInstanceConfig, toLog)
         return False, "Failed to bootstrap '%s' k8s cluster. Check 'logs' file " % flavor
 
     # ---------------- wait for default service account to be ready
-    while runCMD('kubectl --kubeconfig %s get sa default' % kubeconfig, hideLogs=True) != 0:
+    while runCMD('kubectl --kubeconfig %s/%s get sa default' % (mainTfDir, kubeconfig), hideLogs=True) != 0:
         time.sleep(1)
 
     writeToFile(toLog, "...'%s' CLUSTER CREATED => STARTING TESTS\n" % flavor, True)
