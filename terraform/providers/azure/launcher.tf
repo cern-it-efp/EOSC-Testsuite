@@ -1,3 +1,5 @@
+# curl -sL https://aka.ms/InstallAzureCLIDeb | bash && az login
+
 provider "azurerm" {}
 
 variable "avar" {
@@ -104,7 +106,7 @@ resource null_resource "allow_root" {
   depends_on = [azurerm_virtual_machine.main]
   provisioner "remote-exec" {
     connection {
-      host        = "${azurerm_public_ip.myterraformpublicip.ip_address}" 
+      host        = "${azurerm_public_ip.myterraformpublicip.ip_address}"
       type        = "ssh"
       user        = "uroot"
       private_key = file("~/.ssh/id_rsa")

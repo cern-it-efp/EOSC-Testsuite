@@ -34,7 +34,7 @@ resource "azurerm_network_security_group" "myterraformnsg" {
 }
 
 resource "azurerm_network_interface" "terraformnic" {
-  count                     = "${var.amount}"
+  count                     = "${var.customCount}"
   name                      = "myNIC${count.index}-${var.clusterRandomID}"
   location                  = "${var.location}"
   resource_group_name       = "${var.resourceGroupName}"
@@ -47,7 +47,7 @@ resource "azurerm_network_interface" "terraformnic" {
 }
 
 resource "azurerm_virtual_machine" "kubenode" {
-  count                 = "${var.amount}"
+  count                 = "${var.customCount}"
   name                  = "${var.instanceName}-${count.index}"
   location              = "${var.location}"
   resource_group_name   = "${var.resourceGroupName}"

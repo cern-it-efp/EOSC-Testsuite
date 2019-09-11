@@ -1,5 +1,5 @@
-variable "amount" {
-  default = AMOUNT_PH
+variable "customCount" {
+  default = NODES_PH
 }
 variable "location" {
   default = "LOCATION_PH"
