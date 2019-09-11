@@ -532,7 +532,7 @@ def terraformProvisionmentAzure(test, nodes, flavor, extraInstanceConfig, toLog)
         "LOCATION_PH", configs['location']).replace(
         "PUB_SSH_PH", configs['pubSSH']).replace(
         "RGROUP_PH", configs['resourceGroupName']).replace(
-        "AMOUNT_PH", str(nodes)).replace(
+        "NODES_PH", str(nodes)).replace(
         "RANDOMID_PH", randomId).replace(
         "VM_SIZE_PH", configs['flavor']).replace(
         "SECGROUPID_PH", configs['securityGroupID']).replace(
