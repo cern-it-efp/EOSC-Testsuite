@@ -34,7 +34,7 @@ resource "azurerm_virtual_machine" "kubenode" {
     version   = "latest"
   }
   os_profile {
-    computer_name  = "${var.instanceName}"
+    computer_name  = "${var.instanceName}-${count.index}"
     admin_username = "${var.openUser}"
   }
   os_profile_linux_config {
