@@ -514,8 +514,8 @@ def runTerraform(mainTfDir, baseCWD):
 def terraformProvisionmentAzure(test, nodes, flavor, extraInstanceConfig, toLog):
     """Provisions VMs on azure and creates a k8s cluster with them."""
 
-    kubeconfig = "config"
     mainTfDir = testsRoot + test
+    kubeconfig = mainTfDir + "/config"
     if test == "shared":
         flavor = configs["flavor"]
         mainTfDir = testsRoot + "sharedCluster"
@@ -528,7 +528,7 @@ def terraformProvisionmentAzure(test, nodes, flavor, extraInstanceConfig, toLog)
     variables = loadFile("templates/azure/variables.tf", required=True).replace(
         "OPEN_USER_PH", configs['openUser']).replace(
         "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(
-        "KUBECONFIG_DST", kubeconfig).replace(
+        #"KUBECONFIG_DST", kubeconfig).replace( # Is this needed? when retrieving the kubeconfig file, ssh_connect.sh is always called from where the config file should be placed
         "LOCATION_PH", configs['location']).replace(
         "PUB_SSH_PH", configs['pubSSH']).replace(
         "RGROUP_PH", configs['resourceGroupName']).replace(
@@ -555,7 +555,7 @@ def terraformProvisionmentAzure(test, nodes, flavor, extraInstanceConfig, toLog)
     if runTerraform(mainTfDir, baseCWD) != 0:
         return False, "Failed to provision raw VMs. Check 'logs' file for details"
 
-    # On completion of TF, add the bootstraping section to main.tf
+    # On completion of TF, add the bootstrap section to main.tf
     bootstrap = loadFile("templates/azure/bootstrap.tf", required=True)
     writeToFile(mainTfDir + "/main.tf", bootstrap, True)
 
@@ -567,8 +567,6 @@ def terraformProvisionmentAzure(test, nodes, flavor, extraInstanceConfig, toLog)
     # ---------------- wait for default service account to be ready
     while runCMD('kubectl --kubeconfig %s get sa default' % kubeconfig, hideLogs=True) != 0:
         time.sleep(1)
-
-    os.chdir(baseCWD)
 
     writeToFile(toLog, "...'%s' CLUSTER CREATED => STARTING TESTS\n" % flavor, True)
     return True, ""
@@ -595,8 +593,8 @@ def terraformProvisionment(test, nodes, flavor, extraInstanceConfig, toLog):
     if configs["providerName"] == "azurerm":
         return terraformProvisionmentAzure(test, nodes, flavor, extraInstanceConfig, toLog)
 
-    kubeconfig = "config"
     mainTfDir = testsRoot + test
+    kubeconfig = mainTfDir + "/config"
     if test == "shared":
         flavor = configs["flavor"]
         mainTfDir = testsRoot + "sharedCluster"
@@ -661,21 +659,18 @@ def terraformProvisionment(test, nodes, flavor, extraInstanceConfig, toLog):
             "NODES_PH", str(nodes))
         writeToFile(mainTfDir + "/main.tf", bootstrap, True)
 
-    # ---------------- locate where main.tf is and run terraform, use '-auto-approve'
-    writeToFile(toLog, "...bootstraping Kubernetes cluster...", True)
-
     #if retry is True and os.path.isfile("main.tf") is False: # TODO: improve
     #    print("ERROR: run with option --retry before normal run.")
     #    stop(1)
 
+    # ---------------- locate where main.tf is and run terraform, use '-auto-approve'
+    writeToFile(toLog, "...bootstraping Kubernetes cluster...", True)
     if runTerraform(mainTfDir, baseCWD) != 0:
         return False, "Failed to bootstrap '%s' k8s cluster. Check 'logs' file " % flavor
 
     # ---------------- wait for default service account to be ready
     while runCMD('kubectl --kubeconfig %s get sa default' % kubeconfig, hideLogs=True) != 0:
         time.sleep(1)
-
-    os.chdir(baseCWD)
 
     writeToFile(toLog, "...'%s' CLUSTER CREATED => STARTING TESTS\n" % flavor, True)
     return True, ""
