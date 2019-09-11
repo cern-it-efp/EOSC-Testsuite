@@ -1,15 +1,6 @@
 variable "customCount" {
   default = NODES_PH
 }
-variable "location" {
-  default = "LOCATION_PH"
-}
-variable "resourceGroupName" {
-  default = "RGROUP_PH"
-}
-variable "pubSSH" {
-  default = "PUB_SSH_PH"
-}
 variable "clusterRandomID" {
   default = "RANDOMID_PH"
 }
@@ -26,14 +17,23 @@ variable "openUser" {
 variable "instanceName" {
   default = "INSTANCE_NAME_PH" # main.py generates name: kubenode-provider-randomId
 }
-variable "vmSize" {
-  default = "VM_SIZE_PH"
+variable "flavor" {
+  default = _PH
 }
-variable "secGroupId" {
-  default = "SECGROUPID_PH"
+variable "imageName" {
+  default = _PH
 }
-variable "subnetId" {
-  default = "SUBNETID_PH"
+variable "keyPair" {
+  default = _PH
+}
+variable "securityGroups" { # this is an array: ["default","allow_ping_ssh_rdp"]
+  default = _PH
+}
+variable "region" { # neither CERN nor cf allow setting region (at least from the UI)
+  default = _PH
+}
+variable "availabilityZone" { # cern os allows selecting Availability Zone / cf allows specifying it too but the only possible option in the dropdown is "nova"
+  default = _PH
 }
 
 # ---------------------------------------- FOR DEBUGGING PURPOSES ----------------------------------------
