@@ -23,7 +23,7 @@ variable "openUser" {
   default = "OPEN_USER_PH"
 }
 variable "instanceName" {
-  default = "INSTANCE_NAME_PH" # main.py has to generate the name like kubenode-providerX-randomId
+  default = "INSTANCE_NAME_PH" # main.py generates name: kubenode-provider-randomId
 }
 variable "vmSize" {
   default = "VM_SIZE_PH"
