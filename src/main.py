@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import sys
+sys.dont_write_bytecode = True
+
 try:
     import yaml
     import json
@@ -23,6 +25,9 @@ try:
     import tarfile
     from pathlib import Path
     from enum import Enum
+    # custom ones
+    import checker
+    import tests
 
 except ModuleNotFoundError as ex:
     print(ex)

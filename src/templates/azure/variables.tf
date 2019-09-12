@@ -17,14 +17,13 @@ variable "pathToKey" {
   default = "PATH_TO_KEY_VALUE"
 }
 variable "kubeconfigDst" {
-  #default = "KUBECONFIG_DST"
-  default = "config"
+  default = "KUBECONFIG_DST"
 }
 variable "openUser" {
   default = "OPEN_USER_PH"
 }
 variable "instanceName" {
-  default = "INSTANCE_NAME_PH" 
+  default = "INSTANCE_NAME_PH"
 }
 variable "vmSize" {
   default = "VM_SIZE_PH"

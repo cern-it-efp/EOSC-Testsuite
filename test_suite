@@ -34,7 +34,7 @@ cd ../..
 ########### TEST SUITE RUN ###########
 watchFunct &
 cd src
-./main.py $opts &> logs
+./main.py $opts &> ../logs
 cd ..
 outStat=$?
 ######################################
