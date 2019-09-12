@@ -55,6 +55,14 @@ Release notes
 
 ``19.8``
 
+-Project restructure and code refactoring.
+
+-Improved support for Google, AWS, Azure and Openstack.
+
+-Usage of Terraform API instead of Terraform CLI.
+
+``19.8``
+
 -Parallel creation of clusters, with different flavors according to tests needs.
 
 -New logging system to keep parallel running tests logs sorted.

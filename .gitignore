@@ -1,41 +1,39 @@
-__pycache__
+src/terraform/providers/aws/*
+src/terraform/providers/azure/*
+src/terraform/providers/cloudferro/*
+src/terraform/providers/cloudscale/*
+src/terraform/providers/exoscale/*
+src/terraform/providers/ibm/*
+src/terraform/providers/openstack/*
+src/terraform/providers/gcp/*
 
-terraform/providers/aws/*
-terraform/providers/azure/*
-terraform/providers/cloudferro/*
-terraform/providers/cloudscale/*
-terraform/providers/exoscale/*
-terraform/providers/ibm/*
-terraform/providers/openstack/*
-terraform/providers/gcp/*
-
-!terraform/providers/*/*.tf
-!terraform/providers/*/*.yaml
-!terraform/providers/*/terraform.tfvars
+!src/terraform/providers/*/*.tf
+!src/terraform/providers/*/*.yaml
+!src/terraform/providers/*/terraform.tfvars
 
 logs
 
-terraform/main.tf
-terraform/join.sh
-terraform/.terraform*
-terraform/terraform.tfstate*
+src/terraform/main.tf
+src/terraform/join.sh
+src/terraform/.terraform*
+src/terraform/terraform.tfstate*
 
-tests/s3/s3pod.yaml
-tests/cpu_benchmarking/cpu_benchmarking_pod.yaml
-tests/data_repatriation/repatriation_pod.yaml
+src/tests/s3/s3pod.yaml
+src/tests/cpu_benchmarking/cpu_benchmarking_pod.yaml
+src/tests/data_repatriation/repatriation_pod.yaml
 
-tests/sharedCluster
+src/tests/sharedCluster
 
-tests/dlTest/train-mpi_3dGAN.yaml
-tests/dlTest/main.tf
-tests/dlTest/config
-tests/dlTest/.terraform*
-tests/dlTest/terraform.tfstate*
-tests/dlTest/join.sh
+src/tests/dlTest/train-mpi_3dGAN.yaml
+src/tests/dlTest/main.tf
+src/tests/dlTest/config
+src/tests/dlTest/.terraform*
+src/tests/dlTest/terraform.tfstate*
+src/tests/dlTest/join.sh
 
-tests/hpcTest/fdmnes
-tests/hpcTest/main.tf
-tests/hpcTest/config
-tests/hpcTest/.terraform*
-tests/hpcTest/terraform.tfstate*
-tests/hpcTest/join.sh
+src/tests/hpcTest/fdmnes
+src/tests/hpcTest/main.tf
+src/tests/hpcTest/config
+src/tests/hpcTest/.terraform*
+src/tests/hpcTest/terraform.tfstate*
+src/tests/hpcTest/join.sh
