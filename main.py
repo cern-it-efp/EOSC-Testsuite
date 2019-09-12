@@ -211,35 +211,37 @@ def initAndChecks():
     testsCatalog = loadFile("configurations/testsCatalog.yaml", required=True)
 
     if os.path.isfile(configs["pathToKey"]) is False:
-        print("Key file not found at the specified path '%s'" % configs["pathToKey"])
+        print("Key file not found at the specified path '%s'" %
+              configs["pathToKey"])
         stop(1)
     if runCMD("ls -l %s | grep '\-rw\-\-\-\-\-\-\-'" % configs["pathToKey"], hideLogs=True) != 0:
         print("Key permissions must be set to 600")
         stop(1)
 
     # disable schema validation for testing
-    #try:
+    # try:
     #    jsonschema.validate(configs, loadFile("schemas/configs_sch.yaml"))
-    #except jsonschema.exceptions.ValidationError as ex:
+    # except jsonschema.exceptions.ValidationError as ex:
     #    print("Error validating configs.yaml: \n %s" % ex)
     #    stop(1)
 
-    #try:
+    # try:
     #    jsonschema.validate(testsCatalog, loadFile("schemas/testsCatalog_sch.yaml"))
-    #except jsonschema.exceptions.ValidationError as ex:
+    # except jsonschema.exceptions.ValidationError as ex:
     #    print("Error validating testsCatalog.yaml: \n %s" % ex)
     #    stop(1)
 
-    instanceDefinition = loadFile("configurations/instanceDefinition") # this is now only required when not running on main clouds
+    # this is now only required when not running on main clouds
+    instanceDefinition = loadFile("configurations/instanceDefinition")
     extraInstanceConfig = loadFile("configurations/extraInstanceConfig")
     dependencies = loadFile("configurations/dependencies")
     credentials = loadFile("configurations/credentials")
 
     # --------General config checks
-    #if "\"#NAME" not in instanceDefinition: # this has to be checked now only when not running on main clouds
+    # if "\"#NAME" not in instanceDefinition: # this has to be checked now only when not running on main clouds
     #    writeToFile("logging/header", "The placeholder comment for name at configs.yaml was not found!", True)
     #    stop(1)
-    #if configs['providerName'] not in provDict:
+    # if configs['providerName'] not in provDict:
     #    writeToFile("logging/header", "Provider '%s' not supported" % configs['providerName'], True)
     #    stop(1)
 
@@ -247,20 +249,24 @@ def initAndChecks():
     selected = []
     if testsCatalog["s3Test"]["run"] is True:
         selected.append("s3Test")
-        obtainCost = checkCost(configs["costCalculation"]["generalInstancePrice"])
+        obtainCost = checkCost(
+            configs["costCalculation"]["generalInstancePrice"])
         obtainCost = checkCost(configs["costCalculation"]["s3bucketPrice"])
 
     if testsCatalog["perfsonarTest"]["run"] is True:
         selected.append("perfsonarTest")
-        obtainCost = checkCost(configs["costCalculation"]["generalInstancePrice"])
+        obtainCost = checkCost(
+            configs["costCalculation"]["generalInstancePrice"])
 
     if testsCatalog["dataRepatriationTest"]["run"] is True:
         selected.append("dataRepatriationTest")
-        obtainCost = checkCost(configs["costCalculation"]["generalInstancePrice"])
+        obtainCost = checkCost(
+            configs["costCalculation"]["generalInstancePrice"])
 
     if testsCatalog["cpuBenchmarking"]["run"] is True:
         selected.append("cpuBenchmarking")
-        obtainCost = checkCost(configs["costCalculation"]["generalInstancePrice"])
+        obtainCost = checkCost(
+            configs["costCalculation"]["generalInstancePrice"])
 
     if testsCatalog["dlTest"]["run"] is True:
         selected.append("dlTest")
@@ -272,7 +278,8 @@ def initAndChecks():
 
     if testsCatalog["dodasTest"]["run"] is True:
         selected.append("dodasTest")
-        obtainCost = checkCost(configs["costCalculation"]["generalInstancePrice"])
+        obtainCost = checkCost(
+            configs["costCalculation"]["generalInstancePrice"])
 
     return selected
 
@@ -324,7 +331,8 @@ def fetchResults(source, file, toLog):
     """
 
     while os.path.exists(resDir + "/" + file) is False:
-        kubectl(Action.cp, podPath=source, localPath="%s/%s" % (resDir, file), fetch=True)
+        kubectl(Action.cp, podPath=source, localPath="%s/%s" %
+                (resDir, file), fetch=True)
     writeToFile(toLog, file + " fetched!", True)
 
 
@@ -343,7 +351,8 @@ def checkDestinationIsDir(podName, pathOnPod, namespace=None):
     if namespace is None:
         namespace = "default"
     cmd = "test -d %s ; echo $?" % pathOnPod
-    resp = stream(client.CoreV1Api().connect_get_namespaced_pod_exec, podName, namespace, command=['/bin/bash', '-c', cmd], stderr=True, stdin=True, stdout=True, tty=False)
+    resp = stream(client.CoreV1Api().connect_get_namespaced_pod_exec, podName, namespace, command=[
+                  '/bin/bash', '-c', cmd], stderr=True, stdin=True, stdout=True, tty=False)
     if int(resp) == 1:
         return False
     return True
@@ -429,7 +438,8 @@ def kubectl(action, type=None, name=None, file=None, cmd=None, kubeconfig=None, 
 
     elif action is Action.exec:
         try:
-            resp = stream(client.CoreV1Api().connect_get_namespaced_pod_exec, name, namespace, command=['/bin/bash', '-c', cmd], stderr=True, stdin=True, stdout=True, tty=False)
+            resp = stream(client.CoreV1Api().connect_get_namespaced_pod_exec, name, namespace, command=[
+                          '/bin/bash', '-c', cmd], stderr=True, stdin=True, stdout=True, tty=False)
         except:  # except ApiException as ex:
             res = False
 
@@ -460,7 +470,8 @@ def kubectl(action, type=None, name=None, file=None, cmd=None, kubeconfig=None, 
                     tarBuffer.seek(0)
                     commands = [tarBuffer.read()]
 
-                resp = stream(client.CoreV1Api().connect_get_namespaced_pod_exec, podName, namespace, command=execCommand, stderr=True, stdin=True, stdout=True, tty=False, _preload_content=False)
+                resp = stream(client.CoreV1Api().connect_get_namespaced_pod_exec, podName, namespace,
+                              command=execCommand, stderr=True, stdin=True, stdout=True, tty=False, _preload_content=False)
 
                 while resp.is_open():
                     resp.update(timeout=1)
@@ -481,7 +492,8 @@ def kubectl(action, type=None, name=None, file=None, cmd=None, kubeconfig=None, 
                     try:
                         member = tar.getmembers()[0]
                         member.name = os.path.basename(member.name)
-                        if os.path.isdir(localPath) is False:  # check if localPath is a locally existing directory.
+                        # check if localPath is a locally existing directory.
+                        if os.path.isdir(localPath) is False:
                             member.name = os.path.basename(localPath)
                             localPath = os.path.dirname(localPath)
                         tar.extract(member, localPath)
@@ -492,6 +504,7 @@ def kubectl(action, type=None, name=None, file=None, cmd=None, kubeconfig=None, 
             res = False
 
     return 0 if res is True else 1
+
 
 def runTerraform(mainTfDir, baseCWD):
     """Run Terraform cmds.
@@ -506,7 +519,8 @@ def runTerraform(mainTfDir, baseCWD):
     """
     os.chdir(mainTfDir)
     beautify = "terraform fmt > /dev/null &&"
-    exitCode = runCMD('terraform init && %s terraform apply -auto-approve' % beautify)
+    exitCode = runCMD(
+        'terraform init && %s terraform apply -auto-approve' % beautify)
     os.chdir(baseCWD)
     return exitCode
 
@@ -523,12 +537,15 @@ def terraformProvisionmentAzure(test, nodes, flavor, extraInstanceConfig, toLog)
         kubeconfig = "~/.kube/config"
 
     # in order to have a single file for the infrastructure ("main.tf") put variables at the  beginning of it
-    randomId = ''.join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(4))  # A randomId is needed for each cluster
-    nodeName = ("kubenode-%s-%s-%s" %(configs["providerName"], test, str(randomId))).lower()
+    randomId = ''.join(random.SystemRandom().choice(string.ascii_lowercase + string.digits)
+                       for _ in range(4))  # A randomId is needed for each cluster
+    nodeName = ("kubenode-%s-%s-%s" %
+                (configs["providerName"], test, str(randomId))).lower()
     variables = loadFile("templates/azure/variables.tf", required=True).replace(
         "OPEN_USER_PH", configs['openUser']).replace(
         "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(
-        "KUBECONFIG_DST", kubeconfig).replace( # Is this needed? when retrieving the kubeconfig file, ssh_connect.sh is always called from where the config file should be placed. TODO: yes it is needed for the general cluster, as in that case ssh_connect is called from tests/sharedCluster but the kubeconfig file has to be places at ~/.kube/config
+        # ssh_connect.sh is always called from where the config file should be placed, except for "shared", whose kubeconfig goes to ~/.kube/config and not tests/sharedCluster/config
+        "KUBECONFIG_DST", kubeconfig).replace(
         "LOCATION_PH", configs['location']).replace(
         "PUB_SSH_PH", configs['pubSSH']).replace(
         "RGROUP_PH", configs['resourceGroupName']).replace(
@@ -540,14 +557,18 @@ def terraformProvisionmentAzure(test, nodes, flavor, extraInstanceConfig, toLog)
         "INSTANCE_NAME_PH", nodeName)
 
     # ------------------------- stack versioning
-    variables = variables.replace("DOCKER_CE_PH", str(configs["dockerCE"])) if configs["dockerCE"] else variables.replace("DOCKER_CE_PH", "")
-    variables = variables.replace("DOCKER_EN_PH", str(configs["dockerEngine"])) if configs["dockerEngine"] else variables.replace("DOCKER_EN_PH", "")
-    variables = variables.replace("K8S_PH", str(configs["kubernetes"])) if configs["kubernetes"] else variables.replace("K8S_PH", "")
+    variables = variables.replace("DOCKER_CE_PH", str(
+        configs["dockerCE"])) if configs["dockerCE"] else variables.replace("DOCKER_CE_PH", "")
+    variables = variables.replace("DOCKER_EN_PH", str(
+        configs["dockerEngine"])) if configs["dockerEngine"] else variables.replace("DOCKER_EN_PH", "")
+    variables = variables.replace("K8S_PH", str(
+        configs["kubernetes"])) if configs["kubernetes"] else variables.replace("K8S_PH", "")
 
     writeToFile(mainTfDir + "/main.tf", variables, False)
 
     # Add VM provisionment to main.tf
-    rawProvisioning = loadFile("templates/azure/rawProvision.tf", required=True)
+    rawProvisioning = loadFile(
+        "templates/azure/rawProvision.tf", required=True)
     writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
 
     # run terraform
@@ -565,10 +586,17 @@ def terraformProvisionmentAzure(test, nodes, flavor, extraInstanceConfig, toLog)
         return False, "Failed to bootstrap '%s' k8s cluster. Check 'logs' file " % flavor
 
     # ---------------- wait for default service account to be ready
-    while runCMD('kubectl --kubeconfig %s/%s get sa default' % (mainTfDir, kubeconfig), hideLogs=True) != 0:
+
+    if test == "shared":  # TODO: improve this
+        kubeconfig = "~/.kube/config"
+    else:
+        kubeconfig = "%s/%s" % (mainTfDir, kubeconfig)
+
+    while runCMD('kubectl --kubeconfig %s get sa default' % kubeconfig, hideLogs=True) != 0:
         time.sleep(1)
 
-    writeToFile(toLog, "...'%s' CLUSTER CREATED => STARTING TESTS\n" % flavor, True)
+    writeToFile(toLog, "...'%s' CLUSTER CREATED => STARTING TESTS\n" %
+                flavor, True)
     return True, ""
 
 
@@ -602,7 +630,8 @@ def terraformProvisionment(test, nodes, flavor, extraInstanceConfig, toLog):
         kubeconfig = "~/.kube/config"
 
     if retry is None:
-        randomId = ''.join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(4))  # A randomId is needed for each cluster
+        randomId = ''.join(random.SystemRandom().choice(string.ascii_lowercase + string.digits)
+                           for _ in range(4))  # A randomId is needed for each cluster
         # ---------------- delete TF stuff from previous run if existing
         for filename in ["join.sh", "main.tf", "terraform.tfstate", "terraform.tfstate.backup", ".terraform"]:
             file = "%s/%s" % (mainTfDir, filename)
@@ -613,7 +642,8 @@ def terraformProvisionment(test, nodes, flavor, extraInstanceConfig, toLog):
 
         # ---------------- create provisioner main.tf file
         global instanceDefinition
-        instanceDefinition = setName("%s \n %s" % (flavor, instanceDefinition), test, randomId)
+        instanceDefinition = setName("%s \n %s" % (
+            flavor, instanceDefinition), test, randomId)
         if extraInstanceConfig:
             instanceDefinition += "\n" + extraInstanceConfig
 
@@ -642,7 +672,8 @@ def terraformProvisionment(test, nodes, flavor, extraInstanceConfig, toLog):
                 "OPEN_USER_PH", configs['openUser']).replace(
                 "ALLOW_ROOT_DEP_PH", "null_resource.allow_root")
         else:
-            bootstrap = bootstrap.replace("ALLOW_ROOT_PH", "").replace("ALLOW_ROOT_DEP_PH", "")
+            bootstrap = bootstrap.replace(
+                "ALLOW_ROOT_PH", "").replace("ALLOW_ROOT_DEP_PH", "")
 
         bootstrap = bootstrap.replace(
             "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(
@@ -650,16 +681,19 @@ def terraformProvisionment(test, nodes, flavor, extraInstanceConfig, toLog):
             "KUBECONFIG_DST", kubeconfig)
 
         # ------------------------- stack versioning
-        bootstrap = bootstrap.replace("DOCKER_CE_PH", str(configs["docker-ce"])) if configs["dockerCE"] else bootstrap.replace("DOCKER_CE_PH", "")
-        bootstrap = bootstrap.replace("DOCKER_EN_PH", str(configs["dockerEngine"])) if configs["dockerEngine"] else bootstrap.replace("DOCKER_EN_PH", "")
-        bootstrap = bootstrap.replace("K8S_PH", str(configs["kubernetes"])) if configs["kubernetes"] else bootstrap.replace("K8S_PH", "")
+        bootstrap = bootstrap.replace("DOCKER_CE_PH", str(
+            configs["docker-ce"])) if configs["dockerCE"] else bootstrap.replace("DOCKER_CE_PH", "")
+        bootstrap = bootstrap.replace("DOCKER_EN_PH", str(
+            configs["dockerEngine"])) if configs["dockerEngine"] else bootstrap.replace("DOCKER_EN_PH", "")
+        bootstrap = bootstrap.replace("K8S_PH", str(
+            configs["kubernetes"])) if configs["kubernetes"] else bootstrap.replace("K8S_PH", "")
 
         bootstrap = "\n" + bootstrap.replace(
             "PROVIDER_INSTANCE_NAME", str(configs["providerInstanceName"])).replace(
             "NODES_PH", str(nodes))
         writeToFile(mainTfDir + "/main.tf", bootstrap, True)
 
-    #if retry is True and os.path.isfile("main.tf") is False: # TODO: improve
+    # if retry is True and os.path.isfile("main.tf") is False: # TODO: improve
     #    print("ERROR: run with option --retry before normal run.")
     #    stop(1)
 
@@ -672,7 +706,8 @@ def terraformProvisionment(test, nodes, flavor, extraInstanceConfig, toLog):
     while runCMD('kubectl --kubeconfig %s get sa default' % kubeconfig, hideLogs=True) != 0:
         time.sleep(1)
 
-    writeToFile(toLog, "...'%s' CLUSTER CREATED => STARTING TESTS\n" % flavor, True)
+    writeToFile(toLog, "...'%s' CLUSTER CREATED => STARTING TESTS\n" %
+                flavor, True)
     return True, ""
 
 
@@ -683,7 +718,8 @@ def checkDLsupport():
         bool: True in case cluster supports DL (dl_stack.sh was already run), False otherwise.
     """
 
-    pods = runCMD('kubectl --kubeconfig tests/dlTest/config get pods -n kubeflow', read=True)
+    pods = runCMD(
+        'kubectl --kubeconfig tests/dlTest/config get pods -n kubeflow', read=True)
     return len(pods) > 0 and "No resources found." not in pods
 
 
@@ -698,7 +734,8 @@ def writeFail(file, msg, toLog):
 
     writeToFile(toLog, msg, True)
     with open(resDir + "/" + file, 'w') as outfile:
-        json.dump({"info": msg, "result": "fail"}, outfile, indent=4, sort_keys=True)
+        json.dump({"info": msg, "result": "fail"},
+                  outfile, indent=4, sort_keys=True)
 
 
 def checkCost(value):
@@ -726,14 +763,16 @@ def s3Test():
     if kubectl(Action.create, file=testsRoot + "s3/s3pod.yaml", toLog="logging/shared") != 0:
         writeFail("s3Test.json", "Error deploying s3pod.", "logging/shared")
     else:
-        fetchResults("s3pod:/home/s3_test.json", "s3_test.json", "logging/shared")
+        fetchResults("s3pod:/home/s3_test.json",
+                     "s3_test.json", "logging/shared")
         end = time.time()  # bucket deletion
         # cleanup
         writeToFile("logging/shared", "Cluster cleanup...", True)
         kubectl(Action.delete, type=Type.pod, name="s3pod")
         res = True
         if obtainCost is True:
-            testCost = float(configs["costCalculation"]["s3bucketPrice"]) * (end - start) / 3600
+            testCost = float(configs["costCalculation"]
+                             ["s3bucketPrice"]) * (end - start) / 3600
 
     queue.put(({"test": "s3Test", "deployed": res}, testCost))
 
@@ -745,13 +784,16 @@ def dataRepatriationTest():
     testCost = 0
     with open(testsRoot + "data_repatriation/raw/repatriation_pod_raw.yaml", 'r') as infile:
         with open(testsRoot + "data_repatriation/repatriation_pod.yaml", 'w') as outfile:
-            outfile.write(infile.read().replace("PROVIDER_PH", configs["providerName"]))
+            outfile.write(infile.read().replace(
+                "PROVIDER_PH", configs["providerName"]))
 
     if kubectl(Action.create, file="%sdata_repatriation/repatriation_pod.yaml" % testsRoot, toLog="logging/shared") != 0:
-        writeFail("data_repatriation_test.json", "Error deploying data_repatriation pod.", "logging/shared")
+        writeFail("data_repatriation_test.json",
+                  "Error deploying data_repatriation pod.", "logging/shared")
 
     else:
-        fetchResults("repatriation-pod:/home/data_repatriation_test.json", "data_repatriation_test.json", "logging/shared")
+        fetchResults("repatriation-pod:/home/data_repatriation_test.json",
+                     "data_repatriation_test.json", "logging/shared")
         # cleanup
         writeToFile("logging/shared", "Cluster cleanup...", True)
         kubectl(Action.delete, type=Type.pod, name="repatriation-pod")
@@ -767,12 +809,15 @@ def cpuBenchmarking():
     testCost = 0
     with open(testsRoot + "cpu_benchmarking/raw/cpu_benchmarking_pod_raw.yaml", 'r') as infile:
         with open(testsRoot + "cpu_benchmarking/cpu_benchmarking_pod.yaml", 'w') as outfile:
-            outfile.write(infile.read().replace("PROVIDER_PH", configs["providerName"]))
+            outfile.write(infile.read().replace(
+                "PROVIDER_PH", configs["providerName"]))
 
     if kubectl(Action.create, file="%scpu_benchmarking/cpu_benchmarking_pod.yaml" % testsRoot, toLog="logging/shared") != 0:
-        writeFail("cpu_benchmarking.json", "Error deploying cpu_benchmarking_pod.", "logging/shared")
+        writeFail("cpu_benchmarking.json",
+                  "Error deploying cpu_benchmarking_pod.", "logging/shared")
     else:
-        fetchResults("cpu-benchmarking-pod:/tmp/cern-benchmark_root/bmk_tmp/result_profile.json", "cpu_benchmarking.json", "logging/shared")
+        fetchResults("cpu-benchmarking-pod:/tmp/cern-benchmark_root/bmk_tmp/result_profile.json",
+                     "cpu_benchmarking.json", "logging/shared")
         # cleanup
         writeToFile("logging/shared", "Cluster cleanup...", True)
         kubectl(Action.delete, type=Type.pod, name="cpu-benchmarking-pod")
@@ -787,7 +832,8 @@ def perfsonarTest():
     res = False
     testCost = 0
     if kubectl(Action.create, file=testsRoot + "perfsonar/ps_pod.yaml", toLog="logging/shared") != 0:
-        writeFail("perfsonar_results.json", "Error deploying perfsonar pod.", "logging/shared")
+        writeFail("perfsonar_results.json",
+                  "Error deploying perfsonar pod.", "logging/shared")
     else:
         while kubectl(Action.cp, podPath="ps-pod:/tmp", localPath=testsRoot + "perfsonar/ps_test.py", fetch=False) != 0:
             pass  # Copy script to pod
@@ -795,9 +841,11 @@ def perfsonarTest():
         prepareAndRun = "yum -y install python-dateutil python-requests && python /tmp/ps_test.py --ep %s" % testsCatalog[
             "perfsonarTest"]["endpoint"]
         if kubectl(Action.exec, name="ps-pod", cmd=prepareAndRun) != 0:
-            writeFail("perfsonar_results.json", "Error running script test on pod.", "logging/shared")
+            writeFail("perfsonar_results.json",
+                      "Error running script test on pod.", "logging/shared")
         else:
-            fetchResults("ps-pod:/tmp/perfsonar_results.json", "perfsonar_results.json", "logging/shared")
+            fetchResults("ps-pod:/tmp/perfsonar_results.json",
+                         "perfsonar_results.json", "logging/shared")
             res = True
             # cleanup
             writeToFile("logging/shared", "Cluster cleanup...", True)
@@ -812,15 +860,18 @@ def dodasTest():
     res = False
     testCost = 0
     if kubectl(Action.create, file=testsRoot + "dodas/dodas_pod.yaml", toLog="logging/shared") != 0:
-        writeFail("dodas_test.json", "Error deploying DODAS pod.", "logging/shared")
+        writeFail("dodas_test.json",
+                  "Error deploying DODAS pod.", "logging/shared")
     else:
         while kubectl(Action.cp, localPath="%sdodas/custom_entrypoint.sh" % testsRoot, podPath="dodas-pod:/CMSSW/CMSSW_9_4_0/src", fetch=False) != 0:
             pass  # Copy script to pod
         # Run copied script
         if kubectl(Action.exec, name="dodas-pod", cmd="sh /CMSSW/CMSSW_9_4_0/src/custom_entrypoint.sh") != 0:
-            writeFail("dodas_results.json", "Error running script test on pod.", "logging/shared")
+            writeFail("dodas_results.json",
+                      "Error running script test on pod.", "logging/shared")
         else:
-            fetchResults("dodas-pod:/tmp/dodas_test.json", "dodas_results.json", "logging/shared")
+            fetchResults("dodas-pod:/tmp/dodas_test.json",
+                         "dodas_results.json", "logging/shared")
             res = True
             # cleanup
             writeToFile("logging/shared", "Cluster cleanup...", True)
@@ -853,11 +904,13 @@ def dlTest():
 
     #### This should be done at the end of this function ##########################
     if obtainCost is True:
-        testCost = ((time.time() - start) / 3600) * configs["costCalculation"]["GPUInstancePrice"] * dl["nodes"]
+        testCost = ((time.time() - start) / 3600) * \
+            configs["costCalculation"]["GPUInstancePrice"] * dl["nodes"]
     #########################################################################################################
 
     #########################################################################################################
-    writeFail("bb_train_history.json", "Unable to download training data: bucket endpoint not reachable.", "logging/dlTest")
+    writeFail("bb_train_history.json",
+              "Unable to download training data: bucket endpoint not reachable.", "logging/dlTest")
     queue.put(({"test": "dlTest", "deployed": res}, testCost))
     return
     #########################################################################################################
@@ -866,23 +919,30 @@ def dlTest():
     if checkDLsupport() is False and viaBackend is False:  # backend run assumes dl support
         writeToFile("logging/dlTest", "Preparing cluster for DL test...", True)
         retries = 10
-        masterIP = runCMD("kubectl --kubeconfig tests/dlTest/config get nodes -owide | grep master | awk '{print $6}'", read=True)
+        masterIP = runCMD(
+            "kubectl --kubeconfig tests/dlTest/config get nodes -owide | grep master | awk '{print $6}'", read=True)
         if runCMD("terraform/ssh_connect.sh --usr root --ip %s --file tests/dlTest/installKubeflow.sh --retries %s" % (masterIP, retries)) != 0:
-            writeFail("bb_train_history.json", "Failed to prepare GPU/DL cluster (Kubeflow/Tensorflow/MPI)", "logging/dlTest")
+            writeFail("bb_train_history.json",
+                      "Failed to prepare GPU/DL cluster (Kubeflow/Tensorflow/MPI)", "logging/dlTest")
             return
-    kubectl(Action.create, file=testsRoot + "dlTest/device_plugin.yaml", ignoreErr=True)
-    kubectl(Action.create, file=testsRoot + "dlTest/pv-volume.yaml", ignoreErr=True)
-    kubectl(Action.create, file=testsRoot + "dlTest/3dgan-datafile-lists-configmap.yaml", ignoreErr=True)
+    kubectl(Action.create, file=testsRoot +
+            "dlTest/device_plugin.yaml", ignoreErr=True)
+    kubectl(Action.create, file=testsRoot +
+            "dlTest/pv-volume.yaml", ignoreErr=True)
+    kubectl(Action.create, file=testsRoot +
+            "dlTest/3dgan-datafile-lists-configmap.yaml", ignoreErr=True)
 
     # 2) Deploy the required files.
     if dl["nodes"] and isinstance(dl["nodes"], int) and dl["nodes"] > 1 and dl["nodes"]:
         nodesToUse = dl["nodes"]
     else:
-        writeToFile("logging/dlTest", "Provided value for 'nodes' not valid or unset, trying to use 5.", True)
+        writeToFile(
+            "logging/dlTest", "Provided value for 'nodes' not valid or unset, trying to use 5.", True)
         nodesToUse = 5
     with open(testsRoot + 'dlTest/train-mpi_3dGAN_raw.yaml', 'r') as inputfile:
         with open(testsRoot + "dlTest/train-mpi_3dGAN.yaml", 'w') as outfile:
-            outfile.write(str(inputfile.read()).replace("REP_PH", str(nodesToUse)))
+            outfile.write(str(inputfile.read()).replace(
+                "REP_PH", str(nodesToUse)))
 
     if kubectl(Action.create, file=testsRoot + "dlTest/train-mpi_3dGAN.yaml", toLog="logging/dlTest") != 0:
         writeFail("bb_train_history.json",
@@ -891,7 +951,8 @@ def dlTest():
         writeFail("bb_train_history.json",
                   "Cluster doesn't have enough GPU support. GPU flavor required.", "logging/dlTest")
     else:
-        fetchResults("train-mpijob-worker-0:/mpi_learn/bb_train_history.json", "bb_train_history.json", "logging/dlTest")
+        fetchResults("train-mpijob-worker-0:/mpi_learn/bb_train_history.json",
+                     "bb_train_history.json", "logging/dlTest")
         res = True
     # cleanup
     writeToFile("logging/dlTest", "Cluster cleanup...", True)
@@ -923,7 +984,8 @@ def hpcTest():
     res = False
 
     if obtainCost is True:
-        testCost = ((time.time() - start) / 3600) * configs["costCalculation"]["HPCInstancePrice"] * hpc["nodes"]
+        testCost = ((time.time() - start) / 3600) * \
+            configs["costCalculation"]["HPCInstancePrice"] * hpc["nodes"]
 
     queue.put(({"test": "hpcTest", "deployed": res}, testCost))
     return  # This is needed in case anything goes wrong and the run has to be killed
@@ -960,7 +1022,9 @@ def sharedClusterTests(msgArr):
     for p in sharedClusterProcs:
         p.join()
     if obtainCost is True:  # duration * instancePrice * numberOfInstances
-        testCost = ((time.time() - start) / 3600) * configs["costCalculation"]["generalInstancePrice"] * len(msgArr[1:])
+        testCost = ((time.time() - start) / 3600) * \
+            configs["costCalculation"]["generalInstancePrice"] * \
+            len(msgArr[1:])
     queue.put((None, testCost))
 
 
@@ -1049,7 +1113,8 @@ if checkResultsExist(resDir) is True:
     if totalCost > 0:
         generalResults["estimatedCost"] = totalCost
     else:
-        writeToFile("logging/footer", "(Required costs aren't correctly set: calculation will not be made)", True)
+        writeToFile(
+            "logging/footer", "(Required costs aren't correctly set: calculation will not be made)", True)
 
     # ----------------MANAGE RESULTS------------------------------------------------
     with open("results/" + s3ResDirBase + "/general.json", 'w') as outfile:
