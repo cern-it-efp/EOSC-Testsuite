@@ -15,7 +15,7 @@ variable "openUser" {
   default = "OPEN_USER_PH"
 }
 variable "instanceName" {
-  default = "INSTANCE_NAME_PH" # main.py generates name: kubenode-provider-randomId
+  default = "INSTANCE_NAME_PH" 
 }
 variable "flavor" {
   default = _PH
