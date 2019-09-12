@@ -214,8 +214,8 @@ def initAndChecks():
         print("kubectl is not installed")
         stop(1)
 
-    configs = loadFile("configurations/configs.yaml", required=True)
-    testsCatalog = loadFile("configurations/testsCatalog.yaml", required=True)
+    configs = loadFile("../configurations/configs.yaml", required=True)
+    testsCatalog = loadFile("../configurations/testsCatalog.yaml", required=True)
 
     # SSH key checks: exists and permissions set to 600
     if os.path.isfile(configs["pathToKey"]) is False:
@@ -239,10 +239,10 @@ def initAndChecks():
     #    stop(1)
 
     # this is now only required when not running on main clouds
-    instanceDefinition = loadFile("configurations/instanceDefinition")
-    extraInstanceConfig = loadFile("configurations/extraInstanceConfig")
-    dependencies = loadFile("configurations/dependencies")
-    credentials = loadFile("configurations/credentials")
+    instanceDefinition = loadFile("../configurations/instanceDefinition")
+    extraInstanceConfig = loadFile("../configurations/extraInstanceConfig")
+    dependencies = loadFile("../configurations/dependencies")
+    credentials = loadFile("../configurations/credentials")
 
     # --------General config checks
     # if "\"#NAME" not in instanceDefinition: # this has to be checked now only when not running on main clouds
@@ -1224,7 +1224,7 @@ if not initAndChecks():
 # ----------------CREATE RESULTS FOLDER AND GENERAL FILE------------------
 s3ResDirBase = configs["providerName"] + "/" + \
     str(datetime.datetime.now().strftime("%d-%m-%Y_%H-%M-%S"))
-resDir = "results/%s/detailed" % s3ResDirBase
+resDir = "../results/%s/detailed" % s3ResDirBase
 os.makedirs(resDir)
 generalResults = {
     "testing": []
@@ -1273,7 +1273,7 @@ if checkResultsExist(resDir) is True:
             True)
 
     # ----------------MANAGE RESULTS------------------------------------------
-    with open("results/" + s3ResDirBase + "/general.json", 'w') as outfile:
+    with open("../results/" + s3ResDirBase + "/general.json", 'w') as outfile:
         json.dump(generalResults, outfile, indent=4, sort_keys=True)
 
     msg1 = "TESTING COMPLETED. Results at:"
@@ -1283,16 +1283,16 @@ if checkResultsExist(resDir) is True:
         bucket = "s3://ts-results"
         pushResults = runCMD(
             "aws s3 cp --endpoint-url=%s %s %s/%s --recursive > /dev/null" %
-            (s3Endpoint, "results/" + s3ResDirBase, bucket, s3ResDirBase))
-        runCMD("cp results/%s/general.json .. " % s3ResDirBase)
+            (s3Endpoint, "../results/" + s3ResDirBase, bucket, s3ResDirBase))
+        runCMD("cp ../results/%s/general.json .. " % s3ResDirBase)
         if pushResults != 0:
             logger("S3 upload failed! Is 'awscli' installed and configured?",
                    "!", "logging/footer")
         else:
             logger([msg1, "S3 bucket"], "#", "logging/footer")
     else:
-        logger([msg1, "results/" + s3ResDirBase], "#", "logging/footer")
+        logger([msg1, "../results/" + s3ResDirBase], "#", "logging/footer")
 else:
-    shutil.rmtree("results/" + s3ResDirBase, True)
+    shutil.rmtree("../results/" + s3ResDirBase, True)
 
 stop(0)
