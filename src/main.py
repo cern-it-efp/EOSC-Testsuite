@@ -26,8 +26,8 @@ try:
     from pathlib import Path
     from enum import Enum
     # custom ones
-    import checker
-    import tests
+    from checker import *
+    from tests import *
 
 except ModuleNotFoundError as ex:
     print(ex)
@@ -110,7 +110,7 @@ instanceDefinition = ""
 extraInstanceConfig = ""
 dependencies = ""
 credentials = ""
-t = True
+#t = True
 totalCost = 0
 procs = []
 testsRoot = "tests/"
@@ -835,14 +835,7 @@ def writeFail(file, msg, toLog):
                   outfile, indent=4, sort_keys=True)
 
 
-def checkCost(value):
-    """ Checks the provided value is not None and is greater than 0.
-
-    Parameters:
-        value: Value to be checked.
-    """
-
-    return value >= 0 and obtainCost is True if value else False
+#def checkCost(value):
 
 
 def s3Test():
