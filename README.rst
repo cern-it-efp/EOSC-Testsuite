@@ -27,14 +27,12 @@ The test-suite executes four main steps:
 
 The test set described below is based on the tests used in `Helix Nebula The Science Cloud <https://www.hnscicloud.eu/>`_ PCP project funded by the European Commission.
 
-The developers would like to thank to all test owners and contributors to this project.
+The developers would like to thank all test owners and contributors to this project.
 
 **This test-suite has been tested on:**
 
 +------------------------------+---------------------------------------------------------------------------------+
-|Python                        | 3                                                                               |
-+------------------------------+---------------------------------------------------------------------------------+
-|Linux distros                 | Ubuntu, CentOS, CoreOS, Debian, RedHat, Fedora                                  |
+|OS on launcher machine        | Ubuntu, CentOS, CoreOS, Debian, RedHat, Fedora                                  |
 +------------------------------+---------------------------------------------------------------------------------+
 |OS running on provider's VMs  | CentOS7                                                                         |
 +------------------------------+---------------------------------------------------------------------------------+
@@ -53,7 +51,7 @@ Release notes
 ---------------------------------------------
 (Note the versions are numbered with the date of the release: YEAR.MONTH)
 
-``19.?``
+``19.``
 
 -Project restructure and code refactoring.
 

@@ -1,0 +1,6 @@
+display_name = "kubenode"#NAME
+template = "Linux CentOS 7.6 64-bit"
+key_pair = "k_cl"
+security_groups = ["default"]
+disk_size = 100
+zone = "ch-gva-2"
