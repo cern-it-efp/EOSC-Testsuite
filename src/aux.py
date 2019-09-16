@@ -142,24 +142,3 @@ def logger(text, sym, file):
                (toPrint, file))
     else:
         print(toPrint)
-
-
-def setName(instance, provider, purpose, randomId):
-    """Generates the name for a VM.
-
-    Parameters:
-        instance (str): Instance's raw name
-        purpose (str): Cluster purpose, to differentiate the clusters
-        randomId (str): A random id to name the node
-
-    Returns:
-        str: Name for the instance
-    """
-
-    newName = (
-        "-%s${count.index}-%s-%s" %
-        (provider, # TODO: configs: taken from where?
-         purpose,
-         str(randomId) +
-         "\"")).lower()
-    return instance.replace("\"#NAME", newName)

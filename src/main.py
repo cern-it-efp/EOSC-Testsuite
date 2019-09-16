@@ -45,19 +45,11 @@ testsSharingCluster = ["s3Test", "dataRepatriationTest",
 customClustersTests = ["dlTest", "hpcTest"]
 baseCWD = os.getcwd()
 resultsExist = False
-provDict = {
-    'openstack': 'openstack_compute_instance_v2.kubenode[count.index].network[0].fixed_ip_v4',
-    'exoscale': 'element(exoscale_compute.kubenode.*.ip_address, count.index)',
-    'aws': 'element(aws_instance.kubenode.*.private_ip, count.index)',
-    'azurerm': 'element(azurerm_network_interface.terraformnic.*.private_ip_address, count.index)',
-    'google': 'element(google_compute_instance.kubenode.*.network_interface.0.network_ip, count.index)',
-    'opentelekomcloud': '',
-    'cloudstack': '',
-    'cloudscale': '',
-    'ibm': ''}
+provDict = loadFile("schemas/provDict.yaml", required=True)["allProviders"]
+extraSupportedClouds = loadFile("schemas/provDict.yaml", required=True)["extraSupportedClouds"]
 obtainCost = True
 retry = None
-publicRepo = "https://github.com/cern-it-efp/OCRE-Testsuite"
+publicRepo = "https://ocre-testsuite.rtfd.io"
 
 
 def initAndChecks():
@@ -95,56 +87,70 @@ def initAndChecks():
         print("Key permissions must be set to 600")
         stop(1)
 
-    # disable schema validation for testing
-    # try:
-    #    jsonschema.validate(configs, loadFile("schemas/configs_sch.yaml"))
-    # except jsonschema.exceptions.ValidationError as ex:
-    #    print("Error validating configs.yaml: \n %s" % ex)
-    #    stop(1)
+    # disabled schema validation for testing
+    try:
+        jsonschema.validate(
+            configs,
+            loadFile("schemas/configs_sch.yaml"))
+    except jsonschema.exceptions.ValidationError as ex:
+        print("Error validating configs.yaml: \n %s" % ex)
+        stop(1)
 
-    # try:
-    #    jsonschema.validate(testsCatalog, loadFile("schemas/testsCatalog_sch.yaml"))
-    # except jsonschema.exceptions.ValidationError as ex:
-    #    print("Error validating testsCatalog.yaml: \n %s" % ex)
-    #    stop(1)
+    try:
+        jsonschema.validate(
+            testsCatalog,
+            loadFile("schemas/testsCatalog_sch.yaml"))
+    except jsonschema.exceptions.ValidationError as ex:
+        print("Error validating testsCatalog.yaml: \n %s" % ex)
+        stop(1)
 
-    # this is now only required when not running on main clouds
+    # TODO: instanceDefinition is now only required when not running on main
+    # clouds
     instanceDefinition = loadFile("../configurations/instanceDefinition")
     extraInstanceConfig = loadFile("../configurations/extraInstanceConfig")
     dependencies = loadFile("../configurations/dependencies")
     credentials = loadFile("../configurations/credentials")
 
+    if configs['providerName'] not in provDict:
+        writeToFile("logging/header", "Provider '%s' not supported" %
+                    configs['providerName'], True)
+        stop(1)
+
     # --------General config checks
-    # if "\"#NAME" not in instanceDefinition: # this has to be checked now only when not running on main clouds
-    #    writeToFile("logging/header", "The placeholder comment for name at configs.yaml was not found!", True)
-    #    stop(1)
-    # if configs['providerName'] not in provDict:
-    #    writeToFile("logging/header", "Provider '%s' not supported" % configs['providerName'], True)
-    #    stop(1)
+    if configs['providerName'] not in extraSupportedClouds and "NAME_PH" not in instanceDefinition:
+        writeToFile(
+            "logging/header",
+            "ERROR: NAME_PH was not found in instanceDefinition file.",
+            True)
+        stop(1)
 
     # --------Tests config checks
     selected = []
     if testsCatalog["s3Test"]["run"] is True:
         selected.append("s3Test")
-        obtainCost = checkCost(obtainCost,
-                               configs["costCalculation"]["generalInstancePrice"])
+        obtainCost = checkCost(
+            obtainCost,
+            configs["costCalculation"]["generalInstancePrice"])
         obtainCost = checkCost(
             obtainCost, configs["costCalculation"]["s3bucketPrice"])
 
     if testsCatalog["perfsonarTest"]["run"] is True:
         selected.append("perfsonarTest")
-        obtainCost = checkCost(obtainCost,
-                               configs["costCalculation"]["generalInstancePrice"])
+        obtainCost = checkCost(
+            obtainCost,
+            configs["costCalculation"]["generalInstancePrice"])
 
     if testsCatalog["dataRepatriationTest"]["run"] is True:
         selected.append("dataRepatriationTest")
-        obtainCost = checkCost(obtainCost,
-                               configs["costCalculation"]["generalInstancePrice"])
+        obtainCost = checkCost(
+            obtainCost,
+            configs["costCalculation"]["generalInstancePrice"])
 
     if testsCatalog["cpuBenchmarking"]["run"] is True:
         selected.append("cpuBenchmarking")
-        obtainCost = checkCost(obtainCost,
-                               configs["costCalculation"]["generalInstancePrice"])
+        obtainCost = checkCost(
+            obtainCost,
+            configs["costCalculation"]["generalInstancePrice"])
 
     if testsCatalog["dlTest"]["run"] is True:
         selected.append("dlTest")
@@ -158,8 +164,9 @@ def initAndChecks():
 
     if testsCatalog["dodasTest"]["run"] is True:
         selected.append("dodasTest")
-        obtainCost = checkCost(obtainCost,
-                               configs["costCalculation"]["generalInstancePrice"])
+        obtainCost = checkCost(
+            obtainCost,
+            configs["costCalculation"]["generalInstancePrice"])
 
     return selected
 
@@ -208,8 +215,10 @@ def dataRepatriationTest():
 
     res = False
     testCost = 0
-    with open(testsRoot + "data_repatriation/raw/repatriation_pod_raw.yaml", 'r') as infile:
-        with open(testsRoot + "data_repatriation/repatriation_pod.yaml", 'w') as outfile:
+    with open(testsRoot + "data_repatriation/raw/repatriation_pod_raw.yaml",
+              'r') as infile:
+        with open(testsRoot + "data_repatriation/repatriation_pod.yaml",
+                  'w') as outfile:
             outfile.write(infile.read().replace(
                 "PROVIDER_PH", configs["providerName"]))
 
@@ -222,8 +231,11 @@ def dataRepatriationTest():
                   "Error deploying data_repatriation pod.", "logging/shared")
 
     else:
-        fetchResults(resDir, "repatriation-pod:/home/data_repatriation_test.json",
-                     "data_repatriation_test.json", "logging/shared")
+        fetchResults(
+            resDir,
+            "repatriation-pod:/home/data_repatriation_test.json",
+            "data_repatriation_test.json",
+            "logging/shared")
         # cleanup
         writeToFile("logging/shared", "Cluster cleanup...", True)
         kubectl(Action.delete, type=Type.pod, name="repatriation-pod")
@@ -237,8 +249,10 @@ def cpuBenchmarking():
 
     res = False
     testCost = 0
-    with open(testsRoot + "cpu_benchmarking/raw/cpu_benchmarking_pod_raw.yaml", 'r') as infile:
-        with open(testsRoot + "cpu_benchmarking/cpu_benchmarking_pod.yaml", 'w') as outfile:
+    with open(testsRoot + "cpu_benchmarking/raw/cpu_benchmarking_pod_raw.yaml",
+              'r') as infile:
+        with open(testsRoot + "cpu_benchmarking/cpu_benchmarking_pod.yaml",
+                  'w') as outfile:
             outfile.write(infile.read().replace(
                 "PROVIDER_PH", configs["providerName"]))
 
@@ -251,12 +265,13 @@ def cpuBenchmarking():
                   "Error deploying cpu_benchmarking_pod.", "logging/shared")
     else:
         fetchResults(
-            resDir, "cpu-benchmarking-pod:/tmp/cern-benchmark_root/bmk_tmp/result_profile.json",
+            resDir,
+            "cpu-bmk-pod:/tmp/cern-benchmark_root/bmk_tmp/result_profile.json",
             "cpu_benchmarking.json",
             "logging/shared")
         # cleanup
         writeToFile("logging/shared", "Cluster cleanup...", True)
-        kubectl(Action.delete, type=Type.pod, name="cpu-benchmarking-pod")
+        kubectl(Action.delete, type=Type.pod, name="cpu-bmk-pod")
         res = True
 
     queue.put(({"test": "cpuBenchmarking", "deployed": res}, testCost))
@@ -351,8 +366,19 @@ def dlTest():
     dl = testsCatalog["dlTest"]
     kubeconfig = "tests/dlTest/config"
     if onlyTest is False:
-        prov, msg = terraformProvisionment(
-            "dlTest", dl["nodes"], dl["flavor"], extraInstanceConfig, "logging/dlTest", configs, testsRoot, retry, instanceDefinition, credentials, dependencies, baseCWD, provDict)
+        prov, msg = terraformProvisionment("dlTest",
+                                           dl["nodes"],
+                                           dl["flavor"],
+                                           extraInstanceConfig,
+                                           "logging/dlTest",
+                                           configs,
+                                           testsRoot,
+                                           retry,
+                                           instanceDefinition,
+                                           credentials,
+                                           dependencies,
+                                           baseCWD,
+                                           provDict)
         if prov is False:
             writeFail(resDir, "bb_train_history.json", msg, "logging/dlTest")
             return
@@ -368,10 +394,11 @@ def dlTest():
     ##########################################################################
 
     ##########################################################################
-    writeFail(resDir,
-              "bb_train_history.json",
-              "Unable to download training data: bucket endpoint not reachable.",
-              "logging/dlTest")
+    writeFail(
+        resDir,
+        "bb_train_history.json",
+        "Unable to download training data: bucket endpoint not reachable.",
+        "logging/dlTest")
     queue.put(({"test": "dlTest", "deployed": res}, testCost))
     return
     ##########################################################################
@@ -388,10 +415,11 @@ def dlTest():
         if runCMD(
             "terraform/ssh_connect.sh --usr root --ip %s --file %s --retries %s" %
                 (masterIP, script, retries)) != 0:
-            writeFail(resDir,
-                      "bb_train_history.json",
-                      "Failed to prepare GPU/DL cluster (Kubeflow/Tensorflow/MPI)",
-                      "logging/dlTest")
+            writeFail(
+                resDir,
+                "bb_train_history.json",
+                "Failed to prepare GPU/DL cluster (Kubeflow/Tensorflow/MPI)",
+                "logging/dlTest")
             return
     kubectl(Action.create, file=testsRoot +
             "dlTest/device_plugin.yaml", ignoreErr=True)
@@ -423,14 +451,19 @@ def dlTest():
         writeFail(resDir, "bb_train_history.json",
                   "Error deploying train-mpi_3dGAN.", "logging/dlTest")
     elif runCMD(
-            'kubectl describe pods | grep \"Insufficient nvidia.com/gpu\"', read=True):
-        writeFail(resDir,
-                  "bb_train_history.json",
-                  "Cluster doesn't have enough GPU support. GPU flavor required.",
-                  "logging/dlTest")
+            'kubectl describe pods | grep \"Insufficient nvidia.com/gpu\"',
+            read=True):
+        writeFail(
+            resDir,
+            "bb_train_history.json",
+            "Cluster doesn't have enough GPU support. GPU flavor required.",
+            "logging/dlTest")
     else:
-        fetchResults(resDir, "train-mpijob-worker-0:/mpi_learn/bb_train_history.json",
-                     "bb_train_history.json", "logging/dlTest")
+        fetchResults(
+            resDir,
+            "train-mpijob-worker-0:/mpi_learn/bb_train_history.json",
+            "bb_train_history.json",
+            "logging/dlTest")
         res = True
     # cleanup
     writeToFile("logging/dlTest", "Cluster cleanup...", True)
@@ -450,8 +483,19 @@ def hpcTest():
     testCost = 0
     hpc = testsCatalog["hpcTest"]
     if onlyTest is False:
-        prov, msg = terraformProvisionment(
-            "hpcTest", hpc["nodes"], hpc["flavor"], None, "logging/hpcTest", configs, testsRoot, retry, instanceDefinition, credentials, dependencies, baseCWD, provDict)
+        prov, msg = terraformProvisionment("hpcTest",
+                                           hpc["nodes"],
+                                           hpc["flavor"],
+                                           None,
+                                           "logging/hpcTest",
+                                           configs,
+                                           testsRoot,
+                                           retry,
+                                           instanceDefinition,
+                                           credentials,
+                                           dependencies,
+                                           baseCWD,
+                                           provDict)
         if prov is False:
             writeFail(resDir, "hpcTest_result.json", msg, "logging/hpcTest")
             return
@@ -486,8 +530,19 @@ def sharedClusterTests(msgArr):
     logger(msgArr, "=", "logging/shared")
     if onlyTest is False:
         # minus 1 because the array contains the string message
-        prov, msg = terraformProvisionment(
-            "shared", len(msgArr) - 1, None, None, "logging/shared", configs, testsRoot, retry, instanceDefinition, credentials, dependencies, baseCWD, provDict)
+        prov, msg = terraformProvisionment("shared",
+                                           len(msgArr) - 1,
+                                           None,
+                                           None,
+                                           "logging/shared",
+                                           configs,
+                                           testsRoot,
+                                           retry,
+                                           instanceDefinition,
+                                           credentials,
+                                           dependencies,
+                                           baseCWD,
+                                           provDict)
         if prov is False:
             writeFail(resDir, "sharedCluster_result.json",
                       msg, "logging/shared")

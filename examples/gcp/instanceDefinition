@@ -1,4 +1,4 @@
-name         = "kubenode"#NAME
+name         = "NAME_PH"
 zone         = "us-west1-a"
 boot_disk {
   initialize_params {

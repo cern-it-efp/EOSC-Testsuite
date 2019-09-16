@@ -1,4 +1,4 @@
-display_name = "kubenode"#NAME
+display_name = "NAME_PH"
 template = "Linux CentOS 7.6 64-bit"
 key_pair = "k_cl"
 security_groups = ["default"]
