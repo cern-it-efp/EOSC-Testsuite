@@ -92,7 +92,7 @@ def terraformProvisionment(
         test (str): Indicates the test for which to provision the cluster
         nodes (int): Number of nodes the cluster must contain.
         flavor (str): Flavor to be used for the VMs.
-        extraInstanceConfig (str): Extra HCL code to configure compute instance
+        extraInstanceConfig (str): Extra HCL code to configure VM
         toLog (str): File to which write the log msg.
         configs ...
         testsRoot ...
@@ -121,7 +121,6 @@ def terraformProvisionment(
     cleanupTF(mainTfDir)
 
     if configs["providerName"] is "azurerm":
-        # TODO: the previous lines have been deleted from terraformProvisionmentAzure, hence pass the needed variables (mainTfDir, kubeconfig) to it
         nodeName = ("kubenode-%s-%s-%s" %
                     (configs["providerName"], test, str(randomId))).lower()
 
@@ -192,7 +191,8 @@ def terraformProvisionment(
             "DEPENDENCIES_PLACEHOLDER", dependencies.replace(
                 "DEP_COUNT_PH", "count = %s" % nodes)).replace(
             "PROVIDER_NAME", str(configs["providerName"])).replace(
-            "PROVIDER_INSTANCE_NAME", str(configs["providerInstanceName"])).replace(
+            "PROVIDER_INSTANCE_NAME", str(
+                configs["providerInstanceName"])).replace(
             "NODE_DEFINITION_PLACEHOLDER", instanceDefinition)
 
         writeToFile(mainTfDir + "/main.tf", rawProvision, True)

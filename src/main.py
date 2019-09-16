@@ -45,8 +45,10 @@ testsSharingCluster = ["s3Test", "dataRepatriationTest",
 customClustersTests = ["dlTest", "hpcTest"]
 baseCWD = os.getcwd()
 resultsExist = False
-provDict = loadFile("schemas/provDict.yaml", required=True)["allProviders"]
-extraSupportedClouds = loadFile("schemas/provDict.yaml", required=True)["extraSupportedClouds"]
+provDict = loadFile("schemas/provDict.yaml",
+                    required=True)["allProviders"]
+extraSupportedClouds = loadFile("schemas/provDict.yaml",
+                                required=True)["extraSupportedClouds"]
 obtainCost = True
 retry = None
 publicRepo = "https://ocre-testsuite.rtfd.io"
@@ -117,7 +119,8 @@ def initAndChecks():
         stop(1)
 
     # --------General config checks
-    if configs['providerName'] not in extraSupportedClouds and "NAME_PH" not in instanceDefinition:
+    if configs['providerName'] not in extraSupportedClouds
+    and "NAME_PH" not in instanceDefinition:
         writeToFile(
             "logging/header",
             "ERROR: NAME_PH was not found in instanceDefinition file.",
@@ -404,16 +407,19 @@ def dlTest():
     ##########################################################################
 
     # 1) Install the stuff needed for this test: device plugin yaml file
-    # (contains driver too) and dl_stack.sh for kubeflow and mpi
-    if checkDLsupport() is False and viaBackend is False:  # backend run assumes dl support
+    # (contains driver too) and dl_stack.sh for kubeflow and mpi.
+    # (backend run assumes dl support)
+    if checkDLsupport() is False and viaBackend is False:
         writeToFile("logging/dlTest", "Preparing cluster for DL test...", True)
         masterIP = runCMD(
-            "kubectl --kubeconfig %s get nodes -owide | grep master | awk '{print $6}'" %
+            "kubectl --kubeconfig %s get nodes -owide |\
+            grep master | awk '{print $6}'" %
             kubeconfig, read=True)
         script = "tests/dlTest/installKubeflow.sh"
         retries = 10
         if runCMD(
-            "terraform/ssh_connect.sh --usr root --ip %s --file %s --retries %s" %
+            "terraform/ssh_connect.sh --usr root --ip %s\
+            --file %s --retries %s" %
                 (masterIP, script, retries)) != 0:
             writeFail(
                 resDir,
@@ -589,8 +595,8 @@ if not initAndChecks():
 
 
 # ----------------CREATE RESULTS FOLDER AND GENERAL FILE------------------
-s3ResDirBase = configs["providerName"] + "/" + \
-    str(datetime.datetime.now().strftime("%d-%m-%Y_%H-%M-%S"))
+s3ResDirBase = configs["providerName"] + "/" + str(
+    datetime.datetime.now().strftime("%d-%m-%Y_%H-%M-%S"))
 resDir = "../results/%s/detailed" % s3ResDirBase
 os.makedirs(resDir)
 generalResults = {
