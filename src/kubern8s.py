@@ -23,6 +23,7 @@ from aux import *
 Action = Enum('Action', 'create delete cp exec')
 Type = Enum('Type', 'pod daemonset mpijob configmap pv')
 
+
 def checkCluster(test):
     """ Returns True if the cluster is reachable
 
@@ -38,10 +39,8 @@ def checkCluster(test):
         cmd += " --kubeconfig tests/%s/config" % (test)
     if runCMD(cmd, hideLogs=True) != 0:
         writeToFile(
-            "logging/" +
-            test,
-            test +
-            " cluster not reachable, was infrastructure created?",
+            "logging/%s" % test,
+            "%s cluster not reachable, was infrastructure created?" % test,
             True)
         return False
     return True
@@ -146,8 +145,12 @@ def kubectl(
             with open(file, 'r') as inputfile:
                 body = yaml.load(inputfile, Loader=yaml.FullLoader)
             try:
-                apiResponse = client.CustomObjectsApi().create_namespaced_custom_object(
-                    'kubeflow.org', 'v1alpha1', namespace, 'mpijobs', body)
+                client.CustomObjectsApi().create_namespaced_custom_object(
+                    'kubeflow.org',
+                    'v1alpha1',
+                    namespace,
+                    'mpijobs',
+                    body)
                 writeToFile(toLog, "Created resource from file '%s'" %
                             file, True)
             except ApiException as ex:
@@ -165,23 +168,28 @@ def kubectl(
     elif action is Action.delete:
         try:
             if type is Type.pod:
-                apiResponse = client.CoreV1Api().delete_namespaced_pod(
+                client.CoreV1Api().delete_namespaced_pod(
                     name=name, namespace=namespace)
             elif type is Type.daemonset:
-                apiResponse = client.AppsV1Api().delete_namespaced_daemon_set(
+                client.AppsV1Api().delete_namespaced_daemon_set(
                     name=name, namespace=namespace)
             elif type is Type.mpijob:
                 try:
-                    apiResponse = client.CustomObjectsApi().delete_namespaced_custom_object(
-                        'kubeflow.org', 'v1alpha1', namespace, 'mpijobs', name, client.V1DeleteOptions())
-                except BaseException:  # except ApiException as ex:
+                    client.CustomObjectsApi().delete_namespaced_custom_object(
+                        'kubeflow.org',
+                        'v1alpha1',
+                        namespace,
+                        'mpijobs',
+                        name,
+                        client.V1DeleteOptions())
+                except BaseException:
                     res = False
             elif type is Type.configmap:
-                apiResponse = client.CoreV1Api().delete_namespaced_config_map(
+                client.CoreV1Api().delete_namespaced_config_map(
                     name=name, namespace=namespace)
             elif type is Type.pv:
-                apiResponse = client.CoreV1Api().delete_persistent_volume(name=name)
-        except BaseException:  # except ApiException as ex:
+                client.CoreV1Api().delete_persistent_volume(name=name)
+        except BaseException:
             res = False
 
     elif action is Action.exec:
@@ -198,7 +206,7 @@ def kubectl(
                 stdin=True,
                 stdout=True,
                 tty=False)
-        except BaseException:  # except ApiException as ex:
+        except BaseException:
             res = False
 
     elif action is Action.cp:
@@ -266,7 +274,7 @@ def kubectl(
                         tar.close()
                     except IndexError:  # File not found
                         res = False
-        except BaseException:  # except ApiException as ex:
+        except BaseException:
             res = False
 
     return 0 if res is True else 1

@@ -7,12 +7,17 @@ import string
 
 from aux import *
 
-def runTerraform(mainTfDir, baseCWD):
+provisionFailMsg = "Failed to provision raw VMs. Check 'logs' file for details"
+bootstrapFailMsg = "Failed to bootstrap '%s' k8s cluster. Check 'logs' file"
+
+
+def runTerraform(mainTfDir, baseCWD, autoApprove=True):
     """Run Terraform cmds.
 
     Parameters:
         mainTfDir (str): Path where the .tf file is.
         baseCWD (str): Path to go back.
+        autoApprove (bool): If True (default) use '-auto-approve' option
 
     Returns:
         int: 0 for success, 1 for failure
@@ -20,10 +25,50 @@ def runTerraform(mainTfDir, baseCWD):
     """
     os.chdir(mainTfDir)
     beautify = "terraform fmt > /dev/null &&"
-    exitCode = runCMD(
-        'terraform init && %s terraform apply -auto-approve' % beautify)
+    tfCMD = 'terraform init && %s terraform apply -auto-approve' % beautify
+    if autoApprove is False:
+        tfCMD = 'terraform init && %s terraform apply' % beautify
+    exitCode = runCMD(tfCMD)
     os.chdir(baseCWD)
     return exitCode
+
+
+def cleanupTF(mainTfDir):
+    """ Delete existing terraform stuff in the specified folder.
+    """
+
+    for filename in [
+        "join.sh",
+        "main.tf",
+        "terraform.tfstate",
+        "terraform.tfstate.backup",
+            ".terraform"]:
+        file = "%s/%s" % (mainTfDir, filename)
+        if os.path.isfile(file):
+            os.remove(file)
+        if os.path.isdir(file):
+            shutil.rmtree(file, True)
+
+
+def stackVersioning(variables, configs):
+
+    if configs["dockerCE"]:
+        variables = variables.replace("DOCKER_CE_PH", str(configs["dockerCE"]))
+    else:
+        variables.replace("DOCKER_CE_PH", "")
+
+    if configs["dockerEngine"]:
+        variables = variables.replace(
+            "DOCKER_EN_PH", str(configs["dockerEngine"]))
+    else:
+        variables.replace("DOCKER_EN_PH", "")
+
+    if configs["kubernetes"]:
+        variables = variables.replace("K8S_PH", str(configs["kubernetes"]))
+    else:
+        variables.replace("K8S_PH", "")
+
+    return variables
 
 
 def terraformProvisionmentAzure(
@@ -34,28 +79,13 @@ def terraformProvisionmentAzure(
         toLog):
     """Provisions VMs on azure and creates a k8s cluster with them."""
 
-    mainTfDir = testsRoot + test
-    kubeconfig = "config"
-    if test == "shared":
-        flavor = configs["flavor"]
-        mainTfDir = testsRoot + "sharedCluster"
-        os.makedirs(mainTfDir, exist_ok=True)
-        kubeconfig = "~/.kube/config"
-
-    # in order to have a single file for the infrastructure ("main.tf") put
-    # variables at the  beginning of it
-    randomId = ''.join(
-        random.SystemRandom().choice(
-            string.ascii_lowercase +
-            string.digits) for _ in range(4))  # One randomId per cluster
     nodeName = ("kubenode-%s-%s-%s" %
                 (configs["providerName"], test, str(randomId))).lower()
-    variables = loadFile("templates/azure/variables.tf", required=True).replace(
+
+    variablesRaw = loadFile("templates/azure/variables.tf", required=True)
+    variables = variablesRaw.replace(
         "OPEN_USER_PH", configs['openUser']).replace(
         "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(
-        # ssh_connect.sh is always called from where the config file should be
-        # placed, except for "shared", whose kubeconfig goes to ~/.kube/config
-        # and not tests/sharedCluster/config
         "KUBECONFIG_DST", kubeconfig).replace(
         "LOCATION_PH", configs['location']).replace(
         "PUB_SSH_PH", configs['pubSSH']).replace(
@@ -68,18 +98,7 @@ def terraformProvisionmentAzure(
         "INSTANCE_NAME_PH", nodeName)
 
     # ------------------------- stack versioning
-    variables = variables.replace(
-        "DOCKER_CE_PH", str(
-            configs["dockerCE"])) if configs["dockerCE"] else variables.replace(
-        "DOCKER_CE_PH", "")
-    variables = variables.replace(
-        "DOCKER_EN_PH", str(
-            configs["dockerEngine"])) if configs["dockerEngine"] else variables.replace(
-        "DOCKER_EN_PH", "")
-    variables = variables.replace(
-        "K8S_PH", str(
-            configs["kubernetes"])) if configs["kubernetes"] else variables.replace(
-        "K8S_PH", "")
+    variables = stackVersioning(variables, configs)
 
     writeToFile(mainTfDir + "/main.tf", variables, False)
 
@@ -91,36 +110,27 @@ def terraformProvisionmentAzure(
     # run terraform
     writeToFile(toLog, "Provisioning '" + flavor + "' VMs...", True)
     if runTerraform(mainTfDir, baseCWD) != 0:
-        return False, "Failed to provision raw VMs. Check 'logs' file for details"
+        return False, provisionFailMsg
 
     # On completion of TF, add the bootstrap section to main.tf
     bootstrap = loadFile("templates/azure/bootstrap.tf", required=True)
     writeToFile(mainTfDir + "/main.tf", bootstrap, True)
 
-    # Run terraform again
-    writeToFile(toLog, "...bootstraping Kubernetes cluster...", True)
-    if runTerraform(mainTfDir, baseCWD) != 0:
-        return False, "Failed to bootstrap '%s' k8s cluster. Check 'logs' file " % flavor
 
-    # ---------------- wait for default service account to be ready
-
-    if test == "shared":  # TODO: improve this
-        kubeconfig = "~/.kube/config"
-    else:
-        kubeconfig = "%s/%s" % (mainTfDir, kubeconfig)
-
-    while runCMD(
-        'kubectl --kubeconfig %s get sa default' %
-        kubeconfig,
-            hideLogs=True) != 0:
-        time.sleep(1)
-
-    writeToFile(toLog, "...'%s' CLUSTER CREATED => STARTING TESTS\n" %
-                flavor, True)
-    return True, ""
-
-
-def terraformProvisionment(test, nodes, flavor, extraInstanceConfig, toLog, configs, testsRoot, retry, instanceDefinition, credentials, dependencies, baseCWD, provDict):
+def terraformProvisionment(
+        test,
+        nodes,
+        flavor,
+        extraInstanceConfig,
+        toLog,
+        configs,
+        testsRoot,
+        retry,
+        instanceDefinition,
+        credentials,
+        dependencies,
+        baseCWD,
+        provDict):
     """Provisions VMs on the provider side and creates a k8s cluster with them.
 
     Parameters:
@@ -137,111 +147,101 @@ def terraformProvisionment(test, nodes, flavor, extraInstanceConfig, toLog, conf
         str: Message informing of the provisionment task result.
     """
 
-    # if configs["providerName"] in extraSupported:
-    # return eval(extraSupported[configs["providerName"](test, nodes, flavor,
-    # extraInstanceConfig, toLog))
-
-    if configs["providerName"] == "azurerm":
-        return terraformProvisionmentAzure(
-            test, nodes, flavor, extraInstanceConfig, toLog)
-
     mainTfDir = testsRoot + test
-    kubeconfig = "config" # kubeconfig = mainTfDir + "/config"
-    if test == "shared":
+    kubeconfig = "config"
+    if test is "shared":
         flavor = configs["flavor"]
         mainTfDir = testsRoot + "sharedCluster"
         os.makedirs(mainTfDir, exist_ok=True)
         kubeconfig = "~/.kube/config"
 
-    if retry is None:
-        randomId = ''.join(
-            random.SystemRandom().choice(
-                string.ascii_lowercase +
-                string.digits) for _ in range(4))  # One randomId per cluster
-        # ---------------- delete TF stuff from previous run if existing
-        for filename in [
-            "join.sh",
-            "main.tf",
-            "terraform.tfstate",
-            "terraform.tfstate.backup",
-                ".terraform"]:
-            file = "%s/%s" % (mainTfDir, filename)
-            if os.path.isfile(file):
-                os.remove(file)
-            if os.path.isdir(file):
-                shutil.rmtree(file, True)
+    # if retry is None:
 
-        # ---------------- create provisioner main.tf file
+    randomId = ''.join(
+        random.SystemRandom().choice(
+            string.ascii_lowercase +
+            string.digits) for _ in range(4))  # One randomId per cluster
+
+    # ---------------- delete TF stuff from previous run if existing
+    cleanupTF(mainTfDir)
+
+    if configs["providerName"] is "azurerm":
+        # TODO: the previous lines have been deleted from terraformProvisionmentAzure, hence pass the needed variables (mainTfDir, kubeconfig) to it
+        print("terraformProvisionmentAzure")
+    if configs["providerName"] is "google":
+        print("terraformProvisionmentGoole")
+    if configs["providerName"] is "aws":
+        print("terraformProvisionmentAWS")
+    if configs["providerName"] is "openstack":
+        print("terraformProvisionmentOpenstack")
+    else:
+        # ---------------- main.tf: add vars
+        variables = loadFile("terraform/variables", required=True).replace(
+            "NODES_PH", str(nodes)).replace(
+            "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(
+            "KUBECONFIG_DST", kubeconfig)
+
+        variables = stackVersioning(variables, configs)
+
+        writeToFile(mainTfDir + "/main.tf", variables, False)
+
+        # ---------------- main.tf: add raw VMs provisioner
         instanceDefinition = setName("%s \n %s" % (
-            flavor, instanceDefinition), configs["providerName"], test, randomId)
+            flavor, instanceDefinition),
+            configs["providerName"],
+            test,
+            randomId)
         if extraInstanceConfig:
             instanceDefinition += "\n" + extraInstanceConfig
 
-        mainStr = loadFile("terraform/main_raw").replace(
+        rawProvision = loadFile("terraform/rawProvision").replace(
             "CREDENTIALS_PLACEHOLDER", credentials).replace(
             "DEPENDENCIES_PLACEHOLDER", dependencies.replace(
                 "DEP_COUNT_PH", "count = %s" % nodes)).replace(
-            "NODES_PH", str(nodes)).replace(
             "PROVIDER_NAME", str(configs["providerName"])).replace(
             "PROVIDER_INSTANCE_NAME", str(configs["providerInstanceName"])).replace(
             "NODE_DEFINITION_PLACEHOLDER", instanceDefinition)
 
-        writeToFile(mainTfDir + "/main.tf", mainStr, False)
+        writeToFile(mainTfDir + "/main.tf", rawProvision, True)
 
+        # ---------------- RUN TERRAFORM - phase 1
         writeToFile(toLog, "Provisioning '" + flavor + "' VMs...", True)
         if runTerraform(mainTfDir, baseCWD) != 0:
-            return False, "Failed to provision raw VMs. Check 'logs' file for details"
+            return False, provisionFailMsg
         os.chdir(baseCWD)
 
-        # ---------------- create bootstraper main.tf file: Vars + root allower + k8s bootstraper
+        # ---------------- main.tf: add root allower + k8s bootstraper
         bootstrap = loadFile("terraform/bootstrap")
 
         if configs['openUser'] is not None:
             bootstrap = bootstrap.replace(
                 "ALLOW_ROOT_PH", loadFile("terraform/allowRoot")).replace(
-                "OPEN_USER_PH", configs['openUser']).replace(
                 "ALLOW_ROOT_DEP_PH", "null_resource.allow_root")
         else:
             bootstrap = bootstrap.replace(
-                "ALLOW_ROOT_PH", "").replace("ALLOW_ROOT_DEP_PH", "")
+                "ALLOW_ROOT_PH", "").replace(
+                "ALLOW_ROOT_DEP_PH", "")
 
         bootstrap = bootstrap.replace(
-            "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(
-            "LIST_IP_GETTER", provDict[configs["providerName"]]).replace(
-            "KUBECONFIG_DST", kubeconfig)
+            "LIST_IP_GETTER", provDict[configs["providerName"]])
 
-        # ------------------------- stack versioning
-        bootstrap = bootstrap.replace("DOCKER_CE_PH", str(
-            configs["docker-ce"])) if configs["dockerCE"] else bootstrap.replace("DOCKER_CE_PH", "")
-        bootstrap = bootstrap.replace(
-            "DOCKER_EN_PH", str(
-                configs["dockerEngine"])) if configs["dockerEngine"] else bootstrap.replace(
-            "DOCKER_EN_PH", "")
-        bootstrap = bootstrap.replace(
-            "K8S_PH", str(
-                configs["kubernetes"])) if configs["kubernetes"] else bootstrap.replace(
-            "K8S_PH", "")
-
-        bootstrap = "\n" + bootstrap.replace(
-            "PROVIDER_INSTANCE_NAME", str(
-                configs["providerInstanceName"])).replace(
-            "NODES_PH", str(nodes))
         writeToFile(mainTfDir + "/main.tf", bootstrap, True)
 
     # if retry is True and os.path.isfile("main.tf") is False: # TODO: improve
     #    print("ERROR: run with option --retry before normal run.")
     #    stop(1)
 
-    # ---------------- locate where main.tf is and run terraform, use '-auto-approve'
+    # COME BACK AT THIS POINT FROM terraformProvisionmentAzure
+
+    # ---------------- RUN TERRAFORM - phase 1
     writeToFile(toLog, "...bootstraping Kubernetes cluster...", True)
     if runTerraform(mainTfDir, baseCWD) != 0:
-        return False, "Failed to bootstrap '%s' k8s cluster. Check 'logs' file " % flavor
+        return False, bootstrapFailMsg % flavor
 
-    # ---------------- wait for default service account to be ready
-    if test == "shared":  # TODO: improve this
-        kubeconfig = "~/.kube/config"
-    else:
-        kubeconfig = "%s/%s" % (mainTfDir, kubeconfig)
+    # ---------------- wait for default service account to be ready and finish
+
+    kubeconfig = "~/.kube/config" if test is "shared" else "%s/%s" % (
+    mainTfDir, kubeconfig)
 
     while runCMD(
         'kubectl --kubeconfig %s get sa default' %
@@ -251,4 +251,5 @@ def terraformProvisionment(test, nodes, flavor, extraInstanceConfig, toLog, conf
 
     writeToFile(toLog, "...'%s' CLUSTER CREATED => STARTING TESTS\n" %
                 flavor, True)
+
     return True, ""
