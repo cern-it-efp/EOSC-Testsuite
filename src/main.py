@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 
-import sys
-sys.dont_write_bytecode = True
-
-from kubern8s import *
-from terraform import *
 from checker import *
+from terraform import *
+from kubern8s import *
 
+import sys
 try:
     import yaml
     import json
@@ -25,9 +23,6 @@ except ModuleNotFoundError as ex:
     print(ex)
     sys.exit(1)
 
-# custom ones
-
-
 logger(
     "OCRE Cloud Benchmarking Validation Test Suite (CERN)",
     "#",
@@ -41,7 +36,6 @@ instanceDefinition = ""
 extraInstanceConfig = ""
 dependencies = ""
 credentials = ""
-#t = True
 totalCost = 0
 procs = []
 testsRoot = "tests/"
@@ -61,13 +55,6 @@ provDict = {
     'cloudstack': '',
     'cloudscale': '',
     'ibm': ''}
-extraSupported = {
-    'azurerm': 'azureProvision',
-    'google': 'googleProvision',
-    'aws': 'awsProvision',
-    'exoscale': 'awsExoscale',
-    'openstack': 'openstackProvision'
-}
 obtainCost = True
 retry = None
 publicRepo = "https://github.com/cern-it-efp/OCRE-Testsuite"
@@ -139,37 +126,40 @@ def initAndChecks():
     selected = []
     if testsCatalog["s3Test"]["run"] is True:
         selected.append("s3Test")
+        obtainCost = checkCost(obtainCost,
+                               configs["costCalculation"]["generalInstancePrice"])
         obtainCost = checkCost(
-            configs["costCalculation"]["generalInstancePrice"])
-        obtainCost = checkCost(configs["costCalculation"]["s3bucketPrice"])
+            obtainCost, configs["costCalculation"]["s3bucketPrice"])
 
     if testsCatalog["perfsonarTest"]["run"] is True:
         selected.append("perfsonarTest")
-        obtainCost = checkCost(
-            configs["costCalculation"]["generalInstancePrice"])
+        obtainCost = checkCost(obtainCost,
+                               configs["costCalculation"]["generalInstancePrice"])
 
     if testsCatalog["dataRepatriationTest"]["run"] is True:
         selected.append("dataRepatriationTest")
-        obtainCost = checkCost(
-            configs["costCalculation"]["generalInstancePrice"])
+        obtainCost = checkCost(obtainCost,
+                               configs["costCalculation"]["generalInstancePrice"])
 
     if testsCatalog["cpuBenchmarking"]["run"] is True:
         selected.append("cpuBenchmarking")
-        obtainCost = checkCost(
-            configs["costCalculation"]["generalInstancePrice"])
+        obtainCost = checkCost(obtainCost,
+                               configs["costCalculation"]["generalInstancePrice"])
 
     if testsCatalog["dlTest"]["run"] is True:
         selected.append("dlTest")
-        obtainCost = checkCost(configs["costCalculation"]["GPUInstancePrice"])
+        obtainCost = checkCost(
+            obtainCost, configs["costCalculation"]["GPUInstancePrice"])
 
     if testsCatalog["hpcTest"]["run"] is True:
         selected.append("hpcTest")
-        obtainCost = checkCost(configs["costCalculation"]["GPUInstancePrice"])
+        obtainCost = checkCost(
+            obtainCost, configs["costCalculation"]["GPUInstancePrice"])
 
     if testsCatalog["dodasTest"]["run"] is True:
         selected.append("dodasTest")
-        obtainCost = checkCost(
-            configs["costCalculation"]["generalInstancePrice"])
+        obtainCost = checkCost(obtainCost,
+                               configs["costCalculation"]["generalInstancePrice"])
 
     return selected
 

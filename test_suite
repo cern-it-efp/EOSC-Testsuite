@@ -31,13 +31,13 @@ cd src/logging
 rm -f header killMe footer hpcTest dlTest shared logs &> /dev/null
 cd ../..
 
-########### TEST SUITE RUN ###########
+############# TEST SUITE RUN #############
 watchFunct &
 cd src
-./main.py $opts &> ../logs
+python3 -B main.py $opts &> ../logs
 cd ..
 outStat=$?
-######################################
+##########################################
 
 #TS run complete, kill logger and cat logs+footer to original console:
 kill $(cat src/logging/killMe)

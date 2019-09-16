@@ -10,7 +10,7 @@ flavor: size = "Medium"
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:
-  generalInstancePrice:
-  GPUInstancePrice:
-  HPCInstancePrice:
-  s3bucketPrice:
+  generalInstancePrice: 0.3
+  GPUInstancePrice: 0.3
+  HPCInstancePrice: 0.3
+  s3bucketPrice: 0.3
