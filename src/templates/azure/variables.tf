@@ -23,7 +23,7 @@ variable "openUser" {
   default = "OPEN_USER_PH"
 }
 variable "instanceName" {
-  default = "INSTANCE_NAME_PH"
+  default = "NAME_PH"
 }
 variable "vmSize" {
   default = "VM_SIZE_PH"

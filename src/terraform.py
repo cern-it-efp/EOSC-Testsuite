@@ -124,20 +124,21 @@ def terraformProvisionment(
         nodeName = ("kubenode-%s-%s-%s" %
                     (configs["providerName"], test, str(randomId))).lower()
 
-        variablesRaw = loadFile("templates/azure/variables.tf", required=True)
-        variables = variablesRaw.replace(
-            "OPEN_USER_PH", configs['openUser']).replace(
-            "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(
-            "KUBECONFIG_DST", kubeconfig).replace(
+        variables = loadFile("templates/azure/variables.tf",
+                             required=True).replace(
+            "OPEN_USER_PH", configs['openUser']).replace(  # common
+            "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(  # common
+            "KUBECONFIG_DST", kubeconfig).replace(  # common
+            "NODES_PH", str(nodes)).replace(  # common
+            "NAME_PH", nodeName).replace(  # common. Here it's in variables though
             "LOCATION_PH", configs['location']).replace(
             "PUB_SSH_PH", configs['pubSSH']).replace(
             "RGROUP_PH", configs['resourceGroupName']).replace(
-            "NODES_PH", str(nodes)).replace(
             "RANDOMID_PH", randomId).replace(
             "VM_SIZE_PH", configs['flavor']).replace(
             "SECGROUPID_PH", configs['securityGroupID']).replace(
-            "SUBNETID_PH", configs['subnetId']).replace(
-            "INSTANCE_NAME_PH", nodeName)
+            "SUBNETID_PH", configs['subnetId'])
+
 
         # ------------------------- stack versioning
         variables = stackVersioning(variables, configs)
@@ -171,7 +172,8 @@ def terraformProvisionment(
         variables = loadFile("terraform/variables", required=True).replace(
             "NODES_PH", str(nodes)).replace(
             "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(
-            "KUBECONFIG_DST", kubeconfig)
+            "KUBECONFIG_DST", kubeconfig).replace(
+            "OPEN_USER_PH", str(configs['openUser']))
 
         variables = stackVersioning(variables, configs)
 
