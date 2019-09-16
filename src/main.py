@@ -119,8 +119,8 @@ def initAndChecks():
         stop(1)
 
     # --------General config checks
-    if configs['providerName'] not in extraSupportedClouds
-    and "NAME_PH" not in instanceDefinition:
+    if configs['providerName'] not in extraSupportedClouds \
+            and "NAME_PH" not in instanceDefinition:
         writeToFile(
             "logging/header",
             "ERROR: NAME_PH was not found in instanceDefinition file.",
