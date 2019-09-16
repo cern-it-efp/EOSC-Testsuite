@@ -1,4 +1,4 @@
-name                  = "kubenode"#NAME
+name                  = "NAME_PH"
 location              = "East US"
 resource_group_name   = "ocrets"
 network_interface_ids = [element(azurerm_network_interface.terraformnic.*.id, count.index)]
@@ -15,7 +15,7 @@ storage_image_reference {
   version   = "latest"
 }
 os_profile {
-  computer_name  = "kubenode"#NAME
+  computer_name  = "NAME_PH"
   admin_username = "uroot"
 }
 os_profile_linux_config {

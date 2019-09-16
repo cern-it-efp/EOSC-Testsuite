@@ -146,7 +146,7 @@ pair a message will be shown in the terminal telling you which ones these are. T
 
 An example (Exoscale cloud provider)::
 
-  display_name = "kubenode"#NAME
+  display_name = "NAME_PH"
   template = "Linux CentOS 7.5 64-bit"
   key_pair = "k_cl"
   security_groups = ["kgroup"]
@@ -155,16 +155,23 @@ An example (Exoscale cloud provider)::
 
 One of the properties specified on the block that defines a compute node (VM) is the flavor or machine type. This property must not be specified on instanceDefinition but on configs.yaml's flavor.
 
-Please pay attention in this section to the name for the instance. A random string will be added later to the name given to the instance in order to avoid DNS issues when
-running the test-suite several times. To achieve this, the block must contain the '#NAME' placeholder. When specifying the name for the instance, please follow this structure::
+Please pay attention in this section to the name for the instance, which will be set by the Test-Suite containing:
 
-  <YOUR_PROVIDER'S_STRING_FOR_NAME> = "<NAME_FOR_YOUR_INSTANCES>"#NAME
+- The string "kubenode"
+- A string indicating the purpose of the cluster to which the VM belongs
+- A random, 4 character string to avoid DNS issues
+- An integer. 0 would be the master node, 1+ would be the slaves
+To achieve this, your instance definition must contain the 'NAME_PH' placeholder. When specifying the name for the instance, please follow this structure::
 
-Now, lets assume your provider's string for the instance name is "display_name", and you want to call your instances "kubenode" then you should write::
+  <YOUR_PROVIDER'S_STRING_FOR_NAME> = "NAME_PH"
 
-  display_name = "kubenode"#NAME
+Now, let's assume your provider's string for the instance name is "display_name", then you should write::
 
-Note the '#NAME'!
+  display_name = "NAME_PH"
+
+As an example let's assume the suite comes up with the name "kubenode-hpcTest-aws-0", Then it would switch that name with the NAME_PH placeholder::
+
+  display_name = "kubenode-hpcTest-aws-0"
 
 | [**NOTE 1**: This will be taken as a whole block and placed directly on a .tf file]
 | [**NOTE 2**: Clouds that don't support resource creation with Terraform or k8saaS can't currently be tested with this Test-Suite]
