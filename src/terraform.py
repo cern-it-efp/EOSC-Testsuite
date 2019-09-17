@@ -140,6 +140,16 @@ def terraformProvisionment(
 
     if configs["providerName"] == "azurerm":
 
+        # manage image related vars
+        publisher = "OpenLogic" if configs["image"]["publisher"] is None \
+        else configs["image"]["publisher"]
+        offer = "CentOS" if configs["image"]["offer"] is None \
+        else configs["image"]["offer"]
+        sku = "7.5" if configs["image"]["sku"] is None \
+        else configs["image"]["sku"]
+        version = "latest" if configs["image"]["version"] is None \
+        else configs["image"]["version"]
+
         # ---------------- main.tf: manage azure specific vars and add them
         variables = variables.replace(
             "LOCATION_PH", configs['location']).replace(
@@ -148,7 +158,11 @@ def terraformProvisionment(
             "RANDOMID_PH", randomId).replace(
             "VM_SIZE_PH", configs['flavor']).replace(
             "SECGROUPID_PH", configs['securityGroupID']).replace(
-            "SUBNETID_PH", configs['subnetId'])
+            "SUBNETID_PH", configs['subnetId']).replace(
+            "PUBLISHER_PH", publisher).replace(
+            "OFFER_PH", offer).replace(
+            "SKU_PH", sku).replace(
+            "VERSION_PH", version)
         writeToFile(mainTfDir + "/main.tf", variables, False)
 
         # ---------------- main.tf: add raw VMs provisioner

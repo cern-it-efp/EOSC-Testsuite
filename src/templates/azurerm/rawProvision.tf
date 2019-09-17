@@ -28,10 +28,10 @@ resource "azurerm_virtual_machine" "kubenode" {
     managed_disk_type = "Premium_LRS"
   }
   storage_image_reference {
-    publisher = "OpenLogic"
-    offer     = "CentOS"
-    sku       = "7.5"
-    version   = "latest"
+    publisher = "${var.publisher}"
+    offer     = "${var.offer}"
+    sku       = "${var.sku}"
+    version   = "${var.version}"
   }
   os_profile {
     computer_name  = "${var.instanceName}-${count.index}"
