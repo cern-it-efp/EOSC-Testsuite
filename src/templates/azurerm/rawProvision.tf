@@ -31,7 +31,7 @@ resource "azurerm_virtual_machine" "kubenode" {
     publisher = "${var.publisher}"
     offer     = "${var.offer}"
     sku       = "${var.sku}"
-    version   = "${var.version}"
+    version   = "${var.imageVersion}"
   }
   os_profile {
     computer_name  = "${var.instanceName}-${count.index}"
