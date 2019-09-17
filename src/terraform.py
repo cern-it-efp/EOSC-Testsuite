@@ -85,7 +85,8 @@ def terraformProvisionment(
         credentials,
         dependencies,
         baseCWD,
-        provDict):
+        provDict,
+        extraSupportedClouds):
     """Provisions VMs on the provider side and creates a k8s cluster with them.
 
     Parameters:
@@ -102,6 +103,11 @@ def terraformProvisionment(
         str: Message informing of the provisionment task result.
     """
 
+    templatesPath = "templates/"
+    if configs["providerName"] in extraSupportedClouds:
+        templatesPath += configs["providerName"]
+    else:
+        templatesPath += "general"
     mainTfDir = testsRoot + test
     kubeconfig = "config"
     if test is "shared":
@@ -116,21 +122,26 @@ def terraformProvisionment(
         random.SystemRandom().choice(
             string.ascii_lowercase +
             string.digits) for _ in range(4))  # One randomId per cluster
+    nodeName = ("kubenode-%s-%s-%s" %
+                (configs["providerName"], test, str(randomId))).lower()
 
     # ---------------- delete TF stuff from previous run if existing
     cleanupTF(mainTfDir)
 
-    if configs["providerName"] is "azurerm":
-        nodeName = ("kubenode-%s-%s-%s" %
-                    (configs["providerName"], test, str(randomId))).lower()
+    # ---------------- manage general variables
+    variables = loadFile("%s/variables.tf" % templatesPath,
+    required=True).replace(
+        "NODES_PH", str(nodes)).replace(
+        "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(
+        "KUBECONFIG_DST", kubeconfig).replace(
+        "OPEN_USER_PH", str(configs['openUser'])).replace(
+        "NAME_PH", nodeName)
+    variables = stackVersioning(variables, configs)
 
-        variables = loadFile("templates/azure/variables.tf",
-                             required=True).replace(
-            "OPEN_USER_PH", configs['openUser']).replace(  # common
-            "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(  # common
-            "KUBECONFIG_DST", kubeconfig).replace(  # common
-            "NODES_PH", str(nodes)).replace(  # common
-            "NAME_PH", nodeName).replace(  # common. Here it's in variables though
+    if configs["providerName"] is "azurerm":
+
+        # ---------------- main.tf: manage azure specific vars and add them
+        variables = variables.replace(
             "LOCATION_PH", configs['location']).replace(
             "PUB_SSH_PH", configs['pubSSH']).replace(
             "RGROUP_PH", configs['resourceGroupName']).replace(
@@ -138,28 +149,12 @@ def terraformProvisionment(
             "VM_SIZE_PH", configs['flavor']).replace(
             "SECGROUPID_PH", configs['securityGroupID']).replace(
             "SUBNETID_PH", configs['subnetId'])
-
-
-        # ------------------------- stack versioning
-        variables = stackVersioning(variables, configs)
-
         writeToFile(mainTfDir + "/main.tf", variables, False)
 
-        # Add VM provisionment to main.tf
+        # ---------------- main.tf: add raw VMs provisioner
         rawProvisioning = loadFile(
-            "templates/azure/rawProvision.tf", required=True)
+            "%s/rawProvision.tf" % templatesPath, required=True)
         writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
-
-        # run terraform
-        if runTerraform(mainTfDir,
-                        baseCWD,
-                        toLog,
-                        "Provisioning '%s' VMs..." % flavor) != 0:
-            return False, provisionFailMsg
-
-        # On completion of TF, add the bootstrap section to main.tf
-        bootstrap = loadFile("templates/azure/bootstrap.tf", required=True)
-        writeToFile(mainTfDir + "/main.tf", bootstrap, True)
 
     if configs["providerName"] is "openstack":
         print("terraformProvisionmentOpenstack")
@@ -169,26 +164,17 @@ def terraformProvisionment(
         print("terraformProvisionmentAWS")
     else:
         # ---------------- main.tf: add vars
-        variables = loadFile("templates/general/variables.tf", required=True).replace(
-            "NODES_PH", str(nodes)).replace(
-            "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(
-            "KUBECONFIG_DST", kubeconfig).replace(
-            "OPEN_USER_PH", str(configs['openUser']))
-
-        variables = stackVersioning(variables, configs)
-
         writeToFile(mainTfDir + "/main.tf", variables, False)
 
         # ---------------- main.tf: add raw VMs provisioner
-
-        nodeName = ("kubenode-%s-%s-%s-${count.index}" %
-                    (configs["providerName"], test, str(randomId))).lower()
-        instanceDefinition = instanceDefinition.replace("NAME_PH", nodeName)
+        instanceDefinition = instanceDefinition.replace(
+            "NAME_PH", "${var.instanceName}-${count.index}"
+        )
 
         if extraInstanceConfig:
             instanceDefinition += "\n" + extraInstanceConfig
 
-        rawProvision = loadFile("templates/general/rawProvision.tf").replace(
+        rawProvision = loadFile("%s/rawProvision.tf" % templatesPath).replace(
             "CREDENTIALS_PLACEHOLDER", credentials).replace(
             "DEPENDENCIES_PLACEHOLDER", dependencies.replace(
                 "DEP_COUNT_PH", "count = %s" % nodes)).replace(
@@ -199,35 +185,31 @@ def terraformProvisionment(
 
         writeToFile(mainTfDir + "/main.tf", rawProvision, True)
 
-        # ---------------- RUN TERRAFORM - phase 1
-        if runTerraform(mainTfDir,
-                        baseCWD,
-                        toLog,
-                        "Provisioning '%s' VMs..." % flavor) != 0:
-            return False, provisionFailMsg
+    # ---------------- RUN TERRAFORM - phase 1: provision VMs
+    if runTerraform(mainTfDir,
+                    baseCWD,
+                    toLog,
+                    "Provisioning '%s' VMs..." % flavor) != 0:
+        return False, provisionFailMsg
 
-        # ---------------- main.tf: add root allower + k8s bootstraper
-        bootstrap = loadFile("templates/general/bootstrap.tf")
+    # ---------------- main.tf: add root allower + k8s bootstraper
+    bootstrap = loadFile("templates/general/bootstrap.tf", required=True)
 
-        if configs['openUser'] is not None:
-            bootstrap = bootstrap.replace(
-                "ALLOW_ROOT_PH", loadFile("templates/general/allowRoot.tf")).replace(
-                "ALLOW_ROOT_DEP_PH", "null_resource.allow_root")
-        else:
-            bootstrap = bootstrap.replace(
-                "ALLOW_ROOT_PH", "").replace(
-                "ALLOW_ROOT_DEP_PH", "")
+    if configs['openUser'] is not None:
+        bootstrap = bootstrap.replace("ALLOW_ROOT_COUNT", "var.customCount")
+    else:
+        bootstrap = bootstrap.replace("ALLOW_ROOT_COUNT", "0")
 
-        bootstrap = bootstrap.replace(
-            "LIST_IP_GETTER", provDict[configs["providerName"]])
+    bootstrap = bootstrap.replace(
+        "LIST_IP_GETTER", provDict[configs["providerName"]])
 
-        writeToFile(mainTfDir + "/main.tf", bootstrap, True)
+    writeToFile(mainTfDir + "/main.tf", bootstrap, True)
 
     # if retry is True and os.path.isfile("main.tf") is False: # TODO: improve
     #    print("ERROR: run with option --retry before normal run.")
     #    stop(1)
 
-    # ---------------- RUN TERRAFORM - phase 2
+    # ---------------- RUN TERRAFORM - phase 2: bootstrap the k8s cluster
     if runTerraform(mainTfDir,
                     baseCWD,
                     toLog,
@@ -235,7 +217,6 @@ def terraformProvisionment(
         return False, bootstrapFailMsg % flavor
 
     # ---------------- wait for default service account to be ready and finish
-
     kubeconfig = "~/.kube/config" if test is "shared" else "%s/%s" % (
         mainTfDir, kubeconfig)
 

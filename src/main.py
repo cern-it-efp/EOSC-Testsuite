@@ -381,7 +381,8 @@ def dlTest():
                                            credentials,
                                            dependencies,
                                            baseCWD,
-                                           provDict)
+                                           provDict,
+                                           extraSupportedClouds)
         if prov is False:
             writeFail(resDir, "bb_train_history.json", msg, "logging/dlTest")
             return
@@ -501,7 +502,8 @@ def hpcTest():
                                            credentials,
                                            dependencies,
                                            baseCWD,
-                                           provDict)
+                                           provDict,
+                                           extraSupportedClouds)
         if prov is False:
             writeFail(resDir, "hpcTest_result.json", msg, "logging/hpcTest")
             return
@@ -548,7 +550,8 @@ def sharedClusterTests(msgArr):
                                            credentials,
                                            dependencies,
                                            baseCWD,
-                                           provDict)
+                                           provDict,
+                                           extraSupportedClouds)
         if prov is False:
             writeFail(resDir, "sharedCluster_result.json",
                       msg, "logging/shared")
