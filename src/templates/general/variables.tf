@@ -10,7 +10,9 @@ variable "kubeconfigDst" {
 variable "openUser" {
   default = "OPEN_USER_PH"
 }
-
+variable "instanceName" {
+  default = "NAME_PH"
+}
 # ---------------------------------------- FOR DEBUGGING PURPOSES ----------------------------------------
 variable "sshConnect" {
   default = "../../terraform/ssh_connect.sh"

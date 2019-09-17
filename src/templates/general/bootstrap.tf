@@ -1,7 +1,24 @@
-ALLOW_ROOT_PH
+resource "null_resource" "allow_root" {
+  count = ALLOW_ROOT_COUNT
+  provisioner "remote-exec" {
+    connection {
+      host        = LIST_IP_GETTER
+      type        = "ssh"
+      user        = var.openUser
+      private_key = file("~/.ssh/id_rsa")
+      timeout     = "20m"
+    }
+    inline = [
+      "sudo mkdir /root/.ssh",
+      "sudo cp /home/${var.openUser}/.ssh/authorized_keys /root/.ssh",
+      "sudo sed -i 's/PermitRootLogin no/PermitRootLogin yes/g' /etc/ssh/sshd_config",
+      "sudo systemctl restart sshd"
+    ]
+  }
+}
 
 resource "null_resource" "kubenode_bootstraper" {
-  depends_on = [null_resource.kubenode_bootstraper[0], ALLOW_ROOT_DEP_PH]
+  depends_on = [null_resource.kubenode_bootstraper[0], null_resource.allow_root]
 
   count = var.customCount
 
