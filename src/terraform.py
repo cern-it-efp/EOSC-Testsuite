@@ -110,7 +110,7 @@ def terraformProvisionment(
         templatesPath += "general"
     mainTfDir = testsRoot + test
     kubeconfig = "config"
-    if test is "shared":
+    if test == "shared":
         flavor = configs["flavor"]
         mainTfDir = testsRoot + "sharedCluster"
         os.makedirs(mainTfDir, exist_ok=True)
@@ -138,7 +138,7 @@ def terraformProvisionment(
         "NAME_PH", nodeName)
     variables = stackVersioning(variables, configs)
 
-    if configs["providerName"] is "azurerm":
+    if configs["providerName"] == "azurerm":
 
         # ---------------- main.tf: manage azure specific vars and add them
         variables = variables.replace(
@@ -156,11 +156,11 @@ def terraformProvisionment(
             "%s/rawProvision.tf" % templatesPath, required=True)
         writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
 
-    if configs["providerName"] is "openstack":
+    elif configs["providerName"] == "openstack":
         print("terraformProvisionmentOpenstack")
-    if configs["providerName"] is "google":
+    elif configs["providerName"] == "google":
         print("terraformProvisionmentGoole")
-    if configs["providerName"] is "aws":
+    elif configs["providerName"] == "aws":
         print("terraformProvisionmentAWS")
     else:
         # ---------------- main.tf: add vars
@@ -217,7 +217,7 @@ def terraformProvisionment(
         return False, bootstrapFailMsg % flavor
 
     # ---------------- wait for default service account to be ready and finish
-    kubeconfig = "~/.kube/config" if test is "shared" else "%s/%s" % (
+    kubeconfig = "~/.kube/config" if test == "shared" else "%s/%s" % (
         mainTfDir, kubeconfig)
 
     while runCMD(

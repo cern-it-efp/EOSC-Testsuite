@@ -90,21 +90,21 @@ def initAndChecks():
         stop(1)
 
     # disabled schema validation for testing
-    try:
-        jsonschema.validate(
-            configs,
-            loadFile("schemas/configs_sch.yaml"))
-    except jsonschema.exceptions.ValidationError as ex:
-        print("Error validating configs.yaml: \n %s" % ex)
-        stop(1)
+    #try:
+    #    jsonschema.validate(
+    #        configs,
+    #        loadFile("schemas/configs_sch.yaml"))
+    #except jsonschema.exceptions.ValidationError as ex:
+    #    print("Error validating configs.yaml: \n %s" % ex)
+    #    stop(1)
 
-    try:
-        jsonschema.validate(
-            testsCatalog,
-            loadFile("schemas/testsCatalog_sch.yaml"))
-    except jsonschema.exceptions.ValidationError as ex:
-        print("Error validating testsCatalog.yaml: \n %s" % ex)
-        stop(1)
+    #try:
+    #    jsonschema.validate(
+    #        testsCatalog,
+    #        loadFile("schemas/testsCatalog_sch.yaml"))
+    #except jsonschema.exceptions.ValidationError as ex:
+    #    print("Error validating testsCatalog.yaml: \n %s" % ex)
+    #    stop(1)
 
     # TODO: instanceDefinition is now only required when not running on main
     # clouds
