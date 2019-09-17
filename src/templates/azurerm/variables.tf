@@ -58,15 +58,15 @@ variable "k8sVer" {
   default = "K8S_PH"
 }
 variable "publisher" {
-  default "PUBLISHER_PH"
+  default = "PUBLISHER_PH"
 }
 variable "offer" {
-  default "OFFER_PH"
+  default = "OFFER_PH"
 }
 variable "sku" {
-  default "SKU_PH"
+  default = "SKU_PH"
 }
-variable "version" {
-  default "VERSION_PH"
+variable "imageVersion" {
+  default = "VERSION_PH"
 }
 # ------------------------------------------------------------------------------------------------------------------------
