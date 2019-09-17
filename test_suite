@@ -35,8 +35,8 @@ cd ../..
 watchFunct &
 cd src
 python3 -B main.py $opts &> ../logs
-cd ..
 outStat=$?
+cd ..
 ##########################################
 
 #TS run complete, kill logger and cat logs+footer to original console:

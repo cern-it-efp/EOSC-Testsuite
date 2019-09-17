@@ -1,8 +1,8 @@
 s3Test:
   run: true
   endpoint: https://s3.com
-  accessKey: 1234a
-  secretKey: 1234a
+  accessKey: 1234abc
+  secretKey: 1234abc
 dataRepatriationTest:
   run: true
 cpuBenchmarking:
