@@ -169,7 +169,7 @@ def terraformProvisionment(
         print("terraformProvisionmentAWS")
     else:
         # ---------------- main.tf: add vars
-        variables = loadFile("terraform/variables", required=True).replace(
+        variables = loadFile("templates/general/variables.tf", required=True).replace(
             "NODES_PH", str(nodes)).replace(
             "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(
             "KUBECONFIG_DST", kubeconfig).replace(
@@ -188,7 +188,7 @@ def terraformProvisionment(
         if extraInstanceConfig:
             instanceDefinition += "\n" + extraInstanceConfig
 
-        rawProvision = loadFile("terraform/rawProvision").replace(
+        rawProvision = loadFile("templates/general/rawProvision.tf").replace(
             "CREDENTIALS_PLACEHOLDER", credentials).replace(
             "DEPENDENCIES_PLACEHOLDER", dependencies.replace(
                 "DEP_COUNT_PH", "count = %s" % nodes)).replace(
@@ -207,11 +207,11 @@ def terraformProvisionment(
             return False, provisionFailMsg
 
         # ---------------- main.tf: add root allower + k8s bootstraper
-        bootstrap = loadFile("terraform/bootstrap")
+        bootstrap = loadFile("templates/general/bootstrap.tf")
 
         if configs['openUser'] is not None:
             bootstrap = bootstrap.replace(
-                "ALLOW_ROOT_PH", loadFile("terraform/allowRoot")).replace(
+                "ALLOW_ROOT_PH", loadFile("templates/general/allowRoot.tf")).replace(
                 "ALLOW_ROOT_DEP_PH", "null_resource.allow_root")
         else:
             bootstrap = bootstrap.replace(

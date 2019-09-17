@@ -1,5 +1,5 @@
 s3Test:
-  run: 
+  run:
   endpoint: https://sos-ch-gva-2.exo.io/
   accessKey: 1234abc
   secretKey: 1234abc
@@ -13,10 +13,10 @@ perfsonarTest:
 dodasTest:
   run:
 dlTest:
-  run:
+  run: true
   nodes: 4
   flavor: size = "GPU-small"
 hpcTest:
-  run: 
+  run: true
   nodes: 4
   flavor: size = "GPU-small"
