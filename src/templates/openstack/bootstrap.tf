@@ -2,10 +2,10 @@ resource "null_resource" "allow_root" {
   count = var.customCount
   provisioner "remote-exec" {
     connection {
-      host        = openstack_compute_instance_v2.kubenode[count.index].network[0].fixed_ip_v4
+      host        = LIST_IP_GETTER
       type        = "ssh"
       user        = var.openUser
-      private_key = file("~/.ssh/id_rsa")
+      private_key = file(var.pathToKey)
       timeout     = "20m"
     }
     inline = [
@@ -23,7 +23,7 @@ resource "null_resource" "kubenode_bootstraper" {
   count = var.customCount
 
   connection {
-    host        = openstack_compute_instance_v2.kubenode[count.index].network[0].fixed_ip_v4
+    host        = LIST_IP_GETTER
     type        = "ssh"
     user        = "root"
     private_key = file(var.pathToKey)
@@ -41,7 +41,7 @@ resource "null_resource" "kubenode_bootstraper" {
 
   #------------------------------------------- THESE ARE FOR MASTER (count.index == 0)--------------------------------------------------------------------------------------
   provisioner "local-exec" {
-    command = "if [ ${count.index} == 0 ]; then timeout ${var.sshcTimeout} ${var.sshConnect} --key ${var.pathToKey} --usr root --ip ${openstack_compute_instance_v2.kubenode[count.index].network[0].fixed_ip_v4} --file ${var.clusterCreator} --opts -m; mkdir -p ~/.kube & ${var.sshConnect} --key ${var.pathToKey} --scp --src root@${openstack_compute_instance_v2.kubenode[count.index].network[0].fixed_ip_v4}:~/.kube/config --dst ${var.kubeconfigDst}; fi"
+    command = "if [ ${count.index} == 0 ]; then timeout ${var.sshcTimeout} ${var.sshConnect} --key ${var.pathToKey} --usr root --ip ${LIST_IP_GETTER} --file ${var.clusterCreator} --opts -m; mkdir -p ~/.kube & ${var.sshConnect} --key ${var.pathToKey} --scp --src root@${LIST_IP_GETTER}:~/.kube/config --dst ${var.kubeconfigDst}; fi"
 
     interpreter = ["/bin/bash", "-c"]
   }
@@ -53,7 +53,7 @@ resource "null_resource" "kubenode_bootstraper" {
   }
 
   provisioner "local-exec" {
-    command = "if [ ${count.index} == 0 ]; then timeout ${var.sshcTimeout} ${var.sshConnect} --key ${var.pathToKey} --scp --src root@${openstack_compute_instance_v2.kubenode[count.index].network[0].fixed_ip_v4}:~/join.sh --dst ./join.sh --hide-logs; if [ $? -eq 124 ]; then echo ' ! ! ! ERROR: Timeout trying to fetch join command from master node ! ! ! ' ; exit 1 ; else exit 0; fi; fi"
+    command = "if [ ${count.index} == 0 ]; then timeout ${var.sshcTimeout} ${var.sshConnect} --key ${var.pathToKey} --scp --src root@${LIST_IP_GETTER}:~/join.sh --dst ./join.sh --hide-logs; if [ $? -eq 124 ]; then echo ' ! ! ! ERROR: Timeout trying to fetch join command from master node ! ! ! ' ; exit 1 ; else exit 0; fi; fi"
 
     interpreter = ["/bin/bash", "-c"]
   }
@@ -62,12 +62,12 @@ resource "null_resource" "kubenode_bootstraper" {
 
   #------------------------------------------- THESE ARE FOR SLAVES (count.index > 0)--------------------------------------------------------------------------------------
   provisioner "local-exec" {
-    command = "if [ ${count.index} \\> 0 ]; then timeout ${var.sshcTimeout} ${var.sshConnect} --key ${var.pathToKey} --usr root --ip ${openstack_compute_instance_v2.kubenode[count.index].network[0].fixed_ip_v4} --file ${var.clusterCreator}; fi"
+    command = "if [ ${count.index} \\> 0 ]; then timeout ${var.sshcTimeout} ${var.sshConnect} --key ${var.pathToKey} --usr root --ip ${LIST_IP_GETTER} --file ${var.clusterCreator}; fi"
 
     interpreter = ["/bin/bash", "-c"]
   }
   provisioner "local-exec" {
-    command = "if [ ${count.index} \\> 0 ]; then echo 'Waiting for join command... ' ; timeout ${var.sshcTimeout} ${var.sshConnect} --key ${var.pathToKey} --usr root --ip ${openstack_compute_instance_v2.kubenode[count.index].network[0].fixed_ip_v4} --file ./join.sh --hide-logs; if [ $? -eq 124 ]; then echo ' ! ! ! ERROR: Timeout waiting for join command at ${openstack_compute_instance_v2.kubenode[count.index].network[0].fixed_ip_v4} ! ! ! ' ; exit 1 ; else exit 0 ; fi; fi"
+    command = "if [ ${count.index} \\> 0 ]; then echo 'Waiting for join command... ' ; timeout ${var.sshcTimeout} ${var.sshConnect} --key ${var.pathToKey} --usr root --ip ${LIST_IP_GETTER} --file ./join.sh --hide-logs; if [ $? -eq 124 ]; then echo ' ! ! ! ERROR: Timeout waiting for join command at ${LIST_IP_GETTER} ! ! ! ' ; exit 1 ; else exit 0 ; fi; fi"
 
     interpreter = ["/bin/bash", "-c"]
   }

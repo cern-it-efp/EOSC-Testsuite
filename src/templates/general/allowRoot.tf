@@ -5,7 +5,7 @@ resource null_resource "allow_root" {
       host        = LIST_IP_GETTER
       type        = "ssh"
       user        = var.openUser
-      private_key = file("~/.ssh/id_rsa")
+      private_key = file(var.pathToKey)
       timeout     = "20m"
     }
     inline = [
