@@ -1,0 +1,4 @@
+name = "NAME_PH"
+image_name = "CC7 - x86_64 [2018-12-03]"
+key_pair = "os-new"
+#security_groups = ["default","allow_ping_ssh_rdp"]

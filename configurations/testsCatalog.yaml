@@ -1,22 +1,22 @@
 s3Test:
-  run:
-  endpoint: https://sos-ch-gva-2.exo.io/
+  run: true
+  endpoint: https://s3.com
   accessKey: 1234abc
   secretKey: 1234abc
 dataRepatriationTest:
   run: true
 cpuBenchmarking:
-  run: true
+  run:
 perfsonarTest:
   run:
-  endpoint: psb01-gva.cern.ch
+  endpoint: 
 dodasTest:
   run:
 dlTest:
-  run: true
-  nodes: 4
-  flavor: size = "GPU-small"
+  run:
+  nodes:
+  flavor:
 hpcTest:
-  run: true
-  nodes: 4
-  flavor: size = "GPU-small"
+  run:
+  nodes:
+  flavor:

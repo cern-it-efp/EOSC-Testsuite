@@ -56,18 +56,18 @@ def stackVersioning(variables, configs):
     if configs["dockerCE"]:
         variables = variables.replace("DOCKER_CE_PH", str(configs["dockerCE"]))
     else:
-        variables.replace("DOCKER_CE_PH", "")
+        variables = variables.replace("DOCKER_CE_PH", "")
 
     if configs["dockerEngine"]:
         variables = variables.replace(
             "DOCKER_EN_PH", str(configs["dockerEngine"]))
     else:
-        variables.replace("DOCKER_EN_PH", "")
+        variables = variables.replace("DOCKER_EN_PH", "")
 
     if configs["kubernetes"]:
         variables = variables.replace("K8S_PH", str(configs["kubernetes"]))
     else:
-        variables.replace("K8S_PH", "")
+        variables = variables.replace("K8S_PH", "")
 
     return variables
 
@@ -108,6 +108,7 @@ def terraformProvisionment(
         templatesPath += configs["providerName"]
     else:
         templatesPath += "general"
+
     mainTfDir = testsRoot + test
     kubeconfig = "config"
     if test == "shared":
@@ -129,8 +130,8 @@ def terraformProvisionment(
     cleanupTF(mainTfDir)
 
     # ---------------- manage general variables
-    variables = loadFile("%s/variables.tf" % templatesPath,
-    required=True).replace(
+    variables = loadFile("templates/general/variables.tf",
+                         required=True).replace(
         "NODES_PH", str(nodes)).replace(
         "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(
         "KUBECONFIG_DST", kubeconfig).replace(
@@ -142,13 +143,13 @@ def terraformProvisionment(
 
         # manage image related vars
         publisher = "OpenLogic" if configs["image"]["publisher"] is None \
-        else configs["image"]["publisher"]
+            else configs["image"]["publisher"]
         offer = "CentOS" if configs["image"]["offer"] is None \
-        else configs["image"]["offer"]
+            else configs["image"]["offer"]
         sku = "7.5" if configs["image"]["sku"] is None \
-        else configs["image"]["sku"]
+            else configs["image"]["sku"]
         version = "latest" if configs["image"]["version"] is None \
-        else configs["image"]["version"]
+            else configs["image"]["version"]
 
         # ---------------- main.tf: manage azure specific vars and add them
         variables = variables.replace(
@@ -171,19 +172,44 @@ def terraformProvisionment(
         writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
 
     elif configs["providerName"] == "openstack":
-        print("terraformProvisionmentOpenstack")
+
+        # manage image related vars
+        region = "" if configs["region"] is None \
+            else configs["region"]
+        availabilityZone = "" if configs["availabilityZone"] is None \
+            else configs["availabilityZone"]
+        securityGroups = "[]" if configs["securityGroups"] is None \
+            else configs["securityGroups"]
+
+        # ---------------- main.tf: manage azure specific vars and add them
+        variables = variables.replace(
+            "FLAVOR_PH", configs['flavor']).replace(
+            "IMAGE_PH", configs['imageName']).replace(
+            "KEY_PAIR_PH", configs['keyPair']).replace(
+            "SEC_GROUPS_PH", securityGroups).replace(
+            "REGION_PH", region).replace(
+            "AV_ZONE_PH", availabilityZone)
+        writeToFile(mainTfDir + "/main.tf", variables, False)
+
+        # ---------------- main.tf: add raw VMs provisioner
+        rawProvisioning = loadFile(
+            "%s/rawProvision.tf" % templatesPath, required=True)
+        writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
+
     elif configs["providerName"] == "google":
         print("terraformProvisionmentGoole")
+
     elif configs["providerName"] == "aws":
         print("terraformProvisionmentAWS")
+
     else:
         # ---------------- main.tf: add vars
         writeToFile(mainTfDir + "/main.tf", variables, False)
 
         # ---------------- main.tf: add raw VMs provisioner
-        instanceDefinition = instanceDefinition.replace(
+        instanceDefinition = "%s \n %s" % (flavor, instanceDefinition.replace(
             "NAME_PH", "${var.instanceName}-${count.index}"
-        )
+        ))
 
         if extraInstanceConfig:
             instanceDefinition += "\n" + extraInstanceConfig
