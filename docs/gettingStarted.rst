@@ -183,8 +183,8 @@ This file takes also HCL code. There are providers for which dependencies are re
 Then this is the file to define those dependencies needed by the VMs.
 
 
-Configuration examples
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+Main clouds: additional support
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Examples of all configuration files for several public cloud providers can be found inside *examples*.
 Find below these lines details on how to run the suite on some of the main providers:
@@ -194,6 +194,41 @@ Find below these lines details on how to run the suite on some of the main provi
 (Find the example files at *examples/azure*. It is also possible to use AKS to provision the cluster, for this refer to section "Using existing clusters".)
 
 Install az CLI and configure credentials with 'az login'.
+
+Variables for configs.yaml besides the general ones:
+
++-------------------+---------------------------------------------------------------------------------------------------------------------------------+
+|Name               | Explanation / Values                                                                                                            |
++===================+=================================================================================================================================+
+|location           | The region in which to create the compute instances. (required)                                                                 |
++-------------------+---------------------------------------------------------------------------------------------------------------------------------+
+|resourceGroupName  | Specifies the name of the Resource Group in which the Virtual Machine should exist. (required)                                  |
++-------------------+---------------------------------------------------------------------------------------------------------------------------------+
+|pubSSH             | Public SSH key of the key specified at configs.yaml's pathToKey. (required)                                                     |
++-------------------+---------------------------------------------------------------------------------------------------------------------------------+
+|securityGroupID    | The ID of the Network Security Group to associate with the VMs's network interfaces (required)                                  |
++-------------------+---------------------------------------------------------------------------------------------------------------------------------+
+|subnetId           | Reference to a subnet in which the NIC for the VM has been created. (required)                                                  |
++-------------------+---------------------------------------------------------------------------------------------------------------------------------+
+|image.publisher    | Specifies the publisher of the image used to create the virtual machines.                                                       |
++-------------------+---------------------------------------------------------------------------------------------------------------------------------+
+|image.offer        | Specifies the offer of the image used to create the virtual machines.                                                           |
++-------------------+---------------------------------------------------------------------------------------------------------------------------------+
+|image.sku          | Specifies the SKU of the image used to create the virtual machines.                                                             |
++-------------------+---------------------------------------------------------------------------------------------------------------------------------+
+|image.version      | Specifies the version of the image used to create the virtual machines.                                                         |
++-------------------+---------------------------------------------------------------------------------------------------------------------------------+
+
+Note: the security group and subnet -virtual network too- have to be created beforehand and their ID's used at configs.yaml.
+Also, if image's *publisher*, *offer*, *sku* and *version* are omitted, the following defaults will be used:
+
+- publisher = OpenLogic
+
+- offer = CentOS
+
+- sku = 7.5
+
+- version = latest
 
 ``AWS``
 
@@ -214,6 +249,26 @@ not allocated unless specified, using network_interface.access_config{} in the i
 .. |use_gke| raw:: html
 
   <a href="https://cloud.google.com/sdk/gcloud/reference/container/clusters/get-credentials?hl=en_US&_ga=2.141757301.-616534808.1554462142" target="_blank">fetch the kubectl kubeconfig file</a>
+
+``Openstack``
+
+Regarding authentication, download the OpenStack RC File containing the credentials from the Horizon dashboard and source it.
+
+Variables for configs.yaml besides the general ones:
+
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|Name                   | Explanation / Values                                                                                                        |
++=======================+=============================================================================================================================+
+|imageName              | OS Image to be used for the VMs. (required)                                                                                 |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|keyPair                | Name of the key to be used. Has to be created or imported beforehand. (required)                                            |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|securityGroups         | Security groups array. Must be a String, example: "[\"default\",\"allow_ping_ssh_rdp\"]"                                    |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|region                 | The region in which to create the compute instances. If omitted, the region specified on the credentials file is used.      |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|availabilityZone       | The availability zone in which to create the compute instances.                                                             |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 
 
 1.6 Using Docker
