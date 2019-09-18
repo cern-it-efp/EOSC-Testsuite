@@ -8,7 +8,7 @@ kubernetes:
 flavor: "m2.medium" # "eo1.medium"
 imageName: "CC7 - x86_64 [2018-12-03]" # "CentOS 7"
 keyPair: "exo" # mykey
-securityGroups: # for cf ["default","allow_ping_ssh_rdp"]
+securityGroups: # MUST be a string to avoid single quotes tf issues ["default","allow_ping_ssh_rdp"]
 region:
 availabilityZone:  # cern os allows selecting Availability Zone / cf allows specifying it too but the only possible option in the dropdown is "nova"
 

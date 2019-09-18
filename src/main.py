@@ -54,6 +54,32 @@ retry = None
 publicRepo = "https://ocre-testsuite.rtfd.io"
 
 
+def validateYaml(provider):
+    """ Validates configs.yaml and testsCatalog.yaml file against schemas.
+
+    Parameters:
+        provider (str): Provider on which the suite is being run. According to
+                        it a specific YAML schema is used.
+    """
+
+    configsSchema = "schemas/configs_sch_%s.yaml" % provider if provider \
+        in extraSupportedClouds else "schemas/configs_sch.yaml"
+
+    try:
+        jsonschema.validate(configs, loadFile(configsSchema))
+    except jsonschema.exceptions.ValidationError as ex:
+        print("Error validating configs.yaml: \n %s" % ex)
+        stop(1)
+
+    try:
+        jsonschema.validate(
+            testsCatalog,
+            loadFile("schemas/testsCatalog_sch.yaml"))
+    except jsonschema.exceptions.ValidationError as ex:
+        print("Error validating testsCatalog.yaml: \n %s" % ex)
+        stop(1)
+
+
 def initAndChecks():
     """Initial checks and initialization of variables.
 
@@ -90,21 +116,7 @@ def initAndChecks():
         stop(1)
 
     # disabled schema validation for testing
-    #try:
-    #    jsonschema.validate(
-    #        configs,
-    #        loadFile("schemas/configs_sch.yaml"))
-    #except jsonschema.exceptions.ValidationError as ex:
-    #    print("Error validating configs.yaml: \n %s" % ex)
-    #    stop(1)
-
-    #try:
-    #    jsonschema.validate(
-    #        testsCatalog,
-    #        loadFile("schemas/testsCatalog_sch.yaml"))
-    #except jsonschema.exceptions.ValidationError as ex:
-    #    print("Error validating testsCatalog.yaml: \n %s" % ex)
-    #    stop(1)
+    # validateYaml(configs["providerName"])
 
     # TODO: instanceDefinition is now only required when not running on main
     # clouds
