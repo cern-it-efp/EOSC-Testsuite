@@ -1,3 +1,4 @@
+############################ COMMON ONES #######################################
 variable "customCount" {
   default = NODES_PH
 }
@@ -13,7 +14,7 @@ variable "openUser" {
 variable "instanceName" {
   default = "NAME_PH"
 }
-# ---------------------------------------- FOR DEBUGGING PURPOSES ----------------------------------------
+# -------------------------- General -------------------------------------------
 variable "sshConnect" {
   default = "../../terraform/ssh_connect.sh"
 }
@@ -23,9 +24,7 @@ variable "clusterCreator" {
 variable "sshcTimeout" {
   default = "2000"
 }
-# ------------------------------------------------------------------------------------------------------------------------
-
-# ---------------------------------------- Optional ----------------------------------------
+# -------------------------- Stack versioning ----------------------------------
 variable "dockerCeVer" {
   default = "DOCKER_CE_PH"
 }
@@ -35,4 +34,61 @@ variable "dockerEnVer" {
 variable "k8sVer" {
   default = "K8S_PH"
 }
-# ------------------------------------------------------------------------------------------------------------------------
+
+############################ OPENSTACK #########################################
+# TODO: check which ones are optional from the following ones (for cern os had enough with: flavor_name, name, image_name, key_pair)
+variable "flavor" {
+  default = "FLAVOR_PH"
+}
+variable "imageName" {
+  default = "IMAGE_PH"
+}
+variable "keyPair" {
+  default = "KEY_PAIR_PH"
+}
+variable "securityGroups" { # this is an array: ["default","allow_ping_ssh_rdp"]
+  default = SEC_GROUPS_PH
+}
+# Optional
+variable "region" { # neither CERN nor cf allow setting region (at least from the UI)
+  default = "REGION_PH"
+}
+variable "availabilityZone" { # cern os allows selecting Availability Zone / cf allows specifying it too but the only possible option in the dropdown is "nova"
+  default = "AV_ZONE_PH"
+}
+
+############################ AZURE #############################################
+variable "location" {
+  default = "LOCATION_PH"
+}
+variable "resourceGroupName" {
+  default = "RGROUP_PH"
+}
+variable "pubSSH" {
+  default = "PUB_SSH_PH"
+}
+variable "clusterRandomID" {
+  default = "RANDOMID_PH"
+}
+variable "vmSize" {
+  default = "VM_SIZE_PH"
+}
+variable "secGroupId" {
+  default = "SECGROUPID_PH"
+}
+variable "subnetId" {
+  default = "SUBNETID_PH"
+}
+# Optional
+variable "publisher" {
+  default = "PUBLISHER_PH"
+}
+variable "offer" {
+  default = "OFFER_PH"
+}
+variable "sku" {
+  default = "SKU_PH"
+}
+variable "imageVersion" {
+  default = "VERSION_PH"
+}
