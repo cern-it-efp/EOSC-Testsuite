@@ -115,3 +115,26 @@ variable "gpuCount" {
 variable "gpuType" {
   default = "GPU_TYPE_PH"
 }
+
+############################ AWS ###############################################
+variable "region" {
+  default = "REGION_PH"
+}
+variable "accessKey" {
+  default = "ACCESS_KEY_PH"
+}
+variable "secretKey" {
+  default = "SECRET_KEY_PH"
+}
+variable "instanceType" {
+  default = "INSTANCE_TYPE_PH"
+}
+variable "ami" {
+  default = "AMI_PH"
+}
+variable "keyName" {
+  default = "KEY_NAME_PH"
+}
+variable "volumeSize" {
+  default = "VOLUME_SIZE_PH"
+}
