@@ -92,3 +92,26 @@ variable "sku" {
 variable "imageVersion" {
   default = "VERSION_PH"
 }
+
+############################ GCP ###############################################
+variable "credentials" {
+  default = "CREDENTIALS_PATH_PH"
+}
+variable "project" {
+  default = "PROJECT_PH"
+}
+variable "machineType" {
+  default = "MACHINE_TYPE_PH"
+}
+variable "zone" {
+  default = "ZONE_PH"
+}
+variable "image" {
+  default = "IMAGE_PH"
+}
+variable "gpuCount" {
+  default = "GPU_COUNT_PH"
+}
+variable "gpuType" {
+  default = "GPU_TYPE_PH"
+}
