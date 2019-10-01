@@ -10,7 +10,7 @@ zone: "us-west1-a"
 image: "centos-cloud/centos-7"
 pathToCredentials: "/gcp.json"
 project: "ocrets"
-gpuType: # this is only required when the GAN test is selected
+gpuType: "nvidia-tesla-p100" # this is only required when the GAN test is selected. Schema has to check this
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:

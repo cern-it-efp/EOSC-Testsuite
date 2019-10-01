@@ -199,7 +199,7 @@ def terraformProvisionment(
     elif configs["providerName"] == "google":
 
         # manage gpu related vars
-        gpuCount = nodes if test == "dlTest" else "0"
+        gpuCount = str(nodes) if test == "dlTest" else "0"
         gpuType = configs["gpuType"] if test == "dlTest" else ""
 
         # ---------------- main.tf: manage google specific vars and add them
