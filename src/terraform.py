@@ -181,7 +181,7 @@ def terraformProvisionment(
         securityGroups = "[]" if configs["securityGroups"] is None \
             else configs["securityGroups"]
 
-        # ---------------- main.tf: manage azure specific vars and add them
+        # ---------------- main.tf: manage openstack specific vars and add them
         variables = variables.replace(
             "FLAVOR_PH", configs['flavor']).replace(
             "IMAGE_PH", configs['imageName']).replace(
@@ -197,7 +197,27 @@ def terraformProvisionment(
         writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
 
     elif configs["providerName"] == "google":
-        print("terraformProvisionmentGoole")
+
+        # manage gpu related vars
+        gpuCount = nodes if test == "dlTest" else "0"
+        gpuType = configs["gpuType"] if test == "dlTest" else ""
+
+        # ---------------- main.tf: manage google specific vars and add them
+        variables = variables.replace(
+            "CREDENTIALS_PATH_PH", configs['pathToCredentials']).replace(
+            "PROJECT_PH", configs['project']).replace(
+            "MACHINE_TYPE_PH", configs['flavor']).replace(
+            "ZONE_PH", configs['zone']).replace(
+            "IMAGE_PH", configs['image']).replace(
+            "GPU_COUNT_PH", gpuCount).replace(
+            "GPU_TYPE_PH", gpuType)
+        writeToFile(mainTfDir + "/main.tf", variables, False)
+
+        # ---------------- main.tf: add raw VMs provisioner
+        rawProvisioning = loadFile(
+            "%s/rawProvision.tf" % templatesPath, required=True)
+        writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
+
 
     elif configs["providerName"] == "aws":
         print("terraformProvisionmentAWS")
