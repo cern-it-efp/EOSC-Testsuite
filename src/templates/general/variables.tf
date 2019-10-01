@@ -47,7 +47,7 @@ variable "keyPair" {
   default = "KEY_PAIR_PH"
 }
 variable "securityGroups" { # this is an array: ["default","allow_ping_ssh_rdp"]
-  default = SEC_GROUPS_PH
+  default = "SEC_GROUPS_PH"
 }
 # Optional
 variable "region" { # neither CERN nor cf allow setting region (at least from the UI)
