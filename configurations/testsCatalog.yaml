@@ -8,8 +8,8 @@ dataRepatriationTest:
 cpuBenchmarking:
   run:
 perfsonarTest:
-  run:
-  endpoint: 
+  run: true
+  endpoint:
 dodasTest:
   run:
 dlTest:

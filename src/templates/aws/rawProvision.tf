@@ -1,7 +1,6 @@
 provider "aws" {
-  region     = "${var.region}" # "us-east-2"
-  access_key = "${var.accessKey}"
-  secret_key = "${var.secretKey}"
+  region                  = "${var.region}" # "us-east-2"
+  shared_credentials_file = "${var.sharedCrdentialsFile}"
 }
 
 resource "aws_instance" "kubenode" {
@@ -11,7 +10,7 @@ resource "aws_instance" "kubenode" {
   tags = {
     name = "${var.instanceName}-${count.index}"
   }
-  ami      = "${var.ami}"     # "ami-08ee2516c7709ea48" 
+  ami      = "${var.ami}"     # "ami-08ee2516c7709ea48"
   key_name = "${var.keyName}" # "exo"
   root_block_device {
     volume_size = var.volumeSize # 50

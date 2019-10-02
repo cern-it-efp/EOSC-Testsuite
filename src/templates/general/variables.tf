@@ -138,3 +138,6 @@ variable "keyName" {
 variable "volumeSize" {
   default = "VOLUME_SIZE_PH"
 }
+variable "sharedCrdentialsFile" {
+  default = "SHARED_CREDENTIALS_FILE_PH"
+}
