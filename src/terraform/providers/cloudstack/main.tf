@@ -1,9 +1,9 @@
 provider "cloudstack" {
-  #config = "/home/ipelu/Desktop/exoCreds"
-  #profile = "local"
-  api_url    = "https://api.exoscale.ch/compute"
-  api_key    = ""
-  secret_key = ""
+  config = "/home/ipelu/Desktop/exoCreds"
+  profile = "cloudstack"
+  #api_url    = "https://api.exoscale.ch/compute"
+  #api_key    = ""
+  #secret_key = ""
 }
 
 resource "cloudstack_instance" "web" {
