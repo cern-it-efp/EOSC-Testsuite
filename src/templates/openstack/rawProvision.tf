@@ -8,6 +8,6 @@ resource "openstack_compute_instance_v2" "kubenode" {
   image_name = "${var.imageName}"
   key_pair = "${var.keyPair}"
   security_groups = var.securityGroups
-  region = "${var.region}" # errors if set to "" ?
+  region = "${var.regionOS}" # errors if set to "" ?
   availability_zone = "${var.availabilityZone}" # errors if set to "" ?
 }

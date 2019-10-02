@@ -1,5 +1,5 @@
 provider "aws" {
-  region                  = "${var.region}" # "us-east-2"
+  region                  = "${var.regionAWS}" # "us-east-2"
   shared_credentials_file = "${var.sharedCrdentialsFile}"
 }
 
