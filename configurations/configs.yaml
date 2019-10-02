@@ -1,20 +1,20 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
-providerName: openstack
-pathToKey: "/home/ipelu/.ssh/id_rsa"
-openUser: #eouser
+providerName: "aws"
+pathToKey: "/root/.ssh/id_rsa"
 dockerCE:
 dockerEngine:
 kubernetes:
-flavor: "m2.medium" # "eo1.medium"
-imageName: "CC7 - x86_64 [2018-12-03]" # "CentOS 7"
-keyPair: "exo" # mykey
-securityGroups: # MUST be a string to avoid single quotes tf issues ["default","allow_ping_ssh_rdp"]
-region:
-availabilityZone:  # cern os allows selecting Availability Zone / cf allows specifying it too but the only possible option in the dropdown is "nova"
+openUser: centos
+flavor: "t2.medium" # instanceType
+region: "us-east-2"
+sharedCrdentialsFile: "creds"
+ami: "ami-08ee2516c7709ea48"
+keyName: "exo"
+volumeSize: # 50 # optional
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:
-  generalInstancePrice:
-  GPUInstancePrice:
+  generalInstancePrice: 0.2
+  GPUInstancePrice: 0.2
   HPCInstancePrice: 0.2
   s3bucketPrice: 0.1

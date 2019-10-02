@@ -224,12 +224,11 @@ def terraformProvisionment(
         # manage optional vars
         volumeSize = "" if configs["volumeSize"] is None \
             else str(configs["volumeSize"])
-        
+
         # ---------------- main.tf: manage aws specific vars and add them
         variables = variables.replace(
             "REGION_PH", configs['region']).replace(
-            "ACCESS_KEY_PH", configs['accessKey']).replace(
-            "SECRET_KEY_PH", configs['secretKey']).replace(
+            "SHARED_CREDENTIALS_FILE_PH", configs['sharedCredentialsFile']).replace(
             "INSTANCE_TYPE_PH", configs['flavor']).replace(
             "AMI_PH", configs['ami']).replace(
             "KEY_NAME_PH", configs['keyName']).replace(

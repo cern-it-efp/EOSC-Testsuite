@@ -7,15 +7,14 @@ kubernetes:
 openUser: centos
 flavor: "t2.medium" # instanceType
 region: "us-east-2"
-accessKey: ""
-secretKey: ""
+sharedCrdentialsFile: "creds"
 ami: "ami-08ee2516c7709ea48"
 keyName: "exo"
 volumeSize: # 50 # optional
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:
-  generalInstancePrice:
-  GPUInstancePrice:
-  HPCInstancePrice:
-  s3bucketPrice:
+  generalInstancePrice: 0.2
+  GPUInstancePrice: 0.2
+  HPCInstancePrice: 0.2
+  s3bucketPrice: 0.1
