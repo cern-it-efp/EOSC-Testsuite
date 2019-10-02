@@ -6,6 +6,7 @@ src/terraform/providers/exoscale/*
 src/terraform/providers/ibm/*
 src/terraform/providers/openstack/*
 src/terraform/providers/gcp/*
+src/terraform/providers/cloudstack/*
 
 !src/terraform/providers/*/*.tf
 !src/terraform/providers/*/*.yaml
