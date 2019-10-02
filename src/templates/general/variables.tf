@@ -14,6 +14,19 @@ variable "openUser" {
 variable "instanceName" {
   default = "NAME_PH"
 }
+variable "zone" {
+  default = "ZONE_PH"
+}
+variable "region" { # neither CERN nor cf allow setting region (at least from the UI)
+  default = "REGION_PH"
+}
+variable "securityGroups" { # this is an array: ["default","allow_ping_ssh_rdp"]
+  default = "SEC_GROUPS_PH"
+}
+variable "keyPair" {
+  default = "KEY_PAIR_PH"
+}
+
 # -------------------------- General -------------------------------------------
 variable "sshConnect" {
   default = "../../terraform/ssh_connect.sh"
@@ -42,16 +55,6 @@ variable "flavor" {
 }
 variable "imageName" {
   default = "IMAGE_PH"
-}
-variable "keyPair" {
-  default = "KEY_PAIR_PH"
-}
-variable "securityGroups" { # this is an array: ["default","allow_ping_ssh_rdp"]
-  default = "SEC_GROUPS_PH"
-}
-# Optional
-variable "regionOS" { # neither CERN nor cf allow setting region (at least from the UI)
-  default = "REGION_OS_PH"
 }
 variable "availabilityZone" { # cern os allows selecting Availability Zone / cf allows specifying it too but the only possible option in the dropdown is "nova"
   default = "AV_ZONE_PH"
@@ -103,9 +106,6 @@ variable "project" {
 variable "machineType" {
   default = "MACHINE_TYPE_PH"
 }
-variable "zone" {
-  default = "ZONE_PH"
-}
 variable "image" {
   default = "IMAGE_PH"
 }
@@ -117,9 +117,6 @@ variable "gpuType" {
 }
 
 ############################ AWS ###############################################
-variable "regionAWS" {
-  default = "REGION_AWS_PH"
-}
 variable "accessKey" {
   default = "ACCESS_KEY_PH"
 }
@@ -138,6 +135,22 @@ variable "keyName" {
 variable "volumeSize" {
   default = "VOLUME_SIZE_PH"
 }
-variable "sharedCrdentialsFile" {
+variable "sharedCredentialsFile" {
   default = "SHARED_CREDENTIALS_FILE_PH"
 }
+
+############################ EXOSCALE ##########################################
+variable "configPath" {
+  default = "CONFIG_PATH_PH"
+}
+variable "size" {
+  default = "EXO_SIZE_PH"
+}
+variable "template" {
+  default = "TEMPLATE_PH"
+}
+variable "diskSize" {
+  default = "DISK_SIZE_PH"
+}
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~ END OF VARS  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

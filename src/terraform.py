@@ -130,12 +130,20 @@ def terraformProvisionment(
     cleanupTF(mainTfDir)
 
     # ---------------- manage general variables
+
+    # TODO: the schema validate must check configs' openUser: it is a required
+    # property for providers that do not allow ssh with the root user (exoscale
+    # would be the only one that allows root ssh)
+    openUser = "" if configs['openUser'] is None else configs['openUser']
+
+    str(configs['openUser'])
+
     variables = loadFile("templates/general/variables.tf",
                          required=True).replace(
         "NODES_PH", str(nodes)).replace(
         "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(
         "KUBECONFIG_DST", kubeconfig).replace(
-        "OPEN_USER_PH", str(configs['openUser'])).replace(
+        "OPEN_USER_PH", openUser).replace(
         "NAME_PH", nodeName)
     variables = stackVersioning(variables, configs)
 
@@ -173,7 +181,7 @@ def terraformProvisionment(
 
     elif configs["providerName"] == "openstack":
 
-        # manage image related vars
+        # manage optional related vars
         region = "" if configs["region"] is None \
             else configs["region"]
         availabilityZone = "" if configs["availabilityZone"] is None \
@@ -186,8 +194,8 @@ def terraformProvisionment(
             "FLAVOR_PH", configs['flavor']).replace(
             "IMAGE_PH", configs['imageName']).replace(
             "KEY_PAIR_PH", configs['keyPair']).replace(
-            "SEC_GROUPS_PH", securityGroups).replace(
-            "REGION_OS_PH", region).replace(
+            "\"SEC_GROUPS_PH\"", securityGroups).replace(
+            "REGION_PH", region).replace(
             "AV_ZONE_PH", availabilityZone)
         writeToFile(mainTfDir + "/main.tf", variables, False)
 
@@ -227,12 +235,38 @@ def terraformProvisionment(
 
         # ---------------- main.tf: manage aws specific vars and add them
         variables = variables.replace(
-            "REGION_AWS_PH", configs['region']).replace(
+            "REGION_PH", configs['region']).replace(
             "SHARED_CREDENTIALS_FILE_PH", configs['sharedCredentialsFile']).replace(
             "INSTANCE_TYPE_PH", configs['flavor']).replace(
             "AMI_PH", configs['ami']).replace(
             "NAME_KEY_PH", configs['keyName']).replace(
             "VOLUME_SIZE_PH", volumeSize)
+        writeToFile(mainTfDir + "/main.tf", variables, False)
+
+        # ---------------- main.tf: add raw VMs provisioner
+        rawProvisioning = loadFile(
+            "%s/rawProvision.tf" % templatesPath, required=True)
+        writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
+
+
+    elif configs["providerName"] == "cloudstack":
+
+
+    elif configs["providerName"] == "exoscale":
+
+        # manage optional related vars
+        securityGroups = "[]" if configs["securityGroups"] is None \
+            else configs["securityGroups"]
+
+        # ---------------- main.tf: manage aws specific vars and add them
+        variables = variables.replace(
+            "CONFIG_PATH_PH", configs['configPath']).replace(
+            "ZONE_PH", configs['zone']).replace(
+            "EXO_SIZE_PH", configs['flavor']).replace(
+            "TEMPLATE_PH", configs['template']).replace(
+            "KEY_PAIR_PH", configs['keyPair']).replace(
+            "\"SEC_GROUPS_PH\"", securityGroups).replace(
+            "DISK_SIZE_PH", str(configs['diskSize']))
         writeToFile(mainTfDir + "/main.tf", variables, False)
 
         # ---------------- main.tf: add raw VMs provisioner

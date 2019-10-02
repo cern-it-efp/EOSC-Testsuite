@@ -4,8 +4,11 @@ allProviders:
   aws: 'element(aws_instance.kubenode.*.private_ip, count.index)'
   azurerm: 'element(azurerm_network_interface.terraformnic.*.private_ip_address, count.index)'
   google: 'element(google_compute_instance.kubenode.*.network_interface.0.network_ip, count.index)'
+  cloudstack: 'element(cloudstack_instance.kubenode.*.ip_address, count.index)'
 extraSupportedClouds:
   - azurerm
   - openstack
   - aws
   - google
+  - exoscale
+  - cloudstack

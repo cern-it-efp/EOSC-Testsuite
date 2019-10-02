@@ -1,16 +1,17 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
-providerName: "aws"
-pathToKey: "/root/.ssh/id_rsa"
+providerName: "exoscale"
+pathToKey: "/home/ipelu/.ssh/id_rsa"
 dockerCE:
 dockerEngine:
 kubernetes:
-openUser: centos
-flavor: "t2.medium" # instanceType
-region: "us-east-2"
-sharedCrdentialsFile: "creds"
-ami: "ami-08ee2516c7709ea48"
-keyName: "exo"
-volumeSize: # 50 # optional
+openUser: # remove this for exo?
+configPath: "/home/ipelu/Desktop/exoCreds"
+flavor: "Medium"
+zone: "ch-gva-2"
+template: "Linux CentOS 7.6 64-bit"
+keyPair: "k_cl"
+securityGroups: "[\"default\"]"
+diskSize: 100
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:
