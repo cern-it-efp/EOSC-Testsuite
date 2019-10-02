@@ -187,7 +187,7 @@ def terraformProvisionment(
             "IMAGE_PH", configs['imageName']).replace(
             "KEY_PAIR_PH", configs['keyPair']).replace(
             "SEC_GROUPS_PH", securityGroups).replace(
-            "REGION_PH", region).replace(
+            "REGION_OS_PH", region).replace(
             "AV_ZONE_PH", availabilityZone)
         writeToFile(mainTfDir + "/main.tf", variables, False)
 
@@ -227,7 +227,7 @@ def terraformProvisionment(
 
         # ---------------- main.tf: manage aws specific vars and add them
         variables = variables.replace(
-            "REGION_PH", configs['region']).replace(
+            "REGION_AWS_PH", configs['region']).replace(
             "SHARED_CREDENTIALS_FILE_PH", configs['sharedCredentialsFile']).replace(
             "INSTANCE_TYPE_PH", configs['flavor']).replace(
             "AMI_PH", configs['ami']).replace(
