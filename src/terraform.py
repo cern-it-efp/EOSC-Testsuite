@@ -231,7 +231,7 @@ def terraformProvisionment(
             "SHARED_CREDENTIALS_FILE_PH", configs['sharedCredentialsFile']).replace(
             "INSTANCE_TYPE_PH", configs['flavor']).replace(
             "AMI_PH", configs['ami']).replace(
-            "KEY_NAME_PH", configs['keyName']).replace(
+            "NAME_KEY_PH", configs['keyName']).replace(
             "VOLUME_SIZE_PH", volumeSize)
         writeToFile(mainTfDir + "/main.tf", variables, False)
 

@@ -133,7 +133,7 @@ variable "ami" {
   default = "AMI_PH"
 }
 variable "keyName" {
-  default = "KEY_NAME_PH"
+  default = "NAME_KEY_PH"
 }
 variable "volumeSize" {
   default = "VOLUME_SIZE_PH"
