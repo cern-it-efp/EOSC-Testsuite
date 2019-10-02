@@ -43,6 +43,7 @@ The developers would like to thank all test owners and contributors to this proj
 |                              | | CERN Private Cloud (OpenStack)                                                |
 |                              | | CloudFerro (OpenStack)                                                        |
 |                              | | Cloudscale (OpenStack)                                                        |
+|                              | | Cloudstack                                                                    |
 +------------------------------+---------------------------------------------------------------------------------+
 
 The test suite is being tested in several additional cloud providers. As tests are concluded the cloud providers names will be added in the table above.

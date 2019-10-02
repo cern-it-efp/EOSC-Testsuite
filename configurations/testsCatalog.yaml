@@ -6,17 +6,17 @@ s3Test:
 dataRepatriationTest:
   run: true
 cpuBenchmarking:
-  run:
+  run: true
 perfsonarTest:
   run: true
-  endpoint:
+  endpoint: psb01-gva.cern.ch
 dodasTest:
   run:
 dlTest:
-  run:
-  nodes:
-  flavor:
+  run: true
+  nodes: 4
+  flavor: "GPU-small"
 hpcTest:
-  run:
-  nodes:
-  flavor:
+  run: true
+  nodes: 4
+  flavor: "Small"

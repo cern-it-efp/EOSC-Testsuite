@@ -1,6 +1,6 @@
 provider "aws" {
-  region                  = "${var.regionAWS}" # "us-east-2"
-  shared_credentials_file = "${var.sharedCrdentialsFile}"
+  region                  = "${var.region}" # "us-east-2"
+  shared_credentials_file = "${var.sharedCredentialsFile}"
 }
 
 resource "aws_instance" "kubenode" {

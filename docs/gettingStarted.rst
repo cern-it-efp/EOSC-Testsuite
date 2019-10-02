@@ -234,13 +234,13 @@ Also, if image's *publisher*, *offer*, *sku* and *version* are omitted, the foll
 
 (Find the example files at *examples/aws*. It is also possible to use EKS to provision the cluster, for this refer to section "Using existing clusters".)
 
-Region, access key and secret key must be hardcoded in the file *configurations/credentials*.
+The authentication method supported is AWS's shared credential file. Specify the path to this at configs.yaml's "sharedCredentialsFile".
 
 ``GCP``
 
-(Example files at *examples/gcp*. It is also possible to use GKE to provision the cluster, for this refer to section "Using existing clusters".)
+(Example files at *examples/gcp*. It is also possible to use GKE to provision the cluster, for this refer to section "Using existing clusters". You will have to |use_gke| too.)
 
-For authentication, donwload the JSON file with the credentials from the Google Cloud console. Then, the file *configurations/credentials* must contain *credentials = "${file("CREDENTIALS_FILE")}"* and
+For authentication, download the JSON file with the credentials from the Google Cloud console. Then, the file *configurations/credentials* must contain *credentials = "${file("CREDENTIALS_FILE")}"* and
 *project = "PROJECT_ID"*, where CREDENTIALS_FILE should be the path to the downloaded file and PROJECT_ID the id of your GCP project.
 
 The VMs need public IP's (NAT) to connect to the internet if the network used it the "default" one and differing to other providers these are
@@ -269,6 +269,15 @@ Variables for configs.yaml besides the general ones:
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 |availabilityZone       | The availability zone in which to create the compute instances.                                                             |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+
+``Exoscale``
+
+Use |cloudstack_creds| for credentials and specify the path to it at configs.yaml's "configPath".
+Must contain endpoint, key and secret.
+
+.. |cloudstack_creds| raw:: html
+
+  <a href="" target="_blank">cloudstack.ini file</a>
 
 
 1.6 Using Docker
