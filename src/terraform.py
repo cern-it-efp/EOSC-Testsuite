@@ -29,6 +29,9 @@ def runTerraform(mainTfDir, baseCWD, toLog, msg, autoApprove=True):
     tfCMD = 'terraform init && %s terraform apply -auto-approve' % beautify
     if autoApprove is False:
         tfCMD = 'terraform init && %s terraform apply' % beautify
+
+    tfCMD = tfCMD + " | while read line; do echo \"[ %s ] $line\"; done" % toLog # FIX: shows the cluster ID only for the apply cmd but not for init + remove 'logging' from toLog
+
     exitCode = runCMD(tfCMD)
     os.chdir(baseCWD)
     return exitCode
