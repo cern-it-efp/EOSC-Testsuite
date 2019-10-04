@@ -270,6 +270,18 @@ Variables for configs.yaml besides the general ones:
 |availabilityZone       | The availability zone in which to create the compute instances.                                                             |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 
+``Cloudstack``
+
+At configs.yaml's configPath, specify the path to the file containing the cloudstack credentials. Such file must follow this structure:
+
+.. code-block:: console
+
+  [cloudstack]
+  url = your_api_url
+  apikey = your_api_key
+  secretkey = your_secret_key
+
+
 ``Exoscale``
 
 Use |cloudstack_creds| for credentials and specify the path to it at configs.yaml's "configPath".

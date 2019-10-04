@@ -1,20 +1,14 @@
-provider "cloudstack" {
-  #config = ""
-  #profile = "" # ?
-  api_url    = ""
-  api_key    = ""
-  secret_key = ""
-  config = "${var.configPath}" # failed, required 'profile'
+provider "exoscale" {
+  config = "${var.configPath}"
 }
 
-resource "cloudstack_instance" "kubenode" {
+resource "exoscale_compute" "kubenode" {
   count           = "${var.customCount}"
   zone            = "${var.zone}"
-  service_offering            = "${var.size}"
-  name            = "${var.instanceName}-${count.index}"
+  size            = "${var.size}"
+  display_name    = "${var.instanceName}-${count.index}"
   template        = "${var.template}"
-  keypair        = "${var.keyPair}"
-  security_group_names = "${var.securityGroups}"
+  key_pair        = "${var.keyPair}"
+  security_groups = "${var.securityGroups}"
   disk_size       = "${var.diskSize}"
-
 }

@@ -1,14 +1,15 @@
-provider "exoscale" {
-  config = "${var.configPath}"
+provider "cloudstack" {
+  config  = "${var.configPath}"
+  profile = "cloudstack"
 }
 
-resource "exoscale_compute" "kubenode" {
-  count           = "${var.customCount}"
-  zone            = "${var.zone}"
-  size            = "${var.size}"
-  display_name    = "${var.instanceName}-${count.index}"
-  template        = "${var.template}"
-  key_pair        = "${var.keyPair}"
-  security_groups = "${var.securityGroups}"
-  disk_size       = "${var.diskSize}"
+resource "cloudstack_instance" "kubenode" {
+  count                = "${var.customCount}"
+  zone                 = "${var.zone}"
+  service_offering     = "${var.size}"
+  name                 = "${var.instanceName}-${count.index}"
+  template             = "${var.template}"
+  keypair              = "${var.keyPair}"
+  security_group_names = "${var.securityGroups}"
+  root_disk_size       = "${var.diskSize}"
 }

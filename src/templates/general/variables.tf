@@ -139,7 +139,7 @@ variable "sharedCredentialsFile" {
   default = "SHARED_CREDENTIALS_FILE_PH"
 }
 
-############################ EXOSCALE ##########################################
+############################ CLOUDSTACK & EXOSCALE #############################
 variable "configPath" {
   default = "CONFIG_PATH_PH"
 }
