@@ -249,12 +249,9 @@ def terraformProvisionment(
         writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
 
 
-    elif configs["providerName"] == "cloudstack":
+    elif configs["providerName"] == "exoscale" or configs["providerName"] == "cloudstack":
 
-
-    elif configs["providerName"] == "exoscale":
-
-        # manage optional related vars
+        # manage optional vars
         securityGroups = "[]" if configs["securityGroups"] is None \
             else configs["securityGroups"]
 
