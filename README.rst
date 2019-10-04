@@ -56,7 +56,7 @@ Release notes
 
 -Project restructure and code refactoring.
 
--Improved support for Google, AWS, Azure and Openstack.
+-Improved support for Google, AWS, Azure, Exoscale, Openstack and Cloudstack.
 
 -Usage of Terraform API instead of Terraform CLI.
 
