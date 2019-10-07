@@ -11,7 +11,7 @@ provisionFailMsg = "Failed to provision raw VMs. Check 'logs' file for details"
 bootstrapFailMsg = "Failed to bootstrap '%s' k8s cluster. Check 'logs' file"
 
 
-def runTerraform(mainTfDir, baseCWD, toLog, msg, autoApprove=True):
+def runTerraform(mainTfDir, baseCWD, test, msg, autoApprove=True):
     """Run Terraform cmds.
 
     Parameters:
@@ -23,14 +23,16 @@ def runTerraform(mainTfDir, baseCWD, toLog, msg, autoApprove=True):
         int: 0 for success, 1 for failure
 
     """
+
+    toLog = "logging/%s" % test
     writeToFile(toLog, msg, True)
     os.chdir(mainTfDir)
     beautify = "terraform fmt > /dev/null &&"
-    tfCMD = 'terraform init && %s terraform apply -auto-approve' % beautify
+    tfCMD = "(terraform init && %s terraform apply -auto-approve)" % beautify
     if autoApprove is False:
-        tfCMD = 'terraform init && %s terraform apply' % beautify
+        tfCMD = "(terraform init && %s terraform apply)" % beautify
 
-    tfCMD = tfCMD + " | while read line; do echo \"[ %s ] $line\"; done" % toLog # FIX: shows the cluster ID only for the apply cmd but not for init + remove 'logging' from toLog
+    tfCMD = tfCMD + " | while read line; do echo \"[ %s ] $line\"; done" % test
 
     exitCode = runCMD(tfCMD)
     os.chdir(baseCWD)
@@ -168,7 +170,7 @@ def terraformProvisionment(
             "PUB_SSH_PH", configs['pubSSH']).replace(
             "RGROUP_PH", configs['resourceGroupName']).replace(
             "RANDOMID_PH", randomId).replace(
-            "VM_SIZE_PH", configs['flavor']).replace(
+            "VM_SIZE_PH", flavor).replace(
             "SECGROUPID_PH", configs['securityGroupID']).replace(
             "SUBNETID_PH", configs['subnetId']).replace(
             "PUBLISHER_PH", publisher).replace(
@@ -194,7 +196,7 @@ def terraformProvisionment(
 
         # ---------------- main.tf: manage openstack specific vars and add them
         variables = variables.replace(
-            "FLAVOR_PH", configs['flavor']).replace(
+            "FLAVOR_PH", flavor).replace(
             "IMAGE_PH", configs['imageName']).replace(
             "KEY_PAIR_PH", configs['keyPair']).replace(
             "\"SEC_GROUPS_PH\"", securityGroups).replace(
@@ -217,7 +219,7 @@ def terraformProvisionment(
         variables = variables.replace(
             "CREDENTIALS_PATH_PH", configs['pathToCredentials']).replace(
             "PROJECT_PH", configs['project']).replace(
-            "MACHINE_TYPE_PH", configs['flavor']).replace(
+            "MACHINE_TYPE_PH", flavor).replace(
             "ZONE_PH", configs['zone']).replace(
             "IMAGE_PH", configs['image']).replace(
             "GPU_COUNT_PH", gpuCount).replace(
@@ -240,7 +242,7 @@ def terraformProvisionment(
         variables = variables.replace(
             "REGION_PH", configs['region']).replace(
             "SHARED_CREDENTIALS_FILE_PH", configs['sharedCredentialsFile']).replace(
-            "INSTANCE_TYPE_PH", configs['flavor']).replace(
+            "INSTANCE_TYPE_PH", flavor).replace(
             "AMI_PH", configs['ami']).replace(
             "NAME_KEY_PH", configs['keyName']).replace(
             "VOLUME_SIZE_PH", volumeSize)
@@ -262,7 +264,7 @@ def terraformProvisionment(
         variables = variables.replace(
             "CONFIG_PATH_PH", configs['configPath']).replace(
             "ZONE_PH", configs['zone']).replace(
-            "EXO_SIZE_PH", configs['flavor']).replace(
+            "EXO_SIZE_PH", flavor).replace(
             "TEMPLATE_PH", configs['template']).replace(
             "KEY_PAIR_PH", configs['keyPair']).replace(
             "\"SEC_GROUPS_PH\"", securityGroups).replace(
@@ -301,7 +303,7 @@ def terraformProvisionment(
     # ---------------- RUN TERRAFORM - phase 1: provision VMs
     if runTerraform(mainTfDir,
                     baseCWD,
-                    toLog,
+                    test,
                     "Provisioning '%s' VMs..." % flavor) != 0:
         return False, provisionFailMsg
 
@@ -325,7 +327,7 @@ def terraformProvisionment(
     # ---------------- RUN TERRAFORM - phase 2: bootstrap the k8s cluster
     if runTerraform(mainTfDir,
                     baseCWD,
-                    toLog,
+                    test,
                     "...bootstraping Kubernetes cluster...") != 0:
         return False, bootstrapFailMsg % flavor
 
