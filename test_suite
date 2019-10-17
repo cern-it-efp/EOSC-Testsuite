@@ -4,9 +4,10 @@ opts=""
 while [[ "$1" != "" ]]; do
   if [[ "$1" == '-j' ]]; then
     jenkins=true
+  else
+    opts+=" "$1
+    shift
   fi
-  opts+=" "$1
-  shift
 done
 
 catAll(){
