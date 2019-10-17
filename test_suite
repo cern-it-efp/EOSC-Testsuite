@@ -2,6 +2,9 @@
 
 opts=""
 while [[ "$1" != "" ]]; do
+  if [[ "$1" == '-j' ]]; then
+    jenkins=true
+  fi
   opts+=" "$1
   shift
 done
@@ -22,7 +25,11 @@ export -f catAll
 watchFunct(){
   cd src/logging
   touch logs header shared dlTest hpcTest footer
-  watch -n 0.1 -t -x bash -c catAll & echo $! > killMe
+  if [[ $jenkins == true ]]; then
+    while true; do catAll; sleep 0.1; clear; done & echo $! > killMe
+  else
+    watch -n 0.1 -t -x bash -c catAll & echo $! > killMe
+  fi
   cd ../..
 }
 
