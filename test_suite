@@ -49,4 +49,5 @@ cat src/logging/logs
 
 if [[ $outStat != 0 ]]; then
   cat logs
+  exit $outStat
 fi
