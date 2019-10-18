@@ -13,10 +13,10 @@ perfsonarTest:
 dodasTest:
   run:
 dlTest:
-  run: true
+  run:
   nodes: 4
   flavor: "GPU-small"
 hpcTest:
-  run: true
+  run: 
   nodes: 4
   flavor: "Small"
