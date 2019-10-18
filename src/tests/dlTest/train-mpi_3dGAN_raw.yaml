@@ -4,6 +4,7 @@ metadata:
   labels:
     app: eleescan-3dgan
   name: train-mpijob
+  namespace: default
 spec:
   backoffLimit: 12
   replicas: REP_PH
