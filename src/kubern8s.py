@@ -209,7 +209,7 @@ def kubectl(
         except BaseException:
             res = False
 
-    elif action is Action.cp: # TODO: failing when fetch=True (at least): on jenkins (cern-openshift), jenkins run locally (docker)(?)
+    elif action is Action.cp: # TODO: failing when fetch=True (perfsonar test): on jenkins (cern-openshift) -> problem is related to namespaces (kubectl on OS default uses test-jenkins-efp which is not even listed at kubectl get namespaces, but it is the name of the openshift project)
 
         podName = podPath.split(':')[0]
         # remove ending '/' if exists
