@@ -14,6 +14,7 @@ try:
     import tarfile
     from pathlib import Path
     from enum import Enum
+    import time
 
 except ModuleNotFoundError as ex:
     print(ex)
@@ -76,6 +77,7 @@ def checkDestinationIsDir(podName, pathOnPod, namespace=None):
     if namespace is None:
         namespace = "default"
     cmd = "test -d %s ; echo $?" % pathOnPod
+    #time.sleep(5)
     resp = stream(
         client.CoreV1Api().connect_get_namespaced_pod_exec,
         podName,
@@ -217,66 +219,58 @@ def kubectl(
         # remove ending '/' if exists
         localPath = re.sub("[/]$", "", localPath)
 
-        try:
-            with NamedTemporaryFile() as tarBuffer:
-                if fetch:
-                    # copy from pod: compress on pod
-                    execCommand = ['tar', 'cf', '-', pathOnPod]
+        with NamedTemporaryFile() as tarBuffer:
+            if fetch:
+                # copy from pod: compress on pod
+                execCommand = ['tar', 'cf', '-', pathOnPod]
+            else:
+                if checkDestinationIsDir(podName, pathOnPod) is False:
+                    fileNameOnDest = pathOnPod.split('/')[-1]
+                    pathOnPod = os.path.dirname(pathOnPod)
                 else:
-                    if checkDestinationIsDir(podName, pathOnPod) is False:
-                        fileNameOnDest = pathOnPod.split('/')[-1]
-                        pathOnPod = os.path.dirname(pathOnPod)
-                    else:
-                        fileNameOnDest = Path(localPath).name
-                    # copy to pod: extract on pod
-                    execCommand = ['tar', 'xf', '-', '-C', pathOnPod]
+                    fileNameOnDest = Path(localPath).name
+                # copy to pod: extract on pod
+                execCommand = ['tar', 'xf', '-', '-C', pathOnPod]
 
-                    with tarfile.open(fileobj=tarBuffer, mode='w') as tar:
-                        tar.add(localPath, arcname=fileNameOnDest)
-                    tarBuffer.seek(0)
-                    commands = [tarBuffer.read()]
-
-                resp = stream(
-                    client.CoreV1Api().connect_get_namespaced_pod_exec,
-                    podName,
-                    namespace,
-                    command=execCommand,
-                    stderr=True,
-                    stdin=True,
-                    stdout=True,
-                    tty=False,
-                    _preload_content=False)
-
-                while resp.is_open():
-                    resp.update(timeout=1)
-                    if resp.peek_stdout():
-                        if fetch:
-                            tarBuffer.write(resp.read_stdout().encode())
-                        else:
-                            print("STDOUT: %s" % resp.read_stdout())
-                    if not fetch and commands:
-                        resp.write_stdin(commands.pop(0).decode())
-                resp.close()
-
-                tarBuffer.flush()
+                with tarfile.open(fileobj=tarBuffer, mode='w') as tar:
+                    tar.add(localPath, arcname=fileNameOnDest)
                 tarBuffer.seek(0)
+                commands = [tarBuffer.read()]
 
-                if fetch:
-                    tar = tarfile.open(tarBuffer.name)
-                    try:
-                        member = tar.getmembers()[0]
-                        member.name = os.path.basename(member.name)
-                        # check if localPath is a locally existing directory.
-                        if os.path.isdir(localPath) is False:
-                            member.name = os.path.basename(localPath)
-                            localPath = os.path.dirname(localPath)
-                        tar.extract(member, localPath)
-                        tar.close()
-                    except IndexError as e:  # File not found
-                        print(e)
-                        res = False
-        except BaseException as e :
-            print(e)
-            res = False
+            resp = stream(
+                client.CoreV1Api().connect_get_namespaced_pod_exec,
+                podName,
+                namespace,
+                command=execCommand,
+                stderr=True,
+                stdin=True,
+                stdout=True,
+                tty=False,
+                _preload_content=False)
+
+            while resp.is_open():
+                resp.update(timeout=1)
+                if resp.peek_stdout():
+                    if fetch:
+                        tarBuffer.write(resp.read_stdout().encode())
+                    else:
+                        print("STDOUT: %s" % resp.read_stdout())
+                if not fetch and commands:
+                    resp.write_stdin(commands.pop(0).decode())
+            resp.close()
+
+            tarBuffer.flush()
+            tarBuffer.seek(0)
+
+            if fetch:
+                tar = tarfile.open(tarBuffer.name)
+                member = tar.getmembers()[0]
+                member.name = os.path.basename(member.name)
+                # check if localPath is a locally existing directory.
+                if os.path.isdir(localPath) is False:
+                    member.name = os.path.basename(localPath)
+                    localPath = os.path.dirname(localPath)
+                tar.extract(member, localPath)
+                tar.close()
 
     return 0 if res is True else 1
