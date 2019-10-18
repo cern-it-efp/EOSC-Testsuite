@@ -1,12 +1,12 @@
 s3Test:
-  run: true
+  run: 
   endpoint: https://s3.com
   accessKey: 1234abc
   secretKey: 1234abc
 dataRepatriationTest:
-  run: true
+  run: 
 cpuBenchmarking:
-  run: true
+  run: 
 perfsonarTest:
   run: true
   endpoint: psb01-gva.cern.ch
