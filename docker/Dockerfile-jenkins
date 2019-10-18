@@ -1,0 +1,48 @@
+FROM jenkins/jenkins
+
+USER root
+
+# ------------------ General Stuff
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update
+RUN apt-get install -y \
+    curl \
+    wget \
+    python \
+    awscli \
+    python-pip \
+    python3-pip \
+    nano \
+    vim \
+    python2.7 \
+    zip \
+    unzip \
+    git \
+    snapd \
+    net-tools \
+    jq
+RUN pip3 install \
+    pyyaml \
+    kubernetes \
+    jsonschema
+RUN pip3 install --upgrade requests
+
+# ------------------ Install terraform
+RUN TERRAFORM_VERSION=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r .current_version) && \
+    wget https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
+    unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
+    mv terraform /bin
+
+# ------------------ Install kubectl
+RUN KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt) && \
+    curl -LO https://storage.googleapis.com/kubernetes-release/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl && \
+    chmod +x ./kubectl && \
+    mv ./kubectl /bin
+
+# ------------------ Create ssh key file
+RUN touch /var/jenkins_home/key && chmod 600 /var/jenkins_home/key
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~ TO ALLOW SSH FORM OPENSHIFT (will openshift always give the 1005360000 UID?
+RUN chgrp -R 0 /etc && chmod -R g=u /etc
+RUN chmod g=u /etc/passwd
+RUN sed -i 's/jenkins:x:1000:1000/jenkins:x:1005360000:1005360000/' /etc/passwd
