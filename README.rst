@@ -52,7 +52,7 @@ Release notes
 ---------------------------------------------
 (Note the versions are numbered with the date of the release: YEAR.MONTH)
 
-``19.``
+``19.12``
 
 -Project restructure and code refactoring.
 

@@ -217,58 +217,66 @@ def kubectl(
         # remove ending '/' if exists
         localPath = re.sub("[/]$", "", localPath)
 
-        with NamedTemporaryFile() as tarBuffer:
-            if fetch:
-                # copy from pod: compress on pod
-                execCommand = ['tar', 'cf', '-', pathOnPod]
-            else:
-                if checkDestinationIsDir(podName, pathOnPod) is False:
-                    fileNameOnDest = pathOnPod.split('/')[-1]
-                    pathOnPod = os.path.dirname(pathOnPod)
+        try:
+            with NamedTemporaryFile() as tarBuffer:
+                if fetch:
+                    # copy from pod: compress on pod
+                    execCommand = ['tar', 'cf', '-', pathOnPod]
                 else:
-                    fileNameOnDest = Path(localPath).name
-                # copy to pod: extract on pod
-                execCommand = ['tar', 'xf', '-', '-C', pathOnPod]
-
-                with tarfile.open(fileobj=tarBuffer, mode='w') as tar:
-                    tar.add(localPath, arcname=fileNameOnDest)
-                tarBuffer.seek(0)
-                commands = [tarBuffer.read()]
-
-            resp = stream(
-                client.CoreV1Api().connect_get_namespaced_pod_exec,
-                podName,
-                namespace,
-                command=execCommand,
-                stderr=True,
-                stdin=True,
-                stdout=True,
-                tty=False,
-                _preload_content=False)
-
-            while resp.is_open():
-                resp.update(timeout=1)
-                if resp.peek_stdout():
-                    if fetch:
-                        tarBuffer.write(resp.read_stdout().encode())
+                    if checkDestinationIsDir(podName, pathOnPod) is False:
+                        fileNameOnDest = pathOnPod.split('/')[-1]
+                        pathOnPod = os.path.dirname(pathOnPod)
                     else:
-                        print("STDOUT: %s" % resp.read_stdout())
-                if not fetch and commands:
-                    resp.write_stdin(commands.pop(0).decode())
-            resp.close()
+                        fileNameOnDest = Path(localPath).name
+                    # copy to pod: extract on pod
+                    execCommand = ['tar', 'xf', '-', '-C', pathOnPod]
 
-            tarBuffer.flush()
-            tarBuffer.seek(0)
+                    with tarfile.open(fileobj=tarBuffer, mode='w') as tar:
+                        tar.add(localPath, arcname=fileNameOnDest)
+                    tarBuffer.seek(0)
+                    commands = [tarBuffer.read()]
 
-            if fetch:
-                tar = tarfile.open(tarBuffer.name)
-                member = tar.getmembers()[0]
-                member.name = os.path.basename(member.name)
-                # check if localPath is a locally existing directory.
-                if os.path.isdir(localPath) is False:
-                    member.name = os.path.basename(localPath)
-                    localPath = os.path.dirname(localPath)
-                tar.extract(member, localPath)
-                tar.close()
+                resp = stream(
+                    client.CoreV1Api().connect_get_namespaced_pod_exec,
+                    podName,
+                    namespace,
+                    command=execCommand,
+                    stderr=True,
+                    stdin=True,
+                    stdout=True,
+                    tty=False,
+                    _preload_content=False)
+
+                while resp.is_open():
+                    resp.update(timeout=1)
+                    if resp.peek_stdout():
+                        if fetch:
+                            tarBuffer.write(resp.read_stdout().encode())
+                        else:
+                            print("STDOUT: %s" % resp.read_stdout())
+                    if not fetch and commands:
+                        resp.write_stdin(commands.pop(0).decode())
+                resp.close()
+
+                tarBuffer.flush()
+                tarBuffer.seek(0)
+
+                if fetch:
+                    tar = tarfile.open(tarBuffer.name)
+                    try:
+                        member = tar.getmembers()[0]
+                        member.name = os.path.basename(member.name)
+                        # check if localPath is a locally existing directory.
+                        if os.path.isdir(localPath) is False:
+                            member.name = os.path.basename(localPath)
+                            localPath = os.path.dirname(localPath)
+                        tar.extract(member, localPath)
+                        tar.close()
+                    except IndexError as e:  # File not found
+                        print(e)
+                        res = False
+        except BaseException as e :
+            print(e)
+            res = False
 
     return 0 if res is True else 1
