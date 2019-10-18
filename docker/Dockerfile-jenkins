@@ -39,8 +39,6 @@ RUN KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/
     chmod +x ./kubectl && \
     mv ./kubectl /bin
 
-# ------------------ Create ssh key file
-RUN touch /var/jenkins_home/key && chmod 600 /var/jenkins_home/key
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~ TO ALLOW SSH FORM OPENSHIFT (will openshift always give the 1005360000 UID?
 RUN chgrp -R 0 /etc && chmod -R g=u /etc

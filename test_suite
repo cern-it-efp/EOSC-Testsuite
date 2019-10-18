@@ -27,7 +27,7 @@ watchFunct(){
   cd src/logging
   touch logs header shared dlTest hpcTest footer
   if  [[ $jenkins = true ]]; then
-    while true; do catAll; sleep 0.1; clear; done & echo $! > killMe
+    while true; do catAll; sleep 2; done & echo $! > killMe
   else
     watch -n 0.1 -t -x bash -c catAll & echo $! > killMe
   fi
