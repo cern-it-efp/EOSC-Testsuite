@@ -1,12 +1,12 @@
 s3Test:
-  run: 
+  run: true
   endpoint: https://s3.com
   accessKey: 1234abc
   secretKey: 1234abc
 dataRepatriationTest:
-  run: 
+  run: true
 cpuBenchmarking:
-  run: 
+  run: true
 perfsonarTest:
   run: true
   endpoint: psb01-gva.cern.ch
@@ -17,6 +17,6 @@ dlTest:
   nodes: 4
   flavor: "GPU-small"
 hpcTest:
-  run: 
+  run:
   nodes: 4
   flavor: "Small"

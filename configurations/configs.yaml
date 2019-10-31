@@ -1,9 +1,9 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
-providerName: "cloudstack"
+providerName: "aws"
 pathToKey: "/home/ipelu/.ssh/id_rsa" # "/var/jenkins_home/key"
 dockerCE:
 dockerEngine:
-kubernetes: v1.15.4
+kubernetes: 
 openUser:
 configPath: "/home/ipelu/Desktop/exoCreds" # "/var/jenkins_home/exoCreds"
 flavor: "Medium"
