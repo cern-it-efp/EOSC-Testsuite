@@ -157,13 +157,14 @@ def kubectl(
             while resp.is_open():
                 resp.update(timeout=1)
 
-                print(commands)
+                print(commands[0])
 
                 if resp.peek_stdout():
                     print("STDOUT: %s" % resp.read_stdout())
                 if not fetch and commands:
                     resp.write_stdin(commands.pop(0).decode())
                     # UnicodeDecodeError: 'utf-8' codec can't decode byte 0x80 in position 108: invalid start byte
+                    # tried decoding locally (same bytes string), also failed: problem has to be in encoding 
             resp.close()
 
             tarBuffer.flush()
