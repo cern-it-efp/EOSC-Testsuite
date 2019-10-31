@@ -132,6 +132,8 @@ init_cluster()
 
   kubectl create -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
+  kubectl config set-context --current --namespace=default # WA to fix namespace issues on jenkins runs
+
 }
 
 systemctl stop firewalld
