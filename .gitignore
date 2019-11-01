@@ -38,3 +38,5 @@ src/tests/hpcTest/config
 src/tests/hpcTest/.terraform*
 src/tests/hpcTest/terraform.tfstate*
 src/tests/hpcTest/join.sh
+
+src/__pycache__

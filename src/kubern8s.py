@@ -93,6 +93,17 @@ def checkDestinationIsDir(podName, pathOnPod, namespace=None):
     return True
 
 
+def reset(tarinfo):
+    """Resets tar file's user related metadata.
+       (Test suite runs on Jenkins failed to encrypt these metadata when
+       copying files to pod, this fixes that)
+     """
+
+    tarinfo.uid = tarinfo.gid = 0
+    tarinfo.uname = tarinfo.gname = "root"
+    return tarinfo
+
+
 def kubectl(
         action,
         type=None,
@@ -209,7 +220,7 @@ def kubectl(
         except BaseException:
             res = False
 
-    elif action is Action.cp: # TODO: failing when fetch=True (perfsonar test): on jenkins (cern-openshift) -> problem is related to namespaces (kubectl on OS default uses test-jenkins-efp which is not even listed at kubectl get namespaces, but it is the name of the openshift project)
+    elif action is Action.cp:
 
         podName = podPath.split(':')[0]
         # remove ending '/' if exists
@@ -232,7 +243,7 @@ def kubectl(
                     execCommand = ['tar', 'xf', '-', '-C', pathOnPod]
 
                     with tarfile.open(fileobj=tarBuffer, mode='w') as tar:
-                        tar.add(localPath, arcname=fileNameOnDest)
+                        tar.add(localPath, arcname=fileNameOnDest, filter=reset)
                     tarBuffer.seek(0)
                     commands = [tarBuffer.read()]
 
@@ -275,7 +286,7 @@ def kubectl(
                     except IndexError as e:  # File not found
                         print(e)
                         res = False
-        except BaseException as e :
+        except BaseException as e:
             print(e)
             res = False
 
