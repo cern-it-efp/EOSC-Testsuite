@@ -4,6 +4,7 @@ opts=""
 while [[ "$1" != "" ]]; do
   if [[ "$1" == '-j' ]]; then
     jenkins=true
+    shift
   else
     opts+=" "$1
     shift
