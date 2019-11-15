@@ -1,6 +1,8 @@
 # curl -sL https://aka.ms/InstallAzureCLIDeb | bash && az login
 
-provider "azurerm" {}
+provider "azurerm" {
+  #subscription_id = "81c8c622-b259-4289-8e31-687edda57dcd"
+}
 
 variable "avar" {
   default = "~/afiletf" # debug
@@ -89,7 +91,7 @@ resource "azurerm_virtual_machine" "main" {
 
   os_profile {
     computer_name  = "myvm"
-    admin_username = "uroot"
+    admin_username = "uroot" # no root here!
   }
 
   os_profile_linux_config {
