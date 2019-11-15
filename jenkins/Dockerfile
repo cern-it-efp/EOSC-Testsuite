@@ -1,3 +1,5 @@
+#This is our custom jenkins-tslauncher image for CERN Openshift
+
 FROM jenkins/jenkins
 
 USER root
