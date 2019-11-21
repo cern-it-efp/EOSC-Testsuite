@@ -54,11 +54,9 @@ Release notes
 
 ``19.12``
 
--Project restructure and code refactoring.
-
 -Improved support for Google, AWS, Azure, Exoscale, Openstack and Cloudstack.
 
--Usage of Terraform API instead of Terraform CLI.
+-Project restructure and code refactoring.
 
 ``19.8``
 

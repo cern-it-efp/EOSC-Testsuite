@@ -1,7 +1,7 @@
 # curl -sL https://aka.ms/InstallAzureCLIDeb | bash && az login
 
 provider "azurerm" {
-  #subscription_id = "81c8c622-b259-4289-8e31-687edda57dcd"
+  subscription_id = "54f623f0-8c18-40dd-9530-d32d2f1ee14f"
 }
 
 variable "avar" {
@@ -12,7 +12,7 @@ variable "avar" {
 resource "azurerm_virtual_network" "myterraformnetwork" {
   name                = "myVnet"
   address_space       = ["10.0.0.0/16"]
-  location            = "East US"
+  location            = "West Europe"
   resource_group_name = "ocrets"
 }
 
@@ -27,7 +27,7 @@ resource "azurerm_subnet" "myterraformsubnet" {
 # Create Network Security Group and rule (This can actually be done IN ADVANCE, like on Exoscale or Openstack as it is just one for all the VMs)
 resource "azurerm_network_security_group" "myterraformnsg" {
   name                = "myNetworkSecurityGroup"
-  location            = "East US"
+  location            = "West Europe"
   resource_group_name = "ocrets"
 
   security_rule {
@@ -46,7 +46,7 @@ resource "azurerm_network_security_group" "myterraformnsg" {
 # Create public IPs
 resource "azurerm_public_ip" "myterraformpublicip" {
   name                = "myPublicIP"
-  location            = "East US"
+  location            = "West Europe"
   resource_group_name = "ocrets"
   allocation_method   = "Dynamic"
 }
@@ -54,7 +54,7 @@ resource "azurerm_public_ip" "myterraformpublicip" {
 # Create network interface (This CAN'T be done in advance, as I need one per VM: too much GUI work)
 resource "azurerm_network_interface" "terraformnic" {
   name                      = "myNIC"
-  location                  = "East US"
+  location                  = "West Europe"
   resource_group_name       = "ocrets"
   network_security_group_id = "${azurerm_network_security_group.myterraformnsg.id}"
 
@@ -70,8 +70,8 @@ resource "azurerm_network_interface" "terraformnic" {
 
 resource "azurerm_virtual_machine" "main" {
   name                  = "tslauncher"
-  location              = "East US"
-  vm_size               = "Standard_D2s_v3"
+  location              = "West Europe"
+  vm_size               = "NV12s_v2_Standard" # Standard_D2s_v3
   resource_group_name   = "ocrets"
   network_interface_ids = ["${azurerm_network_interface.terraformnic.id}"]
 
