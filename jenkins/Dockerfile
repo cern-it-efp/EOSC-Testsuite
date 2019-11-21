@@ -4,6 +4,9 @@ FROM jenkins/jenkins
 
 USER root
 
+#1008220000 (openshift uses different UID per project)
+ARG UID=1005360000
+
 # ------------------ General Stuff
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update
@@ -41,19 +44,8 @@ RUN KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/
     chmod +x ./kubectl && \
     mv ./kubectl /bin
 
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~ TO ALLOW SSH FROM OPENSHIFT (openshift uses different UID per project)
+# ------------------ Permissions
 RUN chgrp -R 0 /etc && chmod -R g=u /etc
 RUN chmod g=u /etc/passwd
-
-#RUN sed -i 's/jenkins:x:1000:1000/jenkins:x:1005360000:1005360000/' /etc/passwd
-#RUN adduser jenkins sudo # works when building but does not achieve what's desired when running the container
-
-RUN sed -i 's/jenkins:x:1000:1000/jenkins:x:1008220000:1008220000/' /etc/passwd
-
-# useless solution bc systemctl fails
-RUN chown -R jenkins:jenkins /usr
-RUN chown -R jenkins:jenkins /etc
-RUN chown -R jenkins:jenkins /var
-
-RUN /etc/init.d/dbus start
+RUN sed -i "s/jenkins:x:1000:1000/jenkins:x:$UID:$UID/" /etc/passwd
+RUN chown -R jenkins:jenkins /usr/share/jenkins
