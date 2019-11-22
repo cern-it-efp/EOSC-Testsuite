@@ -5,7 +5,7 @@ FROM jenkins/jenkins
 USER root
 
 #1008220000 (openshift uses different UID per project)
-ARG UID=1005360000
+#ARG UID=1005360000
 
 # ------------------ General Stuff
 ARG DEBIAN_FRONTEND=noninteractive
@@ -47,5 +47,11 @@ RUN KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/
 # ------------------ Permissions
 RUN chgrp -R 0 /etc && chmod -R g=u /etc
 RUN chmod g=u /etc/passwd
-RUN sed -i "s/jenkins:x:1000:1000/jenkins:x:$UID:$UID/" /etc/passwd
-RUN chown -R jenkins:jenkins /usr/share/jenkins
+
+#RUN sed -i "s/jenkins:x:1000:1000/jenkins:x:$UID:$UID/" /etc/passwd
+
+RUN chown -R jenkins:jenkins /usr/share/jenkins /etc/passwd
+
+################ AFTER CONTAINER IS RUN ################ (Try to add the random UID to etc/passwd when the container is run)
+
+ENTRYPOINT chown -R $UID:$UID /usr/share/jenkins /etc/passwd ; sed -i "s/jenkins:x:1000:1000/jenkins:x:$UID:$UID/" /etc/passwd
