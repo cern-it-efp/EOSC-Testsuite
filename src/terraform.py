@@ -28,13 +28,23 @@ def runTerraform(mainTfDir, baseCWD, test, msg, autoApprove=True):
     writeToFile(toLog, msg, True)
     os.chdir(mainTfDir)
     beautify = "terraform fmt > /dev/null &&"
-    tfCMD = "(terraform init && %s terraform apply -auto-approve)" % beautify
+    tfCMD = "terraform init && %s terraform apply -auto-approve" % beautify
     if autoApprove is False:
-        tfCMD = "(terraform init && %s terraform apply)" % beautify
+        tfCMD = "terraform init && %s terraform apply" % beautify
 
-    tfCMD = tfCMD + " | while read line; do echo \"[ %s ] $line\"; done" % test
+    tfScript = """
+    ((%s) && touch /tmp/validTFrun) |&
 
-    exitCode = runCMD(tfCMD)
+    while read line; do echo [ %s ] $line; done
+
+    if [[ -f /tmp/validTFrun ]]; then
+    	rm -f /tmp/validTFrun
+    	exit 0
+    fi
+    exit 1
+    """ % (tfCMD, test)
+
+    exitCode = runCMD(tfScript)
     os.chdir(baseCWD)
     return exitCode
 
@@ -231,7 +241,6 @@ def terraformProvisionment(
             "%s/rawProvision.tf" % templatesPath, required=True)
         writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
 
-
     elif configs["providerName"] == "aws":
 
         # manage optional vars
@@ -252,7 +261,6 @@ def terraformProvisionment(
         rawProvisioning = loadFile(
             "%s/rawProvision.tf" % templatesPath, required=True)
         writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
-
 
     elif configs["providerName"] == "exoscale" or configs["providerName"] == "cloudstack":
 
@@ -275,7 +283,6 @@ def terraformProvisionment(
         rawProvisioning = loadFile(
             "%s/rawProvision.tf" % templatesPath, required=True)
         writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
-
 
     else:
         # ---------------- main.tf: add vars
