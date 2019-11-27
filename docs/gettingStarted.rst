@@ -56,13 +56,17 @@ Note errors may occur if your key doesn't have the right permissions. Set these 
 ==========================================
 The following ports have to be opened:
 
-- 22/TCP (SSH)
-
-- 6443/TCP (Kubernetes API)
-
-- 10250/TCP	(API which allows node access)
-
-- 8472/UDP (Flannel overlay network, k8s pods communication)
++------+----------+----------------------------------------------------+
+|Port  | Protocol |Functionality                                       |
++======+==========+====================================================+
+|22    | TCP      |SSH                                                 |
++------+----------+----------------------------------------------------+
+|6443  | TCP      |Kubernetes API                                      |
++------+----------+----------------------------------------------------+
+|10250 | TCP      |API which allows node access                        |
++------+----------+----------------------------------------------------+
+|8472  | UDP      |Flannel overlay network, k8s pods communication     |
++------+----------+----------------------------------------------------+
 
 1.4 Networking and IPs
 ==========================================
@@ -234,7 +238,7 @@ Also, if image's *publisher*, *offer*, *sku* and *version* are omitted, the foll
 
 (Find the example files at *examples/aws*. It is also possible to use EKS to provision the cluster, for this refer to section "Using existing clusters".)
 
-The authentication method supported is AWS's shared credential file. Specify the path to this at configs.yaml's "sharedCredentialsFile".
+The authentication method supported is AWS's shared credential file. Specify the absolute path to this at configs.yaml's "sharedCredentialsFile".
 
 ``GCP``
 
