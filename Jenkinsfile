@@ -36,13 +36,13 @@ pipeline {
                           cat header > logs; echo "" >> logs
                         fi
                         if [ -s shared ]; then
-                          cat shared > logs; echo "" >> logs
+                          cat shared >> logs; echo "" >> logs
                         fi
                         if [ -s dlTest ]; then
-                          cat dlTest > logs; echo "" >> logs
+                          cat dlTest >> logs; echo "" >> logs
                         fi
                         if [ -s hpcTest ]; then
-                          cat hpcTest > logs; echo "" >> logs
+                          cat hpcTest >> logs; echo "" >> logs
                         fi
                   '''
                     def output = sh(returnStdout: true, script: 'cat run.txt')
