@@ -6,11 +6,11 @@ dockerEngine:
 kubernetes:
 openUser: centos
 flavor: "t2.medium" # instanceType
-region: "us-east-2"
-sharedCredentialsFile: "creds"
-ami: "ami-08ee2516c7709ea48"
+region: "eu-central-1"
+sharedCredentialsFile: "/creds"
+ami: "ami-0957ba512eafd08d9"
 keyName: "exo"
-volumeSize: # 50 # optional
+volumeSize: 50 # optional
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:
