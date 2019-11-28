@@ -33,11 +33,11 @@ def runTerraform(mainTfDir, baseCWD, test, msg, autoApprove=True):
         tfCMD = "terraform init && %s terraform apply" % beautify
 
     tfScript = """
-    ((%s) && touch /tmp/validTFrun) |&
+    ((%s) && touch /tmp/validTFrun) |
 
     while read line; do echo [ %s ] $line; done
 
-    if [[ -f /tmp/validTFrun ]]; then
+    if [ -f /tmp/validTFrun ]; then
     	rm -f /tmp/validTFrun
     	exit 0
     fi
