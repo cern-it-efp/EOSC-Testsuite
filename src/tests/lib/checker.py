@@ -4,7 +4,7 @@ import os
 import sys
 
 #jenkins library configuration
-sys.path.append(os.path.abspath("lib"))
+sys.path.append(os.path.abspath("src/tests/lib"))
 from aux import *
 
 try:
