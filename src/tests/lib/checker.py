@@ -3,9 +3,10 @@
 import os
 import sys
 import importlib
-sys.path.append(os.path.abspath("./lib/"))
+sys.path.append(os.path.abspath(os.environ['WORKSPACE'] + "src/tests/lib/"))
+sys.path.append(os.path.abspath("lib"))
 sys.path.append(os.environ['WORKSPACE'])
-importlib.import_module("lib")
+importlib.import_module("/var/lib")
 
 #jenkins library configuration
 from lib.aux import *
