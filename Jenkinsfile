@@ -22,46 +22,6 @@ pipeline {
       }
     }
 
-    stage("Configure") {
-          steps{
-            script{
-              dir ("$WORKSPACE/src") {
-                sh """
-                #!/usr/bin/env python3
-                from checker import *
-                from terraform import *
-                from kubern8s import *
-
-                import sys
-                try:
-                    import yaml
-                    import json
-                    from multiprocessing import Process, Queue
-                    import getopt
-                    import jsonschema
-                    import os
-                    import datetime
-                    import time
-                    import subprocess
-                    import string
-                    import re
-                    import shutil
-
-                except ModuleNotFoundError as ex:
-                    print(ex)
-                    sys.exit(1)
-
-                logger(
-                    "OCRE Cloud Benchmarking Validation Test Suite (CERN)",
-                    "#",
-                    "logging/header")
-
-                """
-              }
-            }
-          }
-      }
-
     stage('Validation') {
       steps{
         dir ("$WORKSPACE/src") {
