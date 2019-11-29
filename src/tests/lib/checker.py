@@ -4,7 +4,7 @@ import os
 import sys
 
 #jenkins library configuration
-sys.path.append(os.path.abspath("src/tests/lib"))
+sys.path.append(os.path.abspath("/var/jenkins_home/workspace/OCRE-test-suite-pipeline-test/src/tests/lib"))
 from lib.aux import *
 
 try:
