@@ -3,6 +3,7 @@
 import os
 import sys
 import importlib
+importlib.import_module("lib")
 
 #jenkins library configuration
 sys.path.append(os.path.abspath("./lib/"))
@@ -10,7 +11,6 @@ from lib.aux import *
 
 try:
     import jsonschema
-    importlib.import_module("lib")
 
 except ModuleNotFoundError as ex:
     print(ex)
