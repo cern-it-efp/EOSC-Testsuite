@@ -20,7 +20,7 @@ except ModuleNotFoundError as ex:
     sys.exit(1)
 
 #jenkins library configuration
-sys.path.append(os.environ['WORKSPACE'])
+sys.path.append(os.path.abspath("./lib/"))
 from lib.aux import *
 Action = Enum('Action', 'create delete cp exec')
 Type = Enum('Type', 'pod daemonset mpijob configmap pv')

@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
 import os
+import sys
 import time
 import random
 import string
 
 #jenkins library configuration
-sys.path.append(os.environ['WORKSPACE'])
+sys.path.append(os.path.abspath("./lib/"))
 from lib.aux import *
 
 provisionFailMsg = "Failed to provision raw VMs. Check 'logs' file for details"
