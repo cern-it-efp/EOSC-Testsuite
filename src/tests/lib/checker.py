@@ -3,7 +3,7 @@
 import os
 import sys
 import importlib
-importlib.import_module("lib")
+importlib.import_module("src.lib")
 
 #jenkins library configuration
 sys.path.append(os.path.abspath("./lib/"))
