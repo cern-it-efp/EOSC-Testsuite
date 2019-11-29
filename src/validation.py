@@ -23,37 +23,6 @@ except ModuleNotFoundError as ex:
     print(ex)
     sys.exit(1)
 
-logger(
-    "OCRE Cloud Benchmarking Validation Test Suite (CERN)",
-    "#",
-    "logging/header")
-
-onlyTest = False
-killResources = False
-configs = ""
-testsCatalog = ""
-instanceDefinition = ""
-extraInstanceConfig = ""
-dependencies = ""
-credentials = ""
-totalCost = 0
-procs = []
-testsRoot = "tests/"
-viaBackend = False
-testsSharingCluster = ["s3Test", "dataRepatriationTest",
-                       "perfsonarTest", "cpuBenchmarking", "dodasTest"]
-customClustersTests = ["dlTest", "hpcTest"]
-baseCWD = os.getcwd()
-resultsExist = False
-provDict = loadFile("schemas/provDict.yaml",
-                    required=True)["allProviders"]
-extraSupportedClouds = loadFile("schemas/provDict.yaml",
-                                required=True)["extraSupportedClouds"]
-obtainCost = True
-retry = None
-publicRepo = "https://ocre-testsuite.rtfd.io"
-
-
 def validateYaml(provider):
     """ Validates configs.yaml and testsCatalog.yaml file against schemas.
 
@@ -80,20 +49,13 @@ def validateYaml(provider):
         stop(1)
 
 
-def initAndChecks():
+def initAndChecks(configs, testsCatalog, instanceDefinition, 
+                    extraInstanceConfig, dependencies, credentials, obtainCost):
     """Initial checks and initialization of variables.
 
     Returns:
         Array(str): Array containing the selected tests (strings)
     """
-
-    global configs
-    global testsCatalog
-    global instanceDefinition
-    global extraInstanceConfig
-    global dependencies
-    global credentials
-    global obtainCost
 
     # --------File check
     if runCMD("terraform version", hideLogs=True) != 0:
@@ -103,10 +65,6 @@ def initAndChecks():
         print("kubectl is not installed")
         stop(1)
 
-    configs = loadFile("../configurations/configs.yaml", required=True)
-    testsCatalog = loadFile(
-        "../configurations/testsCatalog.yaml", required=True)
-
     # SSH key checks: exists and permissions set to 600
     if os.path.isfile(configs["pathToKey"]) is False:
         print("Key file not found at '%s'" % configs["pathToKey"])
@@ -114,16 +72,6 @@ def initAndChecks():
     if "600" not in oct(os.stat(configs["pathToKey"]).st_mode & 0o777):
         print("Key permissions must be set to 600")
         stop(1)
-
-    # disabled schema validation for testing
-    # validateYaml(configs["providerName"], extraSupportedClouds)
-
-    # TODO: instanceDefinition is now only required when not running on main
-    # clouds
-    instanceDefinition = loadFile("../configurations/instanceDefinition")
-    extraInstanceConfig = loadFile("../configurations/extraInstanceConfig")
-    dependencies = loadFile("../configurations/dependencies")
-    credentials = loadFile("../configurations/credentials")
 
     if configs['providerName'] not in provDict:
         writeToFile("logging/header", "Provider '%s' not supported" %
@@ -183,12 +131,11 @@ def initAndChecks():
             obtainCost,
             configs["costCalculation"]["generalInstancePrice"])
 
-    return selected
-
 # -----------------CMD OPTIONS--------------------------------------------
 try:
     opts, args = getopt.getopt(
-        sys.argv, "ul", ["--only-test", "--via-backend", "--retry"])
+        sys.argv, "ul", ["--only-test", "--via-backend", "--retry", "--s3Test", "--sharedClusterTest", "--perfSonarTest", 
+                            "--hpcTest", "--dodasTest", "--dlTest", "--dataRepatriationTest", "--cpuBenchmarkingTest"])
 except getopt.GetoptError as err:
     writeToFile("logging/header", err, True)
     stop(1)
@@ -197,6 +144,22 @@ for arg in args[1:len(args)]:
         writeToFile("logging/header", "(ONLY TEST EXECUTION)", True)
         #runCMD("kubectl delete pods --all", hideLogs=True)
         onlyTest = True
+    elif arg == '--dataRepatriationTest':
+        dataRepatriationTest = True
+    elif arg == '--cpuBenchmarkingTest':
+        cpuBenchmarkingTest = True
+    elif arg == '--sharedClusterTest':
+        sharedClusterTest = True
+    elif arg == '--perfSonarTest':
+        perfSonarTest = True
+    elif arg == '--dodasTest':
+        dodasTest = True
+    elif arg == '--hpcTest':
+        hpcTest = True
+    elif arg == '--dlTest':
+        dlTest = True
+    elif arg == '--s3Test':
+        s3Test = True
     elif arg == '--retry':
         retry = True
     else:
@@ -204,13 +167,27 @@ for arg in args[1:len(args)]:
                     (arg, publicRepo), True)
         stop(1)
 
-# -----------------CHECKS AND PREPARATION---------------------------------
-if not initAndChecks():
-    writeToFile("logging/header", "No tests selected, nothing to do!", True)
-    stop(0)
+# -----------------CONFIGURE PATHS ---------------------------------------
+print("About to set paths to the config files.")
+configs = loadFile("/var/jenkins_home/configurations/configs.yaml", required=True)
+testsCatalog = loadFile(
+        "/var/jenkins_home/configurations/testsCatalog.yaml", required=True)
 
+provDict = loadFile("schemas/provDict.yaml",
+                    required=True)["allProviders"]
+extraSupportedClouds = loadFile("schemas/provDict.yaml",
+                                required=True)["extraSupportedClouds"] 
+
+publicRepo = "https://ocre-testsuite.rtfd.io"                                       
+
+# TODO: instanceDefinition is now only required when not running on main clouds
+instanceDefinition = loadFile("/var/jenkins_home/configurations/instanceDefinition")
+extraInstanceConfig = loadFile("/var/jenkins_home/configurations/extraInstanceConfig")
+dependencies = loadFile("/var/jenkins_home/configurations/dependencies")
+credentials = loadFile("/var/jenkins_home/configurations/credentials")
 
 # ----------------CREATE RESULTS FOLDER AND GENERAL FILE------------------
+print("About to create results folder and general file.")
 s3ResDirBase = configs["providerName"] + "/" + str(
     datetime.datetime.now().strftime("%d-%m-%Y_%H-%M-%S"))
 resDir = "../results/%s/detailed" % s3ResDirBase
@@ -219,69 +196,9 @@ generalResults = {
     "testing": []
 }
 
-# ----------------RUN TESTS-----------------------------------------------
-queue = Queue()
-cluster = 1
-
-msgArr = ["CLUSTER %s: (parallel running tests):" % (cluster)]
-for test in testsSharingCluster:
-    if testsCatalog[test]["run"] is True:
-        msgArr.append(test)
-
-if len(msgArr) > 1:
-    p = Process(target=sharedClusterTests, args=(msgArr,))
-    procs.append(p)
-    p.start()
-    cluster += 1
-
-for test in customClustersTests:
-    if testsCatalog[test]["run"] is True:
-        logger("CLUSTER %s: %s" % (cluster, test), "=", "logging/%s" % test)
-        p = Process(target=eval(test))
-        procs.append(p)
-        p.start()
-        cluster += 1
-
-for p in procs:  # All tests launched (functions run): wait for completion
-    p.join()
-
-while not queue.empty():
-    entry, cost = queue.get()
-    if entry:
-        generalResults["testing"].append(entry)
-    totalCost += cost
-
-if checkResultsExist(resDir) is True:
-    # ----------------CALCULATE COSTS-----------------------------------------
-    if totalCost > 0:
-        generalResults["estimatedCost"] = totalCost
-    else:
-        writeToFile(
-            "logging/footer",
-            "(Costs aren't correctly set: calculation will not be made)",
-            True)
-
-    # ----------------MANAGE RESULTS------------------------------------------
-    with open("../results/" + s3ResDirBase + "/general.json", 'w') as outfile:
-        json.dump(generalResults, outfile, indent=4, sort_keys=True)
-
-    msg1 = "TESTING COMPLETED. Results at:"
-    # No results push if local run (only ts-backend has AWS creds for this)
-    if viaBackend is True:
-        s3Endpoint = "https://s3.cern.ch"
-        bucket = "s3://ts-results"
-        pushResults = runCMD(
-            "aws s3 cp --endpoint-url=%s %s %s/%s --recursive > /dev/null" %
-            (s3Endpoint, "../results/" + s3ResDirBase, bucket, s3ResDirBase))
-        runCMD("cp ../results/%s/general.json .. " % s3ResDirBase)
-        if pushResults != 0:
-            logger("S3 upload failed! Is 'awscli' installed and configured?",
-                   "!", "logging/footer")
-        else:
-            logger([msg1, "S3 bucket"], "#", "logging/footer")
-    else:
-        logger([msg1, "results/" + s3ResDirBase], "#", "logging/footer")
-else:
-    shutil.rmtree("../results/" + s3ResDirBase, True)
-
-stop(0)
+# ----------------VALIDATION AND INIT RUN---------------------------------
+# disabled schema validation for testing
+# validateYaml(configs["providerName"], extraSupportedClouds)
+print("About to run the required checks.")
+initAndChecks(configs, testsCatalog, instanceDefinition, 
+                extraInstanceConfig, dependencies, credentials, True)
