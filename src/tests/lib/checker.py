@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import os
-from lib.aux import *
+from func.aux import *
 
 try:
     import jsonschema

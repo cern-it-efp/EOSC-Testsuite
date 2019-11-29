@@ -5,7 +5,7 @@ import time
 import random
 import string
 
-from aux import *
+from func.aux import *
 
 provisionFailMsg = "Failed to provision raw VMs. Check 'logs' file for details"
 bootstrapFailMsg = "Failed to bootstrap '%s' k8s cluster. Check 'logs' file"
