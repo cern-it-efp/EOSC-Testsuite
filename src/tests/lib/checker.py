@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 
 import os
-from lib.func.aux import *
+import sys
+
+#jenkins library configuration
+sys.path.append(os.environ['WORKSPACE'])
+from lib.aux import *
 
 try:
     import jsonschema

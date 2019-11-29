@@ -19,7 +19,9 @@ except ModuleNotFoundError as ex:
     print(ex)
     sys.exit(1)
 
-from aux import *
+#jenkins library configuration
+sys.path.append(os.environ['WORKSPACE'])
+from lib.aux import *
 Action = Enum('Action', 'create delete cp exec')
 Type = Enum('Type', 'pod daemonset mpijob configmap pv')
 

@@ -5,7 +5,9 @@ import time
 import random
 import string
 
-from lib.func.aux import *
+#jenkins library configuration
+sys.path.append(os.environ['WORKSPACE'])
+from lib.aux import *
 
 provisionFailMsg = "Failed to provision raw VMs. Check 'logs' file for details"
 bootstrapFailMsg = "Failed to bootstrap '%s' k8s cluster. Check 'logs' file"
