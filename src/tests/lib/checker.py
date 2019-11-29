@@ -4,8 +4,8 @@ import os
 import sys
 
 #jenkins library configuration
-sys.path.append(os.path.abspath(os.environ['WORKSPACE'] + "/src/tests/lib"))
-from aux import *
+sys.path.append(os.path.abspath(os.environ['WORKSPACE'] + "/src/tests"))
+from lib.aux import *
 
 try:
     import jsonschema
