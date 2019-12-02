@@ -32,13 +32,11 @@ except ModuleNotFoundError as ex:
 #tests to be run (will be updated from CMD in the run)
 dataRepatriationTest = False
 cpuBenchmarkingTest = False
-sharedClusterTest = False
 perfSonarTest = False
 dodasTest = False
 hpcTest = False
 dlTest = False
 s3Test = False
-
 
 def validateYaml(provider):
     """ Validates configs.yaml and testsCatalog.yaml file against schemas.
@@ -107,7 +105,7 @@ def initAndChecks(configs, testsCatalog, instanceDefinition,
     # --------Tests config checks
     selected = []
     if s3Test is True:
-        print("s3Test has been selected.")
+        print("s3Test has been selected to be validated.")
         selected.append("s3Test")
         obtainCost = checkCost(
             obtainCost,
@@ -116,40 +114,40 @@ def initAndChecks(configs, testsCatalog, instanceDefinition,
             obtainCost, configs["costCalculation"]["s3bucketPrice"])
 
     if perfSonarTest is True:
-        print("perfSonarTest has been selected.")
+        print("perfSonarTest has been selected to be validated.")
         selected.append("perfsonarTest")
         obtainCost = checkCost(
             obtainCost,
             configs["costCalculation"]["generalInstancePrice"])
 
     if dataRepatriationTest is True:
-        print("dataRepatriationTest has been selected.")
+        print("dataRepatriationTest has been selected to be validated.")
         selected.append("dataRepatriationTest")
         obtainCost = checkCost(
             obtainCost,
             configs["costCalculation"]["generalInstancePrice"])
 
     if cpuBenchmarkingTest is True:
-        print("cpuBenchmarking has been selected.")
+        print("cpuBenchmarking has been selected to be validated.")
         selected.append("cpuBenchmarking")
         obtainCost = checkCost(
             obtainCost,
             configs["costCalculation"]["generalInstancePrice"])
 
     if dlTest is True:
-        print("dlTest has been selected.")
+        print("dlTest has been selected to be validated.")
         selected.append("dlTest")
         obtainCost = checkCost(
             obtainCost, configs["costCalculation"]["GPUInstancePrice"])
 
     if hpcTest is True:
-        print("hpcTest has been selected.")
+        print("hpcTest has been selected to be validated.")
         selected.append("hpcTest")
         obtainCost = checkCost(
             obtainCost, configs["costCalculation"]["GPUInstancePrice"])
 
     if dodasTest is True:
-        print("dodasTest has been selected.")
+        print("dodasTest has been selected to be validated.")
         selected.append("dodasTest")
         obtainCost = checkCost(
             obtainCost,
@@ -158,7 +156,7 @@ def initAndChecks(configs, testsCatalog, instanceDefinition,
 # -----------------CMD OPTIONS--------------------------------------------
 try:
     opts, args = getopt.getopt(
-        sys.argv, "ul", ["--only-test", "--via-backend", "--retry", "--s3Test", "--sharedClusterTest", "--perfSonarTest", 
+        sys.argv, "ul", ["--only-test", "--via-backend", "--retry", "--s3Test", "--perfSonarTest", 
                             "--hpcTest", "--dodasTest", "--dlTest", "--dataRepatriationTest", "--cpuBenchmarkingTest"])
 except getopt.GetoptError as err:
     writeToFile("logging/header", err, True)
@@ -172,8 +170,6 @@ for arg in args[1:len(args)]:
         dataRepatriationTest = True
     elif arg == '--cpuBenchmarkingTest':
         cpuBenchmarkingTest = True
-    elif arg == '--sharedClusterTest':
-        sharedClusterTest = True
     elif arg == '--perfSonarTest':
         perfSonarTest = True
     elif arg == '--dodasTest':
@@ -209,16 +205,6 @@ instanceDefinition = loadFile("/var/jenkins_home/configurations/instanceDefiniti
 extraInstanceConfig = loadFile("/var/jenkins_home/configurations/extraInstanceConfig")
 dependencies = loadFile("/var/jenkins_home/configurations/dependencies")
 credentials = loadFile("/var/jenkins_home/configurations/credentials")
-
-# ----------------CREATE RESULTS FOLDER AND GENERAL FILE------------------
-print("About to create results folder and general file.")
-s3ResDirBase = configs["providerName"] + "/" + str(
-    datetime.datetime.now().strftime("%d-%m-%Y_%H-%M-%S"))
-resDir = "../results/%s/detailed" % s3ResDirBase
-os.makedirs(resDir)
-generalResults = {
-    "testing": []
-}
 
 # ----------------VALIDATION AND INIT RUN---------------------------------
 # disabled schema validation for testing

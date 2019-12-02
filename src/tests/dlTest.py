@@ -41,6 +41,7 @@ obtainCost, credentials, resDir, viaBackend):
     else:
         if not checkCluster("dlTest"):
             return  # Cluster not reachable, do not add cost for this test
+    res = False
 
     #### This should be done at the end of this function #####################
     if obtainCost is True:
@@ -128,4 +129,5 @@ obtainCost, credentials, resDir, viaBackend):
     kubectl(Action.delete, type=Type.pv, name="pv-volume1")
     kubectl(Action.delete, type=Type.pv, name="pv-volume2")
     kubectl(Action.delete, type=Type.pv, name="pv-volume3")
-    return
+
+    return ({"test": "dlTest", "deployed": res}, testCost)

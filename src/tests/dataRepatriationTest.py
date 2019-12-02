@@ -7,6 +7,8 @@ from lib.kubern8s import *
 def dataRepatriationTest(configs, resDir):
     """Run Data Repatriation Test -Exporting from cloud to Zenodo-."""
 
+    res = False
+    testCost = 0
     testsRoot =  "../"
     with open("data_repatriation/raw/repatriation_pod_raw.yaml",
               'r') as infile:
@@ -32,3 +34,6 @@ def dataRepatriationTest(configs, resDir):
         # cleanup
         writeToFile("logging/shared", "Cluster cleanup...", True)
         kubectl(Action.delete, type=Type.pod, name="repatriation-pod")
+        res = True
+
+    return ({"test": "dataRepatriationTest", "deployed": res}, testCost)

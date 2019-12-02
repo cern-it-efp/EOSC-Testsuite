@@ -32,6 +32,9 @@ def s3Test(testsCatalog, configs, resDir, obtainCost):
         # cleanup
         writeToFile("../logging/shared", "Cluster cleanup...", True)
         kubectl(Action.delete, type=Type.pod, name="s3pod")
+        res = True
         if obtainCost is True:
             testCost = float(configs["costCalculation"]
                              ["s3bucketPrice"]) * (end - start) / 3600
+                             
+    return ({"test": "s3Test", "deployed": res}, testCost) #entry, cost

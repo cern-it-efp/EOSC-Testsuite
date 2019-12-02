@@ -1,6 +1,8 @@
-pipeline {
-  agent any
-  stages {
+#!/usr/bin/env groovy
+
+def testSuiteParams = "";
+def testNamesToRun = [:]
+
     stage('SCM') {
       steps{
         cleanWs()
@@ -12,12 +14,24 @@ pipeline {
       }
     }
 
-    stage('Clean') {
+    stage('Set-up') {
       steps{
-        dir ("$WORKSPACE/src/logging") {
-        pwd() 
-        sh "rm -f header killMe footer hpcTest dlTest shared logs"
-        sh "touch logs run.txt"
+        script{
+            dir ("$WORKSPACE/src/logging") {
+            sh "rm -f header killMe footer hpcTest dlTest shared logs"
+            sh "touch logs run.txt"
+
+            if (params.ONLY_TEST) testSuiteParams = "--only-test "
+            if (params.VIA_BACKEND) testSuiteParams += "--via-backend "
+            if (params.RETRY) testSuiteParams += "--retry " 
+            if (params.S3_TEST) testSuiteParams += "--s3Test " testNamesToRun.add("s3Test")
+            if (params.DL_TEST) testSuiteParams += "--dlTest " testNamesToRun.add("s3TedlTestst")
+            if (params.PERF_SONAR_TEST) testSuiteParams += "--perfSonarTest " testNamesToRun.add("perfSonarTest")
+            if (params.DODAS_TEST) testSuiteParams += "--dodasTest " testNamesToRun.add("dodasTest")
+            if (params.DATA_REPARATION_TEST) testSuiteParams += "--dataRepatriationTest " testNamesToRun.add("dataRepatriationTest")
+            if (params.CPU_BENCHMARKING_TEST) testSuiteParams += "--cpuBenchmarkingTest" testNamesToRun.add("cpuBenchmarkingTest")
+            println "this is run params var: $testSuiteParams"
+          }
         }
       }
     }
@@ -26,71 +40,19 @@ pipeline {
       steps{
         dir ("$WORKSPACE/src") {
         pwd() 
-        sh "python3 -B validation.py --s3Test &> ../logs"
+        sh "python3 -B validation.py $testSuiteParams"
         }
       }
     }
 
-    stage("Execution") {
-      parallel {
-        stage("logging") {
-          steps{
-              script{
-                  dir ("$WORKSPACE/src/logging") {
-                  sh '''
-                      set +x
-                        if [ -s header ]; then
-                          cat header > logs; echo "" >> logs
-                        fi
-                        if [ -s shared ]; then
-                          cat shared >> logs; echo "" >> logs
-                        fi
-                        if [ -s dlTest ]; then
-                          cat dlTest >> logs; echo "" >> logs
-                        fi
-                        if [ -s hpcTest ]; then
-                          cat hpcTest >> logs; echo "" >> logs
-                        fi
-                  '''
-                    def output = sh(returnStdout: true, script: 'cat run.txt')
-                    return !output.empty
-                  }
+    testNamesToRun.each { name -> 
+        node {
+            stage(name) {
+                runOCRETests(version)
             }
-          }
         }
-        
-        stage('tests run') {
-          steps{
-            script{ 
-            dir ("$WORKSPACE/src/logging") {
-            sh """
-                #!/bin/bash
-                touch logs header shared dlTest hpcTest footer
-                echo "Logs to the file logs"
-            """     
-              try { 
-                  dir ("$WORKSPACE/src") {
-                  //sh "python3 -B main.py &> ../logs"
-                  }
-              } catch(Exception err) {
-                  print err
-                  failure = true
-                  currentBuild.result = 'FAILURE'
-                }
-              }
-            }
-          }
-          post {
-            always {
-              sh """                        
-              echo 'finished' >  $WORKSPACE/src/logging/run.txt
-              cat $ld/footer >> $ld/logs
-              cat $ld/logs
-              """
-            }
-          }
-          }
-        }
-      }
-  }
-}
+    }
+
+    def runOCRETests(test) {
+      println "Initiating test run with the name '${test}'"
+    }

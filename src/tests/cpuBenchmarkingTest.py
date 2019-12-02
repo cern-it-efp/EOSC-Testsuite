@@ -7,6 +7,8 @@ from lib.kubern8s import *
 def cpuBenchmarkingTest(configs, resDir):
     """Run containerised CPU Benchmarking test."""
 
+    res = False
+    testCost = 0
     testsRoot =  "../"
     with open(testsRoot + "cpu_benchmarking/raw/cpu_benchmarking_pod_raw.yaml",
               'r') as infile:
@@ -31,3 +33,6 @@ def cpuBenchmarkingTest(configs, resDir):
         # cleanup
         writeToFile("logging/shared", "Cluster cleanup...", True)
         kubectl(Action.delete, type=Type.pod, name="cpu-bmk-pod")
+        res = True
+
+    return ({"test": "cpuBenchmarking", "deployed": res}, testCost)

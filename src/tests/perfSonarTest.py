@@ -7,6 +7,8 @@ from lib.kubern8s import *
 def perfSonarTest(testsCatalog, resDir):
     """Run Networking Performance test -perfSONAR toolkit-."""
 
+    res = False
+    testCost = 0
     testsRoot =  "../"
     endpoint = testsCatalog["perfsonarTest"]["endpoint"]
     if kubectl(
@@ -37,3 +39,5 @@ def perfSonarTest(testsCatalog, resDir):
             # cleanup
             writeToFile("logging/shared", "Cluster cleanup...", True)
             kubectl(Action.delete, type=Type.pod, name="ps-pod")
+
+    return ({"test": "perfsonarTest", "deployed": res}, testCost)

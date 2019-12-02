@@ -39,4 +39,4 @@ credentials, dependencies, baseCWD, provDict, extraSupportedClouds, resDir, obta
         testCost = ((time.time() - start) / 3600) * \
             configs["costCalculation"]["HPCInstancePrice"] * hpc["nodes"]
 
-    return  # if errors: finish run
+    return ({"test": "hpcTest", "deployed": res}, testCost)

@@ -8,6 +8,7 @@ def dodasTest(resDir):
     """Run DODAS test."""
 
     res = False
+    testCost = 0
     testsRoot =  "../"
     if kubectl(
         Action.create,
@@ -37,3 +38,5 @@ def dodasTest(resDir):
             # cleanup
             writeToFile("logging/shared", "Cluster cleanup...", True)
             kubectl(Action.delete, type=Type.pod, name="dodas-pod")
+
+    return ({"test": "dodasTest", "deployed": res}, testCost)
