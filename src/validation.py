@@ -29,6 +29,17 @@ except ModuleNotFoundError as ex:
     print(ex)
     sys.exit(1)
 
+#tests to be run (will be updated from CMD in the run)
+dataRepatriationTest = False
+cpuBenchmarkingTest = False
+sharedClusterTest = False
+perfSonarTest = False
+dodasTest = False
+hpcTest = False
+dlTest = False
+s3Test = False
+
+
 def validateYaml(provider):
     """ Validates configs.yaml and testsCatalog.yaml file against schemas.
 
