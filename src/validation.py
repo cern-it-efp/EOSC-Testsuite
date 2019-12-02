@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 
+import os
+import sys
+
+#jenkins library configuration
+sys.path.append(os.path.abspath(os.environ['WORKSPACE'] + "/src/tests"))
+
 from tests.lib.checker import *
 from tests.lib.terraform import *
 from tests.lib.kubern8s import *
@@ -89,7 +95,8 @@ def initAndChecks(configs, testsCatalog, instanceDefinition,
 
     # --------Tests config checks
     selected = []
-    if testsCatalog["s3Test"]["run"] is True:
+    if s3Test is True:
+        print("s3Test has been selected.")
         selected.append("s3Test")
         obtainCost = checkCost(
             obtainCost,
@@ -97,35 +104,41 @@ def initAndChecks(configs, testsCatalog, instanceDefinition,
         obtainCost = checkCost(
             obtainCost, configs["costCalculation"]["s3bucketPrice"])
 
-    if testsCatalog["perfsonarTest"]["run"] is True:
+    if perfSonarTest is True:
+        print("perfSonarTest has been selected.")
         selected.append("perfsonarTest")
         obtainCost = checkCost(
             obtainCost,
             configs["costCalculation"]["generalInstancePrice"])
 
-    if testsCatalog["dataRepatriationTest"]["run"] is True:
+    if dataRepatriationTest is True:
+        print("dataRepatriationTest has been selected.")
         selected.append("dataRepatriationTest")
         obtainCost = checkCost(
             obtainCost,
             configs["costCalculation"]["generalInstancePrice"])
 
-    if testsCatalog["cpuBenchmarking"]["run"] is True:
+    if cpuBenchmarkingTest is True:
+        print("cpuBenchmarking has been selected.")
         selected.append("cpuBenchmarking")
         obtainCost = checkCost(
             obtainCost,
             configs["costCalculation"]["generalInstancePrice"])
 
-    if testsCatalog["dlTest"]["run"] is True:
+    if dlTest is True:
+        print("dlTest has been selected.")
         selected.append("dlTest")
         obtainCost = checkCost(
             obtainCost, configs["costCalculation"]["GPUInstancePrice"])
 
-    if testsCatalog["hpcTest"]["run"] is True:
+    if hpcTest is True:
+        print("hpcTest has been selected.")
         selected.append("hpcTest")
         obtainCost = checkCost(
             obtainCost, configs["costCalculation"]["GPUInstancePrice"])
 
-    if testsCatalog["dodasTest"]["run"] is True:
+    if dodasTest is True:
+        print("dodasTest has been selected.")
         selected.append("dodasTest")
         obtainCost = checkCost(
             obtainCost,
