@@ -175,6 +175,7 @@ generalResults = {
 
 # ----------------RUN TESTS-----------------------------------------------
 cluster = 1
+entry = ""
 
 msgArr = ["CLUSTER %s: (parallel running tests):" % (cluster)]
 for test in testsSharingCluster:
