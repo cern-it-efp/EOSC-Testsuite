@@ -122,6 +122,20 @@ for arg in args[1:len(args)]:
         writeToFile("logging/header", "(ONLY TEST EXECUTION)", True)
         #runCMD("kubectl delete pods --all", hideLogs=True)
         onlyTest = True
+    elif arg == '--dataRepatriationTest':
+        dataRepatriationTest = True
+    elif arg == '--cpuBenchmarkingTest':
+        cpuBenchmarkingTest = True
+    elif arg == '--perfSonarTest':
+        perfSonarTest = True
+    elif arg == '--dodasTest':
+        dodasTest = True
+    elif arg == '--hpcTest':
+        hpcTest = True
+    elif arg == '--dlTest':
+        dlTest = True
+    elif arg == '--s3Test':
+        s3Test = True
     elif arg == '--retry':
         retry = True
     else:
