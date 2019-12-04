@@ -175,6 +175,7 @@ generalResults = {
 
 # ----------------RUN TESTS-----------------------------------------------
 totalCost = 0
+cost = 0
 cluster = 1
 entry = ""
 
