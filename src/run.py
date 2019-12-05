@@ -173,17 +173,15 @@ cost = 0
 cluster = 1
 entry = ""
 
-msgArr = ["CLUSTER %s: (parallel running tests):" % (cluster)]
+print("CLUSTER %s: (parallel running tests):" % (cluster))
 for test in testsSharingCluster:
-    if test is True:
-        entry, cost = sharedClusterTests(test)
-        cluster += 1
+    entry, cost = sharedClusterTests(test)
+    cluster += 1
 
 for test in customClustersTests:
-    if test is True:
-        logger("CLUSTER %s: %s" % (cluster, test), "=", "logging/%s" % test)
-        entry, cost = eval(test)
-        cluster += 1
+    logger("CLUSTER %s: %s" % (cluster, test), "=", "logging/%s" % test)
+    entry, cost = eval(test)
+    cluster += 1
 
 if entry:
     generalResults["testing"].append(entry)
