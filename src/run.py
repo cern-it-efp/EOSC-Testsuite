@@ -65,43 +65,21 @@ def sharedClusterTests(test):
     """
 
     logger(
-    "OCRE Cloud Benchmarking Validation Test Suite (CERN) Running %s test..." % (test),
+    "OCRE Cloud Benchmarking Validation Test Suite (CERN)" + "\n" +
+    "Running %s test..." % (test),
     "#",
     False)
     
     start = time.time()
     testCost = 0
-    logger(msgArr, "=", "logging/shared")
-    if onlyTest is False:
-        # minus 1 because the array contains the string message
-        prov, msg = terraformProvisionment("shared",
-                                           len(msgArr) - 1,
-                                           None,
-                                           None,
-                                           "logging/shared",
-                                           configs,
-                                           testsRoot,
-                                           retry,
-                                           instanceDefinition,
-                                           credentials,
-                                           dependencies,
-                                           baseCWD,
-                                           provDict,
-                                           extraSupportedClouds)
-        if prov is False:
-            #writeFail(resDir, "sharedCluster_result.json", msg, "logging/shared")
-            print(msg)
-            return
-    else:
-        if not checkCluster("shared"):
-            print("Cluster not reachable, do not add cost for this test")
-            return
+    if not checkCluster("shared"):
+        print("Cluster not reachable, do not add cost for this test")
+        return
     print(eval('dir()'))
     print(eval(test, args=(testsCatalog, configs, resDir, obtainCost))) # Run the selected test
     if obtainCost is True:  # duration * instancePrice * numberOfInstances
         testCost = ((time.time() - start) / 3600) * \
-            configs["costCalculation"]["generalInstancePrice"] * \
-            len(msgArr[1:])
+            configs["costCalculation"]["generalInstancePrice"]
     return (None, testCost)
 
 # -----------------CMD OPTIONS--------------------------------------------
