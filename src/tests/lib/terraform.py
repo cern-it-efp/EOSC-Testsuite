@@ -351,7 +351,7 @@ def terraformProvisionment(
             hideLogs=True) != 0:
         time.sleep(1)
 
-    writeToFile(toLog, "...'%s' CLUSTER CREATED => STARTING TESTS\n" %
-                flavor, True)
+    #writeToFile(toLog, "...'%s' CLUSTER CREATED => STARTING TESTS\n" %flavor, True)
+    print("...'%s' CLUSTER CREATED => STARTING TESTS\n" %flavor)
 
     return True, ""

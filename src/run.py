@@ -43,7 +43,7 @@ s3Test = False
 logger(
     "OCRE Cloud Benchmarking Validation Test Suite (CERN)",
     "#",
-    "logging/header")
+    False)   
 
 onlyTest = False
 configs = ""
@@ -97,13 +97,14 @@ def sharedClusterTests(test):
                                            provDict,
                                            extraSupportedClouds)
         if prov is False:
-            writeFail(resDir, "sharedCluster_result.json",
-                      msg, "logging/shared")
+            #writeFail(resDir, "sharedCluster_result.json", msg, "logging/shared")
+            print(msg)
             return
     else:
         if not checkCluster("shared"):
             return  # Cluster not reachable, do not add cost for this test
-    eval(test, args=(testsCatalog, configs, resDir, obtainCost)) # Run the selected test
+    print(eval('dir()'))
+    print(eval(test, args=(testsCatalog, configs, resDir, obtainCost))) # Run the selected test
     if obtainCost is True:  # duration * instancePrice * numberOfInstances
         testCost = ((time.time() - start) / 3600) * \
             configs["costCalculation"]["generalInstancePrice"] * \
