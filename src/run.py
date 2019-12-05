@@ -40,12 +40,7 @@ hpcTest = False
 dlTest = False
 s3Test = False
 
-logger(
-    "OCRE Cloud Benchmarking Validation Test Suite (CERN)",
-    "#",
-    False)   
-
-onlyTest = False
+onlyTest = True
 configs = ""
 instanceDefinition = ""
 dependencies = ""
@@ -77,6 +72,12 @@ def sharedClusterTests(test):
         None: In case of errors the function stops (returns None)
     """
 
+    logger(
+    "OCRE Cloud Benchmarking Validation Test Suite (CERN)" + "\n" +
+    "Running %s test..." % (test),
+    "#",
+    False)
+    
     start = time.time()
     testCost = 0
     logger(msgArr, "=", "logging/shared")
