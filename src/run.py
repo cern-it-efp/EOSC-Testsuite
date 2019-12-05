@@ -151,10 +151,16 @@ cost = 0
 cluster = 1
 entry = ""
 
+logger(
+    "OCRE Cloud Benchmarking Validation Test Suite (CERN)" + "\n" +
+    "Running %s test..." % (test),
+    "#",
+    False)
+
 logger("CLUSTER %s: %s" % (cluster, test), "=", False)
 print(eval('dir()'))
-print(eval(test, args=(testsCatalog, configs, resDir, obtainCost))) # Run the selected test
-entry, cost = eval(test)
+# Run the selected test
+entry, cost = eval(test + "(testsCatalog, configs, resDir, obtainCost)")
 
 if entry:
     generalResults["testing"].append(entry)
