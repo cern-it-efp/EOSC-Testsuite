@@ -151,15 +151,10 @@ cost = 0
 cluster = 1
 entry = ""
 
-print("CLUSTER %s: (parallel running tests):" % (cluster))
-for test in testsSharingCluster:
-    entry, cost = sharedClusterTests(test)
-    cluster += 1
-
-for test in customClustersTests:
-    logger("CLUSTER %s: %s" % (cluster, test), "=", "logging/%s" % test)
-    entry, cost = eval(test)
-    cluster += 1
+logger("CLUSTER %s: %s" % (cluster, test), "=", False)
+print(eval('dir()'))
+print(eval(test, args=(testsCatalog, configs, resDir, obtainCost))) # Run the selected test
+entry, cost = eval(test)
 
 if entry:
     generalResults["testing"].append(entry)
