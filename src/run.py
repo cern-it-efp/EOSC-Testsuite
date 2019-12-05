@@ -73,8 +73,7 @@ def sharedClusterTests(test):
     """
 
     logger(
-    "OCRE Cloud Benchmarking Validation Test Suite (CERN)" + "\n" +
-    "Running %s test..." % (test),
+    "OCRE Cloud Benchmarking Validation Test Suite (CERN) Running %s test..." % (test),
     "#",
     False)
     
@@ -103,7 +102,8 @@ def sharedClusterTests(test):
             return
     else:
         if not checkCluster("shared"):
-            return  # Cluster not reachable, do not add cost for this test
+            print("Cluster not reachable, do not add cost for this test")
+            return
     print(eval('dir()'))
     print(eval(test, args=(testsCatalog, configs, resDir, obtainCost))) # Run the selected test
     if obtainCost is True:  # duration * instancePrice * numberOfInstances
