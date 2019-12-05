@@ -31,15 +31,7 @@ except ModuleNotFoundError as ex:
     print(ex)
     sys.exit(1)
 
-#tests to be run (will be updated from CMD in the run)
-dataRepatriationTest = False
-cpuBenchmarkingTest = False
-perfSonarTest = False
-dodasTest = False
-hpcTest = False
-dlTest = False
-s3Test = False
-
+test = ""
 onlyTest = True
 configs = ""
 instanceDefinition = ""
@@ -125,19 +117,19 @@ for arg in args[1:len(args)]:
         #runCMD("kubectl delete pods --all", hideLogs=True)
         onlyTest = True
     elif arg == '--dataRepatriationTest':
-        dataRepatriationTest = True
+        test = "dataRepatriationTest"
     elif arg == '--cpuBenchmarkingTest':
-        cpuBenchmarkingTest = True
+        test = "cpuBenchmarkingTest"
     elif arg == '--perfSonarTest':
-        perfSonarTest = True
+        test = "perfSonarTest"
     elif arg == '--dodasTest':
-        dodasTest = True
+        test = "dodasTest"
     elif arg == '--hpcTest':
-        hpcTest = True
+        test = "hpcTest"
     elif arg == '--dlTest':
-        dlTest = True
+        test = "dlTest"
     elif arg == '--s3Test':
-        s3Test = True
+        test = "s3Test"
     elif arg == '--retry':
         retry = True
     else:
