@@ -4,7 +4,7 @@ import os
 import sys
 
 #jenkins library configuration
-sys.path.append(os.path.abspath(os.environ['WORKSPACE'] + "/src/tests"))
+sys.path.append(os.path.abspath(os.environ['WORKSPACE'] + "/src/tests/lib"))
 
 from lib.aux import *
 
