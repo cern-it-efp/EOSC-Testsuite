@@ -38,7 +38,6 @@ pipeline {
           steps {
             script{
                 dir ("$WORKSPACE") {
-                  
                 if (params.ONLY_TEST) testSuiteParams = "--only-test "
                 if (params.VIA_BACKEND) testSuiteParams += "--via-backend "
                 if (params.RETRY) testSuiteParams += "--retry " 
@@ -97,6 +96,12 @@ pipeline {
               println header
               parallel runs
             }
+          }
+        }
+
+        stage('Tear Down') {
+          steps {
+            cleanWs()
           }
         }
     }
