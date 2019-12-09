@@ -12,6 +12,12 @@ def header = """
 """
 def runOCRETests(test) {
   println "Initiating test run with the name '${test}'"
+  cleanWs()
+            git(
+              url: 'git@github.com:cern-it-efp/OCRE-Testsuite.git',
+              credentialsId: 'Jakub',
+              branch: "jenkins"
+            )
     dir ("$WORKSPACE/src") {
         sh "python3 -B run.py --${test}"
     }
