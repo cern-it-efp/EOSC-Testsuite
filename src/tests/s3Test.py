@@ -7,6 +7,7 @@ from lib.kubern8s import *
 def s3Test(testsCatalog, configs, resDir, obtainCost):
     """Run S3 endpoints test."""
 
+    res = False
     with open("tests/s3/raw/s3pod_raw.yaml", 'r') as infile:
         with open("tests/s3/s3pod.yaml", 'w') as outfile:
             outfile.write(
