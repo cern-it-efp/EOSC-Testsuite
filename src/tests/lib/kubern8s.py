@@ -21,6 +21,7 @@ except ModuleNotFoundError as ex:
 
 #jenkins library configuration
 sys.path.append(os.path.abspath("./lib/"))
+
 from lib.aux import *
 Action = Enum('Action', 'create delete cp exec')
 Type = Enum('Type', 'pod daemonset mpijob configmap pv')
@@ -104,7 +105,6 @@ def reset(tarinfo):
     tarinfo.uid = tarinfo.gid = 0
     tarinfo.uname = tarinfo.gname = "root"
     return tarinfo
-
 
 def kubectl(
         action,

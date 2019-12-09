@@ -23,7 +23,7 @@ def s3Test(testsCatalog, configs, resDir, obtainCost):
     start = time.time()  # create bucket
     if kubectl(
         Action.create,
-        file="s3/s3pod.yaml",
+        file="tests/s3/s3pod.yaml",
             toLog="logging/s3Test") != 0:
         print("Error deploying s3pod.")    
         writeFail(resDir, "s3Test.json",
