@@ -3,6 +3,10 @@
 import os
 import sys
 
+#jenkins library configuration
+sys.path.append(os.path.abspath(os.environ['WORKSPACE'] + "/src/tests"))
+sys.path.append(os.path.abspath(os.environ['WORKSPACE'] + "/src/tests/lib"))
+
 from tests.lib.aux import *
 from tests.lib.checker import *
 from tests.lib.terraform import *
