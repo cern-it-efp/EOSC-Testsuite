@@ -22,13 +22,13 @@ def s3Test(testsCatalog, configs, resDir, obtainCost):
     if kubectl(
         Action.create,
         file="s3/s3pod.yaml",
-            toLog="../../logging/s3Test") != 0:
+            toLog="logging/s3Test") != 0:
         print("Error deploying s3pod.")    
         writeFail(resDir, "s3Test.json",
-                  "Error deploying s3pod.", "../logging/s3Test")
+                  "Error deploying s3pod.", "logging/s3Test")
     else:
         fetchResults(resDir, "s3pod:/home/s3_test.json",
-                     "s3_test.json", "../logging/s3Test")
+                     "s3_test.json", "logging/s3Test")
         end = time.time()  # bucket deletion
         # cleanup
         print("Cluster cleanup...")
