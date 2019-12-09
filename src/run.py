@@ -160,7 +160,9 @@ logger(
 logger("CLUSTER %s: %s" % (cluster, test), "=", False)
 print(eval('dir()'))
 # Run the selected test 
-entry, cost = eval(test + '(testsCatalog, configs, resDir, obtainCost)')
+#entry, cost = eval(test + '(testsCatalog, configs, resDir, obtainCost)')
+entry, cost = locals()[test](testsCatalog, configs, resDir, obtainCost)
+logger("ENTRY: %s COST: %s" % (entry, cost), "=", False)
 # p = Process(target=eval(test))
 # p.start()
 
