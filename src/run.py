@@ -160,9 +160,9 @@ logger(
 logger("CLUSTER %s: %s" % (cluster, test), "=", False)
 print(eval('dir()'))
 # Run the selected test
-# entry, cost = eval(test + "(testsCatalog, configs, resDir, obtainCost)")
-p = Process(target=eval(test))
-p.start()
+entry, cost = eval(test + "(testsCatalog, configs, resDir, obtainCost)")
+# p = Process(target=eval(test))
+# p.start()
 
 if entry:
     generalResults["testing"].append(entry)
