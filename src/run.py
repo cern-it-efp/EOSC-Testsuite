@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 
+import os
+import sys
+
+#jenkins library configuration
+sys.path.append(os.path.abspath(os.environ['WORKSPACE'] + "/src/tests"))
+
 from tests.lib.aux import *
 from tests.lib.checker import *
 from tests.lib.terraform import *
@@ -17,6 +23,7 @@ import sys
 try:
     import yaml
     import json
+    from multiprocessing import Process, Queue
     import getopt
     import jsonschema
     import os
@@ -40,9 +47,6 @@ credentials = ""
 totalCost = 0
 testsRoot = "tests/"
 viaBackend = False
-testsSharingCluster = ["s3Test", "dataRepatriationTest",
-                       "perfsonarTest", "cpuBenchmarking", "dodasTest"]
-customClustersTests = ["dlTest", "hpcTest"]
 baseCWD = os.getcwd()
 resultsExist = False
 provDict = loadFile("schemas/provDict.yaml",
@@ -102,10 +106,6 @@ for arg in args[1:len(args)]:
         test = "perfSonarTest"
     elif arg == '--dodasTest':
         test = "dodasTest"
-    elif arg == '--hpcTest':
-        test = "hpcTest"
-    elif arg == '--dlTest':
-        test = "dlTest"
     elif arg == '--s3Test':
         test = "s3Test"
     elif arg == '--retry':
@@ -152,7 +152,6 @@ cluster = 1
 entry = ""
 
 logger(
-    "OCRE Cloud Benchmarking Validation Test Suite (CERN)" + "\n" +
     "Running %s test..." % (test),
     "#",
     False)
@@ -160,7 +159,9 @@ logger(
 logger("CLUSTER %s: %s" % (cluster, test), "=", False)
 print(eval('dir()'))
 # Run the selected test
-entry, cost = eval(test + "(testsCatalog, configs, resDir, obtainCost)")
+# entry, cost = eval(test + "(testsCatalog, configs, resDir, obtainCost)")
+p = Process(target=eval(test))
+p.start()
 
 if entry:
     generalResults["testing"].append(entry)

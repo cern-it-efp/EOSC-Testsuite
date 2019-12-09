@@ -37,10 +37,8 @@ pipeline {
         stage('Set-up') {
           steps {
             script{
-                dir ("$WORKSPACE/src/logging") {
-                sh "rm -f header killMe footer hpcTest dlTest shared logs"
-                sh "touch logs run.txt"
-
+                dir ("$WORKSPACE") {
+                  
                 if (params.ONLY_TEST) testSuiteParams = "--only-test "
                 if (params.VIA_BACKEND) testSuiteParams += "--via-backend "
                 if (params.RETRY) testSuiteParams += "--retry " 
