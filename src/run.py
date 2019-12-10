@@ -26,7 +26,6 @@ try:
     import json
     import getopt
     import jsonschema
-    import os
     import datetime
     import time
     import string

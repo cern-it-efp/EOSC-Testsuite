@@ -51,6 +51,15 @@ def runTerraform(mainTfDir, baseCWD, test, msg, autoApprove=True):
     os.chdir(baseCWD)
     return exitCode
 
+def destroyTF(mainTfDir):
+    """ Destroy existing terraform stuff in the specified folder.
+    """
+
+    os.chdir(mainTfDir)
+    exitCode = runCMD("terraform destroy -auto-approve")
+
+    return exitCode
+
 
 def cleanupTF(mainTfDir):
     """ Delete existing terraform stuff in the specified folder.

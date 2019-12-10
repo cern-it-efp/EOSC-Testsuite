@@ -98,11 +98,27 @@ pipeline {
           }
         }
 
+        stage('Cluster creation') {
+          steps {
+            dir ("$WORKSPACE/src") {
+            sh "python3 -B cluster.py -c -y=${YAML_ROOT}${YAML_CONFIG}.yaml"
+            }
+          }
+        }
+
         stage('Tests Execution') {
           steps {
             script {
               println header
               parallel runs
+            }
+          }
+        }
+
+        stage('Cluster creation') {
+          steps {
+            dir ("$WORKSPACE/src") {
+            sh "python3 -B cluster.py -d"
             }
           }
         }
