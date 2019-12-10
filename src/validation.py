@@ -165,10 +165,10 @@ except getopt.GetoptError as err:
 
 for opt, arg in options:
     if opt in ('-c', '--configs'):
-        configs = str(arg)
+        configs = arg
         print("Using configs path: " + arg)
     if opt in ('-t', '--testsCatalog'):
-        testsCatalog = str(arg)
+        testsCatalog = arg
         print("Using testsCatalog path: " + arg)
     elif opt == '--dataRepatriationTest':
         dataRepatriationTest = True

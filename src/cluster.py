@@ -43,6 +43,7 @@ if mode == "create":
         "Creating cluster ...",
         "=",
         False)
+    configs = loadFile(configs, required=True)
     instanceDefinition = loadFile("../configurations/instanceDefinition")
     extraInstanceConfig = loadFile("../configurations/extraInstanceConfig")
     dependencies = loadFile("../configurations/dependencies")
