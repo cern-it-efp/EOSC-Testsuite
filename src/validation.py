@@ -167,11 +167,9 @@ for opt, arg in options:
     if opt in ('-c', '--configs'):
         configs = arg
         print("Using configs path: " + arg)
-    elif opt in ('-tc', '--testsCatalog'):
+    if opt in ('-tc', '--testsCatalog'):
         testsCatalog = arg
         print("Using testsCatalog path: " + arg)
-    elif opt in ('-d', '--destroy'):
-        mode = "destroy"
     elif opt == '--dataRepatriationTest':
         dataRepatriationTest = True
     elif opt == '--cpuBenchmarkingTest':
