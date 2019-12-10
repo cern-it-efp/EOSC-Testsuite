@@ -20,7 +20,7 @@ publicRepo = "https://ocre-testsuite.rtfd.io"
 # -----------------CMD OPTIONS--------------------------------------------
 try:
     options, remainder = getopt.getopt(sys.argv[1:],
-                "c:y:d", ["create", "yaml=", "destroy"])
+                'c:y:d', ['create', 'yaml=', 'destroy'])
 except getopt.GetoptError as err:
     print(err)
     stop(1)
@@ -28,7 +28,7 @@ except getopt.GetoptError as err:
 for opt, arg in options:
     if opt in ('-c', '--create'):
         mode = "create"
-    if opt in ('-y', '--yaml'):
+    elif opt in ('-y', '--yaml'):
         configs = arg
         print("Using config path: " + arg)
     elif opt in ('-d', '--destroy'):
