@@ -93,7 +93,7 @@ pipeline {
         stage('Validation') {
           steps {
             dir ("$WORKSPACE/src") {
-            sh "python3 -B validation.py $testSuiteParams"
+            sh "python3 -B validation.py $testSuiteParams -c=${YAML_ROOT}${YAML_CONFIG}.yaml -tc=${YAML_ROOT}testsCatalog.yaml"
             }
           }
         }
@@ -115,7 +115,7 @@ pipeline {
           }
         }
 
-        stage('Cluster creation') {
+        stage('Cluster deletion') {
           steps {
             dir ("$WORKSPACE/src") {
             sh "python3 -B cluster.py -d"

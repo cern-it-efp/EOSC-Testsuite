@@ -156,50 +156,42 @@ def initAndChecks(configs, testsCatalog, instanceDefinition,
 
 # -----------------CMD OPTIONS--------------------------------------------
 try:
-    opts, args = getopt.getopt(
-        sys.argv, "ul", ["--only-test", "--via-backend", "--retry", "--s3Test", "--perfSonarTest", 
-                            "--hpcTest", "--dodasTest", "--dlTest", "--dataRepatriationTest", "--cpuBenchmarkingTest"])
+    options, remainder = getopt.getopt(sys.argv[1:],
+                "c:tc", ["--s3Test", "--perfSonarTest", "--dataRepatriationTest", 
+                    "--cpuBenchmarkingTest", "--dodasTest", "configs=", "testsCatalog="])
 except getopt.GetoptError as err:
-    writeToFile("logging/header", err, True)
+    print(err)
     stop(1)
-for arg in args[1:len(args)]:
-    if arg == '--only-test':
-        writeToFile("logging/header", "(ONLY TEST EXECUTION)", True)
-        #runCMD("kubectl delete pods --all", hideLogs=True)
-        onlyTest = True
-    elif arg == '--dataRepatriationTest':
+
+for opt, arg in options:
+    if opt in ('-c', '--configs'):
+        configs = arg
+        print("Using configs path: " + arg)
+    elif opt in ('-tc', '--testsCatalog'):
+        testsCatalog = arg
+        print("Using testsCatalog path: " + arg)
+    elif opt in ('-d', '--destroy'):
+        mode = "destroy"
+    elif opt == '--dataRepatriationTest':
         dataRepatriationTest = True
-    elif arg == '--cpuBenchmarkingTest':
+    elif opt == '--cpuBenchmarkingTest':
         cpuBenchmarkingTest = True
-    elif arg == '--perfSonarTest':
+    elif opt == '--perfSonarTest':
         perfSonarTest = True
-    elif arg == '--dodasTest':
+    elif opt == '--dodasTest':
         dodasTest = True
-    elif arg == '--hpcTest':
-        hpcTest = True
-    elif arg == '--dlTest':
-        dlTest = True
-    elif arg == '--s3Test':
+    elif opt == '--s3Test':
         s3Test = True
-    elif arg == '--retry':
-        retry = True
     else:
-        writeToFile("logging/header", "Bad option '%s'. Docs at %s " %
-                    (arg, publicRepo), True)
+        print("Bad option '%s'." % arg)
         stop(1)
 
 # -----------------CONFIGURE PATHS ---------------------------------------
 print("About to set paths to the config files.")
-configs = loadFile("/var/jenkins_home/configurations/configs.yaml", required=True)
-testsCatalog = loadFile(
-        "/var/jenkins_home/configurations/testsCatalog.yaml", required=True)
-
 provDict = loadFile("schemas/provDict.yaml",
                     required=True)["allProviders"]
 extraSupportedClouds = loadFile("schemas/provDict.yaml",
                                 required=True)["extraSupportedClouds"] 
-
-publicRepo = "https://ocre-testsuite.rtfd.io"                                       
 
 # TODO: instanceDefinition is now only required when not running on main clouds
 instanceDefinition = loadFile("/var/jenkins_home/configurations/instanceDefinition")
