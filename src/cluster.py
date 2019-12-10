@@ -51,7 +51,7 @@ if mode == "create":
     baseCWD = os.getcwd()
 
     prov, msg = terraformProvisionment("shared",
-                                           5,
+                                           1,
                                            None,
                                            None,
                                            "logging/shared",

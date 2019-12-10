@@ -86,39 +86,38 @@ def sharedClusterTests(test):
 
 # -----------------CMD OPTIONS--------------------------------------------
 try:
-    opts, args = getopt.getopt(
-        sys.argv, "ul", ["--only-test", "--via-backend", "--retry"])
+    options, remainder = getopt.getopt(sys.argv[1:],
+                "ct", ["s3Test", "perfSonarTest", "dataRepatriationTest", 
+                    "cpuBenchmarkingTest", "dodasTest", "configs=", "testsCatalog="])
 except getopt.GetoptError as err:
-    writeToFile("logging/header", err, True)
+    print(err)
     stop(1)
-for arg in args[1:len(args)]:
-    if arg == '--only-test':
-        writeToFile("logging/header", "(ONLY TEST EXECUTION)", True)
-        #runCMD("kubectl delete pods --all", hideLogs=True)
-        onlyTest = True
-    elif arg == '--dataRepatriationTest':
-        test = "dataRepatriationTest"
-    elif arg == '--cpuBenchmarkingTest':
-        test = "cpuBenchmarkingTest"
-    elif arg == '--perfSonarTest':
-        test = "perfSonarTest"
-    elif arg == '--dodasTest':
-        test = "dodasTest"
-    elif arg == '--s3Test':
-        test = "s3Test"
-    elif arg == '--retry':
-        retry = True
-    else:
-        writeToFile("logging/header", "Bad option '%s'. Docs at %s " %
-                    (arg, publicRepo), True)
-        stop(1)
 
+for opt, arg in options:
+    if opt in ('-c', '--configs'):
+        configs = arg
+        print("Using configs path: " + arg)
+    if opt in ('-t', '--testsCatalog'):
+        testsCatalog = arg
+        print("Using testsCatalog path: " + arg)
+    elif opt == '--dataRepatriationTest':
+        test = "dataRepatriationTest"
+    elif opt == '--cpuBenchmarkingTest':
+        test = "cpuBenchmarkingTest"
+    elif opt == '--perfSonarTest':
+        test = "perfSonarTest"
+    elif opt == '--dodasTest':
+        test = "dodasTest"
+    elif opt == '--s3Test':
+        test = "s3Test"
+    else:
+        print("Remaining opts: '%s'." % remainder)
 
 # -----------------CONFIGURE PATHS ---------------------------------------
 print("About to set paths to the config files.")
-configs = loadFile("/var/jenkins_home/configurations/configs.yaml", required=True)
+configs = loadFile(configs, required=True)
 testsCatalog = loadFile(
-        "/var/jenkins_home/configurations/testsCatalog.yaml", required=True)
+        testsCatalog, required=True)
 
 provDict = loadFile("schemas/provDict.yaml",
                     required=True)["allProviders"]

@@ -21,7 +21,7 @@ def runOCRETests(test) {
 
     dir ("$WORKSPACE/src") {
         sh "touch logging/${test}"
-        sh "python3 -B run.py --${test}"
+        sh "python3 -B run.py --${test} --configs ${YAML_ROOT}${YAML_CONFIG}.yaml --testsCatalog ${YAML_ROOT}testsCatalog.yaml""
     }
 }
 
@@ -93,7 +93,7 @@ pipeline {
         stage('Validation') {
           steps {
             dir ("$WORKSPACE/src") {
-            sh "python3 -B validation.py $testSuiteParams -c ${YAML_ROOT}${YAML_CONFIG}.yaml -t ${YAML_ROOT}testsCatalog.yaml"
+            sh "python3 -B validation.py $testSuiteParams --configs ${YAML_ROOT}${YAML_CONFIG}.yaml --testsCatalog ${YAML_ROOT}testsCatalog.yaml"
             }
           }
         }
@@ -101,7 +101,7 @@ pipeline {
         stage('Cluster creation') {
           steps {
             dir ("$WORKSPACE/src") {
-            sh "python3 -B cluster.py -c ${YAML_ROOT}${YAML_CONFIG}.yaml"
+            sh "python3 -B cluster.py --create ${YAML_ROOT}${YAML_CONFIG}.yaml"
             }
           }
         }
