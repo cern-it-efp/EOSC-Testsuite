@@ -157,8 +157,8 @@ def initAndChecks(configs, testsCatalog, instanceDefinition,
 # -----------------CMD OPTIONS--------------------------------------------
 try:
     options, remainder = getopt.getopt(sys.argv[1:],
-                "c:tc", ["--s3Test", "--perfSonarTest", "--dataRepatriationTest", 
-                    "--cpuBenchmarkingTest", "--dodasTest", "configs=", "testsCatalog="])
+                "c:tc", ["s3Test", "perfSonarTest", "dataRepatriationTest", 
+                    "cpuBenchmarkingTest", "dodasTest", "configs=", "testsCatalog="])
 except getopt.GetoptError as err:
     print(err)
     stop(1)
