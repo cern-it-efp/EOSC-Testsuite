@@ -101,7 +101,7 @@ pipeline {
         stage('Cluster creation') {
           steps {
             dir ("$WORKSPACE/src") {
-            sh "python3 -B cluster.py -c -y ${YAML_ROOT}${YAML_CONFIG}.yaml"
+            sh "python3 -B cluster.py -c ${YAML_ROOT}${YAML_CONFIG}.yaml"
             }
           }
         }
