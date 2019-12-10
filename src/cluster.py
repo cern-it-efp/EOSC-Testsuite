@@ -28,7 +28,7 @@ except getopt.GetoptError as err:
 for opt, arg in options:
     if opt in ('-c', '--create'):
         mode = "create"
-    elif opt in ('-y', '--yaml'):
+    if opt in ('-y', '--yaml'):
         configs = arg
         print("Using config path: " + arg)
     elif opt in ('-d', '--destroy'):
