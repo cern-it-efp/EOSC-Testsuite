@@ -185,6 +185,8 @@ for opt, arg in options:
 
 # -----------------CONFIGURE PATHS ---------------------------------------
 print("About to set paths to the config files.")
+configs = loadFile(configs, required=True)
+testsCatalog = loadFile(testsCatalog, required=True)
 provDict = loadFile("schemas/provDict.yaml",
                     required=True)["allProviders"]
 extraSupportedClouds = loadFile("schemas/provDict.yaml",
