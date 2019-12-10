@@ -20,7 +20,7 @@ publicRepo = "https://ocre-testsuite.rtfd.io"
 # -----------------CMD OPTIONS--------------------------------------------
 try:
     options, remainder = getopt.getopt(sys.argv[1:],
-                "cd", ["create", "destroy"])
+                "cd", ["create=", "destroy"])
 except getopt.GetoptError as err:
     print(err)
     stop(1)
