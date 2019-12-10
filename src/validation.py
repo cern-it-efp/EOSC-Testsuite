@@ -183,8 +183,7 @@ for opt, arg in options:
     elif opt == '--s3Test':
         s3Test = True
     else:
-        print("Bad option '%s'." % arg)
-        stop(1)
+        print("Remaining opts: '%s'." % remainder)
 
 # -----------------CONFIGURE PATHS ---------------------------------------
 print("About to set paths to the config files.")
