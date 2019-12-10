@@ -157,7 +157,7 @@ def initAndChecks(configs, testsCatalog, instanceDefinition,
 # -----------------CMD OPTIONS--------------------------------------------
 try:
     options, remainder = getopt.getopt(sys.argv[1:],
-                "c:tc", ["s3Test", "perfSonarTest", "dataRepatriationTest", 
+                "c:t", ["s3Test", "perfSonarTest", "dataRepatriationTest", 
                     "cpuBenchmarkingTest", "dodasTest", "configs=", "testsCatalog="])
 except getopt.GetoptError as err:
     print(err)
@@ -165,10 +165,10 @@ except getopt.GetoptError as err:
 
 for opt, arg in options:
     if opt in ('-c', '--configs'):
-        configs = arg
+        configs = str(arg)
         print("Using configs path: " + arg)
-    if opt in ('-tc', '--testsCatalog'):
-        testsCatalog = arg
+    if opt in ('-t', '--testsCatalog'):
+        testsCatalog = str(arg)
         print("Using testsCatalog path: " + arg)
     elif opt == '--dataRepatriationTest':
         dataRepatriationTest = True

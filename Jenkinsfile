@@ -93,7 +93,7 @@ pipeline {
         stage('Validation') {
           steps {
             dir ("$WORKSPACE/src") {
-            sh "python3 -B validation.py $testSuiteParams -c ${YAML_ROOT}${YAML_CONFIG}.yaml -tc ${YAML_ROOT}testsCatalog.yaml"
+            sh "python3 -B validation.py $testSuiteParams -c ${YAML_ROOT}${YAML_CONFIG}.yaml -t ${YAML_ROOT}testsCatalog.yaml"
             }
           }
         }
