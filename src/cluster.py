@@ -13,6 +13,7 @@ from tests.lib.aux import *
 from tests.lib.terraform import *
 
 mode = ""
+nodes = 1
 configs = ""
 testsRoot = "tests/"
 publicRepo = "https://ocre-testsuite.rtfd.io"
@@ -20,7 +21,7 @@ publicRepo = "https://ocre-testsuite.rtfd.io"
 # -----------------CMD OPTIONS--------------------------------------------
 try:
     options, remainder = getopt.getopt(sys.argv[1:],
-                "cd", ["create=", "destroy"])
+                "cd", ["create=", "nodes=", "destroy"])
 except getopt.GetoptError as err:
     print(err)
     stop(1)
@@ -30,6 +31,9 @@ for opt, arg in options:
         mode = "create"
         configs = arg
         print("Using config path: " + arg)
+    if opt == "--nodes":
+        nodes = arg
+        print("About to create %s node(s)." % nodes)
     elif opt in ('-d', '--destroy'):
         mode = "destroy"
 
@@ -51,7 +55,7 @@ if mode == "create":
     baseCWD = os.getcwd()
 
     prov, msg = terraformProvisionment("shared",
-                                           1,
+                                           nodes,
                                            None,
                                            None,
                                            "logging/shared",
@@ -73,5 +77,5 @@ elif mode == "destroy":
         "Destroying cluster ...",
         "=",
          False)
-    destroyTF("tests/")
+    destroyTF("../")
     stop(0)

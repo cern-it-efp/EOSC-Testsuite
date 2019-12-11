@@ -2,6 +2,7 @@
 
 def testSuiteParams = "";
 def testNamesToRun = []
+def testCounter = 0
 def runs = [:]
 def header = """
 ###################################################################
@@ -10,19 +11,42 @@ def header = """
 #                                                                 #
 ###################################################################
 """
-def runOCRETests(test) {
-  println "Initiating test run with the name '${test}'"
+def runSCM() {
+  println "Cloning workspace from GitHub."
   cleanWs()
   git(
     url: 'git@github.com:cern-it-efp/OCRE-Testsuite.git',
     credentialsId: 'Jakub',
     branch: "jenkins"
   )
+}
+
+def runOCRETests(test) {
+  println "Initiating test run with the name '${test}'"
+  runSCM()
 
     dir ("$WORKSPACE/src") {
         sh "touch logging/${test}"
-        sh "python3 -B run.py --${test} --configs ${YAML_ROOT}${YAML_CONFIG}.yaml --testsCatalog ${YAML_ROOT}testsCatalog.yaml""
+        sh "python3 -B run.py --${test} --configs ${YAML_ROOT}${YAML_CONFIG}.yaml --testsCatalog ${YAML_ROOT}testsCatalog.yaml"
     }
+}
+
+def runValidation() {
+  dir ("$WORKSPACE/src") {
+      sh "python3 -B validation.py $testSuiteParams --configs ${YAML_ROOT}${YAML_CONFIG}.yaml --testsCatalog ${YAML_ROOT}testsCatalog.yaml"
+  }
+}
+
+def runClusterCreation() {
+  dir ("$WORKSPACE/src") {
+      sh "python3 -B cluster.py --create ${YAML_ROOT}${YAML_CONFIG}.yaml --nodes ${testCounter}"
+  }
+}
+
+def runClusterDeletion() {
+  dir ("$WORKSPACE/src/tests") {
+      sh "python3 -B cluster.py -d"
+  }
 }
 
 pipeline {
@@ -33,12 +57,9 @@ pipeline {
     stages {
         stage('SCM') {
           steps {
-            cleanWs()
-            git(
-              url: 'git@github.com:cern-it-efp/OCRE-Testsuite.git',
-              credentialsId: 'Jakub',
-              branch: "jenkins"
-            )
+            script{
+              runSCM()
+            }
           }
         }
 
@@ -52,26 +73,32 @@ pipeline {
                 if (params.S3_TEST) {
                     testSuiteParams += "--s3Test " 
                     testNamesToRun.add("s3Test")
+                    testCounter++
                 }
                 if (params.DL_TEST){
                   testSuiteParams += "--dlTest " 
                   testNamesToRun.add("dlTest")
+                  testCounter++
                 }
                 if (params.PERF_SONAR_TEST){
                   testSuiteParams += "--perfSonarTest " 
                   testNamesToRun.add("perfSonarTest")
+                  testCounter++
                 }
                 if (params.DODAS_TEST){
                   testSuiteParams += "--dodasTest " 
                   testNamesToRun.add("dodasTest")
+                  testCounter++
                 }
                 if (params.DATA_REPARATION_TEST){
                   testSuiteParams += "--dataRepatriationTest " 
                   testNamesToRun.add("dataRepatriationTest")
+                  testCounter++
                 }
                 if (params.CPU_BENCHMARKING_TEST){
                   testSuiteParams += "--cpuBenchmarkingTest" 
                   testNamesToRun.add("cpuBenchmarkingTest")
+                  testCounter++
                 }
                 println "this is run params var: $testSuiteParams"
               }
@@ -90,43 +117,55 @@ pipeline {
           }
         }
 
-        stage('Validation') {
-          steps {
-            dir ("$WORKSPACE/src") {
-            sh "python3 -B validation.py $testSuiteParams --configs ${YAML_ROOT}${YAML_CONFIG}.yaml --testsCatalog ${YAML_ROOT}testsCatalog.yaml"
+          stage('Validation') {
+            steps {
+              script{
+                if (testCounter > 0){
+                  runValidation()
+                } else {
+                  println "No test selected. Nothing to validate."
+                }
+              }
             }
           }
-        }
 
-        stage('Cluster creation') {
-          steps {
-            dir ("$WORKSPACE/src") {
-            sh "python3 -B cluster.py --create ${YAML_ROOT}${YAML_CONFIG}.yaml"
+          stage('Cluster creation') {
+            steps {
+              script{
+                if (testCounter > 0){
+                  runClusterCreation()
+                } else {
+                  println "No test selected. Nothing to create."
+                }
+              }
             }
           }
-        }
 
-        stage('Tests Execution') {
-          steps {
-            script {
-              println header
-              parallel runs
+          stage('Tests Execution') {
+            steps {
+              script {
+                println header
+                parallel runs
+              }
             }
           }
-        }
 
-        stage('Cluster deletion') {
-          steps {
-            dir ("$WORKSPACE/src") {
-            sh "python3 -B cluster.py -d"
+          stage('Cluster deletion') {
+            steps {
+              script{
+                if (testCounter > 0){
+                  runClusterDeletion()
+                } else {
+                  println "No test selected. Nothing to delete."
+                }
+              }
             }
           }
-        }
 
-        stage('Tear Down') {
-          steps {
-            cleanWs()
+          stage('Tear Down') {
+            steps {
+              cleanWs()
+            }
           }
-        }
     }
 }  
