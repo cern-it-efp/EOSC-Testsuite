@@ -40,7 +40,7 @@ for opt, arg in options:
 # ----------------RUN TESTS-----------------------------------------------
 if mode == "create":
     logger(
-        "Creating cluster ...",
+        "Cluster has been created.",
         "=",
         False)
     configs = loadFile(configs, required=True)
@@ -74,7 +74,7 @@ if mode == "create":
 
 elif mode == "destroy":
     logger(
-        "Destroying cluster ...",
+        "Cluster has been destroyed.",
         "=",
          False)
     destroyTF("tests/sharedCluster")

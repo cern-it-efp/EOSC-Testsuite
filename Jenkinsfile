@@ -3,6 +3,7 @@
 def testSuiteParams = "";
 def testNamesToRun = []
 def testCounter = 0
+def deleteFlag = false
 def runs = [:]
 def header = """
 ###################################################################
@@ -67,9 +68,7 @@ pipeline {
           steps {
             script{
                 dir ("$WORKSPACE") {
-                if (params.ONLY_TEST) testSuiteParams = "--only-test "
-                if (params.VIA_BACKEND) testSuiteParams += "--via-backend "
-                if (params.RETRY) testSuiteParams += "--retry " 
+                if (params.DELETE_CLUSTER) deleteFlag = true
                 if (params.S3_TEST) {
                     testSuiteParams += "--s3Test " 
                     testNamesToRun.add("s3Test")
@@ -155,7 +154,11 @@ pipeline {
             steps {
               script{
                 if (testCounter > 0){
-                  runClusterDeletion()
+                  if (deleteFlag){
+                    runClusterDeletion()
+                  } else {
+                    println "Cluster deletion not selected. Leaving VM running."
+                  }
                 } else {
                   println "No test selected. Nothing to delete."
                 }
