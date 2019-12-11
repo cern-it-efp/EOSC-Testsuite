@@ -33,7 +33,7 @@ def runOCRETests(test) {
 
 def runValidation() {
   dir ("$WORKSPACE/src") {
-      sh "python3 -B validation.py $testSuiteParams --configs ${YAML_ROOT}${YAML_CONFIG}.yaml --testsCatalog ${YAML_ROOT}testsCatalog.yaml"
+      sh "python3 -B validation.py ${testSuiteParams} --configs ${YAML_ROOT}${YAML_CONFIG}.yaml --testsCatalog ${YAML_ROOT}testsCatalog.yaml"
   }
 }
 
@@ -100,7 +100,8 @@ pipeline {
                   testNamesToRun.add("cpuBenchmarkingTest")
                   testCounter++
                 }
-                println "this is run params var: $testSuiteParams"
+                println "Run params var: $testSuiteParams"
+                println "Amount of tests: $testCounter"
               }
 
             testNamesToRun.each { name -> 
