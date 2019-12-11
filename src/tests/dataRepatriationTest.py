@@ -9,10 +9,10 @@ def dataRepatriationTest(testsCatalog, configs, resDir, obtainCost):
 
     res = False
     testCost = 0
-    testsRoot =  "./"
-    with open("data_repatriation/raw/repatriation_pod_raw.yaml",
+    testsRoot =  "tests/"
+    with open(testsRoot + "data_repatriation/raw/repatriation_pod_raw.yaml",
               'r') as infile:
-        with open("data_repatriation/repatriation_pod.yaml",
+        with open(testsRoot + "data_repatriation/repatriation_pod.yaml",
                   'w') as outfile:
             outfile.write(infile.read().replace(
                 "PROVIDER_PH", configs["providerName"]))

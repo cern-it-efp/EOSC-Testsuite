@@ -9,7 +9,7 @@ def cpuBenchmarkingTest(testsCatalog, configs, resDir, obtainCost):
 
     res = False
     testCost = 0
-    testsRoot =  "./"
+    testsRoot =  "tests/"
     with open(testsRoot + "cpu_benchmarking/raw/cpu_benchmarking_pod_raw.yaml",
               'r') as infile:
         with open(testsRoot + "cpu_benchmarking/cpu_benchmarking_pod.yaml",
