@@ -4,7 +4,7 @@ from lib.checker import *
 from lib.terraform import *
 from lib.kubern8s import *    
 
-def dataRepatriationTest(configs, resDir):
+def dataRepatriationTest(testsCatalog, configs, resDir, obtainCost):
     """Run Data Repatriation Test -Exporting from cloud to Zenodo-."""
 
     res = False

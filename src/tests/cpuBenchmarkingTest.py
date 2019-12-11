@@ -4,7 +4,7 @@ from lib.checker import *
 from lib.terraform import *
 from lib.kubern8s import *    
 
-def cpuBenchmarkingTest(configs, resDir):
+def cpuBenchmarkingTest(testsCatalog, configs, resDir, obtainCost):
     """Run containerised CPU Benchmarking test."""
 
     res = False

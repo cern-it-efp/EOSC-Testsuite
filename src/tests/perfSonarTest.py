@@ -4,7 +4,7 @@ from lib.checker import *
 from lib.terraform import *
 from lib.kubern8s import *    
 
-def perfSonarTest(testsCatalog, resDir):
+def perfSonarTest(testsCatalog, configs, resDir, obtainCost):
     """Run Networking Performance test -perfSONAR toolkit-."""
 
     res = False

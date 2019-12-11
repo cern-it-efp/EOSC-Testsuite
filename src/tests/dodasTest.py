@@ -4,7 +4,7 @@ from lib.checker import *
 from lib.terraform import *
 from lib.kubern8s import *    
 
-def dodasTest(resDir):
+def dodasTest(testsCatalog, configs, resDir, obtainCost):
     """Run DODAS test."""
 
     res = False
