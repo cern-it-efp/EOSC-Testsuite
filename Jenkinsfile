@@ -31,20 +31,20 @@ def runOCRETests(test) {
     }
 }
 
-def runValidation() {
+def runValidation(testSuiteParams) {
   dir ("$WORKSPACE/src") {
       sh "python3 -B validation.py ${testSuiteParams} --configs ${YAML_ROOT}${YAML_CONFIG}.yaml --testsCatalog ${YAML_ROOT}testsCatalog.yaml"
   }
 }
 
-def runClusterCreation() {
+def runClusterCreation(nodes) {
   dir ("$WORKSPACE/src") {
-      sh "python3 -B cluster.py --create ${YAML_ROOT}${YAML_CONFIG}.yaml --nodes ${testCounter}"
+      sh "python3 -B cluster.py --create ${YAML_ROOT}${YAML_CONFIG}.yaml --nodes ${nodes}"
   }
 }
 
 def runClusterDeletion() {
-  dir ("$WORKSPACE/src/tests") {
+  dir ("$WORKSPACE/src") {
       sh "python3 -B cluster.py -d"
   }
 }
@@ -122,7 +122,7 @@ pipeline {
             steps {
               script{
                 if (testCounter > 0){
-                  runValidation()
+                  runValidation(testSuiteParams)
                 } else {
                   println "No test selected. Nothing to validate."
                 }
@@ -134,7 +134,7 @@ pipeline {
             steps {
               script{
                 if (testCounter > 0){
-                  runClusterCreation()
+                  runClusterCreation(testCounter)
                 } else {
                   println "No test selected. Nothing to create."
                 }

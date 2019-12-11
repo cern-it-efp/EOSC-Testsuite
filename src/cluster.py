@@ -58,7 +58,7 @@ if mode == "create":
                                            nodes,
                                            None,
                                            None,
-                                           "logging/shared",
+                                           "logs",
                                            configs,
                                            testsRoot,
                                            True,
@@ -77,5 +77,5 @@ elif mode == "destroy":
         "Destroying cluster ...",
         "=",
          False)
-    destroyTF("../")
+    destroyTF("tests/sharedCluster")
     stop(0)
