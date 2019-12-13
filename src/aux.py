@@ -103,6 +103,7 @@ def writeFail(resDir, file, msg, toLog):
     """Writes results file in case of errors.
 
     Parameters:
+        resDir (str): Path to the results folder.
         file (str): Name of the results file.
         msg (str): Message to write to results file.
         toLog (str): File to which write the log msg.

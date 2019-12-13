@@ -115,7 +115,7 @@ def initAndChecks():
         print("Key permissions must be set to 600")
         stop(1)
 
-    # disabled schema validation for testing
+    # disabled schema validation for testing. TODO: change when merging 
     # validateYaml(configs["providerName"])
 
     # TODO: instanceDefinition is now only required when not running on main

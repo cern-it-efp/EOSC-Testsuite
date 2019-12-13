@@ -7,7 +7,11 @@ def checkCost(obtainCost, value):
     """ Checks the provided value is not None and is greater than 0.
 
     Parameters:
+        obtainCost: Flag indicating if the cost can be calculated.
         value: Value to be checked.
+
+    Returns:
+        bool: True in case the given value can be used for cost estimation.
     """
 
     return value >= 0 and obtainCost is True if value else False

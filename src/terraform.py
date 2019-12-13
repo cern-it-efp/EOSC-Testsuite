@@ -17,6 +17,8 @@ def runTerraform(mainTfDir, baseCWD, test, msg, autoApprove=True):
     Parameters:
         mainTfDir (str): Path where the .tf file is.
         baseCWD (str): Path to go back.
+        test (str): Cluster identification.
+        msg (str): Message to be shown.
         autoApprove (bool): If True (default) use '-auto-approve' option
 
     Returns:
@@ -50,7 +52,11 @@ def runTerraform(mainTfDir, baseCWD, test, msg, autoApprove=True):
 
 
 def cleanupTF(mainTfDir):
-    """ Delete existing terraform stuff in the specified folder.
+    """Delete existing terraform stuff in the specified folder.
+
+    Parameters:
+        mainTfDir (str): Path to the .tf file.
+
     """
 
     for filename in [
@@ -67,6 +73,14 @@ def cleanupTF(mainTfDir):
 
 
 def stackVersioning(variables, configs):
+    """Delete existing terraform stuff in the specified folder.
+
+    Parameters:
+        variables (str): Variables section of the .tf file.
+        configs (dict): Object containing configs.yaml's configurations.
+
+    """
+
 
     if configs["dockerCE"]:
         variables = variables.replace("DOCKER_CE_PH", str(configs["dockerCE"]))
@@ -110,8 +124,15 @@ def terraformProvisionment(
         flavor (str): Flavor to be used for the VMs.
         extraInstanceConfig (str): Extra HCL code to configure VM
         toLog (str): File to which write the log msg.
-        configs ...
-        testsRoot ...
+        configs (dict): Object containing configs.yaml's configurations.
+        testsRoot (str): 
+        retry ():
+        instanceDefinition ():
+        credentials ():
+        dependencies ():
+        baseCWD ():
+        provDict ():
+        extraSupportedClouds ():
 
     Returns:
         bool: True if the cluster was succesfully provisioned. False otherwise.
