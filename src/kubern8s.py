@@ -94,10 +94,14 @@ def checkDestinationIsDir(podName, pathOnPod, namespace=None):
 
 
 def reset(tarinfo):
-    """Resets tar file's user related metadata.
-       (Test suite runs on Jenkins failed to encrypt these metadata when
-       copying files to pod, this fixes that)
-     """
+    """Resets tar file's user related metadata (uid and name).
+
+    Parameters:
+        tarinfo (TarInfo): TarInfo object.
+
+    Returns:
+        TarInfo: returns the modified TarInfo object received.
+    """
 
     tarinfo.uid = tarinfo.gid = 0
     tarinfo.uname = tarinfo.gname = "root"
