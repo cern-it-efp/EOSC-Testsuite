@@ -3,11 +3,10 @@ required:
     - providerName
     - pathToKey
     - flavor
-    - openUser
+    - configPath
     - zone
-    - image
-    - pathToCredentials
-    - project
+    - template
+    - keyPair
 properties:
     providerName:
         type: string
@@ -23,15 +22,17 @@ properties:
         type: string
     kubernetes:
         type: string
+    configPath:
+        type: string
     zone:
         type: string
-    image:
+    template:
         type: string
-    pathToCredentials:
+    keyPair:
         type: string
-    project:
-        type: string
-    gpuType:
+    diskSize:
+        type: number
+    securityGroups:
         type: string
     costCalculation:
         type:

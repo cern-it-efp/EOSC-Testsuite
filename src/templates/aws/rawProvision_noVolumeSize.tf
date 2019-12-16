@@ -6,13 +6,10 @@ provider "aws" {
 resource "aws_instance" "kubenode" {
 
   count         = "${var.customCount}"
-  instance_type = "${var.instanceType}" 
+  instance_type = "${var.instanceType}"
   tags = {
     name = "${var.instanceName}-${count.index}"
   }
   ami      = "${var.ami}"
   key_name = "${var.keyName}"
-  root_block_device {
-    volume_size = var.volumeSize
-  }
 }

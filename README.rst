@@ -54,9 +54,9 @@ Release notes
 
 ``19.12``
 
--Improved support for Google, AWS, Azure, Exoscale, Openstack and Cloudstack.
+-Project restructured.
 
--Project restructure and code refactoring.
+-Improved support for Google, AWS, Azure, Exoscale, Openstack and Cloudstack.
 
 ``19.8``
 

@@ -1,11 +1,7 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
-providerName: "cloudstack"
-pathToKey: "/var/jenkins_home/key"
-dockerCE:
-dockerEngine:
-kubernetes: 
-openUser:
-configPath: "/var/jenkins_home/exoCreds"
+providerName: "exoscale"
+pathToKey: "/home/ipelu/.ssh/id_rsa"
+configPath: "/home/ipelu/Desktop/exoCreds"
 flavor: "Medium"
 zone: "ch-gva-2"
 template: "Linux CentOS 7.6 64-bit"
