@@ -1,10 +1,6 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
 providerName: "exoscale"
 pathToKey: "/home/ipelu/.ssh/id_rsa"
-dockerCE:
-dockerEngine:
-kubernetes:
-openUser: # remove this for exo?
 configPath: "/home/ipelu/Desktop/exoCreds"
 flavor: "Medium"
 zone: "ch-gva-2"

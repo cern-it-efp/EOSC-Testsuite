@@ -23,7 +23,6 @@ def runTerraform(mainTfDir, baseCWD, test, msg, autoApprove=True):
 
     Returns:
         int: 0 for success, 1 for failure
-
     """
 
     toLog = "logging/%s" % test
@@ -56,7 +55,6 @@ def cleanupTF(mainTfDir):
 
     Parameters:
         mainTfDir (str): Path to the .tf file.
-
     """
 
     for filename in [
@@ -73,30 +71,20 @@ def cleanupTF(mainTfDir):
 
 
 def stackVersioning(variables, configs):
-    """Delete existing terraform stuff in the specified folder.
+    """Adds stack versioning related stuff to the variables section of the
+       .tf file.
 
     Parameters:
         variables (str): Variables section of the .tf file.
         configs (dict): Object containing configs.yaml's configurations.
 
+    Returns:
+        string: modified variables section, stack versioning stuff added.
     """
 
-
-    if configs["dockerCE"]:
-        variables = variables.replace("DOCKER_CE_PH", str(configs["dockerCE"]))
-    else:
-        variables = variables.replace("DOCKER_CE_PH", "")
-
-    if configs["dockerEngine"]:
-        variables = variables.replace(
-            "DOCKER_EN_PH", str(configs["dockerEngine"]))
-    else:
-        variables = variables.replace("DOCKER_EN_PH", "")
-
-    if configs["kubernetes"]:
-        variables = variables.replace("K8S_PH", str(configs["kubernetes"]))
-    else:
-        variables = variables.replace("K8S_PH", "")
+    variables = variables.replace("DOCKER_CE_PH", tryTakeFromYaml(configs, "dockerCE", ""))
+    variables = variables.replace("DOCKER_EN_PH", tryTakeFromYaml(configs, "dockerEngine", ""))
+    variables = variables.replace("K8S_PH", tryTakeFromYaml(configs, "kubernetes", ""))
 
     return variables
 
@@ -125,7 +113,7 @@ def terraformProvisionment(
         extraInstanceConfig (str): Extra HCL code to configure VM
         toLog (str): File to which write the log msg.
         configs (dict): Object containing configs.yaml's configurations.
-        testsRoot (str): 
+        testsRoot (str):
         retry ():
         instanceDefinition ():
         credentials ():
@@ -167,12 +155,9 @@ def terraformProvisionment(
 
     # ---------------- manage general variables
 
-    # TODO: the schema validate must check configs' openUser: it is a required
-    # property for providers that do not allow ssh with the root user (exoscale
-    # would be the only one that allows root ssh)
-    openUser = "" if configs['openUser'] is None else configs['openUser']
-
-    str(configs['openUser'])
+    openUserDefault = "root"
+    msgExcept = "WARNING: using default user '%s' for ssh connections (running on %s)" % (openUserDefault,configs["providerName"])
+    openUser = tryTakeFromYaml(configs, "openUser", openUserDefault, msgExcept=msgExcept)
 
     variables = loadFile("templates/general/variables.tf",
                          required=True).replace(
@@ -213,7 +198,6 @@ def terraformProvisionment(
         # ---------------- main.tf: add raw VMs provisioner
         rawProvisioning = loadFile(
             "%s/rawProvision.tf" % templatesPath, required=True)
-        writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
 
     elif configs["providerName"] == "openstack":
 
@@ -238,9 +222,10 @@ def terraformProvisionment(
         # ---------------- main.tf: add raw VMs provisioner
         rawProvisioning = loadFile(
             "%s/rawProvision.tf" % templatesPath, required=True)
-        writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
 
     elif configs["providerName"] == "google":
+
+        # TODO: check here whether gpuType is set if dlTest is set to True?
 
         # manage gpu related vars
         gpuCount = str(nodes) if test == "dlTest" else "0"
@@ -260,13 +245,16 @@ def terraformProvisionment(
         # ---------------- main.tf: add raw VMs provisioner
         rawProvisioning = loadFile(
             "%s/rawProvision.tf" % templatesPath, required=True)
-        writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
 
     elif configs["providerName"] == "aws":
 
         # manage optional vars
-        volumeSize = "" if configs["volumeSize"] is None \
-            else str(configs["volumeSize"])
+
+        awsTemplate = "%s/rawProvision.tf" % templatesPath
+        volumeSize = tryTakeFromYaml(configs, "volumeSize", "")
+        if volumeSize is "":
+            awsTemplate = "%s/rawProvision_noVolumeSize.tf" % templatesPath
+
 
         # ---------------- main.tf: manage aws specific vars and add them
         variables = variables.replace(
@@ -279,11 +267,35 @@ def terraformProvisionment(
         writeToFile(mainTfDir + "/main.tf", variables, False)
 
         # ---------------- main.tf: add raw VMs provisioner
-        rawProvisioning = loadFile(
-            "%s/rawProvision.tf" % templatesPath, required=True)
-        writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
+        rawProvisioning = loadFile(awsTemplate, required=True)
 
-    elif configs["providerName"] == "exoscale" or configs["providerName"] == "cloudstack":
+    elif configs["providerName"] == "cloudstack": # TODO: separate these two! disk_size is required in exoscale but root_disk_size is optional in cloudstack
+
+        # manage optional vars
+        securityGroups = "[]" if configs["securityGroups"] is None \
+            else configs["securityGroups"]
+        if configs["diskSize"] is None:
+            diskSize = ""
+            csTemplate = "%s/rawProvision_noDiskSize.tf" % templatesPath
+        else:
+            diskSize = str(configs["diskSize"])
+            csTemplate = "%s/rawProvision.tf" % templatesPath
+
+        # ---------------- main.tf: manage aws specific vars and add them
+        variables = variables.replace(
+            "CONFIG_PATH_PH", configs['configPath']).replace(
+            "ZONE_PH", configs['zone']).replace(
+            "EXO_SIZE_PH", flavor).replace(
+            "TEMPLATE_PH", configs['template']).replace(
+            "KEY_PAIR_PH", configs['keyPair']).replace(
+            "\"SEC_GROUPS_PH\"", securityGroups).replace(
+            "DISK_SIZE_PH", diskSize)
+        writeToFile(mainTfDir + "/main.tf", variables, False)
+
+        # ---------------- main.tf: add raw VMs provisioner
+        rawProvisioning = loadFile(csTemplate, required=True)
+
+    elif configs["providerName"] == "exoscale": # TODO: separate these two! disk_size is required in exoscale but root_disk_size is optional in cloudstack
 
         # manage optional vars
         securityGroups = "[]" if configs["securityGroups"] is None \
@@ -303,7 +315,6 @@ def terraformProvisionment(
         # ---------------- main.tf: add raw VMs provisioner
         rawProvisioning = loadFile(
             "%s/rawProvision.tf" % templatesPath, required=True)
-        writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
 
     else:
         # ---------------- main.tf: add vars
@@ -317,7 +328,7 @@ def terraformProvisionment(
         if extraInstanceConfig:
             instanceDefinition += "\n" + extraInstanceConfig
 
-        rawProvision = loadFile("%s/rawProvision.tf" % templatesPath).replace(
+        rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath).replace(
             "CREDENTIALS_PLACEHOLDER", credentials).replace(
             "DEPENDENCIES_PLACEHOLDER", dependencies.replace(
                 "DEP_COUNT_PH", "count = %s" % nodes)).replace(
@@ -326,7 +337,7 @@ def terraformProvisionment(
                 configs["providerInstanceName"])).replace(
             "NODE_DEFINITION_PLACEHOLDER", instanceDefinition)
 
-        writeToFile(mainTfDir + "/main.tf", rawProvision, True)
+    writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
 
     # ---------------- RUN TERRAFORM - phase 1: provision VMs
     if runTerraform(mainTfDir,
@@ -338,10 +349,10 @@ def terraformProvisionment(
     # ---------------- main.tf: add root allower + k8s bootstraper
     bootstrap = loadFile("templates/general/bootstrap.tf", required=True)
 
-    if configs['openUser'] is not None:
-        bootstrap = bootstrap.replace("ALLOW_ROOT_COUNT", "var.customCount")
-    else:
+    if openUser is "root":
         bootstrap = bootstrap.replace("ALLOW_ROOT_COUNT", "0")
+    else:
+        bootstrap = bootstrap.replace("ALLOW_ROOT_COUNT", "var.customCount")
 
     bootstrap = bootstrap.replace(
         "LIST_IP_GETTER", provDict[configs["providerName"]])

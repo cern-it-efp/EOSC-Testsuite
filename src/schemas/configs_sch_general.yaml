@@ -4,11 +4,6 @@ required:
     - providerInstanceName
     - pathToKey
     - flavor
-    - openUser
-    - dockerCE
-    - dockerEngine
-    - kubernetes
-    - costCalculation
 properties:
     providerName:
         type: string
@@ -19,21 +14,13 @@ properties:
     flavor:
         type: string
     openUser:
-        type:
-            - string
-            - "null"
+        type: string
     dockerCE:
-        type:
-            - string
-            - "null"
+        type: string
     dockerEngine:
-        type:
-            - string
-            - "null"
+        type: string
     kubernetes:
-        type:
-            - string
-            - "null"
+        type: string
     costCalculation:
         type:
             - object

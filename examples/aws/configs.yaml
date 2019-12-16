@@ -1,16 +1,13 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
 providerName: "aws"
 pathToKey: "/root/.ssh/id_rsa"
-dockerCE:
-dockerEngine:
-kubernetes:
 openUser: centos
-flavor: "t2.medium" # instanceType
+flavor: "t2.medium"
 region: "eu-central-1"
 sharedCredentialsFile: "/creds"
 ami: "ami-0957ba512eafd08d9"
 keyName: "exo"
-volumeSize: 50 # optional
+volumeSize: 50
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:

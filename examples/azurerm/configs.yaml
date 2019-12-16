@@ -1,9 +1,6 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
 providerName: azurerm
 pathToKey: "/root/.ssh/id_rsa"
-dockerCE:
-dockerEngine:
-kubernetes:
 openUser: uroot
 flavor: "Standard_D2s_v3"
 location: "East US"

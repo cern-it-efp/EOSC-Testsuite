@@ -1,8 +1,0 @@
-tags = {
-    Name = "NAME_PH"
-}
-ami = "ami-08ee2516c7709ea48"
-key_name = "exo"
-root_block_device {
-    volume_size = 50
-}

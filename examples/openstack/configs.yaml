@@ -2,15 +2,12 @@
 providerName: openstack
 pathToKey: "/home/ipelu/.ssh/id_rsa"
 openUser: #eouser
-dockerCE:
-dockerEngine:
-kubernetes:
 flavor: "m2.medium" # "eo1.medium"
 imageName: "CC7 - x86_64 [2018-12-03]" # "CentOS 7"
 keyPair: "exo" # mykey
 securityGroups: # for cf ["default","allow_ping_ssh_rdp"]
 region:
-availabilityZone:  # cern os allows selecting Availability Zone / cf allows specifying it too but the only possible option in the dropdown is "nova"
+availabilityZone:  # cern's 'allows selecting Availability Zone / cf allows it too but the only possible option in the dropdown is "nova"
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:

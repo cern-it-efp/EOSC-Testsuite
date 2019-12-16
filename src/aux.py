@@ -116,7 +116,7 @@ def writeFail(resDir, file, msg, toLog):
 
 
 def logger(text, sym, file):
-    """ Logs in a fancy way.
+    """Logs in a fancy way.
 
     Parameters:
         text (str): Text to log
@@ -143,3 +143,25 @@ def logger(text, sym, file):
                (toPrint, file))
     else:
         print(toPrint)
+
+
+def tryTakeFromYaml(dict, key, defaultValue, msgExcept=None):
+    """Tries to return the dict's value for key 'key'. If KeyError
+       exception is thrown, returns the specified default value.
+
+    Parameters:
+        dict (dict): Dict object loaded from a yaml file.
+        key (object): Key whose value should be returned if existing.
+        defaultValue (object): value to return in case of KeyError exception.
+        msgExcept (str): Message to show in case of exception.
+
+    Returns
+        Object taken from the yaml file (dict) or default one.
+    """
+
+    try:
+        return dict[key]
+    except KeyError:
+        if msgExcept is not None:
+            print(msgExcept)
+        return defaultValue

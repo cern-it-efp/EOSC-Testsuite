@@ -63,7 +63,7 @@ def validateYaml(provider):
     """
 
     configsSchema = "schemas/configs_sch_%s.yaml" % provider if provider \
-        in extraSupportedClouds else "schemas/configs_sch.yaml"
+        in extraSupportedClouds else "schemas/configs_sch_general.yaml"
 
     try:
         jsonschema.validate(configs, loadFile(configsSchema))
@@ -115,11 +115,8 @@ def initAndChecks():
         print("Key permissions must be set to 600")
         stop(1)
 
-    # disabled schema validation for testing. TODO: change when merging 
-    # validateYaml(configs["providerName"])
+    validateYaml(configs["providerName"])
 
-    # TODO: instanceDefinition is now only required when not running on main
-    # clouds
     instanceDefinition = loadFile("../configurations/instanceDefinition")
     extraInstanceConfig = loadFile("../configurations/extraInstanceConfig")
     dependencies = loadFile("../configurations/dependencies")
@@ -496,7 +493,11 @@ def dlTest():
 
 
 def hpcTest():
-    """HPC test."""
+    """HPC test.
+
+    Returns:
+        None: In case of errors the function stops (returns None)
+    """
 
     start = time.time()
     testCost = 0
@@ -549,7 +550,6 @@ def sharedClusterTests(msgArr):
     testCost = 0
     logger(msgArr, "=", "logging/shared")
     if onlyTest is False:
-        # minus 1 because the array contains the string message
         prov, msg = terraformProvisionment("shared",
                                            len(msgArr) - 1,
                                            None,

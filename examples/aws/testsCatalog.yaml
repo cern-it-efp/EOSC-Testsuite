@@ -2,7 +2,7 @@ s3Test:
   run: true
   endpoint: https://s3.amazonaws.com
   accessKey:
-  secretKey: 
+  secretKey:
 dataRepatriationTest:
   run: true
 cpuBenchmarking:
@@ -15,8 +15,8 @@ dodasTest:
 dlTest:
   run: true
   nodes: 5
-  flavor: instance_type = "g3s.xlarge"
+  flavor: "g3s.xlarge"
 hpcTest:
   run: true
   nodes: 4
-  flavor: instance_type = "r5ad.4xlarge"
+  flavor: "r5ad.4xlarge"
