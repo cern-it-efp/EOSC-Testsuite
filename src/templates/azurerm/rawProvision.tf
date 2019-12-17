@@ -1,4 +1,5 @@
 provider "azurerm" {
+  subscription_id = "${var.subscriptionId}"
 }
 
 resource "azurerm_network_interface" "terraformnic" {

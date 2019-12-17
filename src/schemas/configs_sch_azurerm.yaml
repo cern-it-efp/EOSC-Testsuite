@@ -3,6 +3,7 @@ required:
     - providerName
     - pathToKey
     - flavor
+    - subscriptionId
     - openUser
     - location
     - resourceGroupName
@@ -11,6 +12,8 @@ required:
     - subnetId
     - image
 properties:
+    subscriptionId:
+        type: string
     providerName:
         type: string
     pathToKey:
