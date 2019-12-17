@@ -44,7 +44,7 @@ watchFunct(){
 ############# TEST SUITE RUN #############
 watchFunct &
 cd src
-python3 -B main.py $opts &> ../logs
+python3 -B -u main.py $opts &> ../logs
 outStat=$?
 cd ..
 ##########################################
