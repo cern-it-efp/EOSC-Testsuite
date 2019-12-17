@@ -56,6 +56,7 @@ def fetchResults(resDir, source, file, toLog):
     """
 
     while os.path.exists(resDir + "/" + file) is False:
+        print("Fetching results...")
         kubectl(Action.cp, podPath=source, localPath="%s/%s" %
                 (resDir, file), fetch=True)
     writeToFile(toLog, file + " fetched!", True)
@@ -209,6 +210,7 @@ def kubectl(
 
     elif action is Action.exec:
         try:
+            cmd = "%s &> /dev/null ; echo $?" % cmd # TODO: this is a w/a
             resp = stream(
                 client.CoreV1Api().connect_get_namespaced_pod_exec,
                 name,
@@ -221,6 +223,7 @@ def kubectl(
                 stdin=True,
                 stdout=True,
                 tty=False)
+            return resp
         except BaseException:
             res = False
 

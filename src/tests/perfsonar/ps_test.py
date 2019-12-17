@@ -112,12 +112,6 @@ def json_dump(obj):
     return json.dumps(obj, sort_keys=True, indent=4, separators=(',', ': '))
 
 
-# This disables warnings about unverifiable keys when fetching HTTPS
-# URLs.  pScheduler rolls its own key by default.
-requests.packages.urllib3.disable_warnings(
-    requests.packages.urllib3.exceptions.InsecureRequestWarning)
-
-
 def url_post(url,          # GET URL
              data=None,    # Data to post
              ):
@@ -173,6 +167,14 @@ def url_get(url,          # GET URL
     else:
         return (status, text)
 
+
+# This disables warnings about unverifiable keys when fetching HTTPS
+# URLs.  pScheduler rolls its own key by default.
+try:
+    warning = requests.packages.urllib3.exceptions.InsecureRequestWarning
+    requests.packages.urllib3.disable_warnings(warning)
+except:
+    print("Error disabling insecure request warning, not quitting")
 
 # -----------------------------------------------------------------------------
 # TESTING BEGINS HERE

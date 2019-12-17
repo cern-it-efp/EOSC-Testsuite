@@ -318,12 +318,13 @@ def perfsonarTest():
             writeFail(resDir, "perfsonar_results.json",
                       "Error running script test on pod.", "logging/shared")
         else:
+
             fetchResults(resDir, "ps-pod:/tmp/perfsonar_results.json",
                          "perfsonar_results.json", "logging/shared")
             res = True
-            # cleanup
-            writeToFile("logging/shared", "Cluster cleanup...", True)
-            kubectl(Action.delete, type=Type.pod, name="ps-pod")
+        # cleanup
+        writeToFile("logging/shared", "Cluster cleanup...", True)
+        kubectl(Action.delete, type=Type.pod, name="ps-pod")
 
     queue.put(({"test": "perfsonarTest", "deployed": res}, testCost))
 
@@ -359,9 +360,9 @@ def dodasTest():
             fetchResults(resDir, "dodas-pod:/tmp/dodas_test.json",
                          "dodas_results.json", "logging/shared")
             res = True
-            # cleanup
-            writeToFile("logging/shared", "Cluster cleanup...", True)
-            kubectl(Action.delete, type=Type.pod, name="dodas-pod")
+        # cleanup
+        writeToFile("logging/shared", "Cluster cleanup...", True)
+        kubectl(Action.delete, type=Type.pod, name="dodas-pod")
 
     queue.put(({"test": "dodasTest", "deployed": res}, testCost))
 
