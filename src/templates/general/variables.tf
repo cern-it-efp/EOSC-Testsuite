@@ -79,6 +79,9 @@ variable "vmSize" {
 variable "secGroupId" {
   default = "SECGROUPID_PH"
 }
+variable "subscriptionId" {
+  default = "SUBSCRIPTION_PH"
+}
 variable "subnetId" {
   default = "SUBNETID_PH"
 }

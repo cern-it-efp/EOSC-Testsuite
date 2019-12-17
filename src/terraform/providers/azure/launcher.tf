@@ -71,7 +71,7 @@ resource "azurerm_network_interface" "terraformnic" {
 resource "azurerm_virtual_machine" "main" {
   name                  = "tslauncher"
   location              = "West Europe"
-  vm_size               = "NV12s_v2_Standard" # Standard_D2s_v3
+  vm_size               = "Standard_D2s_v3"
   resource_group_name   = "ocrets"
   network_interface_ids = ["${azurerm_network_interface.terraformnic.id}"]
 

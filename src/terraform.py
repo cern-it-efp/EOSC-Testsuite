@@ -182,6 +182,7 @@ def terraformProvisionment(
 
         # ---------------- main.tf: manage azure specific vars and add them
         variables = variables.replace(
+            "SUBSCRIPTION_PH", configs['subscriptionId']).replace(
             "LOCATION_PH", configs['location']).replace(
             "PUB_SSH_PH", configs['pubSSH']).replace(
             "RGROUP_PH", configs['resourceGroupName']).replace(
