@@ -12,7 +12,7 @@ spec:
     spec:
       #hostNetwork: true
       containers:
-      - image: ipeluaga/custom_mpi_learn # gitlab-registry.cern.ch/cloud-infrastructure/gpu-mpi-containers/mpi_learn # use here my custom image tor testing: aws-cli with --no-sign-request to the public CERN s3 bucket with the GAN data
+      - image: cernefp/custom_mpi_learn # gitlab-registry.cern.ch/cloud-infrastructure/gpu-mpi-containers/mpi_learn # use here my custom image tor testing: aws-cli with --no-sign-request to the public CERN s3 bucket with the GAN data
         imagePullPolicy: Always
         name: train-mpijob
         resources:

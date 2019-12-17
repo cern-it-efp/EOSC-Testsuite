@@ -18,7 +18,7 @@ spec:
         topologyKey: kubernetes.io/hostname
   containers:
   - name: repatriation-cont
-    image: ipeluaga/data_repatriation_test_image:latest
+    image: cernefp/data_repatriation_test_image:latest
     imagePullPolicy: Always
     env:
     - name: PROVIDER
