@@ -9,7 +9,7 @@ spec:
     spec:
       #hostNetwork: true
       containers:
-      - image: ipeluaga/fdmnes
+      - image: cernefp/fdmnes
         imagePullPolicy: Always
         name: fdmnes-mpijob
         command: ["/bin/sh","-c"]

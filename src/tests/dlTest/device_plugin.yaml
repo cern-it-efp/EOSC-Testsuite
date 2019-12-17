@@ -39,7 +39,7 @@ spec:
         hostPath:
           path: /usr/lib/modules/3.10.0-957.12.2.el7.x86_64 #3.10.0-862.3.2.el7.x86_64
       initContainers:
-      - image: ipeluaga/custom-gpu-drivers:latest #"gitlab-registry.cern.ch/cloud-infrastructure/nvidia-driver-container/nvidia-driver-installer-centos:7-3.10.0-862-415.18"
+      - image: cernefp/custom-gpu-drivers:latest #"gitlab-registry.cern.ch/cloud-infrastructure/nvidia-driver-container/nvidia-driver-installer-centos:7-3.10.0-862-415.18"
         name: nvidia-driver-installer
         imagePullPolicy: Always
         resources:

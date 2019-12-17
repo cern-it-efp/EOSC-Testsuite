@@ -8,7 +8,7 @@ resource "aws_instance" "kubenode" {
   count         = "${var.customCount}"
   instance_type = "${var.instanceType}"
   tags = {
-    name = "${var.instanceName}-${count.index}"
+    Name = "${var.instanceName}-${count.index}"
   }
   ami      = "${var.ami}"
   key_name = "${var.keyName}"

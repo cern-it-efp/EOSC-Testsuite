@@ -304,7 +304,7 @@ Run the container (pulls the image first):
 
 .. code-block:: console
 
-    $ docker run --net=host -it ipeluaga/tslauncher
+    $ docker run --net=host -it cernefp/tslauncher
 
 Note the option '--net=host'. Without it, the container wouldn't be able to connect to the nodes, as it would not be in the same network as them and it is likely the nodes will not have public IPs. With that option, the container will use the network used by its host, which will be sharing the network with the nodes.
 

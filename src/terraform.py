@@ -191,8 +191,8 @@ def terraformProvisionment(
             "SUBNETID_PH", configs['subnetId']).replace(
             "PUBLISHER_PH", publisher).replace(
             "OFFER_PH", offer).replace(
-            "SKU_PH", sku).replace(
-            "VERSION_PH", version)
+            "SKU_PH", str(sku)).replace(
+            "VERSION_PH", str(version))
         writeToFile(mainTfDir + "/main.tf", variables, False)
 
         # ---------------- main.tf: add raw VMs provisioner
@@ -263,7 +263,7 @@ def terraformProvisionment(
             "INSTANCE_TYPE_PH", flavor).replace(
             "AMI_PH", configs['ami']).replace(
             "NAME_KEY_PH", configs['keyName']).replace(
-            "VOLUME_SIZE_PH", volumeSize)
+            "VOLUME_SIZE_PH", str(volumeSize))
         writeToFile(mainTfDir + "/main.tf", variables, False)
 
         # ---------------- main.tf: add raw VMs provisioner
@@ -289,7 +289,7 @@ def terraformProvisionment(
             "TEMPLATE_PH", configs['template']).replace(
             "KEY_PAIR_PH", configs['keyPair']).replace(
             "\"SEC_GROUPS_PH\"", securityGroups).replace(
-            "DISK_SIZE_PH", diskSize)
+            "DISK_SIZE_PH", str(diskSize))
         writeToFile(mainTfDir + "/main.tf", variables, False)
 
         # ---------------- main.tf: add raw VMs provisioner

@@ -18,7 +18,7 @@ spec:
         topologyKey: kubernetes.io/hostname
   containers:
   - name: s3cont
-    image: ipeluaga/s3_test_image:latest
+    image: cernefp/s3_test_image:latest
     imagePullPolicy: Always
     env:
     - name: AWS_ACCESS_KEY_ID
