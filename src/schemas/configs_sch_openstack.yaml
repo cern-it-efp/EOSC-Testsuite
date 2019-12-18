@@ -12,6 +12,10 @@ properties:
         type: string
     flavor:
         type: string
+    imageName:
+        type: string
+    keyPair:
+        type: string
     openUser:
         type: string
     dockerCE:
@@ -20,15 +24,10 @@ properties:
         type: string
     kubernetes:
         type: string
-    imageName:
-        type: string
-    keyPair:
-        type: string
     securityGroups:
         type: string
     region:
-        type:
-            type: string
+        type: string
     availabilityZone:
         type: string
     costCalculation:

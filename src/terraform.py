@@ -202,12 +202,9 @@ def terraformProvisionment(
         elif configs["providerName"] == "openstack":
 
             # manage optional related vars
-            region = "" if configs["region"] is None \
-                else configs["region"]
-            availabilityZone = "" if configs["availabilityZone"] is None \
-                else configs["availabilityZone"]
-            securityGroups = "[]" if configs["securityGroups"] is None \
-                else configs["securityGroups"]
+            region = tryTakeFromYaml(configs, "region", "")
+            availabilityZone = tryTakeFromYaml(configs, "availabilityZone", "")
+            securityGroups = tryTakeFromYaml(configs, "securityGroups", "[]")
 
             # ---------------- main.tf: manage openstack specific vars and add them
             variables = variables.replace(
@@ -269,7 +266,7 @@ def terraformProvisionment(
             # ---------------- main.tf: add raw VMs provisioner
             rawProvisioning = loadFile(awsTemplate, required=True)
 
-        elif configs["providerName"] == "cloudstack": # TODO: separate these two! disk_size is required in exoscale but root_disk_size is optional in cloudstack
+        elif configs["providerName"] == "cloudstack": # TODO: use here tryTakeFromYaml
 
             # manage optional vars
             securityGroups = "[]" if configs["securityGroups"] is None \
@@ -295,7 +292,7 @@ def terraformProvisionment(
             # ---------------- main.tf: add raw VMs provisioner
             rawProvisioning = loadFile(csTemplate, required=True)
 
-        elif configs["providerName"] == "exoscale": # TODO: separate these two! disk_size is required in exoscale but root_disk_size is optional in cloudstack
+        elif configs["providerName"] == "exoscale": # TODO: use here tryTakeFromYaml
 
             # manage optional vars
             securityGroups = "[]" if configs["securityGroups"] is None \
