@@ -37,6 +37,11 @@ RUN KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/
     chmod +x ./kubectl && \
     mv ./kubectl /bin
 
+# ------------------ Install az CLI
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+
+
+
 # ------------------ Create ssh key file
 RUN mkdir /root/.ssh && \
     touch /root/.ssh/id_rsa && \

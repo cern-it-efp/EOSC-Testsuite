@@ -97,7 +97,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#download-and-preparation">1.5 Download and preparation</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#cloning-repository">Cloning repository</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#configuration-examples">Configuration examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#main-clouds-additional-support">Main clouds: additional support</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#using-docker">1.6 Using Docker</a></li>
@@ -196,10 +196,10 @@ Once downloaded, this must be placed at <em>~/.terraform.d/plugins</em> and exec
 <p>Python version 3 is required.
 The following python packages are required:</p>
 <ul class="simple">
-<li>pyyaml</li>
-<li>jsonschema</li>
-<li>kubernetes</li>
-<li>requests</li>
+<li><p>pyyaml</p></li>
+<li><p>jsonschema</p></li>
+<li><p>kubernetes</p></li>
+<li><p>requests</p></li>
 </ul>
 <p>Please install them with pip3.</p>
 </div>
@@ -216,12 +216,37 @@ Note errors may occur if your key doesn’t have the right permissions. Set thes
 <div class="section" id="security-groups">
 <h2>1.3 Security groups<a class="headerlink" href="#security-groups" title="Permalink to this headline">¶</a></h2>
 <p>The following ports have to be opened:</p>
-<ul class="simple">
-<li>22/TCP (SSH)</li>
-<li>6443/TCP (Kubernetes API)</li>
-<li>10250/TCP     (API which allows node access)</li>
-<li>8472/UDP (Flannel overlay network, k8s pods communication)</li>
-</ul>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 15%" />
+<col style="width: 76%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Port</p></th>
+<th class="head"><p>Protocol</p></th>
+<th class="head"><p>Functionality</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>22</p></td>
+<td><p>TCP</p></td>
+<td><p>SSH</p></td>
+</tr>
+<tr class="row-odd"><td><p>6443</p></td>
+<td><p>TCP</p></td>
+<td><p>Kubernetes API</p></td>
+</tr>
+<tr class="row-even"><td><p>10250</p></td>
+<td><p>TCP</p></td>
+<td><p>API which allows node access</p></td>
+</tr>
+<tr class="row-odd"><td><p>8472</p></td>
+<td><p>UDP</p></td>
+<td><p>Flannel overlay network, k8s pods communication</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section" id="networking-and-ips">
 <h2>1.4 Networking and IPs<a class="headerlink" href="#networking-and-ips" title="Permalink to this headline">¶</a></h2>
@@ -247,48 +272,48 @@ provider specific and differ from one provider to another.</p>
 <p>You will find in the root of the cloned repository a folder named <em>configurations</em>. That folder must containing the following files:</p>
 <p><code class="docutils literal notranslate"><span class="pre">configs.yaml</span> <span class="pre">(required)</span></code></p>
 <p>Its variables:</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="16%" />
-<col width="84%" />
+<col style="width: 16%" />
+<col style="width: 84%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Name</th>
-<th class="head">Explanation / Values</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Explanation / Values</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>providerName</td>
-<td>Name of the provider for Terraform. (required)</td>
+<tbody>
+<tr class="row-even"><td><p>providerName</p></td>
+<td><p>Name of the provider for Terraform. (required)</p></td>
 </tr>
-<tr class="row-odd"><td>providerInstanceName</td>
-<td>Compute instance name for Terraform. This is provider specific. (required)</td>
+<tr class="row-odd"><td><p>providerInstanceName</p></td>
+<td><p>Compute instance name for Terraform. This is provider specific. (required)</p></td>
 </tr>
-<tr class="row-even"><td>pathToKey</td>
-<td>Path to the location of your private key (required)</td>
+<tr class="row-even"><td><p>pathToKey</p></td>
+<td><p>Path to the location of your private key (required)</p></td>
 </tr>
-<tr class="row-odd"><td>flavor</td>
-<td><div class="first last line-block">
+<tr class="row-odd"><td><p>flavor</p></td>
+<td><div class="line-block">
 <div class="line">Flavor to be used for the main cluster. This has to be specified as a key-value</div>
 <div class="line">pair according to the provider. (required)</div>
 </div>
 </td>
 </tr>
-<tr class="row-even"><td>openUser</td>
-<td><div class="first last line-block">
+<tr class="row-even"><td><p>openUser</p></td>
+<td><div class="line-block">
 <div class="line">User to be used in case the provider doesn’t allow root ssh. If not specified,</div>
 <div class="line">root will be used for ssh connections.</div>
 </div>
 </td>
 </tr>
-<tr class="row-odd"><td>dockerCE</td>
-<td>Version of docker-ce to be installed. Leave empty for latest.</td>
+<tr class="row-odd"><td><p>dockerCE</p></td>
+<td><p>Version of docker-ce to be installed. Leave empty for latest.</p></td>
 </tr>
-<tr class="row-even"><td>dockerEngine</td>
-<td>Version of docker-engine to be installed. Leave empty for latest.</td>
+<tr class="row-even"><td><p>dockerEngine</p></td>
+<td><p>Version of docker-engine to be installed. Leave empty for latest.</p></td>
 </tr>
-<tr class="row-odd"><td>kubernetes</td>
-<td>Version of Kubernetes to be installed. Leave empty for latest.</td>
+<tr class="row-odd"><td><p>kubernetes</p></td>
+<td><p>Version of Kubernetes to be installed. Leave empty for latest.</p></td>
 </tr>
 </tbody>
 </table>
@@ -309,7 +334,7 @@ pair a message will be shown in the terminal telling you which ones these are. T
 </pre></div>
 </div>
 <p>An example (Exoscale cloud provider):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;kubenode&quot;</span><span class="c1">#NAME</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;NAME_PH&quot;</span>
 <span class="n">template</span> <span class="o">=</span> <span class="s2">&quot;Linux CentOS 7.5 64-bit&quot;</span>
 <span class="n">key_pair</span> <span class="o">=</span> <span class="s2">&quot;k_cl&quot;</span>
 <span class="n">security_groups</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;kgroup&quot;</span><span class="p">]</span>
@@ -318,16 +343,25 @@ pair a message will be shown in the terminal telling you which ones these are. T
 </pre></div>
 </div>
 <p>One of the properties specified on the block that defines a compute node (VM) is the flavor or machine type. This property must not be specified on instanceDefinition but on configs.yaml’s flavor.</p>
-<p>Please pay attention in this section to the name for the instance. A random string will be added later to the name given to the instance in order to avoid DNS issues when
-running the test-suite several times. To achieve this, the block must contain the ‘#NAME’ placeholder. When specifying the name for the instance, please follow this structure:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">YOUR_PROVIDER</span><span class="s1">&#39;S_STRING_FOR_NAME&gt; = &quot;&lt;NAME_FOR_YOUR_INSTANCES&gt;&quot;#NAME</span>
+<p>Please pay attention in this section to the name for the instance, which will be set by the Test-Suite containing:</p>
+<ul class="simple">
+<li><p>The string “kubenode”</p></li>
+<li><p>A string indicating the purpose of the cluster to which the VM belongs</p></li>
+<li><p>A random, 4 character string to avoid DNS issues</p></li>
+<li><p>An integer. 0 would be the master node, 1+ would be the slaves</p></li>
+</ul>
+<p>To achieve this, your instance definition must contain the ‘NAME_PH’ placeholder. When specifying the name for the instance, please follow this structure:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">YOUR_PROVIDER</span><span class="s1">&#39;S_STRING_FOR_NAME&gt; = &quot;NAME_PH&quot;</span>
 </pre></div>
 </div>
-<p>Now, lets assume your provider’s string for the instance name is “display_name”, and you want to call your instances “kubenode” then you should write:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;kubenode&quot;</span><span class="c1">#NAME</span>
+<p>Now, let’s assume your provider’s string for the instance name is “display_name”, then you should write:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;NAME_PH&quot;</span>
 </pre></div>
 </div>
-<p>Note the ‘#NAME’!</p>
+<p>As an example let’s assume the suite comes up with the name “kubenode-hpcTest-aws-0”, Then it would switch that name with the NAME_PH placeholder:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;kubenode-hpcTest-aws-0&quot;</span>
+</pre></div>
+</div>
 <div class="line-block">
 <div class="line">[<strong>NOTE 1</strong>: This will be taken as a whole block and placed directly on a .tf file]</div>
 <div class="line">[<strong>NOTE 2</strong>: Clouds that don’t support resource creation with Terraform or k8saaS can’t currently be tested with this Test-Suite]</div>
@@ -336,29 +370,120 @@ running the test-suite several times. To achieve this, the block must contain th
 <p>This file takes also HCL code. There are providers for which dependencies are required, for example Azure: Terraform can’t create a VM if there is no NIC for it.
 Then this is the file to define those dependencies needed by the VMs.</p>
 </div>
-<div class="section" id="configuration-examples">
-<h3>Configuration examples<a class="headerlink" href="#configuration-examples" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="main-clouds-additional-support">
+<h3>Main clouds: additional support<a class="headerlink" href="#main-clouds-additional-support" title="Permalink to this headline">¶</a></h3>
 <p>Examples of all configuration files for several public cloud providers can be found inside <em>examples</em>.
 Find below these lines details on how to run the suite on some of the main providers:</p>
 <p><code class="docutils literal notranslate"><span class="pre">Azure</span></code></p>
 <p>(Find the example files at <em>examples/azure</em>. It is also possible to use AKS to provision the cluster, for this refer to section “Using existing clusters”.)</p>
 <p>Install az CLI and configure credentials with ‘az login’.</p>
+<p>Variables for configs.yaml besides the general ones:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 13%" />
+<col style="width: 87%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Explanation / Values</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>location</p></td>
+<td><p>The region in which to create the compute instances. (required)</p></td>
+</tr>
+<tr class="row-odd"><td><p>resourceGroupName</p></td>
+<td><p>Specifies the name of the Resource Group in which the Virtual Machine should exist. (required)</p></td>
+</tr>
+<tr class="row-even"><td><p>pubSSH</p></td>
+<td><p>Public SSH key of the key specified at configs.yaml’s pathToKey. (required)</p></td>
+</tr>
+<tr class="row-odd"><td><p>securityGroupID</p></td>
+<td><p>The ID of the Network Security Group to associate with the VMs’s network interfaces (required)</p></td>
+</tr>
+<tr class="row-even"><td><p>subnetId</p></td>
+<td><p>Reference to a subnet in which the NIC for the VM has been created. (required)</p></td>
+</tr>
+<tr class="row-odd"><td><p>image.publisher</p></td>
+<td><p>Specifies the publisher of the image used to create the virtual machines.</p></td>
+</tr>
+<tr class="row-even"><td><p>image.offer</p></td>
+<td><p>Specifies the offer of the image used to create the virtual machines.</p></td>
+</tr>
+<tr class="row-odd"><td><p>image.sku</p></td>
+<td><p>Specifies the SKU of the image used to create the virtual machines.</p></td>
+</tr>
+<tr class="row-even"><td><p>image.version</p></td>
+<td><p>Specifies the version of the image used to create the virtual machines.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Note: the security group and subnet -virtual network too- have to be created beforehand and their ID’s used at configs.yaml.
+Also, if image’s <em>publisher</em>, <em>offer</em>, <em>sku</em> and <em>version</em> are omitted, the following defaults will be used:</p>
+<ul class="simple">
+<li><p>publisher = OpenLogic</p></li>
+<li><p>offer = CentOS</p></li>
+<li><p>sku = 7.5</p></li>
+<li><p>version = latest</p></li>
+</ul>
 <p><code class="docutils literal notranslate"><span class="pre">AWS</span></code></p>
 <p>(Find the example files at <em>examples/aws</em>. It is also possible to use EKS to provision the cluster, for this refer to section “Using existing clusters”.)</p>
-<p>Region, access key and secret key must be hardcoded in the file <em>configurations/credentials</em>.</p>
+<p>The authentication method supported is AWS’s shared credential file. Specify the absolute path to this at configs.yaml’s “sharedCredentialsFile”.</p>
 <p><code class="docutils literal notranslate"><span class="pre">GCP</span></code></p>
-<p>(Example files at <em>examples/gcp</em>. It is also possible to use GKE to provision the cluster, for this refer to section “Using existing clusters”.)</p>
-<p>For authentication, donwload the JSON file with the credentials from the Google Cloud console. Then, the file <em>configurations/credentials</em> must contain <em>credentials = “${file(“CREDENTIALS_FILE”)}”</em> and
+<p>(Example files at <em>examples/gcp</em>. It is also possible to use GKE to provision the cluster, for this refer to section “Using existing clusters”. You will have to <a href="https://cloud.google.com/sdk/gcloud/reference/container/clusters/get-credentials?hl=en_US&_ga=2.141757301.-616534808.1554462142" target="_blank">fetch the kubectl kubeconfig file</a> too.)</p>
+<p>For authentication, download the JSON file with the credentials from the Google Cloud console. Then, the file <em>configurations/credentials</em> must contain <em>credentials = “${file(“CREDENTIALS_FILE”)}”</em> and
 <em>project = “PROJECT_ID”</em>, where CREDENTIALS_FILE should be the path to the downloaded file and PROJECT_ID the id of your GCP project.</p>
 <p>The VMs need public IP’s (NAT) to connect to the internet if the network used it the “default” one and differing to other providers these are
 not allocated unless specified, using network_interface.access_config{} in the instance definition.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Openstack</span></code></p>
+<p>Regarding authentication, download the OpenStack RC File containing the credentials from the Horizon dashboard and source it.</p>
+<p>Variables for configs.yaml besides the general ones:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 84%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Explanation / Values</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>imageName</p></td>
+<td><p>OS Image to be used for the VMs. (required)</p></td>
+</tr>
+<tr class="row-odd"><td><p>keyPair</p></td>
+<td><p>Name of the key to be used. Has to be created or imported beforehand. (required)</p></td>
+</tr>
+<tr class="row-even"><td><p>securityGroups</p></td>
+<td><p>Security groups array. Must be a String, example: “[“default”,”allow_ping_ssh_rdp”]”</p></td>
+</tr>
+<tr class="row-odd"><td><p>region</p></td>
+<td><p>The region in which to create the compute instances. If omitted, the region specified on the credentials file is used.</p></td>
+</tr>
+<tr class="row-even"><td><p>availabilityZone</p></td>
+<td><p>The availability zone in which to create the compute instances.</p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">Cloudstack</span></code></p>
+<p>At configs.yaml’s configPath, specify the path to the file containing the cloudstack credentials. Such file must follow this structure:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">[cloudstack]</span>
+<span class="go">url = your_api_url</span>
+<span class="go">apikey = your_api_key</span>
+<span class="go">secretkey = your_secret_key</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Exoscale</span></code></p>
+<p>Use <a href="" target="_blank">cloudstack.ini file</a> for credentials and specify the path to it at configs.yaml’s “configPath”.
+Must contain endpoint, key and secret.</p>
 </div>
 </div>
 <div class="section" id="using-docker">
 <h2>1.6 Using Docker<a class="headerlink" href="#using-docker" title="Permalink to this headline">¶</a></h2>
 <p>A Docker image has been built and pushed to Docker hub. This image allows you to skip section “1.1 Dependencies” and jump to “1.2 SSH key”.</p>
 <p>Run the container (pulls the image first):</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> docker run --net<span class="o">=</span>host -it ipeluaga/tslauncher
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> docker run --net<span class="o">=</span>host -it cernefp/tslauncher
 </pre></div>
 </div>
 <p>Note the option ‘–net=host’. Without it, the container wouldn’t be able to connect to the nodes, as it would not be in the same network as them and it is likely the nodes will not have public IPs. With that option, the container will use the network used by its host, which will be sharing the network with the nodes.</p>

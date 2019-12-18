@@ -165,6 +165,7 @@ Please pay attention in this section to the name for the instance, which will be
 - A string indicating the purpose of the cluster to which the VM belongs
 - A random, 4 character string to avoid DNS issues
 - An integer. 0 would be the master node, 1+ would be the slaves
+
 To achieve this, your instance definition must contain the 'NAME_PH' placeholder. When specifying the name for the instance, please follow this structure::
 
   <YOUR_PROVIDER'S_STRING_FOR_NAME> = "NAME_PH"
