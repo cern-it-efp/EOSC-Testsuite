@@ -115,7 +115,7 @@ def writeFail(resDir, file, msg, toLog):
                   outfile, indent=4, sort_keys=True)
 
 
-def logger(text, sym, file):
+def logger(text, sym, file, override=None):
     """Logs in a fancy way.
 
     Parameters:
@@ -138,9 +138,10 @@ def logger(text, sym, file):
         toPrint += "\n" + sym + "  " + text + \
             " " * (size - len(text)) + "  " + sym
     toPrint += "\n" + blank + "\n" + frame
-    if file:
-        runCMD("echo \"%s\" >> %s" %
-               (toPrint, file))
+    if file and override is True:
+        runCMD("echo \"%s\" > %s" % (toPrint, file))
+    elif file and override is not True:
+        runCMD("echo \"%s\" >> %s" % (toPrint, file))
     else:
         print(toPrint)
 

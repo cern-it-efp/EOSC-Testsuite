@@ -23,36 +23,6 @@ except ModuleNotFoundError as ex:
     print(ex)
     sys.exit(1)
 
-logger(
-    "OCRE Cloud Benchmarking Validation Test Suite (CERN)",
-    "#",
-    "logging/header")
-
-onlyTest = False
-killResources = False
-configs = ""
-testsCatalog = ""
-instanceDefinition = ""
-extraInstanceConfig = ""
-dependencies = ""
-credentials = ""
-totalCost = 0
-procs = []
-testsRoot = "tests/"
-viaBackend = False
-testsSharingCluster = ["s3Test", "dataRepatriationTest",
-                       "perfsonarTest", "cpuBenchmarking", "dodasTest"]
-customClustersTests = ["dlTest", "hpcTest"]
-baseCWD = os.getcwd()
-resultsExist = False
-provDict = loadFile("schemas/provDict.yaml",
-                    required=True)["allProviders"]
-extraSupportedClouds = loadFile("schemas/provDict.yaml",
-                                required=True)["extraSupportedClouds"]
-obtainCost = True
-retry = None
-publicRepo = "https://ocre-testsuite.rtfd.io"
-
 
 def validateYaml(provider):
     """ Validates configs.yaml and testsCatalog.yaml file against schemas.
@@ -350,7 +320,7 @@ def dodasTest():
                 fetch=False) != 0:
             pass  # Copy script to pod
         # Run copied script
-        if kubectl( 
+        if kubectl(
                 Action.exec,
                 name="dodas-pod",
                 cmd="sh /CMSSW/CMSSW_9_4_0/src/custom_entrypoint.sh") != 0:
@@ -609,6 +579,40 @@ def checkRequiredTFexist(selectedTests):
         stop(1)
 
 
+logger(
+    "OCRE Cloud Benchmarking Validation Test Suite (CERN)",
+    "#",
+    "logging/header")
+
+onlyTest = False
+killResources = False
+configs = ""
+testsCatalog = ""
+instanceDefinition = ""
+extraInstanceConfig = ""
+dependencies = ""
+credentials = ""
+totalCost = 0
+procs = []
+testsRoot = "tests/"
+viaBackend = False
+testsSharingCluster = ["s3Test",
+                       "dataRepatriationTest",
+                       "perfsonarTest",
+                       "cpuBenchmarking",
+                       "dodasTest"]
+customClustersTests = ["dlTest", "hpcTest"]
+baseCWD = os.getcwd()
+resultsExist = False
+provDict = loadFile("schemas/provDict.yaml",
+                    required=True)["allProviders"]
+extraSupportedClouds = loadFile("schemas/provDict.yaml",
+                                required=True)["extraSupportedClouds"]
+obtainCost = True
+retry = None
+publicRepo = "https://ocre-testsuite.rtfd.io"
+
+
 # -----------------CMD OPTIONS--------------------------------------------
 try:
     opts, args = getopt.getopt(
@@ -630,6 +634,13 @@ for arg in args[1:len(args)]:
 # -----------------CHECKS AND PREPARATION---------------------------------
 
 selectedTests = initAndChecks()
+
+logger(
+    ["OCRE Cloud Benchmarking Validation Test Suite (CERN)","Provider: %s" % configs["providerName"]],
+    "#",
+    "logging/header",
+    override=True)
+
 if not selectedTests:
     writeToFile("logging/header", "No tests selected, nothing to do!", True)
     stop(0)
@@ -638,7 +649,7 @@ if retry is True:
     checkRequiredTFexist(selectedTests)
 
 
-# ----------------CREATE RESULTS FOLDER AND GENERAL FILE------------------
+# -----------------CREATE RESULTS FOLDER AND GENERAL FILE------------------
 s3ResDirBase = configs["providerName"] + "/" + str(
     datetime.datetime.now().strftime("%d-%m-%Y_%H-%M-%S"))
 resDir = "../results/%s/detailed" % s3ResDirBase
@@ -647,7 +658,15 @@ generalResults = {
     "testing": []
 }
 
-# ----------------RUN TESTS-----------------------------------------------
+logger(
+    ["OCRE Cloud Benchmarking Validation Test Suite (CERN)",
+    "Provider: %s" % configs["providerName"],
+    "Results: results/%s" % s3ResDirBase],
+    "#",
+    "logging/header",
+    override=True)
+
+# -----------------RUN TESTS-----------------------------------------------
 queue = Queue()
 cluster = 1
 
@@ -680,7 +699,7 @@ while not queue.empty():
     totalCost += cost
 
 if checkResultsExist(resDir) is True:
-    # ----------------CALCULATE COSTS-----------------------------------------
+    # -----------------CALCULATE COSTS-----------------------------------------
     if totalCost > 0:
         generalResults["estimatedCost"] = totalCost
     else:
@@ -689,11 +708,11 @@ if checkResultsExist(resDir) is True:
             "(Costs aren't correctly set: calculation will not be made)",
             True)
 
-    # ----------------MANAGE RESULTS------------------------------------------
+    # -----------------MANAGE RESULTS------------------------------------------
     with open("../results/" + s3ResDirBase + "/general.json", 'w') as outfile:
         json.dump(generalResults, outfile, indent=4, sort_keys=True)
 
-    msg1 = "TESTING COMPLETED. Results at:"
+    msg1 = "TESTING COMPLETED"
     # No results push if local run (only ts-backend has AWS creds for this)
     if viaBackend is True:
         s3Endpoint = "https://s3.cern.ch"
@@ -706,10 +725,15 @@ if checkResultsExist(resDir) is True:
             logger("S3 upload failed! Is 'awscli' installed and configured?",
                    "!", "logging/footer")
         else:
-            logger([msg1, "S3 bucket"], "#", "logging/footer")
+            logger([msg1, "Results on the S3 bucket"], "#", "logging/footer")
     else:
-        logger([msg1, "results/" + s3ResDirBase], "#", "logging/footer")
+        logger(msg1, "#", "logging/footer")
 else:
+    logger(
+        ["OCRE Cloud Benchmarking Validation Test Suite (CERN)","Provider: %s" % configs["providerName"]],
+        "#",
+        "logging/header",
+        override=True)
     shutil.rmtree("../results/" + s3ResDirBase, True)
 
 stop(0)
