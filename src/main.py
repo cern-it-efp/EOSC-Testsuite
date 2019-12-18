@@ -350,7 +350,7 @@ def dodasTest():
                 fetch=False) != 0:
             pass  # Copy script to pod
         # Run copied script
-        if kubectl(
+        if kubectl( 
                 Action.exec,
                 name="dodas-pod",
                 cmd="sh /CMSSW/CMSSW_9_4_0/src/custom_entrypoint.sh") != 0:
@@ -585,6 +585,30 @@ def sharedClusterTests(msgArr):
     queue.put((None, testCost))
 
 
+def checkRequiredTFexist(selectedTests):
+    """Called when --retry option is used, checks the main.tf files exist for
+       the required tests: those with run: true at testsCatalog.yaml"""
+
+    pathToMain = "tests/%s/main.tf"
+
+    if ("s3Test" in selectedTests or \
+        "dataRepatriationTest" in selectedTests or \
+        "cpuBenchmarking" in selectedTests or \
+        "perfsonarTest" in selectedTests or \
+        "dodasTest" in selectedTests) \
+        and os.path.isfile(pathToMain % "sharedCluster") is False:
+        writeToFile("logging/header", "ERROR: terraform files not found for shared cluster. Normal run is required before run with '--retry'.", True)
+        stop(1)
+
+    if "dlTest" in selectedTests and os.path.isfile(pathToMain % "dlTest") is False:
+        writeToFile("logging/header", "ERROR: terraform files not found for dlTest. Normal run is required before run with '--retry'.", True)
+        stop(1)
+
+    if "hpcTest" in selectedTests and os.path.isfile(pathToMain % "hpcTest") is False:
+        writeToFile("logging/header", "ERROR: terraform files not found for hpcTest. Normal run is required before run with '--retry'.", True)
+        stop(1)
+
+
 # -----------------CMD OPTIONS--------------------------------------------
 try:
     opts, args = getopt.getopt(
@@ -595,7 +619,6 @@ except getopt.GetoptError as err:
 for arg in args[1:len(args)]:
     if arg == '--only-test':
         writeToFile("logging/header", "(ONLY TEST EXECUTION)", True)
-        #runCMD("kubectl delete pods --all", hideLogs=True)
         onlyTest = True
     elif arg == '--retry':
         retry = True
@@ -605,9 +628,14 @@ for arg in args[1:len(args)]:
         stop(1)
 
 # -----------------CHECKS AND PREPARATION---------------------------------
-if not initAndChecks():
+
+selectedTests = initAndChecks()
+if not selectedTests:
     writeToFile("logging/header", "No tests selected, nothing to do!", True)
     stop(0)
+
+if retry is True:
+    checkRequiredTFexist(selectedTests)
 
 
 # ----------------CREATE RESULTS FOLDER AND GENERAL FILE------------------

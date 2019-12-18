@@ -174,28 +174,28 @@
 It is based on MPI for communication. As such, it tests the performance of single nodes (GPUs cards) but also latency and bandwidth of nodes interconnects and data access. The training uses a Kubernetes cluster (GPU flavored) with Kubeflow and MPI.</p>
 <p>If selected, the suite will provision a Kubernetes cluster -GPU flavored- specifically for this test.
 For this test, apart from the <em>run</em> variable, the following can be set in the <em>testsCatalog.yaml</em> file:</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="13%" />
-<col width="87%" />
+<col style="width: 13%" />
+<col style="width: 87%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Name</th>
-<th class="head">Explanation / Values</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Explanation / Values</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>nodes</td>
-<td>Number of nodes to be used for the deployment. Default: max number of nodes available.</td>
+<tbody>
+<tr class="row-even"><td><p>nodes</p></td>
+<td><p>Number of nodes to be used for the deployment. Default: max number of nodes available.</p></td>
 </tr>
-<tr class="row-odd"><td>flavor</td>
-<td>Terraform definition of the flavor to be used for this test’s cluster. (required)</td>
+<tr class="row-odd"><td><p>flavor</p></td>
+<td><p>Terraform definition of the flavor to be used for this test’s cluster. (required)</p></td>
 </tr>
 </tbody>
 </table>
 <ul class="simple">
-<li>Contributors/Owners: Sofia Vallecorsa (CERN) - sofia.vallecorsa AT cern.ch; Jean-Roch Vlimant (Caltech)</li>
-<li><a href="https://github.com/svalleco/mpi_learn" target="_blank">Repository</a></li>
+<li><p>Contributors/Owners: Sofia Vallecorsa (CERN) - sofia.vallecorsa AT cern.ch; Jean-Roch Vlimant (Caltech)</p></li>
+<li><p><a href="https://github.com/svalleco/mpi_learn" target="_blank">Repository</a></p></li>
 </ul>
 </div>
 <div class="section" id="s3-endpoint-tests">
@@ -203,35 +203,35 @@ For this test, apart from the <em>run</em> variable, the following can be set in
 <p>A simple S3 test script to test functionality of S3-like endpoints, checking the following:
 S3 authentication (access key + secret key), PUT, GET, GET with prefix matching, GET chunk, GET multiple chunks.</p>
 <p>For this test, apart from the <em>run</em> variable, the following ones must be set on the <em>testsCatalog.yaml</em> file:</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="13%" />
-<col width="88%" />
+<col style="width: 13%" />
+<col style="width: 88%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Name</th>
-<th class="head">Explanation / Values</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Explanation / Values</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>endpoint</td>
-<td><div class="first last line-block">
+<tbody>
+<tr class="row-even"><td><p>endpoint</p></td>
+<td><div class="line-block">
 <div class="line">Endpoint under which your S3 bucket is reachable.</div>
 <div class="line">This URL must not include the bucket name but only the host.</div>
 </div>
 </td>
 </tr>
-<tr class="row-odd"><td>accessKey</td>
-<td>Access key for S3 resource management.</td>
+<tr class="row-odd"><td><p>accessKey</p></td>
+<td><p>Access key for S3 resource management.</p></td>
 </tr>
-<tr class="row-even"><td>secretKey</td>
-<td>Secret key for S3 resource management.</td>
+<tr class="row-even"><td><p>secretKey</p></td>
+<td><p>Secret key for S3 resource management.</p></td>
 </tr>
 </tbody>
 </table>
 <ul class="simple">
-<li>Contributors/Owners: Oliver Keeble (CERN) - oliver.keeble AT cern.ch</li>
-<li><a href="https://gitlab.cern.ch/okeeble/s3test" target="_blank">Repository</a></li>
+<li><p>Contributors/Owners: Oliver Keeble (CERN) - oliver.keeble AT cern.ch</p></li>
+<li><p><a href="https://gitlab.cern.ch/okeeble/s3test" target="_blank">Repository</a></p></li>
 </ul>
 </div>
 <div class="section" id="data-export-from-the-commercial-cloud-provider-to-zenodo">
@@ -239,8 +239,8 @@ S3 authentication (access key + secret key), PUT, GET, GET with prefix matching,
 <p>When using cloud credits, when the credit is exhausted, data can be repatriated or moved to a long-term data storage service. The example used in this test uses
 <a href="https://zenodo.org/" target="_blank">Zenodo</a> service maintained by CERN, verifying that the output data can be taken from the cloud provider to Zenodo.</p>
 <ul class="simple">
-<li>Contributors/Owners: Ignacio Peluaga (CERN) - ignacio.peluaga.lozada AT cern.ch</li>
-<li><a href="https://github.com/ignpelloz/cloud-exporter" target="_blank">Repository</a></li>
+<li><p>Contributors/Owners: Ignacio Peluaga (CERN) - ignacio.peluaga.lozada AT cern.ch</p></li>
+<li><p><a href="https://github.com/ignpelloz/cloud-exporter" target="_blank">Repository</a></p></li>
 </ul>
 </div>
 <div class="section" id="containerised-cpu-benchmarking">
@@ -248,14 +248,14 @@ S3 authentication (access key + secret key), PUT, GET, GET with prefix matching,
 <p>Suite containing several CPU benchmarks used for High Energy Physics (HEP).
 The following benchmarks are run on the cloud provider, using a containerised approach:</p>
 <ul class="simple">
-<li>DIRAC Benchmark</li>
-<li>ATLAS Kit Validation</li>
-<li>Whetstone: from the UnixBench benchmark suite.</li>
-<li>Hyper-benchmark: A pre-defined sequence of measurements and fast benchmarks.</li>
+<li><p>DIRAC Benchmark</p></li>
+<li><p>ATLAS Kit Validation</p></li>
+<li><p>Whetstone: from the UnixBench benchmark suite.</p></li>
+<li><p>Hyper-benchmark: A pre-defined sequence of measurements and fast benchmarks.</p></li>
 </ul>
 <ul class="simple">
-<li>Contributors/Owners: Domenico Giordano (CERN) - domenico.giordano AT cern.ch</li>
-<li><a href="https://gitlab.cern.ch/cloud-infrastructure/cloud-benchmark-suite" target="_blank">Repository</a></li>
+<li><p>Contributors/Owners: Domenico Giordano (CERN) - domenico.giordano AT cern.ch</p></li>
+<li><p><a href="https://gitlab.cern.ch/cloud-infrastructure/cloud-benchmark-suite" target="_blank">Repository</a></p></li>
 </ul>
 </div>
 <div class="section" id="networking-performance-measurements">
@@ -264,20 +264,20 @@ The following benchmarks are run on the cloud provider, using a containerised ap
 <p>In this test, a perfSONAR testpoint is created using a containerised approach on the cloud provider infrastructure.
 The following tests are launched end to end:</p>
 <ul class="simple">
-<li>throughput: A test to measure the observed speed of a data transfer and associated statistics between two endpoints.</li>
-<li>rtt: Measure the round trip time and related statistics between hosts.</li>
-<li>trace: Trace the path between IP hosts.</li>
-<li>latencybg: Continuously measure one-way latency and associated statistics between hosts and report back results periodically.</li>
+<li><p>throughput: A test to measure the observed speed of a data transfer and associated statistics between two endpoints.</p></li>
+<li><p>rtt: Measure the round trip time and related statistics between hosts.</p></li>
+<li><p>trace: Trace the path between IP hosts.</p></li>
+<li><p>latencybg: Continuously measure one-way latency and associated statistics between hosts and report back results periodically.</p></li>
 </ul>
 <p>The endpoint for these tests must be specified at testsCatalog.yaml’s <em>perfsonarTest.endpoint</em> variable. Use endpoints from:</p>
 <ul class="simple">
-<li><a href="https://fasterdata.es.net/performance-testing/perfsonar/esnet-perfsonar-services/esnet-iperf-hosts/" target="_blank">List of throughput hosts</a></li>
-<li><a href="http://perfsonar-otc.hnsc.otc-service.com/toolkit/" target="_blank">perfSONAR Toolkit</a></li>
-<li><a href="http://stats.es.net/ServicesDirectory/" target="_blank">Lookup Services Directory</a></li>
+<li><p><a href="https://fasterdata.es.net/performance-testing/perfsonar/esnet-perfsonar-services/esnet-iperf-hosts/" target="_blank">List of throughput hosts</a></p></li>
+<li><p><a href="http://perfsonar-otc.hnsc.otc-service.com/toolkit/" target="_blank">perfSONAR Toolkit</a></p></li>
+<li><p><a href="http://stats.es.net/ServicesDirectory/" target="_blank">Lookup Services Directory</a></p></li>
 </ul>
 <ul class="simple">
-<li>Contributors/Owners: Shawn Mckee (University of Michigan) - smckee AT umich.edu; Marian Babik CERN) - marian.babik AT cern.ch</li>
-<li><a href="https://github.com/perfsonar/perfsonar-testpoint-docker" target="_blank">Repository</a></li>
+<li><p>Contributors/Owners: Shawn Mckee (University of Michigan) - smckee AT umich.edu; Marian Babik CERN) - marian.babik AT cern.ch</p></li>
+<li><p><a href="https://github.com/perfsonar/perfsonar-testpoint-docker" target="_blank">Repository</a></p></li>
 </ul>
 </div>
 <div class="section" id="fdmnes-simulation-of-x-ray-spectroscopies">
@@ -288,28 +288,28 @@ It uses parallel calculations using OpenMPI. As an HPC test FDMNES is rather hea
 The objective of this test is to understand which configuration of FDMNES is the most efficient and which type of tasks and calculations can be done in a give cloud provider.</p>
 <p>If selected, the suite will provision a Kubernetes cluster -HPC flavored- specifically for this test.
 For this test, apart from the <em>run</em> variable, the following can be set in the <em>testsCatalog.yaml</em> file:</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="13%" />
-<col width="87%" />
+<col style="width: 13%" />
+<col style="width: 87%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Name</th>
-<th class="head">Explanation / Values</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Explanation / Values</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>nodes</td>
-<td>Number of nodes to be used for the deployment.</td>
+<tbody>
+<tr class="row-even"><td><p>nodes</p></td>
+<td><p>Number of nodes to be used for the deployment.</p></td>
 </tr>
-<tr class="row-odd"><td>flavor</td>
-<td>Terraform definition of the flavor to be used for this test’s cluster. (required)</td>
+<tr class="row-odd"><td><p>flavor</p></td>
+<td><p>Terraform definition of the flavor to be used for this test’s cluster. (required)</p></td>
 </tr>
 </tbody>
 </table>
 <ul class="simple">
-<li>Contributors/Owners: Rainer Wilcke (ESRF) - wilcke AT esrf.fr</li>
-<li><a href="http://neel.cnrs.fr/spip.php?article3137&lang=en" target="_blank">Repository</a></li>
+<li><p>Contributors/Owners: Rainer Wilcke (ESRF) - wilcke AT esrf.fr</p></li>
+<li><p><a href="http://neel.cnrs.fr/spip.php?article3137&lang=en" target="_blank">Repository</a></p></li>
 </ul>
 </div>
 <div class="section" id="dodas-dynamic-on-demand-analysis-services-test">
@@ -320,8 +320,8 @@ HTCondor Global Pool of CMS to enable the dynamic extension of existing computin
 scaling capabilities and self-healing support that results in a drastic reduction of time and cost, through setup and operational efficiency increases.</p>
 <p>If one wants to deploy this test, the machines in the general cluster (to which such test is deployed), should have at least 50 gb disk as the image for this test is 16GB.</p>
 <ul class="simple">
-<li>Contributors/Owners: Daniele Spiga (INFN) - <a class="reference external" href="mailto:daniele&#46;spiga&#37;&#52;&#48;pg&#46;infn&#46;it">daniele<span>&#46;</span>spiga<span>&#64;</span>pg<span>&#46;</span>infn<span>&#46;</span>it</a> ; Diego Ciangottini (INFN) - <a class="reference external" href="mailto:diego&#46;ciangottini&#37;&#52;&#48;cern&#46;ch">diego<span>&#46;</span>ciangottini<span>&#64;</span>cern<span>&#46;</span>ch</a></li>
-<li><a href="https://dodas-ts.github.io/dodas-doc/" target="_blank">Repository</a></li>
+<li><p>Contributors/Owners: Daniele Spiga (INFN) - <a class="reference external" href="mailto:daniele&#46;spiga&#37;&#52;&#48;pg&#46;infn&#46;it">daniele<span>&#46;</span>spiga<span>&#64;</span>pg<span>&#46;</span>infn<span>&#46;</span>it</a> ; Diego Ciangottini (INFN) - <a class="reference external" href="mailto:diego&#46;ciangottini&#37;&#52;&#48;cern&#46;ch">diego<span>&#46;</span>ciangottini<span>&#64;</span>cern<span>&#46;</span>ch</a></p></li>
+<li><p><a href="https://dodas-ts.github.io/dodas-doc/" target="_blank">Repository</a></p></li>
 </ul>
 </div>
 </div>

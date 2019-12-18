@@ -56,13 +56,17 @@ Note errors may occur if your key doesn't have the right permissions. Set these 
 ==========================================
 The following ports have to be opened:
 
-- 22/TCP (SSH)
-
-- 6443/TCP (Kubernetes API)
-
-- 10250/TCP	(API which allows node access)
-
-- 8472/UDP (Flannel overlay network, k8s pods communication)
++------+----------+----------------------------------------------------+
+|Port  | Protocol |Functionality                                       |
++======+==========+====================================================+
+|22    | TCP      |SSH                                                 |
++------+----------+----------------------------------------------------+
+|6443  | TCP      |Kubernetes API                                      |
++------+----------+----------------------------------------------------+
+|10250 | TCP      |API which allows node access                        |
++------+----------+----------------------------------------------------+
+|8472  | UDP      |Flannel overlay network, k8s pods communication     |
++------+----------+----------------------------------------------------+
 
 1.4 Networking and IPs
 ==========================================
@@ -146,7 +150,7 @@ pair a message will be shown in the terminal telling you which ones these are. T
 
 An example (Exoscale cloud provider)::
 
-  display_name = "kubenode"#NAME
+  display_name = "NAME_PH"
   template = "Linux CentOS 7.5 64-bit"
   key_pair = "k_cl"
   security_groups = ["kgroup"]
@@ -155,16 +159,24 @@ An example (Exoscale cloud provider)::
 
 One of the properties specified on the block that defines a compute node (VM) is the flavor or machine type. This property must not be specified on instanceDefinition but on configs.yaml's flavor.
 
-Please pay attention in this section to the name for the instance. A random string will be added later to the name given to the instance in order to avoid DNS issues when
-running the test-suite several times. To achieve this, the block must contain the '#NAME' placeholder. When specifying the name for the instance, please follow this structure::
+Please pay attention in this section to the name for the instance, which will be set by the Test-Suite containing:
 
-  <YOUR_PROVIDER'S_STRING_FOR_NAME> = "<NAME_FOR_YOUR_INSTANCES>"#NAME
+- The string "kubenode"
+- A string indicating the purpose of the cluster to which the VM belongs
+- A random, 4 character string to avoid DNS issues
+- An integer. 0 would be the master node, 1+ would be the slaves
 
-Now, lets assume your provider's string for the instance name is "display_name", and you want to call your instances "kubenode" then you should write::
+To achieve this, your instance definition must contain the 'NAME_PH' placeholder. When specifying the name for the instance, please follow this structure::
 
-  display_name = "kubenode"#NAME
+  <YOUR_PROVIDER'S_STRING_FOR_NAME> = "NAME_PH"
 
-Note the '#NAME'!
+Now, let's assume your provider's string for the instance name is "display_name", then you should write::
+
+  display_name = "NAME_PH"
+
+As an example let's assume the suite comes up with the name "kubenode-hpcTest-aws-0", Then it would switch that name with the NAME_PH placeholder::
+
+  display_name = "kubenode-hpcTest-aws-0"
 
 | [**NOTE 1**: This will be taken as a whole block and placed directly on a .tf file]
 | [**NOTE 2**: Clouds that don't support resource creation with Terraform or k8saaS can't currently be tested with this Test-Suite]
@@ -176,8 +188,8 @@ This file takes also HCL code. There are providers for which dependencies are re
 Then this is the file to define those dependencies needed by the VMs.
 
 
-Configuration examples
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+Main clouds: additional support
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Examples of all configuration files for several public cloud providers can be found inside *examples*.
 Find below these lines details on how to run the suite on some of the main providers:
@@ -188,17 +200,52 @@ Find below these lines details on how to run the suite on some of the main provi
 
 Install az CLI and configure credentials with 'az login'.
 
+Variables for configs.yaml besides the general ones:
+
++-------------------+---------------------------------------------------------------------------------------------------------------------------------+
+|Name               | Explanation / Values                                                                                                            |
++===================+=================================================================================================================================+
+|location           | The region in which to create the compute instances. (required)                                                                 |
++-------------------+---------------------------------------------------------------------------------------------------------------------------------+
+|resourceGroupName  | Specifies the name of the Resource Group in which the Virtual Machine should exist. (required)                                  |
++-------------------+---------------------------------------------------------------------------------------------------------------------------------+
+|pubSSH             | Public SSH key of the key specified at configs.yaml's pathToKey. (required)                                                     |
++-------------------+---------------------------------------------------------------------------------------------------------------------------------+
+|securityGroupID    | The ID of the Network Security Group to associate with the VMs's network interfaces (required)                                  |
++-------------------+---------------------------------------------------------------------------------------------------------------------------------+
+|subnetId           | Reference to a subnet in which the NIC for the VM has been created. (required)                                                  |
++-------------------+---------------------------------------------------------------------------------------------------------------------------------+
+|image.publisher    | Specifies the publisher of the image used to create the virtual machines.                                                       |
++-------------------+---------------------------------------------------------------------------------------------------------------------------------+
+|image.offer        | Specifies the offer of the image used to create the virtual machines.                                                           |
++-------------------+---------------------------------------------------------------------------------------------------------------------------------+
+|image.sku          | Specifies the SKU of the image used to create the virtual machines.                                                             |
++-------------------+---------------------------------------------------------------------------------------------------------------------------------+
+|image.version      | Specifies the version of the image used to create the virtual machines.                                                         |
++-------------------+---------------------------------------------------------------------------------------------------------------------------------+
+
+Note: the security group and subnet -virtual network too- have to be created beforehand and their ID's used at configs.yaml.
+Also, if image's *publisher*, *offer*, *sku* and *version* are omitted, the following defaults will be used:
+
+- publisher = OpenLogic
+
+- offer = CentOS
+
+- sku = 7.5
+
+- version = latest
+
 ``AWS``
 
 (Find the example files at *examples/aws*. It is also possible to use EKS to provision the cluster, for this refer to section "Using existing clusters".)
 
-Region, access key and secret key must be hardcoded in the file *configurations/credentials*.
+The authentication method supported is AWS's shared credential file. Specify the absolute path to this at configs.yaml's "sharedCredentialsFile".
 
 ``GCP``
 
-(Example files at *examples/gcp*. It is also possible to use GKE to provision the cluster, for this refer to section "Using existing clusters".)
+(Example files at *examples/gcp*. It is also possible to use GKE to provision the cluster, for this refer to section "Using existing clusters". You will have to |use_gke| too.)
 
-For authentication, donwload the JSON file with the credentials from the Google Cloud console. Then, the file *configurations/credentials* must contain *credentials = "${file("CREDENTIALS_FILE")}"* and
+For authentication, download the JSON file with the credentials from the Google Cloud console. Then, the file *configurations/credentials* must contain *credentials = "${file("CREDENTIALS_FILE")}"* and
 *project = "PROJECT_ID"*, where CREDENTIALS_FILE should be the path to the downloaded file and PROJECT_ID the id of your GCP project.
 
 The VMs need public IP's (NAT) to connect to the internet if the network used it the "default" one and differing to other providers these are
@@ -207,6 +254,47 @@ not allocated unless specified, using network_interface.access_config{} in the i
 .. |use_gke| raw:: html
 
   <a href="https://cloud.google.com/sdk/gcloud/reference/container/clusters/get-credentials?hl=en_US&_ga=2.141757301.-616534808.1554462142" target="_blank">fetch the kubectl kubeconfig file</a>
+
+``Openstack``
+
+Regarding authentication, download the OpenStack RC File containing the credentials from the Horizon dashboard and source it.
+
+Variables for configs.yaml besides the general ones:
+
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|Name                   | Explanation / Values                                                                                                        |
++=======================+=============================================================================================================================+
+|imageName              | OS Image to be used for the VMs. (required)                                                                                 |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|keyPair                | Name of the key to be used. Has to be created or imported beforehand. (required)                                            |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|securityGroups         | Security groups array. Must be a String, example: "[\"default\",\"allow_ping_ssh_rdp\"]"                                    |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|region                 | The region in which to create the compute instances. If omitted, the region specified on the credentials file is used.      |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|availabilityZone       | The availability zone in which to create the compute instances.                                                             |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+
+``Cloudstack``
+
+At configs.yaml's configPath, specify the path to the file containing the cloudstack credentials. Such file must follow this structure:
+
+.. code-block:: console
+
+  [cloudstack]
+  url = your_api_url
+  apikey = your_api_key
+  secretkey = your_secret_key
+
+
+``Exoscale``
+
+Use |cloudstack_creds| for credentials and specify the path to it at configs.yaml's "configPath".
+Must contain endpoint, key and secret.
+
+.. |cloudstack_creds| raw:: html
+
+  <a href="" target="_blank">cloudstack.ini file</a>
 
 
 1.6 Using Docker
@@ -217,7 +305,7 @@ Run the container (pulls the image first):
 
 .. code-block:: console
 
-    $ docker run --net=host -it ipeluaga/tslauncher
+    $ docker run --net=host -it cernefp/tslauncher
 
 Note the option '--net=host'. Without it, the container wouldn't be able to connect to the nodes, as it would not be in the same network as them and it is likely the nodes will not have public IPs. With that option, the container will use the network used by its host, which will be sharing the network with the nodes.
 

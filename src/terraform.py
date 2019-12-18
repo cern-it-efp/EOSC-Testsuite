@@ -141,228 +141,223 @@ def terraformProvisionment(
         os.makedirs(mainTfDir, exist_ok=True)
         kubeconfig = "~/.kube/config"
 
-    # if retry is None:
+    if retry is None:
+        randomId = ''.join(
+            random.SystemRandom().choice(
+                string.ascii_lowercase +
+                string.digits) for _ in range(4))  # One randomId per cluster
+        nodeName = ("kubenode-%s-%s-%s" %
+                    (configs["providerName"], test, str(randomId))).lower()
 
-    randomId = ''.join(
-        random.SystemRandom().choice(
-            string.ascii_lowercase +
-            string.digits) for _ in range(4))  # One randomId per cluster
-    nodeName = ("kubenode-%s-%s-%s" %
-                (configs["providerName"], test, str(randomId))).lower()
+        # ---------------- delete TF stuff from previous run if existing
+        cleanupTF(mainTfDir)
 
-    # ---------------- delete TF stuff from previous run if existing
-    cleanupTF(mainTfDir)
+        # ---------------- manage general variables
 
-    # ---------------- manage general variables
+        openUserDefault = "root"
+        msgExcept = "WARNING: using default user '%s' for ssh connections (running on %s)" % (openUserDefault,configs["providerName"])
+        openUser = tryTakeFromYaml(configs, "openUser", openUserDefault, msgExcept=msgExcept)
 
-    openUserDefault = "root"
-    msgExcept = "WARNING: using default user '%s' for ssh connections (running on %s)" % (openUserDefault,configs["providerName"])
-    openUser = tryTakeFromYaml(configs, "openUser", openUserDefault, msgExcept=msgExcept)
+        variables = loadFile("templates/general/variables.tf",
+                             required=True).replace(
+            "NODES_PH", str(nodes)).replace(
+            "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(
+            "KUBECONFIG_DST", kubeconfig).replace(
+            "OPEN_USER_PH", openUser).replace(
+            "NAME_PH", nodeName)
+        variables = stackVersioning(variables, configs)
 
-    variables = loadFile("templates/general/variables.tf",
-                         required=True).replace(
-        "NODES_PH", str(nodes)).replace(
-        "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(
-        "KUBECONFIG_DST", kubeconfig).replace(
-        "OPEN_USER_PH", openUser).replace(
-        "NAME_PH", nodeName)
-    variables = stackVersioning(variables, configs)
+        if configs["providerName"] == "azurerm":
 
-    if configs["providerName"] == "azurerm":
+            # manage image related vars
+            publisher = "OpenLogic" if configs["image"]["publisher"] is None \
+                else configs["image"]["publisher"]
+            offer = "CentOS" if configs["image"]["offer"] is None \
+                else configs["image"]["offer"]
+            sku = "7.5" if configs["image"]["sku"] is None \
+                else configs["image"]["sku"]
+            version = "latest" if configs["image"]["version"] is None \
+                else configs["image"]["version"]
 
-        # manage image related vars
-        publisher = "OpenLogic" if configs["image"]["publisher"] is None \
-            else configs["image"]["publisher"]
-        offer = "CentOS" if configs["image"]["offer"] is None \
-            else configs["image"]["offer"]
-        sku = "7.5" if configs["image"]["sku"] is None \
-            else configs["image"]["sku"]
-        version = "latest" if configs["image"]["version"] is None \
-            else configs["image"]["version"]
+            # ---------------- main.tf: manage azure specific vars and add them
+            variables = variables.replace(
+                "SUBSCRIPTION_PH", configs['subscriptionId']).replace(
+                "LOCATION_PH", configs['location']).replace(
+                "PUB_SSH_PH", configs['pubSSH']).replace(
+                "RGROUP_PH", configs['resourceGroupName']).replace(
+                "RANDOMID_PH", randomId).replace(
+                "VM_SIZE_PH", flavor).replace(
+                "SECGROUPID_PH", configs['securityGroupID']).replace(
+                "SUBNETID_PH", configs['subnetId']).replace(
+                "PUBLISHER_PH", publisher).replace(
+                "OFFER_PH", offer).replace(
+                "SKU_PH", str(sku)).replace(
+                "VERSION_PH", str(version))
+            writeToFile(mainTfDir + "/main.tf", variables, False)
 
-        # ---------------- main.tf: manage azure specific vars and add them
-        variables = variables.replace(
-            "SUBSCRIPTION_PH", configs['subscriptionId']).replace(
-            "LOCATION_PH", configs['location']).replace(
-            "PUB_SSH_PH", configs['pubSSH']).replace(
-            "RGROUP_PH", configs['resourceGroupName']).replace(
-            "RANDOMID_PH", randomId).replace(
-            "VM_SIZE_PH", flavor).replace(
-            "SECGROUPID_PH", configs['securityGroupID']).replace(
-            "SUBNETID_PH", configs['subnetId']).replace(
-            "PUBLISHER_PH", publisher).replace(
-            "OFFER_PH", offer).replace(
-            "SKU_PH", str(sku)).replace(
-            "VERSION_PH", str(version))
-        writeToFile(mainTfDir + "/main.tf", variables, False)
+            # ---------------- main.tf: add raw VMs provisioner
+            rawProvisioning = loadFile(
+                "%s/rawProvision.tf" % templatesPath, required=True)
 
-        # ---------------- main.tf: add raw VMs provisioner
-        rawProvisioning = loadFile(
-            "%s/rawProvision.tf" % templatesPath, required=True)
+        elif configs["providerName"] == "openstack":
 
-    elif configs["providerName"] == "openstack":
+            # manage optional related vars
+            region = "" if configs["region"] is None \
+                else configs["region"]
+            availabilityZone = "" if configs["availabilityZone"] is None \
+                else configs["availabilityZone"]
+            securityGroups = "[]" if configs["securityGroups"] is None \
+                else configs["securityGroups"]
 
-        # manage optional related vars
-        region = "" if configs["region"] is None \
-            else configs["region"]
-        availabilityZone = "" if configs["availabilityZone"] is None \
-            else configs["availabilityZone"]
-        securityGroups = "[]" if configs["securityGroups"] is None \
-            else configs["securityGroups"]
+            # ---------------- main.tf: manage openstack specific vars and add them
+            variables = variables.replace(
+                "FLAVOR_PH", flavor).replace(
+                "IMAGE_PH", configs['imageName']).replace(
+                "KEY_PAIR_PH", configs['keyPair']).replace(
+                "\"SEC_GROUPS_PH\"", securityGroups).replace(
+                "REGION_PH", region).replace(
+                "AV_ZONE_PH", availabilityZone)
+            writeToFile(mainTfDir + "/main.tf", variables, False)
 
-        # ---------------- main.tf: manage openstack specific vars and add them
-        variables = variables.replace(
-            "FLAVOR_PH", flavor).replace(
-            "IMAGE_PH", configs['imageName']).replace(
-            "KEY_PAIR_PH", configs['keyPair']).replace(
-            "\"SEC_GROUPS_PH\"", securityGroups).replace(
-            "REGION_PH", region).replace(
-            "AV_ZONE_PH", availabilityZone)
-        writeToFile(mainTfDir + "/main.tf", variables, False)
+            # ---------------- main.tf: add raw VMs provisioner
+            rawProvisioning = loadFile(
+                "%s/rawProvision.tf" % templatesPath, required=True)
 
-        # ---------------- main.tf: add raw VMs provisioner
-        rawProvisioning = loadFile(
-            "%s/rawProvision.tf" % templatesPath, required=True)
+        elif configs["providerName"] == "google":
 
-    elif configs["providerName"] == "google":
+            # TODO: check here whether gpuType is set if dlTest is set to True?
 
-        # TODO: check here whether gpuType is set if dlTest is set to True?
+            # manage gpu related vars
+            gpuCount = str(nodes) if test == "dlTest" else "0"
+            gpuType = configs["gpuType"] if test == "dlTest" else ""
 
-        # manage gpu related vars
-        gpuCount = str(nodes) if test == "dlTest" else "0"
-        gpuType = configs["gpuType"] if test == "dlTest" else ""
+            # ---------------- main.tf: manage google specific vars and add them
+            variables = variables.replace(
+                "CREDENTIALS_PATH_PH", configs['pathToCredentials']).replace(
+                "PROJECT_PH", configs['project']).replace(
+                "MACHINE_TYPE_PH", flavor).replace(
+                "ZONE_PH", configs['zone']).replace(
+                "IMAGE_PH", configs['image']).replace(
+                "GPU_COUNT_PH", gpuCount).replace(
+                "GPU_TYPE_PH", gpuType)
+            writeToFile(mainTfDir + "/main.tf", variables, False)
 
-        # ---------------- main.tf: manage google specific vars and add them
-        variables = variables.replace(
-            "CREDENTIALS_PATH_PH", configs['pathToCredentials']).replace(
-            "PROJECT_PH", configs['project']).replace(
-            "MACHINE_TYPE_PH", flavor).replace(
-            "ZONE_PH", configs['zone']).replace(
-            "IMAGE_PH", configs['image']).replace(
-            "GPU_COUNT_PH", gpuCount).replace(
-            "GPU_TYPE_PH", gpuType)
-        writeToFile(mainTfDir + "/main.tf", variables, False)
+            # ---------------- main.tf: add raw VMs provisioner
+            rawProvisioning = loadFile(
+                "%s/rawProvision.tf" % templatesPath, required=True)
 
-        # ---------------- main.tf: add raw VMs provisioner
-        rawProvisioning = loadFile(
-            "%s/rawProvision.tf" % templatesPath, required=True)
+        elif configs["providerName"] == "aws":
 
-    elif configs["providerName"] == "aws":
+            # manage optional vars
 
-        # manage optional vars
-
-        awsTemplate = "%s/rawProvision.tf" % templatesPath
-        volumeSize = tryTakeFromYaml(configs, "volumeSize", "")
-        if volumeSize is "":
-            awsTemplate = "%s/rawProvision_noVolumeSize.tf" % templatesPath
+            awsTemplate = "%s/rawProvision.tf" % templatesPath
+            volumeSize = tryTakeFromYaml(configs, "volumeSize", "")
+            if volumeSize is "":
+                awsTemplate = "%s/rawProvision_noVolumeSize.tf" % templatesPath
 
 
-        # ---------------- main.tf: manage aws specific vars and add them
-        variables = variables.replace(
-            "REGION_PH", configs['region']).replace(
-            "SHARED_CREDENTIALS_FILE_PH", configs['sharedCredentialsFile']).replace(
-            "INSTANCE_TYPE_PH", flavor).replace(
-            "AMI_PH", configs['ami']).replace(
-            "NAME_KEY_PH", configs['keyName']).replace(
-            "VOLUME_SIZE_PH", str(volumeSize))
-        writeToFile(mainTfDir + "/main.tf", variables, False)
+            # ---------------- main.tf: manage aws specific vars and add them
+            variables = variables.replace(
+                "REGION_PH", configs['region']).replace(
+                "SHARED_CREDENTIALS_FILE_PH", configs['sharedCredentialsFile']).replace(
+                "INSTANCE_TYPE_PH", flavor).replace(
+                "AMI_PH", configs['ami']).replace(
+                "NAME_KEY_PH", configs['keyName']).replace(
+                "VOLUME_SIZE_PH", str(volumeSize))
+            writeToFile(mainTfDir + "/main.tf", variables, False)
 
-        # ---------------- main.tf: add raw VMs provisioner
-        rawProvisioning = loadFile(awsTemplate, required=True)
+            # ---------------- main.tf: add raw VMs provisioner
+            rawProvisioning = loadFile(awsTemplate, required=True)
 
-    elif configs["providerName"] == "cloudstack": # TODO: separate these two! disk_size is required in exoscale but root_disk_size is optional in cloudstack
+        elif configs["providerName"] == "cloudstack": # TODO: separate these two! disk_size is required in exoscale but root_disk_size is optional in cloudstack
 
-        # manage optional vars
-        securityGroups = "[]" if configs["securityGroups"] is None \
-            else configs["securityGroups"]
-        if configs["diskSize"] is None:
-            diskSize = ""
-            csTemplate = "%s/rawProvision_noDiskSize.tf" % templatesPath
+            # manage optional vars
+            securityGroups = "[]" if configs["securityGroups"] is None \
+                else configs["securityGroups"]
+            if configs["diskSize"] is None:
+                diskSize = ""
+                csTemplate = "%s/rawProvision_noDiskSize.tf" % templatesPath
+            else:
+                diskSize = str(configs["diskSize"])
+                csTemplate = "%s/rawProvision.tf" % templatesPath
+
+            # ---------------- main.tf: manage aws specific vars and add them
+            variables = variables.replace(
+                "CONFIG_PATH_PH", configs['configPath']).replace(
+                "ZONE_PH", configs['zone']).replace(
+                "EXO_SIZE_PH", flavor).replace(
+                "TEMPLATE_PH", configs['template']).replace(
+                "KEY_PAIR_PH", configs['keyPair']).replace(
+                "\"SEC_GROUPS_PH\"", securityGroups).replace(
+                "DISK_SIZE_PH", str(diskSize))
+            writeToFile(mainTfDir + "/main.tf", variables, False)
+
+            # ---------------- main.tf: add raw VMs provisioner
+            rawProvisioning = loadFile(csTemplate, required=True)
+
+        elif configs["providerName"] == "exoscale": # TODO: separate these two! disk_size is required in exoscale but root_disk_size is optional in cloudstack
+
+            # manage optional vars
+            securityGroups = "[]" if configs["securityGroups"] is None \
+                else configs["securityGroups"]
+
+            # ---------------- main.tf: manage aws specific vars and add them
+            variables = variables.replace(
+                "CONFIG_PATH_PH", configs['configPath']).replace(
+                "ZONE_PH", configs['zone']).replace(
+                "EXO_SIZE_PH", flavor).replace(
+                "TEMPLATE_PH", configs['template']).replace(
+                "KEY_PAIR_PH", configs['keyPair']).replace(
+                "\"SEC_GROUPS_PH\"", securityGroups).replace(
+                "DISK_SIZE_PH", str(configs['diskSize']))
+            writeToFile(mainTfDir + "/main.tf", variables, False)
+
+            # ---------------- main.tf: add raw VMs provisioner
+            rawProvisioning = loadFile(
+                "%s/rawProvision.tf" % templatesPath, required=True)
+
         else:
-            diskSize = str(configs["diskSize"])
-            csTemplate = "%s/rawProvision.tf" % templatesPath
+            # ---------------- main.tf: add vars
+            writeToFile(mainTfDir + "/main.tf", variables, False)
 
-        # ---------------- main.tf: manage aws specific vars and add them
-        variables = variables.replace(
-            "CONFIG_PATH_PH", configs['configPath']).replace(
-            "ZONE_PH", configs['zone']).replace(
-            "EXO_SIZE_PH", flavor).replace(
-            "TEMPLATE_PH", configs['template']).replace(
-            "KEY_PAIR_PH", configs['keyPair']).replace(
-            "\"SEC_GROUPS_PH\"", securityGroups).replace(
-            "DISK_SIZE_PH", str(diskSize))
-        writeToFile(mainTfDir + "/main.tf", variables, False)
+            # ---------------- main.tf: add raw VMs provisioner
+            instanceDefinition = "%s \n %s" % (flavor, instanceDefinition.replace(
+                "NAME_PH", "${var.instanceName}-${count.index}"
+            ))
 
-        # ---------------- main.tf: add raw VMs provisioner
-        rawProvisioning = loadFile(csTemplate, required=True)
+            if extraInstanceConfig:
+                instanceDefinition += "\n" + extraInstanceConfig
 
-    elif configs["providerName"] == "exoscale": # TODO: separate these two! disk_size is required in exoscale but root_disk_size is optional in cloudstack
+            rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath).replace(
+                "CREDENTIALS_PLACEHOLDER", credentials).replace(
+                "DEPENDENCIES_PLACEHOLDER", dependencies.replace(
+                    "DEP_COUNT_PH", "count = %s" % nodes)).replace(
+                "PROVIDER_NAME", str(configs["providerName"])).replace(
+                "PROVIDER_INSTANCE_NAME", str(
+                    configs["providerInstanceName"])).replace(
+                "NODE_DEFINITION_PLACEHOLDER", instanceDefinition)
 
-        # manage optional vars
-        securityGroups = "[]" if configs["securityGroups"] is None \
-            else configs["securityGroups"]
+        writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
 
-        # ---------------- main.tf: manage aws specific vars and add them
-        variables = variables.replace(
-            "CONFIG_PATH_PH", configs['configPath']).replace(
-            "ZONE_PH", configs['zone']).replace(
-            "EXO_SIZE_PH", flavor).replace(
-            "TEMPLATE_PH", configs['template']).replace(
-            "KEY_PAIR_PH", configs['keyPair']).replace(
-            "\"SEC_GROUPS_PH\"", securityGroups).replace(
-            "DISK_SIZE_PH", str(configs['diskSize']))
-        writeToFile(mainTfDir + "/main.tf", variables, False)
+        # ---------------- RUN TERRAFORM - phase 1: provision VMs
+        if runTerraform(mainTfDir,
+                        baseCWD,
+                        test,
+                        "Provisioning '%s' VMs..." % flavor) != 0:
+            return False, provisionFailMsg
 
-        # ---------------- main.tf: add raw VMs provisioner
-        rawProvisioning = loadFile(
-            "%s/rawProvision.tf" % templatesPath, required=True)
+        # ---------------- main.tf: add root allower + k8s bootstraper
+        bootstrap = loadFile("templates/general/bootstrap.tf", required=True)
 
-    else:
-        # ---------------- main.tf: add vars
-        writeToFile(mainTfDir + "/main.tf", variables, False)
+        if openUser is "root":
+            bootstrap = bootstrap.replace("ALLOW_ROOT_COUNT", "0")
+        else:
+            bootstrap = bootstrap.replace("ALLOW_ROOT_COUNT", "var.customCount")
 
-        # ---------------- main.tf: add raw VMs provisioner
-        instanceDefinition = "%s \n %s" % (flavor, instanceDefinition.replace(
-            "NAME_PH", "${var.instanceName}-${count.index}"
-        ))
+        bootstrap = bootstrap.replace(
+            "LIST_IP_GETTER", provDict[configs["providerName"]])
 
-        if extraInstanceConfig:
-            instanceDefinition += "\n" + extraInstanceConfig
-
-        rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath).replace(
-            "CREDENTIALS_PLACEHOLDER", credentials).replace(
-            "DEPENDENCIES_PLACEHOLDER", dependencies.replace(
-                "DEP_COUNT_PH", "count = %s" % nodes)).replace(
-            "PROVIDER_NAME", str(configs["providerName"])).replace(
-            "PROVIDER_INSTANCE_NAME", str(
-                configs["providerInstanceName"])).replace(
-            "NODE_DEFINITION_PLACEHOLDER", instanceDefinition)
-
-    writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
-
-    # ---------------- RUN TERRAFORM - phase 1: provision VMs
-    if runTerraform(mainTfDir,
-                    baseCWD,
-                    test,
-                    "Provisioning '%s' VMs..." % flavor) != 0:
-        return False, provisionFailMsg
-
-    # ---------------- main.tf: add root allower + k8s bootstraper
-    bootstrap = loadFile("templates/general/bootstrap.tf", required=True)
-
-    if openUser is "root":
-        bootstrap = bootstrap.replace("ALLOW_ROOT_COUNT", "0")
-    else:
-        bootstrap = bootstrap.replace("ALLOW_ROOT_COUNT", "var.customCount")
-
-    bootstrap = bootstrap.replace(
-        "LIST_IP_GETTER", provDict[configs["providerName"]])
-
-    writeToFile(mainTfDir + "/main.tf", bootstrap, True)
-
-    # if retry is True and os.path.isfile("main.tf") is False: # TODO: improve
-    #    print("ERROR: run with option --retry before normal run.")
-    #    stop(1)
+        writeToFile(mainTfDir + "/main.tf", bootstrap, True)
 
     # ---------------- RUN TERRAFORM - phase 2: bootstrap the k8s cluster
     if runTerraform(mainTfDir,
