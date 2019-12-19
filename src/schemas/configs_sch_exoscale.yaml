@@ -3,12 +3,11 @@ required:
     - providerName
     - pathToKey
     - flavor
-    - configPath
+    - diskSize
     - zone
     - template
+    - configPath
     - keyPair
-    - securityGroups
-    - diskSize
 properties:
     providerName:
         type: string

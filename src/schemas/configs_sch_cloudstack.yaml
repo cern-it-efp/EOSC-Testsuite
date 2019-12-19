@@ -1,12 +1,12 @@
 type: object
 required:
-    - providerName
-    - pathToKey
     - flavor
-    - configPath
     - zone
     - template
     - keyPair
+    - configPath
+    - pathToKey
+    - providerName
 properties:
     providerName:
         type: string

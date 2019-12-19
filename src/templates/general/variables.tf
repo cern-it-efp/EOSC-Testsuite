@@ -49,14 +49,13 @@ variable "k8sVer" {
 }
 
 ############################ OPENSTACK #########################################
-# TODO: check which ones are optional from the following ones (for cern os had enough with: flavor_name, name, image_name, key_pair)
 variable "flavor" {
   default = "FLAVOR_PH"
 }
 variable "imageName" {
   default = "IMAGE_PH"
 }
-variable "availabilityZone" { # cern os allows selecting Availability Zone / cf allows specifying it too but the only possible option in the dropdown is "nova"
+variable "availabilityZone" { 
   default = "AV_ZONE_PH"
 }
 
