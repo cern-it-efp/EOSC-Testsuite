@@ -210,7 +210,7 @@ def kubectl(
 
     elif action is Action.exec:
         try:
-            cmd = "(%s) &> /dev/null ; echo $?" % cmd # TODO: this is a w/a to get the exit code
+            cmd = "(%s) &> /dev/null ; echo $?" % cmd # w/a to get the exit code
             resp = stream(
                 client.CoreV1Api().connect_get_namespaced_pod_exec,
                 name,

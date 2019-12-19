@@ -124,17 +124,17 @@ def logger(text, sym, file, override=None):
         file (bool): File the logs should be sent to
     """
 
-    size = 61  # longest msg on code
+    size = 66  # longest msg on code (was 61)
     frame = sym * (size + 6)
     blank = sym + "  " + " " * size + "  " + sym
     toPrint = frame + "\n" + blank
     if isinstance(text, list):
         for i in text:
-            textLine = i.strip()
+            textLine = i.rstrip()  # strip()
             toPrint += "\n" + sym + "  " + textLine + \
                 " " * (size - len(textLine)) + "  " + sym
     else:
-        text = text.strip()
+        text = text.rstrip()  # strip()
         toPrint += "\n" + sym + "  " + text + \
             " " * (size - len(text)) + "  " + sym
     toPrint += "\n" + blank + "\n" + frame

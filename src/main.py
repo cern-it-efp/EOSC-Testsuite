@@ -24,6 +24,57 @@ except ModuleNotFoundError as ex:
     sys.exit(1)
 
 
+def header(noLogo=False, provider=None, results=None):
+    """Prints the header according to parameters.
+
+    Parameters:
+        noLogo (bool): Specifies whether "OCRE" has to be shown or not.
+        provider (str): Provider on which the suite is being run.
+        results (str): Path to the results folder for the current run.
+    """
+
+    if noLogo is True:
+        if provider is not None:
+            if results is None:
+                showThis = ["OCRE Cloud Benchmarking Validation Test Suite",
+                    "Developed by CERN IT-EFP (ignacio.peluaga.lozada@cern.ch)",
+                    ".........................................................",
+                    "Provider: %s" % provider]
+            else:
+                showThis = ["OCRE Cloud Benchmarking Validation Test Suite",
+                    "Developed by CERN IT-EFP (ignacio.peluaga.lozada@cern.ch)",
+                    ".........................................................",
+                    "Provider: %s" % provider,
+                    "Results: results/%s" % results]
+        else:
+            showThis = ["OCRE Cloud Benchmarking Validation Test Suite",
+                "Developed by CERN IT-EFP (ignacio.peluaga.lozada@cern.ch)",
+                "........................................................."]
+
+    else:
+        if provider is not None:
+            if results is None:
+                showThis = ["                  | Cloud Benchmarking & Validation Test Suite",
+                     "█▀▀█ █▀▀ █▀▀█ █▀▀ | Developed by CERN IT-EFP",
+                     "█  █ █   █▄▄▀ █▀▀ | Contact: ignacio.peluaga.lozada@cern.ch",
+                     "▀▀▀▀ ▀▀▀ ▀ ▀▀ ▀▀▀ | ..........................................",
+                     " ocre-project.eu  | Provider: %s" % provider]
+            else:
+                showThis = ["                  | Cloud Benchmarking & Validation Test Suite",
+                     "█▀▀█ █▀▀ █▀▀█ █▀▀ | Developed by CERN IT-EFP",
+                     "█  █ █   █▄▄▀ █▀▀ | Contact: ignacio.peluaga.lozada@cern.ch",
+                     "▀▀▀▀ ▀▀▀ ▀ ▀▀ ▀▀▀ | ..........................................",
+                     " ocre-project.eu  | Provider: %s" % provider,
+                     "                  | Results: results/%s" % results]
+        else:
+            showThis = ["                  | Cloud Benchmarking & Validation Test Suite",
+                 "█▀▀█ █▀▀ █▀▀█ █▀▀ | Developed by CERN IT-EFP",
+                 "█  █ █   █▄▄▀ █▀▀ | Contact: ignacio.peluaga.lozada@cern.ch",
+                 "▀▀▀▀ ▀▀▀ ▀ ▀▀ ▀▀▀ | ..........................................",
+                 " ocre-project.eu  | "]
+
+    logger(showThis,"#","logging/header",override=True)
+
 def validateYaml(provider):
     """ Validates configs.yaml and testsCatalog.yaml file against schemas.
 
@@ -578,11 +629,9 @@ def checkRequiredTFexist(selectedTests):
         writeToFile("logging/header", "ERROR: terraform files not found for hpcTest. Normal run is required before run with '--retry'.", True)
         stop(1)
 
+#logo, no results, no provider
+header()
 
-logger(
-    "OCRE Cloud Benchmarking Validation Test Suite (CERN)",
-    "#",
-    "logging/header")
 
 onlyTest = False
 killResources = False
@@ -635,11 +684,9 @@ for arg in args[1:len(args)]:
 
 selectedTests = initAndChecks()
 
-logger(
-    ["OCRE Cloud Benchmarking Validation Test Suite (CERN)","Provider: %s" % configs["providerName"]],
-    "#",
-    "logging/header",
-    override=True)
+#logo, no results but provider
+header(provider=configs["providerName"])
+
 
 if not selectedTests:
     writeToFile("logging/header", "No tests selected, nothing to do!", True)
@@ -658,13 +705,9 @@ generalResults = {
     "testing": []
 }
 
-logger(
-    ["OCRE Cloud Benchmarking Validation Test Suite (CERN)",
-    "Provider: %s" % configs["providerName"],
-    "Results: results/%s" % s3ResDirBase],
-    "#",
-    "logging/header",
-    override=True)
+#logo with provider and results
+header(provider=configs["providerName"], results=s3ResDirBase)
+
 
 # -----------------RUN TESTS-----------------------------------------------
 queue = Queue()
@@ -729,11 +772,10 @@ if checkResultsExist(resDir) is True:
     else:
         logger(msg1, "#", "logging/footer")
 else:
-    logger(
-        ["OCRE Cloud Benchmarking Validation Test Suite (CERN)","Provider: %s" % configs["providerName"]],
-        "#",
-        "logging/header",
-        override=True)
+
+    #logo with provider, no results
+    header(provider=configs["providerName"])
+
     shutil.rmtree("../results/" + s3ResDirBase, True)
 
 stop(0)

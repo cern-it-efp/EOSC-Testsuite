@@ -222,7 +222,7 @@ def terraformProvisionment(
 
         elif configs["providerName"] == "google":
 
-            # TODO: check here whether gpuType is set if dlTest is set to True?
+            # TODO: check here whether gpuType is set if dlTest is set to True? do this with the schema validation? how to validate using stuff from another yaml file (testsCatalog.yaml)?
 
             # manage gpu related vars
             gpuCount = str(nodes) if test == "dlTest" else "0"
@@ -266,16 +266,14 @@ def terraformProvisionment(
             # ---------------- main.tf: add raw VMs provisioner
             rawProvisioning = loadFile(awsTemplate, required=True)
 
-        elif configs["providerName"] == "cloudstack": # TODO: use here tryTakeFromYaml
+        elif configs["providerName"] == "cloudstack":
 
             # manage optional vars
-            securityGroups = "[]" if configs["securityGroups"] is None \
-                else configs["securityGroups"]
-            if configs["diskSize"] is None:
-                diskSize = ""
+            securityGroups = tryTakeFromYaml(configs, "securityGroups", "[]")
+            diskSize = tryTakeFromYaml(configs, "diskSize", "")
+            if diskSize is "":
                 csTemplate = "%s/rawProvision_noDiskSize.tf" % templatesPath
             else:
-                diskSize = str(configs["diskSize"])
                 csTemplate = "%s/rawProvision.tf" % templatesPath
 
             # ---------------- main.tf: manage aws specific vars and add them
@@ -292,11 +290,10 @@ def terraformProvisionment(
             # ---------------- main.tf: add raw VMs provisioner
             rawProvisioning = loadFile(csTemplate, required=True)
 
-        elif configs["providerName"] == "exoscale": # TODO: use here tryTakeFromYaml
+        elif configs["providerName"] == "exoscale":
 
             # manage optional vars
-            securityGroups = "[]" if configs["securityGroups"] is None \
-                else configs["securityGroups"]
+            securityGroups = tryTakeFromYaml(configs, "securityGroups", "[]")
 
             # ---------------- main.tf: manage aws specific vars and add them
             variables = variables.replace(

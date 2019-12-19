@@ -11,7 +11,7 @@ perfsonarTest:
   run: true
   endpoint: psb01-gva.cern.ch
 dodasTest:
-  run: 
+  run: true
 dlTest:
   run:
   nodes: 4
