@@ -51,6 +51,8 @@ def header(noLogo=False, provider=None, results=None):
                 "Developed by CERN IT-EFP (ignacio.peluaga.lozada@cern.ch)",
                 "........................................................."]
 
+        logger(showThis,"#","logging/header",override=True)
+
     else:
         if provider is not None:
             if results is None:
@@ -73,7 +75,12 @@ def header(noLogo=False, provider=None, results=None):
                  "▀▀▀▀ ▀▀▀ ▀ ▀▀ ▀▀▀ | ..........................................",
                  " ocre-project.eu  | "]
 
-    logger(showThis,"#","logging/header",override=True)
+        # this fixes encode errors experienced in some clouds
+        try:
+            logger(showThis,"#","logging/header",override=True)
+        except:
+            header(noLogo=True,provider=provider,results=results)
+
 
 def validateYaml(provider):
     """ Validates configs.yaml and testsCatalog.yaml file against schemas.

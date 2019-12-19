@@ -36,7 +36,7 @@ The developers would like to thank all test owners and contributors to this proj
 +------------------------------+---------------------------------------------------------------------------------+
 |OS running on provider's VMs  | CentOS7                                                                         |
 +------------------------------+---------------------------------------------------------------------------------+
-|Providers                     | | AWS                                                                           |
+|Providers / clouds            | | AWS                                                                           |
 |                              | | Google Cloud                                                                  |
 |                              | | Microsoft Azure                                                               |
 |                              | | Exoscale (Cloudstack)                                                         |
@@ -44,6 +44,7 @@ The developers would like to thank all test owners and contributors to this proj
 |                              | | CloudFerro (OpenStack)                                                        |
 |                              | | Cloudscale (OpenStack)                                                        |
 |                              | | Cloudstack                                                                    |
+|                              | | OpenStack                                                                     |
 +------------------------------+---------------------------------------------------------------------------------+
 
 The test suite is being tested in several additional cloud providers. As tests are concluded the cloud providers names will be added in the table above.

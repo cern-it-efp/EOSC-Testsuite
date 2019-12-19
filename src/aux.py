@@ -72,10 +72,10 @@ def loadFile(loadThis, required=None):
             except AttributeError:
                 try:
                     return yaml.load(inputfile)
-                except yaml.scanner.ScannerError:
+                except: # yaml.scanner.ScannerError:
                     print("Error loading yaml file " + loadThis)
                     stop(1)
-            except yaml.scanner.ScannerError:
+            except: # yaml.scanner.ScannerError:
                 print("Error loading yaml file " + loadThis)
                 stop(1)
         else:
