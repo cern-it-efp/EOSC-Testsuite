@@ -1,5 +1,8 @@
 FROM ubuntu:18.04
 
+# ------------------ Fix UnicodeEncodeError: 'export PYTHONIOENCODING=utf8'
+ARG PYTHONIOENCODING=utf8
+
 # ------------------ General Stuff
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update
