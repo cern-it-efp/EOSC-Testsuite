@@ -222,12 +222,10 @@ def terraformProvisionment(
 
         elif configs["providerName"] == "google":
 
-            # TODO: check here whether gpuType is set if dlTest is set to True? do this with the schema validation? how to validate using stuff from another yaml file (testsCatalog.yaml)?
-
             # manage gpu related vars
             gpuCount = str(nodes) if test == "dlTest" else "0"
-            gpuType = configs["gpuType"] if test == "dlTest" else ""
-
+            gpuType = tryTakeFromYaml(configs, "gpuType", "")
+            
             # ---------------- main.tf: manage google specific vars and add them
             variables = variables.replace(
                 "CREDENTIALS_PATH_PH", configs['pathToCredentials']).replace(
