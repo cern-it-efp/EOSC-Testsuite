@@ -1,0 +1,59 @@
+type: object
+required:
+    - providerName
+    - pathToKey
+    - flavor
+    - imageName
+    - keyPair
+properties:
+    providerName:
+        type: string
+    pathToKey:
+        type: string
+    flavor:
+        type: string
+    imageName:
+        type: string
+    keyPair:
+        type: string
+    openUser:
+        type: string
+    dockerCE:
+        type: string
+    dockerEngine:
+        type: string
+    kubernetes:
+        type: string
+    securityGroups:
+        type: string
+    region:
+        type: string
+    availabilityZone:
+        type: string
+    costCalculation:
+        type:
+            - object
+            - "null"
+        required:
+            - generalInstancePrice
+            - GPUInstancePrice
+            - HPCInstancePrice
+            - s3bucketPrice
+        properties:
+            generalInstancePrice:
+                type:
+                    - number
+                    - "null"
+            GPUInstancePrice:
+                type:
+                    - number
+                    - "null"
+            HPCInstancePrice:
+                type:
+                    - number
+                    - "null"
+            s3bucketPrice:
+                type:
+                    - number
+                    - "null"
+additionalProperties: false

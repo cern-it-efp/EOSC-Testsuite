@@ -1,5 +1,8 @@
 FROM ubuntu:18.04
 
+# ------------------ Fix UnicodeEncodeError: 'export PYTHONIOENCODING=utf8'
+ARG PYTHONIOENCODING=utf8
+
 # ------------------ General Stuff
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update
@@ -36,6 +39,11 @@ RUN KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/
     curl -LO https://storage.googleapis.com/kubernetes-release/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl && \
     chmod +x ./kubectl && \
     mv ./kubectl /bin
+
+# ------------------ Install az CLI
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+
+
 
 # ------------------ Create ssh key file
 RUN mkdir /root/.ssh && \

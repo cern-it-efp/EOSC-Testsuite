@@ -27,24 +27,24 @@ The test-suite executes four main steps:
 
 The test set described below is based on the tests used in `Helix Nebula The Science Cloud <https://www.hnscicloud.eu/>`_ PCP project funded by the European Commission.
 
-The developers would like to thank to all test owners and contributors to this project.
+The developers would like to thank all test owners and contributors to this project.
 
 **This test-suite has been tested on:**
 
 +------------------------------+---------------------------------------------------------------------------------+
-|Python                        | 3                                                                               |
-+------------------------------+---------------------------------------------------------------------------------+
-|Linux distros                 | Ubuntu, CentOS, CoreOS, Debian, RedHat, Fedora                                  |
+|OS on launcher machine        | Ubuntu, CentOS, CoreOS, Debian, RedHat, Fedora                                  |
 +------------------------------+---------------------------------------------------------------------------------+
 |OS running on provider's VMs  | CentOS7                                                                         |
 +------------------------------+---------------------------------------------------------------------------------+
-|Providers                     | | AWS                                                                           |
+|Providers / clouds            | | AWS                                                                           |
 |                              | | Google Cloud                                                                  |
 |                              | | Microsoft Azure                                                               |
-|                              | | Exoscale (Cloudstack)                                                         |
+|                              | | Exoscale (CloudStack)                                                         |
 |                              | | CERN Private Cloud (OpenStack)                                                |
 |                              | | CloudFerro (OpenStack)                                                        |
 |                              | | Cloudscale (OpenStack)                                                        |
+|                              | | CloudStack                                                                    |
+|                              | | OpenStack                                                                     |
 +------------------------------+---------------------------------------------------------------------------------+
 
 The test suite is being tested in several additional cloud providers. As tests are concluded the cloud providers names will be added in the table above.
@@ -52,6 +52,12 @@ The test suite is being tested in several additional cloud providers. As tests a
 Release notes
 ---------------------------------------------
 (Note the versions are numbered with the date of the release: YEAR.MONTH)
+
+``19.12``
+
+-Project restructured.
+
+-Improved support for running on Google, AWS, Azure, Exoscale, OpenStack and CloudStack.
 
 ``19.8``
 

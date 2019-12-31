@@ -56,13 +56,17 @@ Note errors may occur if your key doesn't have the right permissions. Set these 
 ==========================================
 The following ports have to be opened:
 
-- 22/TCP (SSH)
-
-- 6443/TCP (Kubernetes API)
-
-- 10250/TCP	(API which allows node access)
-
-- 8472/UDP (Flannel overlay network, k8s pods communication)
++------+----------+----------------------------------------------------+
+|Port  | Protocol |Functionality                                       |
++======+==========+====================================================+
+|22    | TCP      |SSH                                                 |
++------+----------+----------------------------------------------------+
+|6443  | TCP      |Kubernetes API                                      |
++------+----------+----------------------------------------------------+
+|10250 | TCP      |API which allows node access                        |
++------+----------+----------------------------------------------------+
+|8472  | UDP      |Flannel overlay network, k8s pods communication     |
++------+----------+----------------------------------------------------+
 
 1.4 Networking and IPs
 ==========================================
@@ -84,6 +88,7 @@ Please clone the repository as follows and cd into it:
 
 Configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^
+
 While completing this task, please refer to |Terraform_docs_link| in order to complete it successfully as some parts are
 provider specific and differ from one provider to another.
 
@@ -91,9 +96,18 @@ provider specific and differ from one provider to another.
 
   <a href="https://www.terraform.io/docs/providers/" target="_blank">Terraform's documentation</a>
 
+
 You will find in the root of the cloned repository a folder named *configurations*. That folder must containing the following files:
 
+
+``testsCatalog.yaml (required)``
+
+  Refer to the section "Test Catalog" to learn how to fill this file.
+
+
 ``configs.yaml (required)``
+
+| [**NOTE**: For running on Azure, AWS, GCP, OpenStack, CloudStack and Exoscale refer to the section "Main clouds" below. In those cases, only configs.yaml and testsCatalog.yaml are needed.]
 
 Its variables:
 
@@ -126,14 +140,10 @@ variables empty to create a cluster with the latest stack.
 The file also contains a section named *costCalculation*. Refer to the section "Cost of run calculation" to understand how to fill that part.
 
 
-``testsCatalog.yaml (required)``
-
-Refer to the section "Test Catalog" to learn how to fill this file.
-
 ``credentials``
 
 This file must contains .tf (HCL) code for authentication that goes on the provider definition section of a Terraform configuration file (i.e AWS)
-In case this file is empty, the TS assumes an external authentication method: like env variables (i.e Openstack) or CLI (i.e Azure).
+In case this file is empty, the TS assumes an external authentication method: like env variables (i.e OpenStack) or CLI (i.e Azure).
 Note that if you aim to use external authentication but you need something inside the provider section of the Terraform configuration file (i.e AWS region), this file is the place to define that.
 
 ``instanceDefinition (required)``
@@ -144,9 +154,9 @@ pair a message will be shown in the terminal telling you which ones these are. T
 
   <YOUR_PROVIDER'S_STRING_FOR_A_KEY> = "<VALUE_GIVEN_FOR_THAT_KEY>"
 
-An example (Exoscale cloud provider)::
+An example::
 
-  display_name = "kubenode"#NAME
+  display_name = "NAME_PH"
   template = "Linux CentOS 7.5 64-bit"
   key_pair = "k_cl"
   security_groups = ["kgroup"]
@@ -155,16 +165,24 @@ An example (Exoscale cloud provider)::
 
 One of the properties specified on the block that defines a compute node (VM) is the flavor or machine type. This property must not be specified on instanceDefinition but on configs.yaml's flavor.
 
-Please pay attention in this section to the name for the instance. A random string will be added later to the name given to the instance in order to avoid DNS issues when
-running the test-suite several times. To achieve this, the block must contain the '#NAME' placeholder. When specifying the name for the instance, please follow this structure::
+Please pay attention in this section to the name for the instance, which will be set by the Test-Suite containing:
 
-  <YOUR_PROVIDER'S_STRING_FOR_NAME> = "<NAME_FOR_YOUR_INSTANCES>"#NAME
+- The string "kubenode"
+- A string indicating the purpose of the cluster to which the VM belongs
+- A random, 4 character string to avoid DNS issues
+- An integer. 0 would be the master node, 1+ would be the slaves
 
-Now, lets assume your provider's string for the instance name is "display_name", and you want to call your instances "kubenode" then you should write::
+To achieve this, your instance definition must contain the 'NAME_PH' placeholder. When specifying the name for the instance, please follow this structure::
 
-  display_name = "kubenode"#NAME
+  <YOUR_PROVIDER'S_STRING_FOR_NAME> = "NAME_PH"
 
-Note the '#NAME'!
+Now, let's assume your provider's string for the instance name is "display_name", then you should write::
+
+  display_name = "NAME_PH"
+
+As an example let's assume the suite comes up with the name "kubenode-hpcTest-aws-0", Then it would switch that name with the NAME_PH placeholder::
+
+  display_name = "kubenode-hpcTest-aws-0"
 
 | [**NOTE 1**: This will be taken as a whole block and placed directly on a .tf file]
 | [**NOTE 2**: Clouds that don't support resource creation with Terraform or k8saaS can't currently be tested with this Test-Suite]
@@ -176,11 +194,12 @@ This file takes also HCL code. There are providers for which dependencies are re
 Then this is the file to define those dependencies needed by the VMs.
 
 
-Configuration examples
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+Main clouds: additional support
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Examples of all configuration files for several public cloud providers can be found inside *examples*.
-Find below these lines details on how to run the suite on some of the main providers:
+Writing Terraform files is not needed when running the suite on Azure, AWS, GCP, OpenStack, CloudStack and Exoscale.
+In those cases the suite will create itself the Terraform files on the fly according to the configuration provided.
+Find below these lines details on how to run the suite on these providers:
 
 ``Azure``
 
@@ -188,25 +207,247 @@ Find below these lines details on how to run the suite on some of the main provi
 
 Install az CLI and configure credentials with 'az login'.
 
+Variables for configs.yaml:
+
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|Name                   | Explanation / Values                                                                                                        |
++=======================+=============================================================================================================================+
+|providerName           | It's value must be "azurerm". (required)                                                                                    |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|pathToKey              | Path to the location of your private key (required)                                                                         |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|flavor                 | Flavor to be used for the main cluster.                                                                                     |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|openUser               | User to be used for ssh connections.                                                                                        |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|dockerCE               | Version of docker-ce to be installed. Leave empty for latest.                                                               |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|dockerEngine           | Version of docker-engine to be installed. Leave empty for latest.                                                           |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|kubernetes             | Version of Kubernetes to be installed. Leave empty for latest.                                                              |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|location               | The region in which to create the compute instances. (required)                                                             |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|subscriptionId         | ID of the subscription. (required)                                                                                          |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|resourceGroupName      | Specifies the name of the Resource Group in which the Virtual Machine should exist. (required)                              |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|pubSSH                 | Public SSH key of the key specified at configs.yaml's pathToKey. (required)                                                 |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|securityGroupID        | The ID of the Network Security Group to associate with the VMs's network interfaces (required)                              |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|subnetId               | Reference to a subnet in which the NIC for the VM has been created. (required)                                              |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|image.publisher        | Specifies the publisher of the image used to create the virtual machines. (required)                                        |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|image.offer            | Specifies the offer of the image used to create the virtual machines. (required)                                            |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|image.sku              | Specifies the SKU of the image used to create the virtual machines. (required)                                              |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|image.version          | Specifies the version of the image used to create the virtual machines. (required)                                          |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+
+Note: the security group and subnet -virtual network too- have to be created beforehand and their ID's used at configs.yaml.
+Also, if image's *publisher*, *offer*, *sku* and *version* are omitted, the following defaults will be used:
+
+- publisher = OpenLogic
+
+- offer = CentOS
+
+- sku = 7.5
+
+- version = latest
+
 ``AWS``
 
 (Find the example files at *examples/aws*. It is also possible to use EKS to provision the cluster, for this refer to section "Using existing clusters".)
 
-Region, access key and secret key must be hardcoded in the file *configurations/credentials*.
+Variables for configs.yaml:
+
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|Name                   | Explanation / Values                                                                                                        |
++=======================+=============================================================================================================================+
+|providerName           | It's value must be "aws". (required)                                                                                        |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|pathToKey              | Path to the location of your private key (required)                                                                         |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|flavor                 | Flavor to be used for the main cluster. (required)                                                                          |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|openUser               | User to be used for ssh connections. (required)                                                                             |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|dockerCE               | Version of docker-ce to be installed. Leave empty for latest.                                                               |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|dockerEngine           | Version of docker-engine to be installed. Leave empty for latest.                                                           |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|kubernetes             | Version of Kubernetes to be installed. Leave empty for latest.                                                              |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|region                 | The region in which to create the compute instances. (required)                                                             |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|sharedCredentialsFile  | The authentication method supported is AWS shared credential file. Specify here the absolute path to such file. (required)  |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|ami                    | AMI for the instances. (required)                                                                                           |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|keyName                | Name of the key for the instances. (required)                                                                               |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+
 
 ``GCP``
 
-(Example files at *examples/gcp*. It is also possible to use GKE to provision the cluster, for this refer to section "Using existing clusters".)
+(Example files at *examples/gcp*. It is also possible to use GKE to provision the cluster, for this refer to section "Using existing clusters". You will have to |use_gke| too.)
 
-For authentication, donwload the JSON file with the credentials from the Google Cloud console. Then, the file *configurations/credentials* must contain *credentials = "${file("CREDENTIALS_FILE")}"* and
-*project = "PROJECT_ID"*, where CREDENTIALS_FILE should be the path to the downloaded file and PROJECT_ID the id of your GCP project.
+Variables for configs.yaml:
 
-The VMs need public IP's (NAT) to connect to the internet if the network used it the "default" one and differing to other providers these are
-not allocated unless specified, using network_interface.access_config{} in the instance definition.
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|Name                   | Explanation / Values                                                                                                        |
++=======================+=============================================================================================================================+
+|providerName           | It's value must be "google". (required)                                                                                     |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|pathToKey              | Path to the location of your private key (required)                                                                         |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|flavor                 | Flavor to be used for the main cluster. (required)                                                                          |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|openUser               | User to be used for ssh connections. (required)                                                                             |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|dockerCE               | Version of docker-ce to be installed. Leave empty for latest.                                                               |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|dockerEngine           | Version of docker-engine to be installed. Leave empty for latest.                                                           |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|kubernetes             | Version of Kubernetes to be installed. Leave empty for latest.                                                              |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|zone                   | The zone in which to create the compute instances. (required)                                                               |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|pathToCredentials      | Path to the GCP JSON credentials file (note this file has to be downloaded in advance from the GCP console). (required)     |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|image                  | Image for the instances. (required)                                                                                         |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|project                | Google project under which the infrastructure has to be provisioned. (required)                                             |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|gpuType                | Type of GPU to be used. Needed if the Deep Learning test was selected at testsCatalog.yaml.                                 |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 
 .. |use_gke| raw:: html
 
   <a href="https://cloud.google.com/sdk/gcloud/reference/container/clusters/get-credentials?hl=en_US&_ga=2.141757301.-616534808.1554462142" target="_blank">fetch the kubectl kubeconfig file</a>
+
+``OpenStack``
+
+Regarding authentication, download the OpenStack RC File containing the credentials from the Horizon dashboard and source it.
+
+Variables for configs.yaml:
+
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|Name                   | Explanation / Values                                                                                                        |
++=======================+=============================================================================================================================+
+|providerName           | It's value must be "openstack". (required)                                                                                  |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|pathToKey              | Path to the location of your private key (required)                                                                         |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|flavor                 | Flavor to be used for the main cluster. (required)                                                                          |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|openUser               | User to be used for ssh connections. Root user will be used by default.                                                     |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|dockerCE               | Version of docker-ce to be installed. Leave empty for latest.                                                               |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|dockerEngine           | Version of docker-engine to be installed. Leave empty for latest.                                                           |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|kubernetes             | Version of Kubernetes to be installed. Leave empty for latest.                                                              |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|imageName              | OS Image to be used for the VMs. (required)                                                                                 |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|keyPair                | Name of the key to be used. Has to be created or imported beforehand. (required)                                            |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|securityGroups         | Security groups array. Must be a String, example: "[\"default\",\"allow_ping_ssh_rdp\"]"                                    |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|region                 | The region in which to create the compute instances. If omitted, the region specified in the credentials file is used.      |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|availabilityZone       | The availability zone in which to create the compute instances.                                                             |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+
+
+``CloudStack``
+
+Variables for configs.yaml:
+
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|Name                   | Explanation / Values                                                                                                        |
++=======================+=============================================================================================================================+
+|providerName           | It's value must be "cloudstack". (required)                                                                                 |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|pathToKey              | Path to the location of your private key (required)                                                                         |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|flavor                 | Flavor to be used for the main cluster. (required)                                                                          |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|openUser               | User to be used for ssh connections. Root user will be used by default.                                                     |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|dockerCE               | Version of docker-ce to be installed. Leave empty for latest.                                                               |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|dockerEngine           | Version of docker-engine to be installed. Leave empty for latest.                                                           |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|kubernetes             | Version of Kubernetes to be installed. Leave empty for latest.                                                              |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|keyPair                | Name of the key to be used. Has to be created or imported beforehand. (required)                                            |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|securityGroups         | Security groups array. Must be a String, example: "[\"default\",\"allow_ping_ssh_rdp\"]"                                    |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|zone                   | The zone in which to create the compute instances. (required)                                                               |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|template               | OS Image to be used for the VMs. (required)                                                                                 |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|diskSize               | VM's disk size.                                                                                                             |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|configPath             | Path to the file containing the CloudStack credentials. See below the structure of such file. (required)                    |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+
+CloudStack credentials file's structure:
+
+.. code-block:: console
+
+  [cloudstack]
+  url = your_api_url
+  apikey = your_api_key
+  secretkey = your_secret_key
+
+
+``Exoscale``
+
+Variables for configs.yaml:
+
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|Name                   | Explanation / Values                                                                                                        |
++=======================+=============================================================================================================================+
+|providerName           | It's value must be "exoscale". (required)                                                                                   |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|pathToKey              | Path to the location of your private key (required)                                                                         |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|flavor                 | Flavor to be used for the main cluster. (required)                                                                          |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|dockerCE               | Version of docker-ce to be installed. Leave empty for latest.                                                               |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|dockerEngine           | Version of docker-engine to be installed. Leave empty for latest.                                                           |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|kubernetes             | Version of Kubernetes to be installed. Leave empty for latest.                                                              |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|keyPair                | Name of the key to be used. Has to be created or imported beforehand. (required)                                            |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|securityGroups         | Security groups array. Must be a String, example: "[\"default\",\"allow_ping_ssh_rdp\"]"                                    |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|zone                   | The zone in which to create the compute instances. (required)                                                               |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|template               | OS Image to be used for the VMs. (required)                                                                                 |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|diskSize               | VM's disk size. (required)                                                                                                  |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|configPath             | Path to the file containing the Exoscale credentials. See below the structure of such file. (required)                      |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+
+Exoscale credentials file's structure:
+
+.. code-block:: console
+
+  [exoscale]
+  key = EXOe3ca3e7621b7cd7a20f7e0de
+  secret = 2_JvzFcZQL_Rg1nZSRNVheYQh9oYlL5aX3zX-eILiL4
+
 
 
 1.6 Using Docker
@@ -217,7 +458,7 @@ Run the container (pulls the image first):
 
 .. code-block:: console
 
-    $ docker run --net=host -it ipeluaga/tslauncher
+    $ docker run --net=host -it cernefp/tslauncher
 
 Note the option '--net=host'. Without it, the container wouldn't be able to connect to the nodes, as it would not be in the same network as them and it is likely the nodes will not have public IPs. With that option, the container will use the network used by its host, which will be sharing the network with the nodes.
 

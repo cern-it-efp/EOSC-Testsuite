@@ -1,0 +1,22 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: azurerm
+pathToKey: "/root/.ssh/id_rsa"
+subscriptionId: "54f623f0-8c18-40dd-9530-d32d2f1ee14f"
+openUser: uroot
+flavor: "Standard_D2s_v3"
+location: "East US"
+resourceGroupName: "ocrets"
+pubSSH: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCFPaN62APTqDCy3eB6qy+ALngWKg/RHCU0XWlL47JQ/Bj4zjHoyviFQ3+WgRgRxakKSdbpRU28qm0dUT+5Ki72doEmcmmqdzwhTa6H/0XwoeeRc12eIUw/sn2wTgdf/c57ft0deOyxeALVArAZwCXxywNeRcAjGJsvp4LW6jjZFQ=="
+securityGroupID: "/subscriptions/54f623f0-8c18-40dd-9530-d32d2f1ee14f/resourceGroups/ocrets/providers/Microsoft.Network/networkSecurityGroups/myNetworkSecurityGroup"
+subnetId: "/subscriptions/54f623f0-8c18-40dd-9530-d32d2f1ee14f/resourceGroups/ocrets/providers/Microsoft.Network/virtualNetworks/myVnet/subnets/mySubnet"
+image:
+  publisher: "OpenLogic"
+  offer: "CentOS"
+  sku: "7.5"
+  version: "latest"
+
+costCalculation:
+  generalInstancePrice: 0.2
+  GPUInstancePrice: 0.2
+  HPCInstancePrice: 0.2
+  s3bucketPrice: 0.1

@@ -42,5 +42,5 @@ If GPU and HPC tests were deployed, see their pods by doing:
 
 .. code-block:: console
 
-    $ watch kubectl --kubeconfig tests/dlTest/config get pods # For GPU cluster
-    $ watch kubectl --kubeconfig tests/hpcTest/config get pods # For HPC cluster
+    $ watch kubectl --kubeconfig src/tests/dlTest/config get pods # For GPU cluster
+    $ watch kubectl --kubeconfig src/tests/hpcTest/config get pods # For HPC cluster

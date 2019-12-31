@@ -1,16 +1,17 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
 providerName: "aws"
-providerInstanceName: "aws_instance"
 pathToKey: "/root/.ssh/id_rsa"
-dockerCE:
-dockerEngine:
-kubernetes:
 openUser: centos
-flavor: instance_type = "t2.medium"
+flavor: "t2.medium"
+region: "eu-central-1"
+sharedCredentialsFile: "/creds"
+ami: "ami-0957ba512eafd08d9"
+keyName: "exo"
+volumeSize: 50
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:
-  generalInstancePrice:
-  GPUInstancePrice:
-  HPCInstancePrice:
-  s3bucketPrice: 
+  generalInstancePrice: 0.2
+  GPUInstancePrice: 0.2
+  HPCInstancePrice: 0.2
+  s3bucketPrice: 0.1
