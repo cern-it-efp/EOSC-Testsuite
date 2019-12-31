@@ -57,7 +57,7 @@ Release notes
 
 -Project restructured.
 
--Improved support for Google, AWS, Azure, Exoscale, Openstack and Cloudstack.
+-Improved support for running on Google, AWS, Azure, Exoscale, Openstack and Cloudstack.
 
 ``19.8``
 
