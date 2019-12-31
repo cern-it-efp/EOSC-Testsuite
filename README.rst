@@ -39,11 +39,11 @@ The developers would like to thank all test owners and contributors to this proj
 |Providers / clouds            | | AWS                                                                           |
 |                              | | Google Cloud                                                                  |
 |                              | | Microsoft Azure                                                               |
-|                              | | Exoscale (Cloudstack)                                                         |
+|                              | | Exoscale (CloudStack)                                                         |
 |                              | | CERN Private Cloud (OpenStack)                                                |
 |                              | | CloudFerro (OpenStack)                                                        |
 |                              | | Cloudscale (OpenStack)                                                        |
-|                              | | Cloudstack                                                                    |
+|                              | | CloudStack                                                                    |
 |                              | | OpenStack                                                                     |
 +------------------------------+---------------------------------------------------------------------------------+
 
@@ -57,7 +57,7 @@ Release notes
 
 -Project restructured.
 
--Improved support for running on Google, AWS, Azure, Exoscale, Openstack and Cloudstack.
+-Improved support for running on Google, AWS, Azure, Exoscale, OpenStack and CloudStack.
 
 ``19.8``
 
