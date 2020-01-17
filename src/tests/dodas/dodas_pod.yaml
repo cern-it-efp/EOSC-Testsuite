@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dodas-pod
+  namespace: default
+  labels:
+    test: test-pod
+spec:
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: test
+            operator: In
+            values:
+            - test-pod
+        topologyKey: kubernetes.io/hostname
+  containers:
+  - name: dodas-cont
+    image: cloudpg/cmssw:mc-test
+    imagePullPolicy: Always
+    command: ["/bin/sh","-c"]
+    args:
+    - sleep infinity
