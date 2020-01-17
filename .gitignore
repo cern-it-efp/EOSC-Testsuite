@@ -1,23 +1,23 @@
-src/terraform/providers/aws/*
-src/terraform/providers/azure/*
-src/terraform/providers/cloudferro/*
-src/terraform/providers/cloudscale/*
-src/terraform/providers/exoscale/*
-src/terraform/providers/ibm/*
-src/terraform/providers/openstack/*
-src/terraform/providers/gcp/*
-src/terraform/providers/cloudstack/*
+src/provisionment/providers/aws/*
+src/provisionment/providers/azure/*
+src/provisionment/providers/cloudferro/*
+src/provisionment/providers/cloudscale/*
+src/provisionment/providers/exoscale/*
+src/provisionment/providers/ibm/*
+src/provisionment/providers/openstack/*
+src/provisionment/providers/gcp/*
+src/provisionment/providers/cloudstack/*
 
-!src/terraform/providers/*/*.tf
-!src/terraform/providers/*/*.yaml
-!src/terraform/providers/*/terraform.tfvars
+!src/provisionment/providers/*/*.tf
+!src/provisionment/providers/*/*.yaml
+!src/provisionment/providers/*/terraform.tfvars
 
 logs
 
-src/terraform/main.tf
-src/terraform/join.sh
-src/terraform/.terraform*
-src/terraform/terraform.tfstate*
+src/provisionment/main.tf
+src/provisionment/join.sh
+src/provisionment/.terraform*
+src/provisionment/terraform.tfstate*
 
 src/tests/s3/s3pod.yaml
 src/tests/cpu_benchmarking/cpu_benchmarking_pod.yaml
