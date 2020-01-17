@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from checker import *
-from terraform import *
+from provisionment import *
 from kubern8s import *
 
 import sys
@@ -457,7 +457,7 @@ def dlTest():
         script = "tests/dlTest/installKubeflow.sh"
         retries = 10
         if runCMD(
-            "terraform/ssh_connect.sh --usr root --ip %s\
+            "provisionment/ssh_connect.sh --usr root --ip %s\
             --file %s --retries %s" %
                 (masterIP, script, retries)) != 0:
             writeFail(

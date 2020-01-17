@@ -4,6 +4,13 @@ import os
 import time
 import random
 import string
+from ansible.module_utils.common.collections import ImmutableDict
+from ansible.parsing.dataloader import DataLoader
+from ansible.vars.manager import VariableManager
+from ansible.inventory.manager import InventoryManager
+from ansible import context
+from ansible.cli import CLI
+from ansible.executor.playbook_executor import PlaybookExecutor
 
 from aux import *
 
@@ -225,7 +232,7 @@ def terraformProvisionment(
             # manage gpu related vars
             gpuCount = str(nodes) if test == "dlTest" else "0"
             gpuType = tryTakeFromYaml(configs, "gpuType", "")
-            
+
             # ---------------- main.tf: manage google specific vars and add them
             variables = variables.replace(
                 "CREDENTIALS_PATH_PH", configs['pathToCredentials']).replace(
@@ -372,3 +379,76 @@ def terraformProvisionment(
                 flavor, True)
 
     return True, ""
+
+
+def runPlaybook(playbookPath, hostsFilePath, sshKeyPath=None): # TODO: will have to send the logs from this to 'logs' together with the terraform ones
+    """Runs ansible-playbook with the given playbook."""
+
+    loader = DataLoader()
+
+    context.CLIARGS = ImmutableDict(
+                                    tags={},
+                                    connection='ssh',
+                                    remote_user='root',
+                                    become_method='sudo',
+                                    become_user='root',
+                                    ssh_common_args='-o StrictHostKeyChecking=no',
+                                    forks=100,
+                                    listtags=False,
+                                    listtasks=False,
+                                    listhosts=False,
+                                    syntax=False,
+                                    become=True,
+                                    verbosity=True,
+                                    check=False,
+                                    start_at_task=None,
+                                    private_key_file=sshKeyPath,
+                                    #module_path=None,
+                                    #ssh_extra_args=None,
+                                    #sftp_extra_args=None,
+                                    #scp_extra_args=None,
+                                    )
+
+    inventory = InventoryManager(loader=loader, sources=hostsFilePath)
+    variable_manager = VariableManager(loader=loader,
+                                       inventory=inventory,
+                                       version_info=CLI.version_info(gitinfo=False))
+
+    return PlaybookExecutor(playbooks=[playbookPath],
+                            inventory=inventory,
+                            variable_manager=variable_manager,
+                            loader=loader,
+                            passwords=None).run() # TODO: does this return anything useful?
+
+
+def getIP(resource, provider):
+    """Given a terraform resource json description, returns the resource's
+       IP address if such exists"""
+    try:
+        if provider == "exoscale" or provider == "cloudstack":
+            return resource["values"]["ip_address"]
+        elif provider == "aws":
+            return resource["values"]["private_ip"]
+        elif provider == "azurerm":
+            return resource["values"]["private_ip_address"]
+        elif provider == "openstack":
+            return resource["values"]["network"][0]["fixed_ip_v4"]
+        elif provider == "google":
+            return resource["values"]["network_interface"][0]["network_ip"]
+    except KeyError:
+        return None
+
+
+def createHostsFile(resources, provider, destination):
+    """Creates the hosts file required by ansible"""
+
+    IPs = []
+    for resource in resources:
+        ip = getIP(resource, provider)
+        if ip is not None:
+            IPs.append(ip)
+
+    with open("%s/hosts" % destination, "w") as outfile:
+        outfile.write("[master]\n%s\n\n[slaves]\n" % IPs[0])
+        for ip in IPs[1:]:
+            outfile.write("%s\n" % ip)

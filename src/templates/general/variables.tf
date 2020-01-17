@@ -29,10 +29,10 @@ variable "keyPair" {
 
 # -------------------------- General -------------------------------------------
 variable "sshConnect" {
-  default = "../../terraform/ssh_connect.sh"
+  default = "../../provisionment/ssh_connect.sh"
 }
 variable "clusterCreator" {
-  default = "../../terraform/cluster_creator.sh"
+  default = "../../provisionment/cluster_creator.sh"
 }
 variable "sshcTimeout" {
   default = "2000"
@@ -55,7 +55,7 @@ variable "flavor" {
 variable "imageName" {
   default = "IMAGE_PH"
 }
-variable "availabilityZone" { 
+variable "availabilityZone" {
   default = "AV_ZONE_PH"
 }
 

@@ -1,0 +1,20 @@
+- name: Install Docker
+  package:
+    name: docker-ce
+    state: latest
+
+- name: Start Docker
+  service:
+    name: docker
+    state: started
+
+- name: Install kubeadm, kubelet and kubectl
+  package:
+    name: kubeadm,kubectl,kubelet
+    state: latest
+
+- name:  Start kubelet
+  service:
+    name: kubelet
+    enabled: yes
+    state: started
