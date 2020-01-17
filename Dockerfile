@@ -25,7 +25,8 @@ RUN apt-get install -y \
 RUN pip3 install \
     pyyaml \
     kubernetes \
-    jsonschema
+    jsonschema \
+    ansible
 RUN pip3 install --upgrade requests
 
 # ------------------ Install terraform
@@ -33,6 +34,11 @@ RUN TERRAFORM_VERSION=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/te
     wget https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
     unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
     mv terraform /bin
+
+# ------------------ Install ansible
+RUN apt-get install -y software-properties-common; \
+    apt-add-repository --yes --update ppa:ansible/ansible; \
+    apt-get install -y ansible
 
 # ------------------ Install kubectl
 RUN KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt) && \
@@ -42,8 +48,6 @@ RUN KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/
 
 # ------------------ Install az CLI
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
-
-
 
 # ------------------ Create ssh key file
 RUN mkdir /root/.ssh && \
