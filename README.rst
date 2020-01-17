@@ -34,7 +34,7 @@ The developers would like to thank all test owners and contributors to this proj
 +------------------------------+---------------------------------------------------------------------------------+
 |OS on launcher machine        | Ubuntu, CentOS, CoreOS, Debian, RedHat, Fedora                                  |
 +------------------------------+---------------------------------------------------------------------------------+
-|OS running on provider's VMs  | CentOS7                                                                         |
+|OS running on provider's VMs  | CentOS7, Ubuntu 18.04                                                           |
 +------------------------------+---------------------------------------------------------------------------------+
 |Providers / clouds            | | AWS                                                                           |
 |                              | | Google Cloud                                                                  |
