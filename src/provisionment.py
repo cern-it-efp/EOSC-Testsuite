@@ -146,7 +146,7 @@ def terraformProvisionment(
         templatesPath += "general"
 
     mainTfDir = testsRoot + test
-    kubeconfig = "config"
+    kubeconfig = "tests/%s/config" % test # "config"
     if test == "shared":
         flavor = configs["flavor"]
         mainTfDir = testsRoot + "sharedCluster"
@@ -162,6 +162,8 @@ def terraformProvisionment(
                     (configs["providerName"], test, str(randomId))).lower()
 
         # ---------------- delete TF stuff from previous run if existing
+        # TODO: here, if there are tf files, first should try to: talk to it, check number of nodes available, etc
+        #       and in case of success use the existing cluster.
         cleanupTF(mainTfDir)
 
         # ---------------- manage general variables
@@ -368,14 +370,14 @@ def terraformProvisionment(
     # ---------------- RUN ANSIBLE (first create hosts file)
     writeToFile("logging/%s" % test, "...bootstraping Kubernetes cluster...", True)
     playbookPath = "provisionment/playbooks/bootstraper.yaml"
-    hostsFilePath = "tests/sharedCluster/hosts"
+    hostsFilePath = "%s/hosts" % mainTfDir # "tests/sharedCluster/hosts"
     os.chdir(mainTfDir)
     tfShow = os.popen("terraform show -json").read().strip()
     os.chdir(baseCWD)
     resources = json.loads(tfShow)["values"]["root_module"]["resources"]
     # TODO: 'hosts' file should be located where the terraform state files are placed (where terraform is run)
     createHostsFile(resources, configs["providerName"], hostsFilePath)
-    runPlaybook(playbookPath, hostsFilePath)
+    runPlaybook(playbookPath, hostsFilePath, kubeconfig) # TODO: specify here also the path to the key specified at configs.yaml
 
 
 # --------------------------------------------------------------------------------
@@ -397,7 +399,7 @@ def terraformProvisionment(
 
 
 # TODO: will have to send the logs from this to 'logs' together with the terraform ones
-def runPlaybook(playbookPath, hostsFilePath, sshKeyPath=None):
+def runPlaybook(playbookPath, hostsFilePath, kubeconfig, sshKeyPath=None):
     """Runs ansible-playbook with the given playbook."""
 
     loader = DataLoader()
@@ -409,6 +411,7 @@ def runPlaybook(playbookPath, hostsFilePath, sshKeyPath=None):
         become_method='sudo',
         become_user='root',
         ssh_common_args='-o StrictHostKeyChecking=no',
+        extra_vars='kubeconfig=%s' % kubeconfig,
         forks=100,
         listtags=False,
         listtasks=False,

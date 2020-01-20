@@ -13,10 +13,10 @@ perfsonarTest:
 dodasTest:
   run: 
 dlTest:
-  run: 
-  nodes: 5
-  flavor: "g3s.xlarge"
+  run: true
+  nodes: 3
+  flavor: "GPU-small"
 hpcTest:
-  run: 
-  nodes: 4
-  flavor: "r5ad.4xlarge"
+  run: true
+  nodes: 3
+  flavor: "Titan"

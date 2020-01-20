@@ -17,9 +17,12 @@
     remote_src: yes
 
 - name: Fetch kubeconfig file
+  vars:
+      kubeconfig: "{{ kubeconfig }}" # TODO: https://stackoverflow.com/questions/30662069/how-can-i-pass-variable-to-ansible-playbook-in-the-command-line
   fetch:
     src: $HOME/.kube/config
-    dest: ~/.kube/config # TODO: this has to be set according to the different clusters
+    #dest: ~/.kube/config
+    dest: {{ kubeconfig }}
     flat: yes
 
 - name: install Pod network

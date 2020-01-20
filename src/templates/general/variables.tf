@@ -31,9 +31,6 @@ variable "keyPair" {
 variable "sshConnect" {
   default = "../../provisionment/ssh_connect.sh"
 }
-variable "clusterCreator" {
-  default = "../../provisionment/cluster_creator.sh"
-}
 variable "sshcTimeout" {
   default = "2000"
 }
