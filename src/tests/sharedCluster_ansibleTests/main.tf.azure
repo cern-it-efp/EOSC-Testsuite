@@ -1,0 +1,80 @@
+variable "openUser" {
+  default = "uroot"
+}
+variable "pathToKey" {
+  default = "~/.ssh/id_rsa"
+}
+variable "customCount" {
+  default = 2
+}
+provider "azurerm" {
+  subscription_id = "54f623f0-8c18-40dd-9530-d32d2f1ee14f"
+}
+
+resource "azurerm_network_interface" "terraformnic" {
+  count                     = var.customCount
+  name                      = "myNIC${count.index}"
+  location                  = "East US"
+  resource_group_name       = "ocrets"
+  network_security_group_id = ""
+  ip_configuration {
+    name                          = "myNicConfiguration"
+    subnet_id                     = ""
+    private_ip_address_allocation = "Dynamic"
+  }
+}
+
+resource "azurerm_virtual_machine" "kubenode" {
+  count                 = var.customCount
+  name                  = "ansiblevm-${count.index}"
+  location              = "East US"
+  resource_group_name   = "ocrets"
+  vm_size               = "Standard_D2s_v3"
+  network_interface_ids = [element(azurerm_network_interface.terraformnic.*.id, count.index)]
+  storage_os_disk {
+    name              = "myOsDisk${count.index}"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
+    managed_disk_type = "Premium_LRS"
+  }
+  storage_image_reference {
+    #publisher = "OpenLogic"
+    #offer     = "CentOS"
+    #sku       = "7.5"
+    #version   = "latest"
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS"
+    version   = "latest"
+  }
+  os_profile {
+    computer_name  = "ansiblevm-${count.index}"
+    admin_username = var.openUser
+  }
+  os_profile_linux_config {
+    disable_password_authentication = true
+    ssh_keys {
+      key_data = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCFPaN62APTqDCy3eB6qy+ALngWKg/RHCU0XWlL47JQ/Bj4zjHoyviFQ3+WgRgRxakKSdbpRU28qm0dUT+5Ki72doEmcmmqdzwhTa6H/0XwoeeRc12eIUw/sn2wTgdf/c57ft0deOyxeALVArAZwCXxywNeRcAjGJsvp4LW6jjZFQ=="
+      path     = "/home/${var.openUser}/.ssh/authorized_keys"
+    }
+  }
+}
+
+resource "null_resource" "allow_root" {
+  count = 2
+  provisioner "remote-exec" {
+    connection {
+      host        = element(azurerm_network_interface.terraformnic.*.private_ip_address, count.index)
+      type        = "ssh"
+      user        = var.openUser
+      private_key = file(var.pathToKey)
+      timeout     = "20m"
+    }
+    inline = [
+      "sudo mkdir /root/.ssh",
+      "sudo cp /home/${var.openUser}/.ssh/authorized_keys /root/.ssh",
+      "sudo sed -i '1iPermitRootLogin yes\n' /etc/ssh/sshd_config",
+      "sudo systemctl restart sshd || sudo service sshd restart"
+    ]
+  }
+}

@@ -40,3 +40,6 @@ src/tests/hpcTest/terraform.tfstate*
 src/tests/hpcTest/join.sh
 
 src/__pycache__
+
+src/tests/sharedCluster_ansibleTests/terraform.tfstate*
+src/tests/sharedCluster_ansibleTests/.terraform*

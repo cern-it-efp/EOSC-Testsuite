@@ -1,0 +1,49 @@
+provider "aws" {
+  region = "us-east-2"
+  shared_credentials_file = "/creds"
+}
+
+variable "ami" {
+  default = "ami-08ee2516c7709ea48" # Centos US
+  #default = "ami-e1496384" # Ubuntu US
+  #default = "ami-0957ba512eafd08d9" # Centos EU
+}
+variable "openUser" {
+  default = "centos"
+}
+variable "pathToKey" {
+  default = "~/.ssh/id_rsa"
+}
+
+resource "aws_instance" "kubenode" {
+
+  count = 2
+  tags = {
+    Name = "ansiblevm-${count.index}"
+  }
+  ami = var.ami
+  instance_type = "t2.medium"
+  key_name = "exo"
+  root_block_device {
+      volume_size = 50
+  }
+}
+
+resource "null_resource" "allow_root" {
+  count = 2
+  provisioner "remote-exec" {
+    connection {
+      host        = element(aws_instance.kubenode.*.private_ip, count.index)
+      type        = "ssh"
+      user        = var.openUser
+      private_key = file(var.pathToKey)
+      timeout     = "20m"
+    }
+    inline = [
+      "sudo mkdir /root/.ssh",
+      "sudo cp /home/${var.openUser}/.ssh/authorized_keys /root/.ssh",
+      "sudo sed -i '1iPermitRootLogin yes\n' /etc/ssh/sshd_config",
+      "sudo systemctl restart sshd || sudo service sshd restart"
+    ]
+  }
+}

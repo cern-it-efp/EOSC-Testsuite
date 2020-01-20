@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-# uses ansible
-
 import os
 import time
 import random
@@ -17,7 +15,7 @@ from ansible.executor.playbook_executor import PlaybookExecutor
 from aux import *
 
 provisionFailMsg = "Failed to provision raw VMs. Check 'logs' file for details"
-rootAllowerFailMsg = "Failed to allow root ssh on VMs. Check 'logs' file"
+bootstrapFailMsg = "Failed to bootstrap '%s' k8s cluster. Check 'logs' file"
 
 
 def runTerraform(mainTfDir, baseCWD, test, msg, autoApprove=True):
@@ -91,12 +89,9 @@ def stackVersioning(variables, configs):
         string: modified variables section, stack versioning stuff added.
     """
 
-    variables = variables.replace(
-        "DOCKER_CE_PH", tryTakeFromYaml(configs, "dockerCE", ""))
-    variables = variables.replace(
-        "DOCKER_EN_PH", tryTakeFromYaml(configs, "dockerEngine", ""))
-    variables = variables.replace(
-        "K8S_PH", tryTakeFromYaml(configs, "kubernetes", ""))
+    variables = variables.replace("DOCKER_CE_PH", tryTakeFromYaml(configs, "dockerCE", ""))
+    variables = variables.replace("DOCKER_EN_PH", tryTakeFromYaml(configs, "dockerEngine", ""))
+    variables = variables.replace("K8S_PH", tryTakeFromYaml(configs, "kubernetes", ""))
 
     return variables
 
@@ -167,10 +162,8 @@ def terraformProvisionment(
         # ---------------- manage general variables
 
         openUserDefault = "root"
-        msgExcept = "WARNING: using default user '%s' for ssh connections (running on %s)" % (
-            openUserDefault, configs["providerName"])
-        openUser = tryTakeFromYaml(
-            configs, "openUser", openUserDefault, msgExcept=msgExcept)
+        msgExcept = "WARNING: using default user '%s' for ssh connections (running on %s)" % (openUserDefault,configs["providerName"])
+        openUser = tryTakeFromYaml(configs, "openUser", openUserDefault, msgExcept=msgExcept)
 
         variables = loadFile("templates/general/variables.tf",
                              required=True).replace(
@@ -264,6 +257,7 @@ def terraformProvisionment(
             if volumeSize is "":
                 awsTemplate = "%s/rawProvision_noVolumeSize.tf" % templatesPath
 
+
             # ---------------- main.tf: manage aws specific vars and add them
             variables = variables.replace(
                 "REGION_PH", configs['region']).replace(
@@ -351,34 +345,25 @@ def terraformProvisionment(
                         "Provisioning '%s' VMs..." % flavor) != 0:
             return False, provisionFailMsg
 
-# ----------------- TODO: at this point, add only the root allower and run ansible
+        # ---------------- main.tf: add root allower + k8s bootstraper
+        bootstrap = loadFile("templates/general/bootstrap.tf", required=True)
 
-        # ---------------- RUN TERRAFORM - phase 2: allow root ssh on machines # TODO: can these 2 be done at once? wouldn't that fail in Azure though?
-        if openUser is not "root":
-            rootAllower = loadFile("templates/general/rootAllower.tf", required=True).replace(
-                "LIST_IP_GETTER", provDict[configs["providerName"]]).replace(
-                "ALLOW_ROOT_COUNT", "var.customCount")
-            writeToFile(mainTfDir + "/main.tf", rootAllower, True)
-            if runTerraform(mainTfDir,
-                            baseCWD,
-                            test,
-                            "...running root allower on machines...") != 0:
-                return False, rootAllowerFailMsg % flavor
+        if openUser is "root":
+            bootstrap = bootstrap.replace("ALLOW_ROOT_COUNT", "0")
+        else:
+            bootstrap = bootstrap.replace("ALLOW_ROOT_COUNT", "var.customCount")
 
-    # ---------------- RUN ANSIBLE (first create hosts file)
-    writeToFile("logging/%s" % test, "...bootstraping Kubernetes cluster...", True)
-    playbookPath = "provisionment/playbooks/bootstraper.yaml"
-    hostsFilePath = "tests/sharedCluster/hosts"
-    os.chdir(mainTfDir)
-    tfShow = os.popen("terraform show -json").read().strip()
-    os.chdir(baseCWD)
-    resources = json.loads(tfShow)["values"]["root_module"]["resources"]
-    # TODO: 'hosts' file should be located where the terraform state files are placed (where terraform is run)
-    createHostsFile(resources, configs["providerName"], hostsFilePath)
-    runPlaybook(playbookPath, hostsFilePath)
+        bootstrap = bootstrap.replace(
+            "LIST_IP_GETTER", provDict[configs["providerName"]])
 
+        writeToFile(mainTfDir + "/main.tf", bootstrap, True)
 
-# --------------------------------------------------------------------------------
+    # ---------------- RUN TERRAFORM - phase 2: bootstrap the k8s cluster
+    if runTerraform(mainTfDir,
+                    baseCWD,
+                    test,
+                    "...bootstraping Kubernetes cluster...") != 0:
+        return False, bootstrapFailMsg % flavor
 
     # ---------------- wait for default service account to be ready and finish
     kubeconfig = "~/.kube/config" if test == "shared" else "%s/%s" % (
@@ -396,34 +381,33 @@ def terraformProvisionment(
     return True, ""
 
 
-# TODO: will have to send the logs from this to 'logs' together with the terraform ones
-def runPlaybook(playbookPath, hostsFilePath, sshKeyPath=None):
+def runPlaybook(playbookPath, hostsFilePath, sshKeyPath=None): # TODO: will have to send the logs from this to 'logs' together with the terraform ones
     """Runs ansible-playbook with the given playbook."""
 
     loader = DataLoader()
 
     context.CLIARGS = ImmutableDict(
-        tags={},
-        connection='ssh',
-        remote_user='root',
-        become_method='sudo',
-        become_user='root',
-        ssh_common_args='-o StrictHostKeyChecking=no',
-        forks=100,
-        listtags=False,
-        listtasks=False,
-        listhosts=False,
-        syntax=False,
-        become=True,
-        verbosity=True,
-        check=False,
-        start_at_task=None,
-        private_key_file=sshKeyPath,
-        # module_path=None,
-        # ssh_extra_args=None,
-        # sftp_extra_args=None,
-        # scp_extra_args=None,
-    )
+                                    tags={},
+                                    connection='ssh',
+                                    remote_user='root',
+                                    become_method='sudo',
+                                    become_user='root',
+                                    ssh_common_args='-o StrictHostKeyChecking=no',
+                                    forks=100,
+                                    listtags=False,
+                                    listtasks=False,
+                                    listhosts=False,
+                                    syntax=False,
+                                    become=True,
+                                    verbosity=True,
+                                    check=False,
+                                    start_at_task=None,
+                                    private_key_file=sshKeyPath,
+                                    #module_path=None,
+                                    #ssh_extra_args=None,
+                                    #sftp_extra_args=None,
+                                    #scp_extra_args=None,
+                                    )
 
     inventory = InventoryManager(loader=loader, sources=hostsFilePath)
     variable_manager = VariableManager(loader=loader,
@@ -434,7 +418,7 @@ def runPlaybook(playbookPath, hostsFilePath, sshKeyPath=None):
                             inventory=inventory,
                             variable_manager=variable_manager,
                             loader=loader,
-                            passwords=None).run()  # TODO: does this return anything useful?
+                            passwords=None).run() # TODO: does this return anything useful?
 
 
 def getIP(resource, provider):
