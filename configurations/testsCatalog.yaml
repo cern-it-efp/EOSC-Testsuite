@@ -1,10 +1,10 @@
 s3Test:
-  run: true
+  run: 
   endpoint: https://s3.amazonaws.com
   accessKey: adsfa 
   secretKey: asdfads
 dataRepatriationTest:
-  run: true
+  run: 
 cpuBenchmarking:
   run: 
 perfsonarTest:
@@ -15,8 +15,8 @@ dodasTest:
 dlTest:
   run: true
   nodes: 3
-  flavor: "GPU-small"
+  flavor: "Small"
 hpcTest:
-  run: true
+  run: 
   nodes: 3
-  flavor: "Titan"
+  flavor: "Small"

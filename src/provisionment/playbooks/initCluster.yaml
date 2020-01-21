@@ -17,12 +17,15 @@
     remote_src: yes
 
 - name: Fetch kubeconfig file
-  vars:
-      kubeconfig: "{{ kubeconfig }}" # TODO: https://stackoverflow.com/questions/30662069/how-can-i-pass-variable-to-ansible-playbook-in-the-command-line
   fetch:
     src: $HOME/.kube/config
     #dest: ~/.kube/config
-    dest: {{ kubeconfig }}
+    #dest: "{{ kubeconfigPath }}" # TODO: https://stackoverflow.com/questions/30662069/how-can-i-pass-variable-to-ansible-playbook-in-the-command-line
+    dest: "{{ kubeconfig }}" # TODO: https://stackoverflow.com/questions/30662069/how-can-i-pass-variable-to-ansible-playbook-in-the-command-line
+    #dest: src/tests/dlTest/config # fails! this is relative to the playbook and not to the path where ansible-playbook is run
+    #dest: /tmp/config # works
+    #dest: ~/Desktop/work/repos/OCRE-Testsuite/src/tests/dlTest/config # works
+    #dest: ./src/tests/dlTest/config # fails! this is relative to the playbook and not to the path where ansible-playbook is run
     flat: yes
 
 - name: install Pod network

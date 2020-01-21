@@ -18,6 +18,7 @@ from aux import *
 
 provisionFailMsg = "Failed to provision raw VMs. Check 'logs' file for details"
 rootAllowerFailMsg = "Failed to allow root ssh on VMs. Check 'logs' file"
+bootstrapFailMsg = "Failed to bootstrap '%s' k8s cluster. Check 'logs' file"
 
 
 def runTerraform(mainTfDir, baseCWD, test, msg, autoApprove=True):
@@ -146,7 +147,7 @@ def terraformProvisionment(
         templatesPath += "general"
 
     mainTfDir = testsRoot + test
-    kubeconfig = "tests/%s/config" % test # "config"
+    kubeconfig = "%s/tests/%s/config" % (baseCWD, test) # "config"
     if test == "shared":
         flavor = configs["flavor"]
         mainTfDir = testsRoot + "sharedCluster"
@@ -375,17 +376,16 @@ def terraformProvisionment(
     tfShow = os.popen("terraform show -json").read().strip()
     os.chdir(baseCWD)
     resources = json.loads(tfShow)["values"]["root_module"]["resources"]
-    # TODO: 'hosts' file should be located where the terraform state files are placed (where terraform is run)
     createHostsFile(resources, configs["providerName"], hostsFilePath)
-    runPlaybook(playbookPath, hostsFilePath, kubeconfig) # TODO: specify here also the path to the key specified at configs.yaml
+    result = runPlaybook(playbookPath, hostsFilePath, kubeconfig, sshKeyPath=configs["pathToKey"])
+    if result != 0:
+        return False, bootstrapFailMsg % flavor
 
 
 # --------------------------------------------------------------------------------
 
     # ---------------- wait for default service account to be ready and finish
-    kubeconfig = "~/.kube/config" if test == "shared" else "%s/%s" % (
-        mainTfDir, kubeconfig)
-
+    # TODO: this has to have a timeout
     while runCMD(
         'kubectl --kubeconfig %s get sa default' %
         kubeconfig,
@@ -398,30 +398,32 @@ def terraformProvisionment(
     return True, ""
 
 
-# TODO: will have to send the logs from this to 'logs' together with the terraform ones
-def runPlaybook(playbookPath, hostsFilePath, kubeconfig, sshKeyPath=None):
+def runPlaybook(playbookPath, hostsFilePath, kubeconfig, sshKeyPath):
     """Runs ansible-playbook with the given playbook."""
 
     loader = DataLoader()
 
+    #extraVars='kubeconfig=%s' % kubeconfig
+    extraVars={'kubeconfig': kubeconfig}
+
     context.CLIARGS = ImmutableDict(
         tags={},
+        private_key_file=sshKeyPath,
         connection='ssh',
         remote_user='root',
         become_method='sudo',
         become_user='root',
         ssh_common_args='-o StrictHostKeyChecking=no',
-        extra_vars='kubeconfig=%s' % kubeconfig,
+        extra_vars=[extraVars],
         forks=100,
+        become=True,
+        verbosity=True,
         listtags=False,
         listtasks=False,
         listhosts=False,
         syntax=False,
-        become=True,
-        verbosity=True,
         check=False,
         start_at_task=None,
-        private_key_file=sshKeyPath,
         # module_path=None,
         # ssh_extra_args=None,
         # sftp_extra_args=None,
@@ -437,7 +439,7 @@ def runPlaybook(playbookPath, hostsFilePath, kubeconfig, sshKeyPath=None):
                             inventory=inventory,
                             variable_manager=variable_manager,
                             loader=loader,
-                            passwords=None).run()  # TODO: does this return anything useful?
+                            passwords=None).run()
 
 
 def getIP(resource, provider):

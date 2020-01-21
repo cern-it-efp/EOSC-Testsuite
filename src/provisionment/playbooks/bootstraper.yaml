@@ -15,11 +15,11 @@
     command: systemctl stop firewalld
   - include_tasks: pkgManagerRepo.yaml
   - include_tasks: dependencies.yaml
-  
+
 # ------------------------------------ Init cluster & generate join command
 - hosts: master
   tasks:
-  - include_tasks: initCluster.yaml
+  - include_tasks: initCluster.yaml 
   - name: Get join command
     shell: kubeadm token create --print-join-command
     register: join_command_raw
