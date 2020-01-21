@@ -179,7 +179,6 @@ def terraformProvisionment(
                              required=True).replace(
             "NODES_PH", str(nodes)).replace(
             "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(
-            "KUBECONFIG_DST", kubeconfig).replace(
             "OPEN_USER_PH", openUser).replace(
             "NAME_PH", nodeName)
         variables = stackVersioning(variables, configs)
@@ -403,9 +402,6 @@ def runPlaybook(playbookPath, hostsFilePath, kubeconfig, sshKeyPath):
 
     loader = DataLoader()
 
-    #extraVars='kubeconfig=%s' % kubeconfig
-    extraVars={'kubeconfig': kubeconfig}
-
     context.CLIARGS = ImmutableDict(
         tags={},
         private_key_file=sshKeyPath,
@@ -414,7 +410,7 @@ def runPlaybook(playbookPath, hostsFilePath, kubeconfig, sshKeyPath):
         become_method='sudo',
         become_user='root',
         ssh_common_args='-o StrictHostKeyChecking=no',
-        extra_vars=[extraVars],
+        extra_vars=[{'kubeconfig': kubeconfig}],
         forks=100,
         become=True,
         verbosity=True,
@@ -474,3 +470,24 @@ def createHostsFile(resources, provider, destination):
         outfile.write("[master]\n%s\n\n[slaves]\n" % IPs[0])
         for ip in IPs[1:]:
             outfile.write("%s\n" % ip)
+
+
+def destroyTF(baseCWD, clusters=None):
+    """Destroy infrastructure. 'clusters' is an array whose objects specify
+       the clusters that should be destroyed. In case no array is given, all
+       clusters will be destroyed"""
+
+    if clusters is None:
+        clusters = ["sharedCluster", "dlTest", "hpcTest"]
+
+    res = []
+
+    for cluster in clusters:
+        logger("Destroying %s cluster..." % cluster, "~", "logging/footer")
+
+        os.chdir("tests/%s" % cluster)
+        exitCode = runCMD("terraform destroy -auto-approve")
+        res.append(exitCode)
+        os.chdir(baseCWD)
+
+    return res # TODO: return a dict with the destroy status of each cluster

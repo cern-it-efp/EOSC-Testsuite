@@ -5,9 +5,6 @@ variable "customCount" {
 variable "pathToKey" {
   default = "PATH_TO_KEY_VALUE"
 }
-variable "kubeconfigDst" {
-  default = "KUBECONFIG_DST"
-}
 variable "openUser" {
   default = "OPEN_USER_PH"
 }

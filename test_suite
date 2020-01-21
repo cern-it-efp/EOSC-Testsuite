@@ -8,6 +8,12 @@ while [[ "$1" != "" ]]; do
   if [[ "$1" == '-j' ]]; then
     jenkins=true
     shift
+  elif [[ "$1" == '--destroy' ]]; then
+    cd src
+    python3 -B -u main.py $1 $opts
+    outStat=$?
+    cd ..
+    exit $outStat
   else
     opts+=" "$1
     shift

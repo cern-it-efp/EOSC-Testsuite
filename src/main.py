@@ -666,13 +666,15 @@ extraSupportedClouds = loadFile("schemas/provDict.yaml",
                                 required=True)["extraSupportedClouds"]
 obtainCost = True
 retry = None
+destroy = None
+destroyOnCompletion = None
 publicRepo = "https://ocre-testsuite.rtfd.io"
 
 
 # -----------------CMD OPTIONS--------------------------------------------
 try:
     opts, args = getopt.getopt(
-        sys.argv, "ul", ["--only-test", "--via-backend", "--retry"])
+        sys.argv, "ul", ["--only-test", "--via-backend", "--retry", "--destroy", "--destroy-on-completion"])
 except getopt.GetoptError as err:
     writeToFile("logging/header", err, True)
     stop(1)
@@ -682,6 +684,17 @@ for arg in args[1:len(args)]:
         onlyTest = True
     elif arg == '--retry':
         retry = True
+    elif arg == '--destroy': # TODO: this takes a coma separated (or similar) list of the clusters to destroy: shared, dlTest, hpcTest
+        # TODO: regardless of the other options, this destroys stuff: should check whether there are TF files for the selected clusters
+        answer = input("WARNING: destroy infrastructure? (yes/no)")
+        if answer == "yes":
+            destroyTF(baseCWD)
+            stop(0)
+        else:
+            writeToFile("logging/header", "Aborting operation", True)
+            stop(0)
+    elif arg == '--destroy-on-completion': # TODO: this takes a coma separated (or similar) list of the clusters to destroy: shared, dlTest, hpcTest
+        destroyOnCompletion = True
     else:
         writeToFile("logging/header", "Bad option '%s'. Docs at %s " %
                     (arg, publicRepo), True)
@@ -784,5 +797,11 @@ else:
     header(provider=configs["providerName"])
 
     shutil.rmtree("../results/" + s3ResDirBase, True)
+
+
+# TODO: how does this deal with --only-test ?
+# TODO: if the cluster is not reachable this shouldn't be even tried
+if destroyOnCompletion == True: # TODO: if anything fails during provision, this option should be ignored. This should be taken into account only if the run succeeded til the end.
+    destroyTF(baseCWD)
 
 stop(0)

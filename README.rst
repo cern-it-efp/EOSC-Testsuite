@@ -57,6 +57,8 @@ Release notes
 
 -Using Ansible for VM configuration instead of Terraform's provisioners.
 
+-Added options to destroy the provisioned infrastructure.
+
 ``19.12``
 
 -Project restructured.
