@@ -52,6 +52,8 @@ def header(noLogo=False, provider=None, results=None):
                 "........................................................."]
 
         logger(showThis,"#","logging/header",override=True)
+        if onlyTest is True:
+            writeToFile("logging/header", "(ONLY TEST EXECUTION)", True)
 
     else:
         if provider is not None:
@@ -78,6 +80,8 @@ def header(noLogo=False, provider=None, results=None):
         # this fixes encode errors experienced in some clouds
         try:
             logger(showThis,"#","logging/header",override=True)
+            if onlyTest is True:
+                writeToFile("logging/header", "(ONLY TEST EXECUTION)", True)
         except:
             header(noLogo=True,provider=provider,results=results)
 
@@ -381,7 +385,7 @@ def dodasTest():
         if kubectl(
                 Action.exec,
                 name="dodas-pod",
-                cmd="sh /CMSSW/CMSSW_9_4_0/src/custom_entrypoint.sh") != 0:
+                cmd="sh /CMSSW/CMSSW_9_4_0/src/custom_entrypoint.sh") != 0: # TODO: fails but does not report error exit code
             writeFail(resDir, "dodas_results.json",
                       "Error running script test on pod.", "logging/shared")
         else:
@@ -390,7 +394,7 @@ def dodasTest():
             res = True
         # cleanup
         writeToFile("logging/shared", "Cluster cleanup...", True)
-        kubectl(Action.delete, type=Type.pod, name="dodas-pod")
+        kubectl(Action.delete, type=Type.pod, name="dodas-pod") # TODO: debug
 
     queue.put(({"test": "dodasTest", "deployed": res}, testCost))
 
@@ -636,9 +640,16 @@ def checkRequiredTFexist(selectedTests):
         writeToFile("logging/header", "ERROR: terraform files not found for hpcTest. Normal run is required before run with '--retry'.", True)
         stop(1)
 
-#logo, no results, no provider
-header()
 
+def checkClustersToDestroy(cliParameterValue):
+    """Checks the given argument matches cluster to be destroyed"""
+    try:
+        for value in cliParameterValue.split(','):
+            if value not in clusters:
+                return False
+    except:
+        return False
+    return True
 
 onlyTest = False
 killResources = False
@@ -672,10 +683,11 @@ clustersToDestroy = None
 publicRepo = "https://ocre-testsuite.rtfd.io"
 clusters = ["sharedCluster", "dlTest", "hpcTest"]
 
+#logo, no results, no provider
+header()
 
 # -----------------CMD OPTIONS--------------------------------------------
 try:
-    #options, values = getopt.getopt(sys.argv, "ul", ["only-test", "via-backend", "retry", "destroy=", "destroy-on-completion="])
     options, values = getopt.getopt(
         sys.argv[1:],
         "",
@@ -683,10 +695,8 @@ try:
 except getopt.GetoptError as err:
     #writeToFile("logging/header", str(err), True)
     print(err)
-    #print("Docs at %s " % publicRepo)
     stop(1)
 for currentOption, currentValue in options:
-#for arg in values[1:len(values)]:
     if currentOption in ['--only-test']:
         writeToFile("logging/header", "(ONLY TEST EXECUTION)", True)
         onlyTest = True
@@ -696,7 +706,7 @@ for currentOption, currentValue in options:
         if checkClustersToDestroy(currentValue): # shared, dlTest, hpcTest
             answer = input("WARNING - destroy infrastructure (%s)? yes/no: " % currentValue)
             if answer == "yes":
-                print(destroyTF(baseCWD,clusters=currentValue))
+                print(destroyTF(baseCWD,clusters=currentValue.split(',')))
             else:
                 print("Aborting operation")
         else:
@@ -705,13 +715,10 @@ for currentOption, currentValue in options:
     elif currentOption in ['--destroy-on-completion']:
         if checkClustersToDestroy(currentValue): # shared, dlTest, hpcTest
             destroyOnCompletion = True
-            clustersToDestroy = currentValue
+            clustersToDestroy = currentValue.split(',')
         else:
             print("The provided value '%s' for the option --destroy-on-completion is not valid." % currentValue)
             stop(1)
-    #else:
-    #    writeToFile("logging/header", "Bad option '%s'. Docs at %s " % (arg, publicRepo), True)
-    #    stop(1)
 
 # -----------------CHECKS AND PREPARATION---------------------------------
 
@@ -808,13 +815,12 @@ else:
 
     #logo with provider, no results
     header(provider=configs["providerName"])
-
     shutil.rmtree("../results/" + s3ResDirBase, True)
 
 
 # TODO: how does this deal with --only-test ?
 # TODO: if the cluster is not reachable this shouldn't be even tried
 if destroyOnCompletion == True: # TODO: if anything fails during provision, this option should be ignored. This should be taken into account only if the run succeeded til the end.
-    destroyTF(baseCWD, clusters=)
+    print(destroyTF(baseCWD, clusters=clustersToDestroy))
 
 stop(0)

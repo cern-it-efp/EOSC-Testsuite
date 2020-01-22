@@ -16,6 +16,7 @@ spec:
             values:
             - test-pod
         topologyKey: kubernetes.io/hostname
+  hostNetwork: true
   containers:
   - name: dodas-cont
     image: cloudpg/cmssw:mc-test

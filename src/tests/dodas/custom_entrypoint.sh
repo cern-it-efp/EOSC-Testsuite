@@ -8,8 +8,12 @@ cmsenv
 
 cmsRun -j jobReport.xml RSGravitonToZZ_kMpl01_M_1000_TuneCUETP8M1_13TeV_pythia8_GEN-SIM_cfg.py &> cmsRunLogs
 
+cmsRunOut=$?
+
 if grep -q "$passString" cmsRunLogs; then
   echo "{\"result\":\"success\"}" > /tmp/dodas_test.json
 else
   echo "{\"result\":\"fail\"}" > /tmp/dodas_test.json
 fi
+
+exit $cmsRunOut
