@@ -13,6 +13,7 @@ from ansible.inventory.manager import InventoryManager
 from ansible import context
 from ansible.cli import CLI
 from ansible.executor.playbook_executor import PlaybookExecutor
+from configparser import ConfigParser
 
 from aux import *
 
@@ -391,8 +392,7 @@ def terraformProvisionment(
             hideLogs=True) != 0:
         time.sleep(1)
 
-    writeToFile(toLog, "...'%s' CLUSTER CREATED => STARTING TESTS\n" %
-                flavor, True)
+    writeToFile(toLog, "...'%s' CLUSTER CREATED (masterIP: %s) => STARTING TESTS\n" % (flavor,getMasterIP(hostsFilePath)), True)
 
     return True, ""
 
@@ -466,10 +466,14 @@ def createHostsFile(resources, provider, destination):
         if ip is not None:
             IPs.append(ip)
 
-    with open(destination, "w") as outfile:
-        outfile.write("[master]\n%s\n\n[slaves]\n" % IPs[0])
-        for ip in IPs[1:]:
-            outfile.write("%s\n" % ip)
+    config = ConfigParser(allow_no_value=True)
+    config.add_section('master')
+    config.add_section('slaves')
+    config.set('master',IPs[0])
+    for ip in IPs[1:]:
+        config.set('slaves',ip)
+    with open(destination, 'w') as hostsfile:
+        config.write(hostsfile)
 
 
 def destroyTF(baseCWD, clusters=None):

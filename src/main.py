@@ -668,37 +668,50 @@ obtainCost = True
 retry = None
 destroy = None
 destroyOnCompletion = None
+clustersToDestroy = None
 publicRepo = "https://ocre-testsuite.rtfd.io"
+clusters = ["sharedCluster", "dlTest", "hpcTest"]
 
 
 # -----------------CMD OPTIONS--------------------------------------------
 try:
-    opts, args = getopt.getopt(
-        sys.argv, "ul", ["--only-test", "--via-backend", "--retry", "--destroy", "--destroy-on-completion"])
+    #options, values = getopt.getopt(sys.argv, "ul", ["only-test", "via-backend", "retry", "destroy=", "destroy-on-completion="])
+    options, values = getopt.getopt(
+        sys.argv[1:],
+        "",
+        ["only-test", "via-backend", "retry", "destroy=", "destroy-on-completion="])
 except getopt.GetoptError as err:
-    writeToFile("logging/header", err, True)
+    #writeToFile("logging/header", str(err), True)
+    print(err)
+    #print("Docs at %s " % publicRepo)
     stop(1)
-for arg in args[1:len(args)]:
-    if arg == '--only-test':
+for currentOption, currentValue in options:
+#for arg in values[1:len(values)]:
+    if currentOption in ['--only-test']:
         writeToFile("logging/header", "(ONLY TEST EXECUTION)", True)
         onlyTest = True
-    elif arg == '--retry':
+    elif currentOption in ['--retry']:
         retry = True
-    elif arg == '--destroy': # TODO: this takes a coma separated (or similar) list of the clusters to destroy: shared, dlTest, hpcTest
-        # TODO: regardless of the other options, this destroys stuff: should check whether there are TF files for the selected clusters
-        answer = input("WARNING: destroy infrastructure? (yes/no)")
-        if answer == "yes":
-            destroyTF(baseCWD)
-            stop(0)
+    elif currentOption in ['--destroy']:
+        if checkClustersToDestroy(currentValue): # shared, dlTest, hpcTest
+            answer = input("WARNING - destroy infrastructure (%s)? yes/no: " % currentValue)
+            if answer == "yes":
+                print(destroyTF(baseCWD,clusters=currentValue))
+            else:
+                print("Aborting operation")
         else:
-            writeToFile("logging/header", "Aborting operation", True)
-            stop(0)
-    elif arg == '--destroy-on-completion': # TODO: this takes a coma separated (or similar) list of the clusters to destroy: shared, dlTest, hpcTest
-        destroyOnCompletion = True
-    else:
-        writeToFile("logging/header", "Bad option '%s'. Docs at %s " %
-                    (arg, publicRepo), True)
-        stop(1)
+            print("The provided value '%s' for the option --destroy is not valid." % currentValue)
+        stop(0)
+    elif currentOption in ['--destroy-on-completion']:
+        if checkClustersToDestroy(currentValue): # shared, dlTest, hpcTest
+            destroyOnCompletion = True
+            clustersToDestroy = currentValue
+        else:
+            print("The provided value '%s' for the option --destroy-on-completion is not valid." % currentValue)
+            stop(1)
+    #else:
+    #    writeToFile("logging/header", "Bad option '%s'. Docs at %s " % (arg, publicRepo), True)
+    #    stop(1)
 
 # -----------------CHECKS AND PREPARATION---------------------------------
 
@@ -802,6 +815,6 @@ else:
 # TODO: how does this deal with --only-test ?
 # TODO: if the cluster is not reachable this shouldn't be even tried
 if destroyOnCompletion == True: # TODO: if anything fails during provision, this option should be ignored. This should be taken into account only if the run succeeded til the end.
-    destroyTF(baseCWD)
+    destroyTF(baseCWD, clusters=)
 
 stop(0)

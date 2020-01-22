@@ -9,10 +9,21 @@ try:
     import time
     import subprocess
     import shutil
+    from configparser import ConfigParser
 
 except ModuleNotFoundError as ex:
     print(ex)
     sys.exit(1)
+
+
+def getMasterIP(hosts):
+    """Given the path to an ansible hosts file, returns the IP specified
+       under the master section of the file."""
+
+    config = ConfigParser(allow_no_value=True)
+    config.read(hosts)
+    return config.items('master')[0][0]
+
 
 def runCMD(cmd, hideLogs=None, read=None):
     """ Run the command.
