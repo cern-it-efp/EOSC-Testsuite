@@ -59,6 +59,8 @@ Release notes
 
 -Added options to destroy the provisioned infrastructure.
 
+-Automated creation of bastion (single node k8s cluster) for runs on providers that use NAT.
+
 ``19.12``
 
 -Project restructured.

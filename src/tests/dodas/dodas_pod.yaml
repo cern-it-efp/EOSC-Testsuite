@@ -21,6 +21,8 @@ spec:
   - name: dodas-cont
     image: cloudpg/cmssw:mc-test
     imagePullPolicy: Always
+    securityContext:
+      privileged: true
     command: ["/bin/sh","-c"]
     args:
     - sleep infinity

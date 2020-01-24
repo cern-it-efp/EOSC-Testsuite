@@ -3,9 +3,9 @@ providerName: "aws"
 pathToKey: "/root/.ssh/id_rsa"
 openUser: centos
 flavor: "t2.medium"
-region: "eu-central-1"
+region: "us-east-2"
 sharedCredentialsFile: "/creds"
-ami: "ami-0957ba512eafd08d9"
+ami: "ami-08ee2516c7709ea48"
 keyName: "exo"
 volumeSize: 50
 

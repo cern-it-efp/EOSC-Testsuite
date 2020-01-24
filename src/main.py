@@ -215,6 +215,26 @@ def initAndChecks():
     return selected
 
 
+def bastionRun(): # TODO
+    """Test Suite run through bastion VM."""
+    # 1) Provision VM and:
+    #   1.1) Bootstrap a single node k8s cluster with (requires public IP w/o NAT which is acually impossible)
+    #   1.2) Do everything over SSH as I do manually when runnin the suite on gcp, aws, etc: discover NAT IP (previously allocated in some cases like CF's openstack), install docker, deploy our docker image, configure and run
+    #   1.3) Use VPN, specific to each provider
+    if runTerraform(mainTfDir, baseCWD, test, msg, autoApprove=True) != 0:
+        writeToFile("logging/header", "Failed to provision bastion VM.", True)
+        stop(1)
+    # 2) Deploy the tslauncher image on a pod to the cluster
+    if kubectl(Action.create,file="src/bastion/bastion_job.yaml", toLog="logging/header") != 0:
+        writeToFile("logging/header", "Failed to deploy tslauncher pod on the bastion VM.", True)
+    # 3) Configure (copy config and auth files) and run the suite
+    # 4) Harvest results and destroy stuff
+    fetchResults( # TODO: this should be on a loop or similar
+        resDir,
+        "repatriation-pod:/home/data_repatriation_test.json",
+        "data_repatriation_test.json",
+        "logging/shared")
+
 def s3Test():
     """Run S3 endpoints test."""
 
@@ -385,7 +405,7 @@ def dodasTest():
         if kubectl(
                 Action.exec,
                 name="dodas-pod",
-                cmd="sh /CMSSW/CMSSW_9_4_0/src/custom_entrypoint.sh") != 0: # TODO: fails but does not report error exit code
+                cmd="sh /CMSSW/CMSSW_9_4_0/src/custom_entrypoint.sh") != 0:
             writeFail(resDir, "dodas_results.json",
                       "Error running script test on pod.", "logging/shared")
         else:
@@ -693,7 +713,6 @@ try:
         "",
         ["only-test", "via-backend", "retry", "destroy=", "destroy-on-completion="])
 except getopt.GetoptError as err:
-    #writeToFile("logging/header", str(err), True)
     print(err)
     stop(1)
 for currentOption, currentValue in options:
@@ -709,6 +728,12 @@ for currentOption, currentValue in options:
                 print(destroyTF(baseCWD,clusters=currentValue.split(',')))
             else:
                 print("Aborting operation")
+        elif currentValue == "all":
+            answer = input("WARNING - destroy infrastructure (%s)? yes/no: " % currentValue)
+            if answer == "yes":
+                print(destroyTF(baseCWD,clusters=clusters))
+            else:
+                print("Aborting operation")
         else:
             print("The provided value '%s' for the option --destroy is not valid." % currentValue)
         stop(0)
@@ -716,6 +741,9 @@ for currentOption, currentValue in options:
         if checkClustersToDestroy(currentValue): # shared, dlTest, hpcTest
             destroyOnCompletion = True
             clustersToDestroy = currentValue.split(',')
+        elif currentValue == "all":
+            destroyOnCompletion = True
+            clustersToDestroy = clusters
         else:
             print("The provided value '%s' for the option --destroy-on-completion is not valid." % currentValue)
             stop(1)

@@ -28,6 +28,11 @@ resource null_resource "allow_root" {
       user        = var.openUser
       private_key = file("~/.ssh/id_rsa")
     }
-    inline = ["sudo mkdir /root/.ssh ; sudo cp /home/${var.openUser}/.ssh/authorized_keys /root/.ssh"]
+    inline = [
+      "sudo mkdir /root/.ssh",
+      "sudo cp /home/${var.openUser}/.ssh/authorized_keys /root/.ssh",
+      "sudo sed -i '1iPermitRootLogin yes\n' /etc/ssh/sshd_config",
+      "sudo systemctl restart sshd || sudo service sshd restart"
+    ]
   }
 }

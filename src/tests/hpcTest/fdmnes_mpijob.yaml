@@ -7,10 +7,12 @@ spec:
   replicas: 4
   template:
     spec:
-      #hostNetwork: true
+      hostNetwork: true
       containers:
       - image: cernefp/fdmnes
         imagePullPolicy: Always
+        securityContext:
+          privileged: true
         name: fdmnes-mpijob
         command: ["/bin/sh","-c"]
         args:
