@@ -1,11 +1,5 @@
-# curl -sL https://aka.ms/InstallAzureCLIDeb | bash && az login
-
 provider "azurerm" {
   subscription_id = "54f623f0-8c18-40dd-9530-d32d2f1ee14f"
-}
-
-variable "avar" {
-  default = "~/afiletf" # debug
 }
 
 # Create virtual network (This can actually be done IN ADVANCE)
