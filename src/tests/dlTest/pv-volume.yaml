@@ -1,0 +1,39 @@
+#https://www.kubeflow.org/docs/other-guides/troubleshooting/
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pv-volume1
+spec:
+  storageClassName:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/pv1"
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pv-volume2
+spec:
+  storageClassName:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/pv2"
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pv-volume3
+spec:
+  storageClassName:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/pv3"

@@ -1,0 +1,62 @@
+type: object
+required:
+    - providerName
+    - pathToKey
+    - flavor
+    - openUser
+    - region
+    - sharedCredentialsFile
+    - ami
+    - keyName
+properties:
+    providerName:
+        type: string
+    pathToKey:
+        type: string
+    openUser:
+        type: string
+    flavor:
+        type: string
+    region:
+        type: string
+    sharedCredentialsFile:
+        type: string
+    ami:
+        type: string
+    keyName:
+        type: string
+    volumeSize:
+        type: number
+    dockerCE:
+        type: string
+    dockerEngine:
+        type: string
+    kubernetes:
+        type: string
+    costCalculation:
+        type:
+            - object
+            - "null"
+        required:
+            - generalInstancePrice
+            - GPUInstancePrice
+            - HPCInstancePrice
+            - s3bucketPrice
+        properties:
+            generalInstancePrice:
+                type:
+                    - number
+                    - "null"
+            GPUInstancePrice:
+                type:
+                    - number
+                    - "null"
+            HPCInstancePrice:
+                type:
+                    - number
+                    - "null"
+            s3bucketPrice:
+                type:
+                    - number
+                    - "null"
+additionalProperties: false

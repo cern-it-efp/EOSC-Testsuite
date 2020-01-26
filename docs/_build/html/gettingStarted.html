@@ -1,0 +1,792 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>1. Getting started &mdash; Cloud Test Suite - CERN IT  documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="2. Tests Catalog" href="testsCatalog.html" />
+    <link rel="prev" title="OCRE Test-Suite for cloud validation - CERN" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Cloud Test Suite Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1. Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#dependencies">1.1 Dependencies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#terraform">Terraform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#kubernetes-client">Kubernetes client</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#python">Python</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#ssh-key">1.2 SSH key</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#security-groups">1.3 Security groups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#networking-and-ips">1.4 Networking and IPs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#download-and-preparation">1.5 Download and preparation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cloning-repository">Cloning repository</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#main-clouds-additional-support">Main clouds: additional support</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#using-docker">1.6 Using Docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="testsCatalog.html">2. Tests Catalog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run.html">3. Run the test-suite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="existingClusters.html">4. Using existing clusters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="results.html">5. Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="verification.html">6. Verification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="costs.html">7. Cost of run calculation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Cloud Test Suite - CERN IT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>1. Getting started</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/gettingStarted.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="getting-started">
+<h1>1. Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<p>Please follow the steps below in order to deploy tests in a cloud provider:</p>
+<p>Refer to section “Using Docker” to use the Docker image we provide to avoid dealing with required packages and dependencies.</p>
+<div class="section" id="dependencies">
+<h2>1.1 Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<p>This test-suite requires some packages to work properly and these must be installed by yourself directly. Please see below.</p>
+<div class="section" id="terraform">
+<h3>Terraform<a class="headerlink" href="#terraform" title="Permalink to this headline">¶</a></h3>
+<p>Terraform is the tool that creates the VMs that will later become a Kubernetes cluster. The test-suite makes use of it so download and
+install <a href="https://learn.hashicorp.com/terraform/getting-started/install.html" target="_blank">Terraform</a> on your machine.
+In some cases, providers are not fully supported by Terraform, however they might provide plugins to bridge this gap. In such cases, please refer to the documentation of the provider to download the plugin.
+Once downloaded, this must be placed at <em>~/.terraform.d/plugins</em> and execution permissions must be given to it (<em>+x</em>).</p>
+</div>
+<div class="section" id="kubernetes-client">
+<h3>Kubernetes client<a class="headerlink" href="#kubernetes-client" title="Permalink to this headline">¶</a></h3>
+<p>In order to manage the Kubernetes cluster locally instead of using the master node, install <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/" target="_blank">kubectl</a> on your machine.</p>
+</div>
+<div class="section" id="python">
+<h3>Python<a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h3>
+<p>Python version 3 is required.
+The following python packages are required:</p>
+<ul class="simple">
+<li>pyyaml</li>
+<li>jsonschema</li>
+<li>kubernetes</li>
+<li>requests</li>
+</ul>
+<p>Please install them with pip3.</p>
+</div>
+</div>
+<div class="section" id="ssh-key">
+<h2>1.2 SSH key<a class="headerlink" href="#ssh-key" title="Permalink to this headline">¶</a></h2>
+<p>A ssh key pair is needed to establish connections to the VMs to be created later. Therefore, you must create (or import) this key on your provider
+beforehand and place the private key at <em>~/.ssh/id_rsa</em>.
+Note errors may occur if your key doesn’t have the right permissions. Set these to the right value using the following command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> chmod <span class="m">600</span> path/to/key
+</pre></div>
+</div>
+</div>
+<div class="section" id="security-groups">
+<h2>1.3 Security groups<a class="headerlink" href="#security-groups" title="Permalink to this headline">¶</a></h2>
+<p>The following ports have to be opened:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="15%" />
+<col width="76%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Port</th>
+<th class="head">Protocol</th>
+<th class="head">Functionality</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>22</td>
+<td>TCP</td>
+<td>SSH</td>
+</tr>
+<tr class="row-odd"><td>6443</td>
+<td>TCP</td>
+<td>Kubernetes API</td>
+</tr>
+<tr class="row-even"><td>10250</td>
+<td>TCP</td>
+<td>API which allows node access</td>
+</tr>
+<tr class="row-odd"><td>8472</td>
+<td>UDP</td>
+<td>Flannel overlay network, k8s pods communication</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="networking-and-ips">
+<h2>1.4 Networking and IPs<a class="headerlink" href="#networking-and-ips" title="Permalink to this headline">¶</a></h2>
+<p>Some providers do not allocate public IPs to the VMs but use NAT. Hence the VM can be reached from outside but that IP is not really residing on the VM. This causes
+conflicts when creating the Kubernetes cluster. If one wants to run the Test-Suite on a provider of this case, then the suite must be launched from within the
+network the nodes will be connected to, this is a private network. In other words, <strong>a VM will have to be created first manually</strong> and the Test Suite will have to be
+triggered from there.</p>
+</div>
+<div class="section" id="download-and-preparation">
+<h2>1.5 Download and preparation<a class="headerlink" href="#download-and-preparation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="cloning-repository">
+<h3>Cloning repository<a class="headerlink" href="#cloning-repository" title="Permalink to this headline">¶</a></h3>
+<p>Please clone the repository as follows and cd into it:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> git clone https://github.com/cern-it-efp/OCRE-Testsuite.git
+<span class="gp">$</span> <span class="nb">cd</span> OCRE-Testsuite
+</pre></div>
+</div>
+</div>
+<div class="section" id="configuration">
+<h3>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h3>
+<p>While completing this task, please refer to <a href="https://www.terraform.io/docs/providers/" target="_blank">Terraform's documentation</a> in order to complete it successfully as some parts are
+provider specific and differ from one provider to another.</p>
+<p>You will find in the root of the cloned repository a folder named <em>configurations</em>. That folder must containing the following files:</p>
+<p><code class="docutils literal notranslate"><span class="pre">testsCatalog.yaml</span> <span class="pre">(required)</span></code></p>
+<blockquote>
+<div>Refer to the section “Test Catalog” to learn how to fill this file.</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">configs.yaml</span> <span class="pre">(required)</span></code></p>
+<div class="line-block">
+<div class="line">[<strong>NOTE</strong>: For running on Azure, AWS, GCP, OpenStack, CloudStack and Exoscale refer to the section “Main clouds” below. In those cases, only configs.yaml and testsCatalog.yaml are needed.]</div>
+</div>
+<p>Its variables:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="84%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Explanation / Values</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>providerName</td>
+<td>Name of the provider for Terraform. (required)</td>
+</tr>
+<tr class="row-odd"><td>providerInstanceName</td>
+<td>Compute instance name for Terraform. This is provider specific. (required)</td>
+</tr>
+<tr class="row-even"><td>pathToKey</td>
+<td>Path to the location of your private key (required)</td>
+</tr>
+<tr class="row-odd"><td>flavor</td>
+<td><div class="first last line-block">
+<div class="line">Flavor to be used for the main cluster. This has to be specified as a key-value</div>
+<div class="line">pair according to the provider. (required)</div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td>openUser</td>
+<td><div class="first last line-block">
+<div class="line">User to be used in case the provider doesn’t allow root ssh. If not specified,</div>
+<div class="line">root will be used for ssh connections.</div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td>dockerCE</td>
+<td>Version of docker-ce to be installed. Leave empty for latest.</td>
+</tr>
+<tr class="row-even"><td>dockerEngine</td>
+<td>Version of docker-engine to be installed. Leave empty for latest.</td>
+</tr>
+<tr class="row-odd"><td>kubernetes</td>
+<td>Version of Kubernetes to be installed. Leave empty for latest.</td>
+</tr>
+</tbody>
+</table>
+<p>Note that it’s possible to choose between “Docker Community Edition” and “Docker Engine” (older Docker packages). However it’s <strong>highly recommended</strong> to leave these
+variables empty to create a cluster with the latest stack.</p>
+<p>The file also contains a section named <em>costCalculation</em>. Refer to the section “Cost of run calculation” to understand how to fill that part.</p>
+<p><code class="docutils literal notranslate"><span class="pre">credentials</span></code></p>
+<p>This file must contains .tf (HCL) code for authentication that goes on the provider definition section of a Terraform configuration file (i.e AWS)
+In case this file is empty, the TS assumes an external authentication method: like env variables (i.e OpenStack) or CLI (i.e Azure).
+Note that if you aim to use external authentication but you need something inside the provider section of the Terraform configuration file (i.e AWS region), this file is the place to define that.</p>
+<p><code class="docutils literal notranslate"><span class="pre">instanceDefinition</span> <span class="pre">(required)</span></code></p>
+<p>In this file one should write all the key-pair values that would be written on the body of an instance definition resource on Terraform, according to the cloud one wants to test.
+Please refer to the documentation of the cloud provider to check which pairs you need to specify. In any case, you can run the Test-Suite (next steps) and if there is any missing
+pair a message will be shown in the terminal telling you which ones these are. This is how you must specify each pair:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">YOUR_PROVIDER</span><span class="s1">&#39;S_STRING_FOR_A_KEY&gt; = &quot;&lt;VALUE_GIVEN_FOR_THAT_KEY&gt;&quot;</span>
+</pre></div>
+</div>
+<p>An example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;NAME_PH&quot;</span>
+<span class="n">template</span> <span class="o">=</span> <span class="s2">&quot;Linux CentOS 7.5 64-bit&quot;</span>
+<span class="n">key_pair</span> <span class="o">=</span> <span class="s2">&quot;k_cl&quot;</span>
+<span class="n">security_groups</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;kgroup&quot;</span><span class="p">]</span>
+<span class="n">disk_size</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="n">zone</span> <span class="o">=</span> <span class="s2">&quot;ch-gva-2&quot;</span>
+</pre></div>
+</div>
+<p>One of the properties specified on the block that defines a compute node (VM) is the flavor or machine type. This property must not be specified on instanceDefinition but on configs.yaml’s flavor.</p>
+<p>Please pay attention in this section to the name for the instance, which will be set by the Test-Suite containing:</p>
+<ul class="simple">
+<li>The string “kubenode”</li>
+<li>A string indicating the purpose of the cluster to which the VM belongs</li>
+<li>A random, 4 character string to avoid DNS issues</li>
+<li>An integer. 0 would be the master node, 1+ would be the slaves</li>
+</ul>
+<p>To achieve this, your instance definition must contain the ‘NAME_PH’ placeholder. When specifying the name for the instance, please follow this structure:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">YOUR_PROVIDER</span><span class="s1">&#39;S_STRING_FOR_NAME&gt; = &quot;NAME_PH&quot;</span>
+</pre></div>
+</div>
+<p>Now, let’s assume your provider’s string for the instance name is “display_name”, then you should write:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;NAME_PH&quot;</span>
+</pre></div>
+</div>
+<p>As an example let’s assume the suite comes up with the name “kubenode-hpcTest-aws-0”, Then it would switch that name with the NAME_PH placeholder:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;kubenode-hpcTest-aws-0&quot;</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">[<strong>NOTE 1</strong>: This will be taken as a whole block and placed directly on a .tf file]</div>
+<div class="line">[<strong>NOTE 2</strong>: Clouds that don’t support resource creation with Terraform or k8saaS can’t currently be tested with this Test-Suite]</div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Dependencies</span></code></p>
+<p>This file takes also HCL code. There are providers for which dependencies are required, for example Azure: Terraform can’t create a VM if there is no NIC for it.
+Then this is the file to define those dependencies needed by the VMs.</p>
+</div>
+<div class="section" id="main-clouds-additional-support">
+<h3>Main clouds: additional support<a class="headerlink" href="#main-clouds-additional-support" title="Permalink to this headline">¶</a></h3>
+<p>Writing Terraform files is not needed when running the suite on Azure, AWS, GCP, OpenStack, CloudStack and Exoscale.
+In those cases the suite will create itself the Terraform files on the fly according to the configuration provided.
+Find below these lines details on how to run the suite on these providers:</p>
+<p><code class="docutils literal notranslate"><span class="pre">Azure</span></code></p>
+<p>(Find the example files at <em>examples/azure</em>. It is also possible to use AKS to provision the cluster, for this refer to section “Using existing clusters”.)</p>
+<p>Install az CLI and configure credentials with ‘az login’.</p>
+<p>Variables for configs.yaml:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="84%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Explanation / Values</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>providerName</td>
+<td>It’s value must be “azurerm”. (required)</td>
+</tr>
+<tr class="row-odd"><td>pathToKey</td>
+<td>Path to the location of your private key (required)</td>
+</tr>
+<tr class="row-even"><td>flavor</td>
+<td>Flavor to be used for the main cluster.</td>
+</tr>
+<tr class="row-odd"><td>openUser</td>
+<td>User to be used for ssh connections.</td>
+</tr>
+<tr class="row-even"><td>dockerCE</td>
+<td>Version of docker-ce to be installed. Leave empty for latest.</td>
+</tr>
+<tr class="row-odd"><td>dockerEngine</td>
+<td>Version of docker-engine to be installed. Leave empty for latest.</td>
+</tr>
+<tr class="row-even"><td>kubernetes</td>
+<td>Version of Kubernetes to be installed. Leave empty for latest.</td>
+</tr>
+<tr class="row-odd"><td>location</td>
+<td>The region in which to create the compute instances. (required)</td>
+</tr>
+<tr class="row-even"><td>subscriptionId</td>
+<td>ID of the subscription. (required)</td>
+</tr>
+<tr class="row-odd"><td>resourceGroupName</td>
+<td>Specifies the name of the Resource Group in which the Virtual Machine should exist. (required)</td>
+</tr>
+<tr class="row-even"><td>pubSSH</td>
+<td>Public SSH key of the key specified at configs.yaml’s pathToKey. (required)</td>
+</tr>
+<tr class="row-odd"><td>securityGroupID</td>
+<td>The ID of the Network Security Group to associate with the VMs’s network interfaces (required)</td>
+</tr>
+<tr class="row-even"><td>subnetId</td>
+<td>Reference to a subnet in which the NIC for the VM has been created. (required)</td>
+</tr>
+<tr class="row-odd"><td>image.publisher</td>
+<td>Specifies the publisher of the image used to create the virtual machines. (required)</td>
+</tr>
+<tr class="row-even"><td>image.offer</td>
+<td>Specifies the offer of the image used to create the virtual machines. (required)</td>
+</tr>
+<tr class="row-odd"><td>image.sku</td>
+<td>Specifies the SKU of the image used to create the virtual machines. (required)</td>
+</tr>
+<tr class="row-even"><td>image.version</td>
+<td>Specifies the version of the image used to create the virtual machines. (required)</td>
+</tr>
+</tbody>
+</table>
+<p>Note: the security group and subnet -virtual network too- have to be created beforehand and their ID’s used at configs.yaml.
+Also, if image’s <em>publisher</em>, <em>offer</em>, <em>sku</em> and <em>version</em> are omitted, the following defaults will be used:</p>
+<ul class="simple">
+<li>publisher = OpenLogic</li>
+<li>offer = CentOS</li>
+<li>sku = 7.5</li>
+<li>version = latest</li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">AWS</span></code></p>
+<p>(Find the example files at <em>examples/aws</em>. It is also possible to use EKS to provision the cluster, for this refer to section “Using existing clusters”.)</p>
+<p>Variables for configs.yaml:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="84%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Explanation / Values</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>providerName</td>
+<td>It’s value must be “aws”. (required)</td>
+</tr>
+<tr class="row-odd"><td>pathToKey</td>
+<td>Path to the location of your private key (required)</td>
+</tr>
+<tr class="row-even"><td>flavor</td>
+<td>Flavor to be used for the main cluster. (required)</td>
+</tr>
+<tr class="row-odd"><td>openUser</td>
+<td>User to be used for ssh connections. (required)</td>
+</tr>
+<tr class="row-even"><td>dockerCE</td>
+<td>Version of docker-ce to be installed. Leave empty for latest.</td>
+</tr>
+<tr class="row-odd"><td>dockerEngine</td>
+<td>Version of docker-engine to be installed. Leave empty for latest.</td>
+</tr>
+<tr class="row-even"><td>kubernetes</td>
+<td>Version of Kubernetes to be installed. Leave empty for latest.</td>
+</tr>
+<tr class="row-odd"><td>region</td>
+<td>The region in which to create the compute instances. (required)</td>
+</tr>
+<tr class="row-even"><td>sharedCredentialsFile</td>
+<td>The authentication method supported is AWS shared credential file. Specify here the absolute path to such file. (required)</td>
+</tr>
+<tr class="row-odd"><td>ami</td>
+<td>AMI for the instances. (required)</td>
+</tr>
+<tr class="row-even"><td>keyName</td>
+<td>Name of the key for the instances. (required)</td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">GCP</span></code></p>
+<p>(Example files at <em>examples/gcp</em>. It is also possible to use GKE to provision the cluster, for this refer to section “Using existing clusters”. You will have to <a href="https://cloud.google.com/sdk/gcloud/reference/container/clusters/get-credentials?hl=en_US&_ga=2.141757301.-616534808.1554462142" target="_blank">fetch the kubectl kubeconfig file</a> too.)</p>
+<p>Variables for configs.yaml:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="84%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Explanation / Values</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>providerName</td>
+<td>It’s value must be “google”. (required)</td>
+</tr>
+<tr class="row-odd"><td>pathToKey</td>
+<td>Path to the location of your private key (required)</td>
+</tr>
+<tr class="row-even"><td>flavor</td>
+<td>Flavor to be used for the main cluster. (required)</td>
+</tr>
+<tr class="row-odd"><td>openUser</td>
+<td>User to be used for ssh connections. (required)</td>
+</tr>
+<tr class="row-even"><td>dockerCE</td>
+<td>Version of docker-ce to be installed. Leave empty for latest.</td>
+</tr>
+<tr class="row-odd"><td>dockerEngine</td>
+<td>Version of docker-engine to be installed. Leave empty for latest.</td>
+</tr>
+<tr class="row-even"><td>kubernetes</td>
+<td>Version of Kubernetes to be installed. Leave empty for latest.</td>
+</tr>
+<tr class="row-odd"><td>zone</td>
+<td>The zone in which to create the compute instances. (required)</td>
+</tr>
+<tr class="row-even"><td>pathToCredentials</td>
+<td>Path to the GCP JSON credentials file (note this file has to be downloaded in advance from the GCP console). (required)</td>
+</tr>
+<tr class="row-odd"><td>image</td>
+<td>Image for the instances. (required)</td>
+</tr>
+<tr class="row-even"><td>project</td>
+<td>Google project under which the infrastructure has to be provisioned. (required)</td>
+</tr>
+<tr class="row-odd"><td>gpuType</td>
+<td>Type of GPU to be used. Needed if the Deep Learning test was selected at testsCatalog.yaml.</td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">OpenStack</span></code></p>
+<p>Regarding authentication, download the OpenStack RC File containing the credentials from the Horizon dashboard and source it.</p>
+<p>Variables for configs.yaml:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="84%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Explanation / Values</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>providerName</td>
+<td>It’s value must be “openstack”. (required)</td>
+</tr>
+<tr class="row-odd"><td>pathToKey</td>
+<td>Path to the location of your private key (required)</td>
+</tr>
+<tr class="row-even"><td>flavor</td>
+<td>Flavor to be used for the main cluster. (required)</td>
+</tr>
+<tr class="row-odd"><td>openUser</td>
+<td>User to be used for ssh connections. Root user will be used by default.</td>
+</tr>
+<tr class="row-even"><td>dockerCE</td>
+<td>Version of docker-ce to be installed. Leave empty for latest.</td>
+</tr>
+<tr class="row-odd"><td>dockerEngine</td>
+<td>Version of docker-engine to be installed. Leave empty for latest.</td>
+</tr>
+<tr class="row-even"><td>kubernetes</td>
+<td>Version of Kubernetes to be installed. Leave empty for latest.</td>
+</tr>
+<tr class="row-odd"><td>imageName</td>
+<td>OS Image to be used for the VMs. (required)</td>
+</tr>
+<tr class="row-even"><td>keyPair</td>
+<td>Name of the key to be used. Has to be created or imported beforehand. (required)</td>
+</tr>
+<tr class="row-odd"><td>securityGroups</td>
+<td>Security groups array. Must be a String, example: “[“default”,”allow_ping_ssh_rdp”]”</td>
+</tr>
+<tr class="row-even"><td>region</td>
+<td>The region in which to create the compute instances. If omitted, the region specified in the credentials file is used.</td>
+</tr>
+<tr class="row-odd"><td>availabilityZone</td>
+<td>The availability zone in which to create the compute instances.</td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">CloudStack</span></code></p>
+<p>Variables for configs.yaml:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="84%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Explanation / Values</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>providerName</td>
+<td>It’s value must be “cloudstack”. (required)</td>
+</tr>
+<tr class="row-odd"><td>pathToKey</td>
+<td>Path to the location of your private key (required)</td>
+</tr>
+<tr class="row-even"><td>flavor</td>
+<td>Flavor to be used for the main cluster. (required)</td>
+</tr>
+<tr class="row-odd"><td>openUser</td>
+<td>User to be used for ssh connections. Root user will be used by default.</td>
+</tr>
+<tr class="row-even"><td>dockerCE</td>
+<td>Version of docker-ce to be installed. Leave empty for latest.</td>
+</tr>
+<tr class="row-odd"><td>dockerEngine</td>
+<td>Version of docker-engine to be installed. Leave empty for latest.</td>
+</tr>
+<tr class="row-even"><td>kubernetes</td>
+<td>Version of Kubernetes to be installed. Leave empty for latest.</td>
+</tr>
+<tr class="row-odd"><td>keyPair</td>
+<td>Name of the key to be used. Has to be created or imported beforehand. (required)</td>
+</tr>
+<tr class="row-even"><td>securityGroups</td>
+<td>Security groups array. Must be a String, example: “[“default”,”allow_ping_ssh_rdp”]”</td>
+</tr>
+<tr class="row-odd"><td>zone</td>
+<td>The zone in which to create the compute instances. (required)</td>
+</tr>
+<tr class="row-even"><td>template</td>
+<td>OS Image to be used for the VMs. (required)</td>
+</tr>
+<tr class="row-odd"><td>diskSize</td>
+<td>VM’s disk size.</td>
+</tr>
+<tr class="row-even"><td>configPath</td>
+<td>Path to the file containing the CloudStack credentials. See below the structure of such file. (required)</td>
+</tr>
+</tbody>
+</table>
+<p>CloudStack credentials file’s structure:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">[cloudstack]</span>
+<span class="go">url = your_api_url</span>
+<span class="go">apikey = your_api_key</span>
+<span class="go">secretkey = your_secret_key</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Exoscale</span></code></p>
+<p>Variables for configs.yaml:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="84%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Explanation / Values</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>providerName</td>
+<td>It’s value must be “exoscale”. (required)</td>
+</tr>
+<tr class="row-odd"><td>pathToKey</td>
+<td>Path to the location of your private key (required)</td>
+</tr>
+<tr class="row-even"><td>flavor</td>
+<td>Flavor to be used for the main cluster. (required)</td>
+</tr>
+<tr class="row-odd"><td>dockerCE</td>
+<td>Version of docker-ce to be installed. Leave empty for latest.</td>
+</tr>
+<tr class="row-even"><td>dockerEngine</td>
+<td>Version of docker-engine to be installed. Leave empty for latest.</td>
+</tr>
+<tr class="row-odd"><td>kubernetes</td>
+<td>Version of Kubernetes to be installed. Leave empty for latest.</td>
+</tr>
+<tr class="row-even"><td>keyPair</td>
+<td>Name of the key to be used. Has to be created or imported beforehand. (required)</td>
+</tr>
+<tr class="row-odd"><td>securityGroups</td>
+<td>Security groups array. Must be a String, example: “[“default”,”allow_ping_ssh_rdp”]”</td>
+</tr>
+<tr class="row-even"><td>zone</td>
+<td>The zone in which to create the compute instances. (required)</td>
+</tr>
+<tr class="row-odd"><td>template</td>
+<td>OS Image to be used for the VMs. (required)</td>
+</tr>
+<tr class="row-even"><td>diskSize</td>
+<td>VM’s disk size. (required)</td>
+</tr>
+<tr class="row-odd"><td>configPath</td>
+<td>Path to the file containing the Exoscale credentials. See below the structure of such file. (required)</td>
+</tr>
+</tbody>
+</table>
+<p>Exoscale credentials file’s structure:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">[exoscale]</span>
+<span class="go">key = EXOe3ca3e7621b7cd7a20f7e0de</span>
+<span class="go">secret = 2_JvzFcZQL_Rg1nZSRNVheYQh9oYlL5aX3zX-eILiL4</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="using-docker">
+<h2>1.6 Using Docker<a class="headerlink" href="#using-docker" title="Permalink to this headline">¶</a></h2>
+<p>A Docker image has been built and pushed to Docker hub. This image allows you to skip section “1.1 Dependencies” and jump to “1.2 SSH key”.</p>
+<p>Run the container (pulls the image first):</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> docker run --net<span class="o">=</span>host -it cernefp/tslauncher
+</pre></div>
+</div>
+<p>Note the option ‘–net=host’. Without it, the container wouldn’t be able to connect to the nodes, as it would not be in the same network as them and it is likely the nodes will not have public IPs. With that option, the container will use the network used by its host, which will be sharing the network with the nodes.</p>
+<p>You will get a session on the container, directly inside the cloned repository.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="testsCatalog.html" class="btn btn-neutral float-right" title="2. Tests Catalog" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="OCRE Test-Suite for cloud validation - CERN" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, CERN IT-DI-EFP
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
