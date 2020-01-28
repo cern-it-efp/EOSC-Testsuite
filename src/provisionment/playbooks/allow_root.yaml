@@ -1,4 +1,5 @@
 - name: Allow root ssh
+  when: open_user != "root"
   become: yes
   block:
 
@@ -8,9 +9,11 @@
       path: /root/.ssh
       state: directory
 
-  - name: Copy open {{ open_user }}'s authorized_keys file to root's .ssh directory
+  - name: Copy {{ open_user }}'s authorized_keys file to root's .ssh directory
+    #when: {{ open_user }} != root
+    #when: open_user != "root"
     copy:
-      src: /home/{{ open_user }}/.ssh/authorized_keys
+      src: /home/{{ open_user }}/.ssh/authorized_keys # TODO: if the provided openUser/remote_user is root (exoscale, bc provisionment.py defaults it to root in case of missing openUser at configs.yml) this path fails! either avoid or workaround
       dest: /root/.ssh
       remote_src: yes
 

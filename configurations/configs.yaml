@@ -4,7 +4,7 @@ pathToKey: "/home/ipelu/.ssh/id_rsa"
 configPath: "/home/ipelu/Desktop/exoCreds"
 flavor: "Medium"
 zone: "ch-gva-2"
-template: "Linux Ubuntu 18.04 LTS 64-bit"
+template: "Linux CentOS 7 64-bit"
 keyPair: "k_cl"
 securityGroups: "[\"default\"]"
 diskSize: 100
