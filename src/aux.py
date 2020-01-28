@@ -135,7 +135,7 @@ def logger(text, sym, file, override=None):
         file (bool): File the logs should be sent to
     """
 
-    size = 66  # longest msg on code (was 61)
+    size = 68  # longest msg on code (was 61)
     frame = sym * (size + 6)
     blank = sym + "  " + " " * size + "  " + sym
     toPrint = frame + "\n" + blank

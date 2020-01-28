@@ -1,15 +1,24 @@
 # ------------------------------------ Wait for infrastructure to be ready
-- hosts: all # TODO: this fixes ssh check and gathering facts but dpkg lock still fails (ubuntu)
+- hosts: all
   gather_facts: false
   tasks:
   - name: Waiting for VMs to be ready...
     wait_for_connection:
       timeout: 120
 
+# ------------------------------------ Allow root ssh
+- hosts: all
+  gather_facts: true
+  vars:
+    open_user: "{{ ansible_user_id }}"
+  tasks:
+  - include_tasks: allow_root.yaml
+
 # ------------------------------------ pkg manager & install dependencies
 - hosts: all
+  become: yes
   tasks:
-  - name: Disable firewall # TODO: this is required in redhat/centos/fedora
+  - name: Disable firewall # this is required in redhat/centos/fedora
     ignore_errors: yes
     no_log: true
     command: systemctl stop firewalld
@@ -18,8 +27,9 @@
 
 # ------------------------------------ Init cluster & generate join command
 - hosts: master
+  become: yes
   tasks:
-  - include_tasks: initCluster.yaml 
+  - include_tasks: initCluster.yaml
   - name: Get join command
     shell: kubeadm token create --print-join-command
     register: join_command_raw
@@ -29,6 +39,7 @@
 
 # ------------------------------------ Make slaves join cluster
 - hosts: slaves
+  become: yes
   tasks:
   - name: slaves join cluster
     shell: "{{ hostvars[groups['master'][0]]['join_command'] }} --ignore-preflight-errors all  >> node_joined.txt"

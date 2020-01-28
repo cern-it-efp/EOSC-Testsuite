@@ -1,0 +1,28 @@
+- name: Allow root ssh
+  become: yes
+  block:
+
+  - name: Create /root/.ssh dir
+    ignore_errors: yes
+    file:
+      path: /root/.ssh
+      state: directory
+
+  - name: Copy open {{ open_user }}'s authorized_keys file to root's .ssh directory
+    copy:
+      src: /home/{{ open_user }}/.ssh/authorized_keys
+      dest: /root/.ssh
+      remote_src: yes
+
+  - name: Set PermitRootLogin to yes
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      line: 'PermitRootLogin yes'
+      insertbefore: BOF
+
+  - name: Restart sshd
+    ignore_errors: yes
+    service:
+      name: sshd
+      enabled: yes
+      state: restarted

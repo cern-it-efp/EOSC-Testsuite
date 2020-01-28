@@ -18,7 +18,6 @@ from configparser import ConfigParser
 from aux import *
 
 provisionFailMsg = "Failed to provision raw VMs. Check 'logs' file for details"
-rootAllowerFailMsg = "Failed to allow root ssh on VMs. Check 'logs' file"
 bootstrapFailMsg = "Failed to bootstrap '%s' k8s cluster. Check 'logs' file"
 
 
@@ -347,26 +346,13 @@ def terraformProvisionment(
 
         writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
 
-        # ---------------- RUN TERRAFORM - phase 1: provision VMs
+        # ---------------- RUN TERRAFORM: provision VMs
         if runTerraform(mainTfDir,
                         baseCWD,
                         test,
                         "Provisioning '%s' VMs..." % flavor) != 0:
             return False, provisionFailMsg
 
-# ----------------- TODO: at this point, add only the root allower and run ansible
-
-        # ---------------- RUN TERRAFORM - phase 2: allow root ssh on machines # TODO: can these 2 be done at once? wouldn't that fail in Azure though?
-        if openUser is not "root":
-            rootAllower = loadFile("templates/general/rootAllower.tf", required=True).replace(
-                "LIST_IP_GETTER", provDict[configs["providerName"]]).replace(
-                "ALLOW_ROOT_COUNT", "var.customCount")
-            writeToFile(mainTfDir + "/main.tf", rootAllower, True)
-            if runTerraform(mainTfDir,
-                            baseCWD,
-                            test,
-                            "...running root allower on machines...") != 0:
-                return False, rootAllowerFailMsg % flavor
 
     # ---------------- RUN ANSIBLE (first create hosts file)
     writeToFile("logging/%s" % test, "...bootstraping Kubernetes cluster...", True)
@@ -377,7 +363,7 @@ def terraformProvisionment(
     os.chdir(baseCWD)
     resources = json.loads(tfShow)["values"]["root_module"]["resources"]
     createHostsFile(resources, configs["providerName"], hostsFilePath)
-    result = runPlaybook(playbookPath, hostsFilePath, kubeconfig, sshKeyPath=configs["pathToKey"])
+    result = runPlaybook(playbookPath, hostsFilePath, kubeconfig, test, configs["pathToKey"], openUser)
     if result != 0:
         return False, bootstrapFailMsg % flavor
 
@@ -397,7 +383,7 @@ def terraformProvisionment(
     return True, ""
 
 
-def runPlaybook(playbookPath, hostsFilePath, kubeconfig, sshKeyPath):
+def runPlaybook(playbookPath, hostsFilePath, kubeconfig, test, sshKeyPath, openUser):
     """Runs ansible-playbook with the given playbook."""
 
     loader = DataLoader()
@@ -406,7 +392,7 @@ def runPlaybook(playbookPath, hostsFilePath, kubeconfig, sshKeyPath):
         tags={},
         private_key_file=sshKeyPath,
         connection='ssh',
-        remote_user='root',
+        remote_user=openUser,
         become_method='sudo',
         become_user='root',
         ssh_common_args='-o StrictHostKeyChecking=no',
@@ -435,7 +421,7 @@ def runPlaybook(playbookPath, hostsFilePath, kubeconfig, sshKeyPath):
                             inventory=inventory,
                             variable_manager=variable_manager,
                             loader=loader,
-                            passwords=None).run()
+                            passwords=None).run() # TODO: add cluster ID (test) to the logs from this function
 
 
 def getIP(resource, provider):

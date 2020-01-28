@@ -18,7 +18,7 @@
       state: latest
 
 - name: Package manager repositories
-  no_log: yes
+  #no_log: yes
   block:
     - name: Add Docker repo (YUM)
       get_url:
