@@ -1,0 +1,22 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: "cloudsigma" # TODO: this can be provided by CLI
+pathToKey: "/home/ipelu/.ssh/id_rsa" # TODO: this can be provided by CLI
+openUser: cloudsigma
+shared: ["31.171.250.25", "31.171.250.203", "31.171.240.219"]
+dlTest:
+hpcTest:
+# ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+configPath: "/home/ipelu/Desktop/exoCreds" # TODO: not needed because does not use terraform
+flavor: "Medium" # TODO: not needed because does not use terraform
+zone: "ch-gva-2"  # TODO: not needed because does not use terraform
+template: "Linux CentOS 7 64-bit" # TODO: not needed because does not use terraform
+keyPair: "k_cl"  # TODO: not needed because does not use terraform
+securityGroups: "[\"default\"]" # TODO: not needed because does not use terraform
+diskSize: 100 # TODO: not needed because does not use terraform
+
+#---------------COST CALCULATION------------------------------------------------
+costCalculation:  # TODO: not needed because does not use terraform
+  generalInstancePrice: 0.2
+  GPUInstancePrice: 0.2
+  HPCInstancePrice: 0.2
+  s3bucketPrice: 0.1

@@ -13,6 +13,7 @@ src/provisionment/providers/cloudstack/*
 !src/provisionment/providers/*/terraform.tfvars
 
 logs
+ansibleLogs*
 
 src/provisionment/main.tf
 src/provisionment/join.sh

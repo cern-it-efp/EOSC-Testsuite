@@ -1,13 +1,13 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
 providerName: openstack
-pathToKey: "/home/ipelu/.ssh/id_rsa"
-#openUser:
-flavor: "m2.medium"
-imageName: "CC7 - x86_64 [2020-01-20]"
-keyPair: "exo"
-securityGroups:
+pathToKey: "/root/.ssh/id_rsa"
+openUser: eouser
+flavor: "eo1.medium"
+imageName: "CentOS 7"
+keyPair: mykey
+securityGroups: "[\"default\",\"allow_ping_ssh_rdp\"]"
 region:
-availabilityZone:
+availabilityZone: 
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:

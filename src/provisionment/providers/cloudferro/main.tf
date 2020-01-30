@@ -1,5 +1,5 @@
 variable "publicIP"{
-  default = "185.178.84.224"
+  default = "185.178.84.49"
 }
 
 provider "openstack" {

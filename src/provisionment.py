@@ -14,12 +14,14 @@ from ansible import context
 from ansible.cli import CLI
 from ansible.executor.playbook_executor import PlaybookExecutor
 from configparser import ConfigParser
+import contextlib
+import io
 
 from aux import *
 
 provisionFailMsg = "Failed to provision raw VMs. Check 'logs' file for details"
 bootstrapFailMsg = "Failed to bootstrap '%s' k8s cluster. Check 'logs' file"
-
+playbookPath = "provisionment/playbooks/bootstraper.yaml"
 
 def runTerraform(mainTfDir, baseCWD, test, msg, autoApprove=True):
     """Run Terraform cmds.
@@ -100,6 +102,67 @@ def stackVersioning(variables, configs):
         "K8S_PH", tryTakeFromYaml(configs, "kubernetes", ""))
 
     return variables
+
+
+def provisionAndBootstrap(test,
+                          nodes,
+                          flavor,
+                          extraInstanceConfig,
+                          toLog,
+                          configs,
+                          testsRoot,
+                          retry,
+                          instanceDefinition,
+                          credentials,
+                          dependencies,
+                          baseCWD,
+                          provDict,
+                          extraSupportedClouds,
+                          noTerraform):
+    """Provision infrastructure and/or bootstrap the k8s cluster."""
+
+    if noTerraform is True:
+        mainTfDir = testsRoot + test
+        kubeconfig = "%s/tests/%s/config" % (baseCWD, test) # "config"
+        openUserDefault = "root"
+        msgExcept = "WARNING: using default user '%s' for ssh connections (running on %s)" % (
+            openUserDefault, configs["providerName"])
+        openUser = tryTakeFromYaml(
+            configs, "openUser", openUserDefault, msgExcept=msgExcept)
+        if test == "shared":
+            mainTfDir = testsRoot + "sharedCluster"
+            os.makedirs(mainTfDir, exist_ok=True)
+            kubeconfig = "~/.kube/config"
+        result,masterIP = ansiblePlaybook(mainTfDir, baseCWD, configs["providerName"] , kubeconfig, noTerraform, test, configs["pathToKey"], openUser, configs)
+        if result != 0:
+            return False, bootstrapFailMsg % flavor
+        else:
+            # ---------------- wait for default service account to be ready and finish
+            # TODO: this must have a timeout
+            while runCMD(
+                'kubectl --kubeconfig %s get sa default' %
+                kubeconfig,
+                    hideLogs=True) != 0:
+                time.sleep(1)
+
+            writeToFile(toLog, "...'%s' CLUSTER CREATED (masterIP: %s) => STARTING TESTS\n" % (flavor,masterIP), True)
+
+            return True, ""
+    else:
+        return terraformProvisionment(test,
+                                  nodes,
+                                  flavor,
+                                  extraInstanceConfig,
+                                  toLog,
+                                  configs,
+                                  testsRoot,
+                                  retry,
+                                  instanceDefinition,
+                                  credentials,
+                                  dependencies,
+                                  baseCWD,
+                                  provDict,
+                                  extraSupportedClouds)
 
 
 def terraformProvisionment(
@@ -355,36 +418,32 @@ def terraformProvisionment(
 
 
     # ---------------- RUN ANSIBLE (first create hosts file)
-    writeToFile("logging/%s" % test, "...bootstraping Kubernetes cluster...", True)
-    playbookPath = "provisionment/playbooks/bootstraper.yaml"
-    hostsFilePath = "%s/hosts" % mainTfDir # "tests/sharedCluster/hosts"
-    os.chdir(mainTfDir)
-    tfShow = os.popen("terraform show -json").read().strip()
-    os.chdir(baseCWD)
-    resources = json.loads(tfShow)["values"]["root_module"]["resources"]
-    createHostsFile(resources, configs["providerName"], hostsFilePath)
-    result = runPlaybook(playbookPath, hostsFilePath, kubeconfig, test, configs["pathToKey"], openUser)
+    result,masterIP = ansiblePlaybook(mainTfDir, baseCWD, configs["providerName"] , kubeconfig, noTerraform, test, configs["pathToKey"], openUser, configs)
     if result != 0:
         return False, bootstrapFailMsg % flavor
 
-
-# --------------------------------------------------------------------------------
-
     # ---------------- wait for default service account to be ready and finish
-    # TODO: this has to have a timeout
+    # TODO: this must have a timeout
     while runCMD(
         'kubectl --kubeconfig %s get sa default' %
         kubeconfig,
             hideLogs=True) != 0:
         time.sleep(1)
 
-    writeToFile(toLog, "...'%s' CLUSTER CREATED (masterIP: %s) => STARTING TESTS\n" % (flavor,getMasterIP(hostsFilePath)), True)
+    writeToFile(toLog, "...'%s' CLUSTER CREATED (masterIP: %s) => STARTING TESTS\n" % (flavor,masterIP), True)
 
     return True, ""
 
 
-def runPlaybook(playbookPath, hostsFilePath, kubeconfig, test, sshKeyPath, openUser):
+def ansiblePlaybook(mainTfDir, baseCWD, providerName, kubeconfig, noTerraform, test, sshKeyPath, openUser, configs):
     """Runs ansible-playbook with the given playbook."""
+
+
+    writeToFile("logging/%s" % test, "...bootstraping Kubernetes cluster...", True)
+
+    hostsFilePath = "%s/hosts" % mainTfDir
+
+    createHostsFile(mainTfDir, baseCWD, providerName, hostsFilePath, configs, noTerraform=noTerraform, test=test)
 
     loader = DataLoader()
 
@@ -397,7 +456,7 @@ def runPlaybook(playbookPath, hostsFilePath, kubeconfig, test, sshKeyPath, openU
         ssh_common_args='-o StrictHostKeyChecking=no',
         extra_vars=[{'kubeconfig': kubeconfig}],
         forks=100,
-        verbosity=True,
+        verbosity=False, #True,
         listtags=False,
         listtasks=False,
         listhosts=False,
@@ -415,11 +474,15 @@ def runPlaybook(playbookPath, hostsFilePath, kubeconfig, test, sshKeyPath, openU
                                        inventory=inventory,
                                        version_info=CLI.version_info(gitinfo=False))
 
-    return PlaybookExecutor(playbooks=[playbookPath],
-                            inventory=inventory,
-                            variable_manager=variable_manager,
-                            loader=loader,
-                            passwords=None).run() # TODO: add cluster ID (test) to the logs from this function
+    # ----- to hide ansible logs
+    with open('../ansibleLogs%s' % test, 'w') as f: # TODO: add cluster ID (test) to the logs from this function
+        #with contextlib.redirect_stdout(io.StringIO()):
+        with contextlib.redirect_stdout(f):
+            return PlaybookExecutor(playbooks=[playbookPath],
+                                    inventory=inventory,
+                                    variable_manager=variable_manager,
+                                    loader=loader,
+                                    passwords=None).run(),getMasterIP(hostsFilePath)
 
 
 def getIP(resource, provider):
@@ -440,15 +503,23 @@ def getIP(resource, provider):
         return None
 
 
-def createHostsFile(resources, provider, destination):
+def createHostsFile(mainTfDir, baseCWD, provider, destination, configs, noTerraform=None, test=None):
     """Creates the hosts file required by ansible. Note destination contains
        the string 'hosts' too."""
 
     IPs = []
-    for resource in resources:
-        ip = getIP(resource, provider)
-        if ip is not None:
-            IPs.append(ip)
+
+    if noTerraform is not True:
+        os.chdir(mainTfDir)
+        resources = json.loads(os.popen("terraform show -json").read().strip())["values"]["root_module"]["resources"]
+        os.chdir(baseCWD)
+
+        for resource in resources:
+            ip = getIP(resource, provider)
+            if ip is not None:
+                IPs.append(ip)
+    else:
+        IPs = configs[test] # one of shared, dlTest, hpcTest
 
     config = ConfigParser(allow_no_value=True)
     config.add_section('master')

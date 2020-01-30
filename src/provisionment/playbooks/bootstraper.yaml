@@ -4,7 +4,7 @@
   tasks:
   - name: Waiting for VMs to be ready...
     wait_for_connection:
-      timeout: 120
+      timeout: 300
 
 # ------------------------------------ Allow root ssh
 - hosts: all
@@ -18,7 +18,9 @@
 - hosts: all
   become: yes
   tasks:
-  - name: Disable firewall # this is required in redhat/centos/fedora
+  - name: Disable swap (if configured)
+    command: swapoff -a
+  - name: Disable firewall # redhat distros
     ignore_errors: yes
     no_log: true
     command: systemctl stop firewalld

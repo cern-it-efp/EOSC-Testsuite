@@ -19,7 +19,7 @@
 - name: Fetch kubeconfig file
   fetch:
     src: $HOME/.kube/config
-    dest: "{{ kubeconfig }}" 
+    dest: "{{ kubeconfig }}"
     flat: yes
 
 - name: install Pod network
@@ -29,6 +29,7 @@
     creates: pod_network_setup.txt
 
 - name: Taint nodes
+  ignore_errors: yes
   command: kubectl taint nodes --all node-role.kubernetes.io/master-
 
 - name: Set default namespace to 'default'

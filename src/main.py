@@ -94,8 +94,11 @@ def validateYaml(provider):
                         it a specific YAML schema is used.
     """
 
-    configsSchema = "schemas/configs_sch_%s.yaml" % provider if provider \
-        in extraSupportedClouds else "schemas/configs_sch_general.yaml"
+    if noTerraform is False:
+        configsSchema = "schemas/configs_sch_%s.yaml" % provider if provider \
+            in extraSupportedClouds else "schemas/configs_sch_general.yaml"
+    else:
+        configsSchema = "schemas/configs_sch_noTerraform.yaml" # TODO: should check that the IP arrays exist for the selected tests
 
     try:
         jsonschema.validate(configs, loadFile(configsSchema))
@@ -154,14 +157,15 @@ def initAndChecks():
     dependencies = loadFile("../configurations/dependencies")
     credentials = loadFile("../configurations/credentials")
 
-    if configs['providerName'] not in provDict:
-        writeToFile("logging/header", "Provider '%s' not supported" %
-                    configs['providerName'], True)
-        stop(1)
+    #if configs['providerName'] not in provDict: # TODO: since we will give support to providers that do not support terraform (like cloudsigma) this check has to be moved to the case --no-terraform is not used
+    #    writeToFile("logging/header", "Provider '%s' not supported" %
+    #                configs['providerName'], True)
+    #    stop(1)
 
     # --------General config checks
     if configs['providerName'] not in extraSupportedClouds \
-            and "NAME_PH" not in instanceDefinition:
+            and "NAME_PH" not in instanceDefinition \
+            and noTerraform is False:
         writeToFile(
             "logging/header",
             "ERROR: NAME_PH was not found in instanceDefinition file.",
@@ -431,7 +435,7 @@ def dlTest():
     dl = testsCatalog["dlTest"]
     kubeconfig = "tests/dlTest/config"
     if onlyTest is False:
-        prov, msg = terraformProvisionment("dlTest",
+        prov, msg = provisionAndBootstrap("dlTest",
                                            dl["nodes"],
                                            dl["flavor"],
                                            extraInstanceConfig,
@@ -444,7 +448,8 @@ def dlTest():
                                            dependencies,
                                            baseCWD,
                                            provDict,
-                                           extraSupportedClouds)
+                                           extraSupportedClouds,
+                                           noTerraform)
         if prov is False:
             writeFail(resDir, "bb_train_history.json", msg, "logging/dlTest")
             return
@@ -556,7 +561,7 @@ def hpcTest():
     testCost = 0
     hpc = testsCatalog["hpcTest"]
     if onlyTest is False:
-        prov, msg = terraformProvisionment("hpcTest",
+        prov, msg = provisionAndBootstrap("hpcTest",
                                            hpc["nodes"],
                                            hpc["flavor"],
                                            None,
@@ -569,7 +574,8 @@ def hpcTest():
                                            dependencies,
                                            baseCWD,
                                            provDict,
-                                           extraSupportedClouds)
+                                           extraSupportedClouds,
+                                           noTerraform)
         if prov is False:
             writeFail(resDir, "hpcTest_result.json", msg, "logging/hpcTest")
             return
@@ -603,7 +609,7 @@ def sharedClusterTests(msgArr):
     testCost = 0
     logger(msgArr, "=", "logging/shared")
     if onlyTest is False:
-        prov, msg = terraformProvisionment("shared",
+        prov, msg = provisionAndBootstrap("shared",
                                            len(msgArr) - 1,
                                            None,
                                            None,
@@ -616,7 +622,8 @@ def sharedClusterTests(msgArr):
                                            dependencies,
                                            baseCWD,
                                            provDict,
-                                           extraSupportedClouds)
+                                           extraSupportedClouds,
+                                           noTerraform)
         if prov is False:
             writeFail(resDir, "sharedCluster_result.json",
                       msg, "logging/shared")
@@ -673,6 +680,7 @@ def checkClustersToDestroy(cliParameterValue):
 
 onlyTest = False
 killResources = False
+noTerraform = False
 configs = ""
 testsCatalog = ""
 instanceDefinition = ""
@@ -711,7 +719,7 @@ try:
     options, values = getopt.getopt(
         sys.argv[1:],
         "",
-        ["only-test", "via-backend", "retry", "destroy=", "destroy-on-completion="])
+        ["only-test", "via-backend", "retry", "destroy=", "destroy-on-completion=", "no-terraform"])
 except getopt.GetoptError as err:
     print(err)
     stop(1)
@@ -747,6 +755,8 @@ for currentOption, currentValue in options:
         else:
             print("The provided value '%s' for the option --destroy-on-completion is not valid." % currentValue)
             stop(1)
+    elif currentOption in ['--no-terraform']: # TODO: in this case configs.yaml validation has to be different
+        noTerraform = True # TODO: how does this deal with the other options?
 
 # -----------------CHECKS AND PREPARATION---------------------------------
 

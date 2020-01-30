@@ -45,6 +45,7 @@ The developers would like to thank all test owners and contributors to this proj
 |                              | | Cloudscale (OpenStack)                                                        |
 |                              | | CloudStack                                                                    |
 |                              | | OpenStack                                                                     |
+|                              | | CloudSigma                                                                    |
 +------------------------------+---------------------------------------------------------------------------------+
 
 The test suite is being tested in several additional cloud providers. As tests are concluded the cloud providers names will be added in the table above.
@@ -53,11 +54,13 @@ Release notes
 ---------------------------------------------
 (Note the versions are numbered with the date of the release: YEAR.MONTH)
 
-``20.xx``
+``20.2``
 
 -Using Ansible for VM configuration instead of Terraform's provisioners.
 
 -Added options to destroy the provisioned infrastructure.
+
+-Added support for non-Terraform providers
 
 -Automated creation of bastion (single node k8s cluster) for runs on providers that use NAT.
 
