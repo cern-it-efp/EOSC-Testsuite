@@ -1,20 +1,9 @@
 type: object
-oneOf:
-    - required:
-        - providerName
-        - pathToKey
-        - openUser
-        - shared
-    - required:
-        - providerName
-        - pathToKey
-        - openUser
-        - dlTest
-    - required:
-        - providerName
-        - pathToKey
-        - openUser
-        - hpcTest
+required:
+    - providerName
+    - pathToKey
+    - openUser
+    - clusters
 properties:
     providerName:
         type: string
@@ -22,18 +11,24 @@ properties:
         type: string
     openUser:
         type: string
-    shared:
-        type: array
-        items:
-          type: string
-    dlTest:
-        type: array
-        items:
-          type: string
-    hpcTest:
-        type: array
-        items:
-          type: string
+    clusters:
+        type:
+            - object
+        additionalProperties: false
+        minProperties: 1
+        properties:
+            shared:
+                type: array
+                items:
+                  type: string
+            dlTest:
+                type: array
+                items:
+                  type: string
+            hpcTest:
+                type: array
+                items:
+                  type: string
     dockerCE:
         type: string
     dockerEngine:
@@ -49,6 +44,7 @@ properties:
             - GPUInstancePrice
             - HPCInstancePrice
             - s3bucketPrice
+        additionalProperties: false
         properties:
             generalInstancePrice:
                 type:

@@ -6,12 +6,12 @@ s3Test:
 dataRepatriationTest:
   run: true
 cpuBenchmarking:
-  run:
+  run: 
 perfsonarTest:
-  run:
+  run: 
   endpoint: psb01-gva.cern.ch
 dodasTest:
-  run:
+  run: 
 dlTest:
   run: true
   nodes: 3

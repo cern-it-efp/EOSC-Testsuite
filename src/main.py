@@ -115,6 +115,29 @@ def validateYaml(provider):
         stop(1)
 
 
+def checkProvidedIPs(selected):
+    """Checks, when the option '--no-terraform' has been used that the
+       IPs for the selected tests were provided at testsCatalog.yaml"""
+
+
+    for test in testsSharingCluster:
+        if testsCatalog[test]["run"] is True:
+            try:
+                configs["clusters"]["shared"]
+                break
+            except KeyError as ex:
+                print("IPs missing at configs.yaml for the shared cluster.")
+                stop(1)
+
+    for test in customClustersTests:
+        if testsCatalog[test]["run"] is True:
+            try:
+                configs["clusters"][test]
+            except KeyError as ex:
+                print("IPs missing at configs.yaml for %s." % test)
+                stop(1)
+
+
 def initAndChecks():
     """Initial checks and initialization of variables.
 
@@ -130,7 +153,7 @@ def initAndChecks():
     global credentials
     global obtainCost
 
-    # --------File check
+    # --------File & deps check
     if runCMD("terraform version", hideLogs=True) != 0:
         print("Terraform is not installed")
         stop(1)
@@ -138,9 +161,10 @@ def initAndChecks():
         print("kubectl is not installed")
         stop(1)
 
-    configs = loadFile("../configurations/configs.yaml", required=True)
-    testsCatalog = loadFile(
-        "../configurations/testsCatalog.yaml", required=True)
+    cfgPath = "../configurations/"
+
+    configs = loadFile("%s/configs.yaml" % cfgPath, required=True)
+    testsCatalog = loadFile("%s/testsCatalog.yaml" % cfgPath, required=True)
 
     # SSH key checks: exists and permissions set to 600
     if os.path.isfile(configs["pathToKey"]) is False:
@@ -152,10 +176,10 @@ def initAndChecks():
 
     validateYaml(configs["providerName"])
 
-    instanceDefinition = loadFile("../configurations/instanceDefinition")
-    extraInstanceConfig = loadFile("../configurations/extraInstanceConfig")
-    dependencies = loadFile("../configurations/dependencies")
-    credentials = loadFile("../configurations/credentials")
+    instanceDefinition = loadFile("%s/instanceDefinition" % cfgPath)
+    extraInstanceConfig = loadFile("%s/extraInstanceConfig" % cfgPath)
+    dependencies = loadFile("%s/dependencies" % cfgPath)
+    credentials = loadFile("%s/credentials" % cfgPath)
 
     #if configs['providerName'] not in provDict: # TODO: since we will give support to providers that do not support terraform (like cloudsigma) this check has to be moved to the case --no-terraform is not used
     #    writeToFile("logging/header", "Provider '%s' not supported" %
@@ -216,6 +240,9 @@ def initAndChecks():
             obtainCost,
             configs["costCalculation"]["generalInstancePrice"])
 
+    if noTerraform is True:
+        checkProvidedIPs(selected)
+
     return selected
 
 
@@ -225,7 +252,7 @@ def bastionRun(): # TODO
     #   1.1) Bootstrap a single node k8s cluster with (requires public IP w/o NAT which is acually impossible)
     #   1.2) Do everything over SSH as I do manually when runnin the suite on gcp, aws, etc: discover NAT IP (previously allocated in some cases like CF's openstack), install docker, deploy our docker image, configure and run
     #   1.3) Use VPN, specific to each provider
-    if runTerraform(mainTfDir, baseCWD, test, msg, autoApprove=True) != 0:
+    if runTerrafor() != 0:
         writeToFile("logging/header", "Failed to provision bastion VM.", True)
         stop(1)
     # 2) Deploy the tslauncher image on a pod to the cluster
@@ -655,7 +682,7 @@ def checkRequiredTFexist(selectedTests):
         "cpuBenchmarking" in selectedTests or \
         "perfsonarTest" in selectedTests or \
         "dodasTest" in selectedTests) \
-        and os.path.isfile(pathToMain % "sharedCluster") is False:
+        and os.path.isfile(pathToMain % "shared") is False:
         writeToFile("logging/header", "ERROR: terraform files not found for shared cluster. Normal run is required before run with '--retry'.", True)
         stop(1)
 
@@ -709,7 +736,7 @@ destroy = None
 destroyOnCompletion = None
 clustersToDestroy = None
 publicRepo = "https://ocre-testsuite.rtfd.io"
-clusters = ["sharedCluster", "dlTest", "hpcTest"]
+clusters = ["shared", "dlTest", "hpcTest"]
 
 #logo, no results, no provider
 header()
@@ -848,7 +875,7 @@ if checkResultsExist(resDir) is True:
         else:
             logger([msg1, "Results on the S3 bucket"], "#", "logging/footer")
     else:
-        logger(msg1, "#", "logging/footer")
+        logger(msg1, "°", "logging/footer") # conflict here?
 else:
 
     #logo with provider, no results
@@ -861,4 +888,5 @@ else:
 if destroyOnCompletion == True: # TODO: if anything fails during provision, this option should be ignored. This should be taken into account only if the run succeeded til the end.
     print(destroyTF(baseCWD, clusters=clustersToDestroy))
 
+logger("Test-Suite run completed!", "#", "logging/end")
 stop(0)

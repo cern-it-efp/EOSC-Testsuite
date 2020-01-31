@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-# uses ansible
-
 import os
 import time
 import random
@@ -23,7 +21,7 @@ provisionFailMsg = "Failed to provision raw VMs. Check 'logs' file for details"
 bootstrapFailMsg = "Failed to bootstrap '%s' k8s cluster. Check 'logs' file"
 playbookPath = "provisionment/playbooks/bootstraper.yaml"
 
-def runTerraform(mainTfDir, baseCWD, test, msg, autoApprove=True):
+def runTerraform(toLog, cmd, mainTfDir, baseCWD, test, msg):
     """Run Terraform cmds.
 
     Parameters:
@@ -31,19 +29,13 @@ def runTerraform(mainTfDir, baseCWD, test, msg, autoApprove=True):
         baseCWD (str): Path to go back.
         test (str): Cluster identification.
         msg (str): Message to be shown.
-        autoApprove (bool): If True (default) use '-auto-approve' option
 
     Returns:
         int: 0 for success, 1 for failure
     """
 
-    toLog = "logging/%s" % test
     writeToFile(toLog, msg, True)
     os.chdir(mainTfDir)
-    beautify = "terraform fmt > /dev/null &&"
-    tfCMD = "terraform init && %s terraform apply -auto-approve" % beautify
-    if autoApprove is False:
-        tfCMD = "terraform init && %s terraform apply" % beautify
 
     tfScript = """
     ((%s) && touch /tmp/validTFrun) |
@@ -55,11 +47,32 @@ def runTerraform(mainTfDir, baseCWD, test, msg, autoApprove=True):
     	exit 0
     fi
     exit 1
-    """ % (tfCMD, test)
+    """ % (cmd, test)
 
     exitCode = runCMD(tfScript)
     os.chdir(baseCWD)
     return exitCode
+
+
+def destroyTF(baseCWD, clusters=None):
+    """Destroy infrastructure. 'clusters' is an array whose objects specify
+       the clusters that should be destroyed. In case no array is given, all
+       clusters will be destroyed"""
+
+    if clusters is None:
+        clusters = ["shared", "dlTest", "hpcTest"]
+
+    res = []
+    for cluster in clusters:
+        toLog = "logging/footer"
+        msg = "  -Destroying %s cluster..." % cluster
+        mainTfDir = "tests/%s" % cluster
+        cmd = "terraform destroy -auto-approve"
+        exitCode = runTerraform(toLog, cmd, mainTfDir, baseCWD, cluster, msg)
+
+        res.append(exitCode)
+        
+    return res
 
 
 def cleanupTF(mainTfDir):
@@ -130,7 +143,7 @@ def provisionAndBootstrap(test,
         openUser = tryTakeFromYaml(
             configs, "openUser", openUserDefault, msgExcept=msgExcept)
         if test == "shared":
-            mainTfDir = testsRoot + "sharedCluster"
+            mainTfDir = testsRoot + "shared"
             os.makedirs(mainTfDir, exist_ok=True)
             kubeconfig = "~/.kube/config"
         result,masterIP = ansiblePlaybook(mainTfDir, baseCWD, configs["providerName"] , kubeconfig, noTerraform, test, configs["pathToKey"], openUser, configs)
@@ -213,7 +226,7 @@ def terraformProvisionment(
     kubeconfig = "%s/tests/%s/config" % (baseCWD, test) # "config"
     if test == "shared":
         flavor = configs["flavor"]
-        mainTfDir = testsRoot + "sharedCluster"
+        mainTfDir = testsRoot + "shared"
         os.makedirs(mainTfDir, exist_ok=True)
         kubeconfig = "~/.kube/config"
 
@@ -410,7 +423,11 @@ def terraformProvisionment(
         writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
 
         # ---------------- RUN TERRAFORM: provision VMs
-        if runTerraform(mainTfDir,
+        beautify = "terraform fmt > /dev/null &&"
+        cmd = "terraform init && %s terraform apply -auto-approve" % beautify
+        if runTerraform("logging/%s" % test,
+                        cmd,
+                        mainTfDir,
                         baseCWD,
                         test,
                         "Provisioning '%s' VMs..." % flavor) != 0:
@@ -418,7 +435,7 @@ def terraformProvisionment(
 
 
     # ---------------- RUN ANSIBLE (first create hosts file)
-    result,masterIP = ansiblePlaybook(mainTfDir, baseCWD, configs["providerName"] , kubeconfig, noTerraform, test, configs["pathToKey"], openUser, configs)
+    result,masterIP = ansiblePlaybook(mainTfDir, baseCWD, configs["providerName"] , kubeconfig, None, test, configs["pathToKey"], openUser, configs)
     if result != 0:
         return False, bootstrapFailMsg % flavor
 
@@ -519,7 +536,7 @@ def createHostsFile(mainTfDir, baseCWD, provider, destination, configs, noTerraf
             if ip is not None:
                 IPs.append(ip)
     else:
-        IPs = configs[test] # one of shared, dlTest, hpcTest
+        IPs = configs["clusters"][test] # one of shared, dlTest, hpcTest
 
     config = ConfigParser(allow_no_value=True)
     config.add_section('master')
@@ -529,24 +546,3 @@ def createHostsFile(mainTfDir, baseCWD, provider, destination, configs, noTerraf
         config.set('slaves',ip)
     with open(destination, 'w') as hostsfile:
         config.write(hostsfile)
-
-
-def destroyTF(baseCWD, clusters=None):
-    """Destroy infrastructure. 'clusters' is an array whose objects specify
-       the clusters that should be destroyed. In case no array is given, all
-       clusters will be destroyed"""
-
-    if clusters is None:
-        clusters = ["sharedCluster", "dlTest", "hpcTest"]
-
-    res = []
-
-    for cluster in clusters:
-        logger("Destroying %s cluster..." % cluster, "~", "logging/footer")
-
-        os.chdir("tests/%s" % cluster)
-        exitCode = runCMD("terraform destroy -auto-approve")
-        res.append(exitCode)
-        os.chdir(baseCWD)
-
-    return res # TODO: return a dict with the destroy status of each cluster

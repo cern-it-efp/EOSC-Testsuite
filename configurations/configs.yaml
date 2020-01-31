@@ -2,11 +2,14 @@
 providerName: "cloudsigma"
 pathToKey: "/home/ipelu/.ssh/id_rsa"
 openUser: cloudsigma
-hpcTest: ["31.171.250.85","31.171.240.148"]
+clusters:
+  shared: ["31.171.250.103","31.171.240.78"]
+  hpcTest: ["31.171.250.218","31.171.240.129"]
+  dlTest: ["31.171.240.121","31.171.250.185","31.171.240.165"]
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:
-  generalInstancePrice: 0.2
+  generalInstancePrice:
   GPUInstancePrice: 0.2
   HPCInstancePrice: 0.2
   s3bucketPrice: 0.1
