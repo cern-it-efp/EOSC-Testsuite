@@ -8,6 +8,7 @@ try:
     import datetime
     import time
     import subprocess
+    import jsonschema
     import shutil
     from configparser import ConfigParser
 
@@ -177,3 +178,32 @@ def tryTakeFromYaml(dict, key, defaultValue, msgExcept=None):
         if msgExcept is not None:
             print(msgExcept)
         return defaultValue
+
+
+def validateYaml(configs, testsCatalog, noTerraform, extraSupportedClouds):
+    """ Validates configs.yaml and testsCatalog.yaml file against schemas.
+
+    Parameters:
+        provider (str): Provider on which the suite is being run. According to
+                        it a specific YAML schema is used.
+    """
+
+    if noTerraform is False:
+        configsSchema = "src/schemas/configs_sch_%s.yaml" % configs["providerName"] if configs["providerName"] \
+            in extraSupportedClouds else "src/schemas/configs_sch_general.yaml"
+    else:
+        configsSchema = "src/schemas/configs_sch_noTerraform.yaml" # TODO: should check that the IP arrays exist for the selected tests
+
+    try:
+        jsonschema.validate(configs, loadFile(configsSchema))
+    except jsonschema.exceptions.ValidationError as ex:
+        print("Error validating configs.yaml: \n %s" % ex)
+        stop(1)
+
+    try:
+        jsonschema.validate(
+            testsCatalog,
+            loadFile("src/schemas/testsCatalog_sch.yaml"))
+    except jsonschema.exceptions.ValidationError as ex:
+        print("Error validating testsCatalog.yaml: \n %s" % ex)
+        stop(1)

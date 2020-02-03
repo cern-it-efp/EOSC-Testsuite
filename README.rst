@@ -64,6 +64,8 @@ Release notes
 
 -Automated creation of bastion (single node k8s cluster) for runs on providers that use NAT.
 
+-Added options to specify custom location of configs.yaml and testsCatalog.yaml.
+
 ``19.12``
 
 -Project restructured.

@@ -9,10 +9,10 @@ while [[ "$1" != "" ]]; do
     jenkins=true
     shift
   elif [[ "$1" == '--destroy' ]]; then
-    cd src
-    python3 -B -u main.py $1 $2
+    #cd src
+    python3 -B -u src/main.py $1 $2
     outStat=$?
-    cd ..
+    #cd ..
     exit $outStat
   else
     opts+=" "$1
@@ -49,10 +49,11 @@ watchFunct(){
 
 ############# TEST SUITE RUN #############
 watchFunct &
-cd src
-python3 -B -u main.py $opts &> ../logs
+#cd src
+#python3 -B -u main.py $opts &> ../logs
+python3 -B -u src/main.py $opts &> logs
 outStat=$?
-cd ..
+#cd ..
 ##########################################
 
 #TS run complete, kill logger and cat logs to main terminal:

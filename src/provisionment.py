@@ -16,10 +16,11 @@ import contextlib
 import io
 
 from aux import *
+from init import *
 
 provisionFailMsg = "Failed to provision raw VMs. Check 'logs' file for details"
 bootstrapFailMsg = "Failed to bootstrap '%s' k8s cluster. Check 'logs' file"
-playbookPath = "provisionment/playbooks/bootstraper.yaml"
+playbookPath = "src/provisionment/playbooks/bootstraper.yaml"
 
 def runTerraform(toLog, cmd, mainTfDir, baseCWD, test, msg):
     """Run Terraform cmds.
@@ -64,14 +65,14 @@ def destroyTF(baseCWD, clusters=None):
 
     res = []
     for cluster in clusters:
-        toLog = "logging/footer"
+        toLog = "src/logging/footer"
         msg = "  -Destroying %s cluster..." % cluster
-        mainTfDir = "tests/%s" % cluster
+        mainTfDir = "src/tests/%s" % cluster
         cmd = "terraform destroy -auto-approve"
         exitCode = runTerraform(toLog, cmd, mainTfDir, baseCWD, cluster, msg)
 
         res.append(exitCode)
-        
+
     return res
 
 
@@ -136,7 +137,7 @@ def provisionAndBootstrap(test,
 
     if noTerraform is True:
         mainTfDir = testsRoot + test
-        kubeconfig = "%s/tests/%s/config" % (baseCWD, test) # "config"
+        kubeconfig = "%s/src/tests/%s/config" % (baseCWD, test) # "config"
         openUserDefault = "root"
         msgExcept = "WARNING: using default user '%s' for ssh connections (running on %s)" % (
             openUserDefault, configs["providerName"])
@@ -216,14 +217,14 @@ def terraformProvisionment(
         str: Message informing of the provisionment task result.
     """
 
-    templatesPath = "templates/"
+    templatesPath = "src/templates/"
     if configs["providerName"] in extraSupportedClouds:
         templatesPath += configs["providerName"]
     else:
         templatesPath += "general"
 
     mainTfDir = testsRoot + test
-    kubeconfig = "%s/tests/%s/config" % (baseCWD, test) # "config"
+    kubeconfig = "%s/src/tests/%s/config" % (baseCWD, test) # "config"
     if test == "shared":
         flavor = configs["flavor"]
         mainTfDir = testsRoot + "shared"
@@ -251,7 +252,7 @@ def terraformProvisionment(
         openUser = tryTakeFromYaml(
             configs, "openUser", openUserDefault, msgExcept=msgExcept)
 
-        variables = loadFile("templates/general/variables.tf",
+        variables = loadFile("src/templates/general/variables.tf",
                              required=True).replace(
             "NODES_PH", str(nodes)).replace(
             "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(
@@ -425,7 +426,7 @@ def terraformProvisionment(
         # ---------------- RUN TERRAFORM: provision VMs
         beautify = "terraform fmt > /dev/null &&"
         cmd = "terraform init && %s terraform apply -auto-approve" % beautify
-        if runTerraform("logging/%s" % test,
+        if runTerraform("src/logging/%s" % test,
                         cmd,
                         mainTfDir,
                         baseCWD,
@@ -456,7 +457,7 @@ def ansiblePlaybook(mainTfDir, baseCWD, providerName, kubeconfig, noTerraform, t
     """Runs ansible-playbook with the given playbook."""
 
 
-    writeToFile("logging/%s" % test, "...bootstraping Kubernetes cluster...", True)
+    writeToFile("src/logging/%s" % test, "...bootstraping Kubernetes cluster...", True)
 
     hostsFilePath = "%s/hosts" % mainTfDir
 
@@ -492,7 +493,7 @@ def ansiblePlaybook(mainTfDir, baseCWD, providerName, kubeconfig, noTerraform, t
                                        version_info=CLI.version_info(gitinfo=False))
 
     # ----- to hide ansible logs
-    with open('../ansibleLogs%s' % test, 'w') as f: # TODO: add cluster ID (test) to the logs from this function
+    with open('ansibleLogs%s' % test, 'w') as f: # TODO: add cluster ID (test) to the logs from this function
         #with contextlib.redirect_stdout(io.StringIO()):
         with contextlib.redirect_stdout(f):
             return PlaybookExecutor(playbooks=[playbookPath],

@@ -2,6 +2,7 @@
 
 import os
 from aux import *
+#from init import *
 
 def checkCost(obtainCost, value):
     """ Checks the provided value is not None and is greater than 0.
@@ -42,3 +43,61 @@ def checkResultsExist(resDir):
 
     for dirpath, dirnames, files in os.walk(resDir):
         return len(files) > 0
+
+
+def checkProvidedIPs(selected, testsSharingCluster, customClustersTests, configs, testsCatalog):
+    """Checks, when the option '--no-terraform' has been used that the
+       IPs for the selected tests were provided at testsCatalog.yaml"""
+
+
+    for test in testsSharingCluster:
+        if testsCatalog[test]["run"] is True:
+            try:
+                configs["clusters"]["shared"]
+                break
+            except KeyError as ex:
+                print("IPs missing at configs.yaml for the shared cluster.")
+                stop(1)
+
+    for test in customClustersTests:
+        if testsCatalog[test]["run"] is True:
+            try:
+                configs["clusters"][test]
+            except KeyError as ex:
+                print("IPs missing at configs.yaml for %s." % test)
+                stop(1)
+
+
+def checkRequiredTFexist(selectedTests):
+    """Called when --retry option is used, checks the main.tf files exist for
+       the required tests: those with run: true at testsCatalog.yaml"""
+
+    pathToMain = "src/tests/%s/main.tf"
+
+    if ("s3Test" in selectedTests or \
+        "dataRepatriationTest" in selectedTests or \
+        "cpuBenchmarking" in selectedTests or \
+        "perfsonarTest" in selectedTests or \
+        "dodasTest" in selectedTests) \
+        and os.path.isfile(pathToMain % "shared") is False:
+        writeToFile("src/logging/header", "ERROR: terraform files not found for shared cluster. Normal run is required before run with '--retry'.", True)
+        stop(1)
+
+    if "dlTest" in selectedTests and os.path.isfile(pathToMain % "dlTest") is False:
+        writeToFile("src/logging/header", "ERROR: terraform files not found for dlTest. Normal run is required before run with '--retry'.", True)
+        stop(1)
+
+    if "hpcTest" in selectedTests and os.path.isfile(pathToMain % "hpcTest") is False:
+        writeToFile("src/logging/header", "ERROR: terraform files not found for hpcTest. Normal run is required before run with '--retry'.", True)
+        stop(1)
+
+
+def checkClustersToDestroy(cliParameterValue):
+    """Checks the given argument matches cluster to be destroyed"""
+    try:
+        for value in cliParameterValue.split(','):
+            if value not in clusters:
+                return False
+    except:
+        return False
+    return True
