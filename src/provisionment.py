@@ -12,6 +12,7 @@ from ansible import context
 from ansible.cli import CLI
 from ansible.executor.playbook_executor import PlaybookExecutor
 from configparser import ConfigParser
+from multiprocessing import Process, Queue
 import contextlib
 import io
 
@@ -149,7 +150,7 @@ def provisionAndBootstrap(test,
             kubeconfig = "~/.kube/config"
         result,masterIP = ansiblePlaybook(mainTfDir, baseCWD, configs["providerName"] , kubeconfig, noTerraform, test, configs["pathToKey"], openUser, configs)
         if result != 0:
-            return False, bootstrapFailMsg % flavor
+            return False, bootstrapFailMsg % test
         else:
             # ---------------- wait for default service account to be ready and finish
             # TODO: this must have a timeout
@@ -159,7 +160,7 @@ def provisionAndBootstrap(test,
                     hideLogs=True) != 0:
                 time.sleep(1)
 
-            writeToFile(toLog, "...'%s' CLUSTER CREATED (masterIP: %s) => STARTING TESTS\n" % (flavor,masterIP), True)
+            writeToFile(toLog, "...%s CLUSTER CREATED (masterIP: %s) => STARTING TESTS\n" % (test,masterIP), True)
 
             return True, ""
     else:
@@ -438,7 +439,7 @@ def terraformProvisionment(
     # ---------------- RUN ANSIBLE (first create hosts file)
     result,masterIP = ansiblePlaybook(mainTfDir, baseCWD, configs["providerName"] , kubeconfig, None, test, configs["pathToKey"], openUser, configs)
     if result != 0:
-        return False, bootstrapFailMsg % flavor
+        return False, bootstrapFailMsg % test
 
     # ---------------- wait for default service account to be ready and finish
     # TODO: this must have a timeout
@@ -448,7 +449,7 @@ def terraformProvisionment(
             hideLogs=True) != 0:
         time.sleep(1)
 
-    writeToFile(toLog, "...'%s' CLUSTER CREATED (masterIP: %s) => STARTING TESTS\n" % (flavor,masterIP), True)
+    writeToFile(toLog, "...%s CLUSTER CREATED (masterIP: %s) => STARTING TESTS\n" % (test,masterIP), True)
 
     return True, ""
 
@@ -480,11 +481,7 @@ def ansiblePlaybook(mainTfDir, baseCWD, providerName, kubeconfig, noTerraform, t
         listhosts=False,
         syntax=False,
         check=False,
-        start_at_task=None,
-        # module_path=None,
-        # ssh_extra_args=None,
-        # sftp_extra_args=None,
-        # scp_extra_args=None,
+        start_at_task=None
     )
 
     inventory = InventoryManager(loader=loader, sources=hostsFilePath)
@@ -493,14 +490,25 @@ def ansiblePlaybook(mainTfDir, baseCWD, providerName, kubeconfig, noTerraform, t
                                        version_info=CLI.version_info(gitinfo=False))
 
     # ----- to hide ansible logs
-    with open('ansibleLogs%s' % test, 'w') as f: # TODO: add cluster ID (test) to the logs from this function
-        #with contextlib.redirect_stdout(io.StringIO()):
-        with contextlib.redirect_stdout(f):
-            return PlaybookExecutor(playbooks=[playbookPath],
-                                    inventory=inventory,
-                                    variable_manager=variable_manager,
-                                    loader=loader,
-                                    passwords=None).run(),getMasterIP(hostsFilePath)
+    #with open('src/logging/ansibleLogs%s' % test, 'w') as f: # TODO: add cluster ID (test) to the logs from this function
+    #with open('src/logging/ansibleLogs', 'w') as f: # TODO: add cluster ID (test) to the logs from this function
+    #    with contextlib.redirect_stdout(f):
+    #        return PlaybookExecutor(playbooks=[playbookPath],
+    #                                inventory=inventory,
+    #                                variable_manager=variable_manager,
+    #                                loader=loader,
+    #                                passwords=None).run(),getMasterIP(hostsFilePath)
+
+    f = io.StringIO()
+    with contextlib.redirect_stdout(f):
+        res = PlaybookExecutor(playbooks=[playbookPath],
+                                inventory=inventory,
+                                variable_manager=variable_manager,
+                                loader=loader,
+                                passwords=None).run(),getMasterIP(hostsFilePath)
+    for line in f.getvalue().splitlines():
+        print("[ %s ] %s" % (test,line))
+    return res
 
 
 def getIP(resource, provider):

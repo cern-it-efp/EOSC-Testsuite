@@ -1,6 +1,9 @@
 #!/bin/bash
 
 ld="src/logging" # logging dir
+
+echo "" > /tmp/someLogs
+
 rm -f $ld/header $ld/killMe $ld/footer $ld/hpcTest $ld/dlTest $ld/shared $ld/logs $ld/end &> /dev/null #Delete log files from previous failed runs
 
 opts=""

@@ -244,7 +244,7 @@ def dodasTest(resDir):
     init.queue.put(({"test": "dodasTest", "deployed": res}, testCost))
 
 
-def dlTest(onlyTest, resDir):
+def dlTest(onlyTest,retry,noTerraform,resDir):
     """Run Deep Learning test -GAN training- on GPU nodes.
 
     Returns:
@@ -371,7 +371,7 @@ def dlTest(onlyTest, resDir):
     init.queue.put(({"test": "dlTest", "deployed": res}, testCost))
 
 
-def hpcTest(resDir):
+def hpcTest(onlyTest,retry,noTerraform,resDir):
     """HPC test.
 
     Returns:

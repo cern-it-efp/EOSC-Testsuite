@@ -14,6 +14,8 @@ try:
     import tarfile
     from pathlib import Path
     from enum import Enum
+    import contextlib # to hide logs
+    import io
 
 except ModuleNotFoundError as ex:
     print(ex)
@@ -57,9 +59,10 @@ def fetchResults(resDir, source, file, toLog):
     """
 
     while os.path.exists(resDir + "/" + file) is False:
-        print("Fetching results...")
-        kubectl(Action.cp, podPath=source, localPath="%s/%s" %
-                (resDir, file), fetch=True)
+        with contextlib.redirect_stdout(io.StringIO()): # to hide logs
+            print("Fetching results...")
+            kubectl(Action.cp, podPath=source, localPath="%s/%s" %
+                    (resDir, file), fetch=True)
     writeToFile(toLog, file + " fetched!", True)
 
 

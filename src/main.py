@@ -139,7 +139,7 @@ for currentOption, currentValue in options:
     elif currentOption in ['--retry']:
         retry = True
     elif currentOption in ['--destroy']:
-        if checkClustersToDestroy(currentValue): # shared, dlTest, hpcTest
+        if checkClustersToDestroy(currentValue, clusters): # shared, dlTest, hpcTest
             answer = input("WARNING - destroy infrastructure (%s)? yes/no: " % currentValue)
             if answer == "yes":
                 print(destroyTF(baseCWD,clusters=currentValue.split(',')))
@@ -155,7 +155,7 @@ for currentOption, currentValue in options:
             print("The provided value '%s' for the option --destroy is not valid." % currentValue)
         stop(0)
     elif currentOption in ['--destroy-on-completion']:
-        if checkClustersToDestroy(currentValue): # shared, dlTest, hpcTest
+        if checkClustersToDestroy(currentValue, clusters): # shared, dlTest, hpcTest
             destroyOnCompletion = True
             clustersToDestroy = currentValue.split(',')
         elif currentValue == "all":
@@ -218,7 +218,7 @@ if len(msgArr) > 1:
 for test in customClustersTests:
     if testsCatalog[test]["run"] is True:
         logger("CLUSTER %s: %s" % (cluster, test), "=", "src/logging/%s" % test)
-        p = Process(target=eval(test), args=(onlyTest,noTerraform))
+        p = Process(target=eval(test), args=(onlyTest,retry,noTerraform,resDir))
         procs.append(p)
         p.start()
         cluster += 1

@@ -92,7 +92,7 @@ def checkRequiredTFexist(selectedTests):
         stop(1)
 
 
-def checkClustersToDestroy(cliParameterValue):
+def checkClustersToDestroy(cliParameterValue, clusters):
     """Checks the given argument matches cluster to be destroyed"""
     try:
         for value in cliParameterValue.split(','):
