@@ -39,10 +39,10 @@ def checkCluster(test):
 
     cmd = "kubectl get nodes --request-timeout=4s"
     if test != "shared":
-        cmd += " --kubeconfig tests/%s/config" % (test)
+        cmd += " --kubeconfig src/tests/%s/config" % (test)
     if runCMD(cmd, hideLogs=True) != 0:
         writeToFile(
-            "logging/%s" % test,
+            "src/logging/%s" % test,
             "%s cluster not reachable, was infrastructure created?" % test,
             True)
         return False

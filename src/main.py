@@ -58,7 +58,7 @@ def header(noLogo=False, provider=None, results=None):
     else:
         if provider is not None:
             if results is None:
-                showThis = ["                  | Cloud Benchmarking & Validation Test Suite",
+                showThis = ["                  | Cloud Benchmarking & Validation Test Suite", # TODO: this has to show EOSC
                      "█▀▀█ █▀▀ █▀▀█ █▀▀ | Developed by CERN IT-EFP",
                      "█  █ █   █▄▄▀ █▀▀ | Contact: ignacio.peluaga.lozada@cern.ch",
                      "▀▀▀▀ ▀▀▀ ▀ ▀▀ ▀▀▀ | ..........................................",
@@ -84,6 +84,12 @@ def header(noLogo=False, provider=None, results=None):
                 writeToFile("src/logging/header", "(ONLY TEST EXECUTION)", True)
         except:
             header(noLogo=True,provider=provider,results=results)
+
+
+def wasSuccessfullyProvisioned(cluster):
+    """Checks if a cluster was successfully provisioned"""
+    #get the object from the queue related to cluster, if True, return True. False otherwise
+    return True
 
 
 onlyTest = False
@@ -272,7 +278,9 @@ else:
 # TODO: how does this deal with --only-test ?
 # TODO: if the cluster is not reachable this shouldn't be even tried
 if destroyOnCompletion == True: # TODO: if anything fails during provision, this option should be ignored. This should be taken into account only if the run succeeded til the end.
-    print(destroyTF(baseCWD, clusters=clustersToDestroy))
+    for cluster in clustersToDestroy:
+        if wasSuccessfullyProvisioned(cluster): # TODO: do not run for a cluster if its provisioning and/or bootstraping failed
+            destroyTF(baseCWD, clusters=[cluster])
 
 logger("Test-Suite run completed!", "#", "src/logging/end")
 stop(0)

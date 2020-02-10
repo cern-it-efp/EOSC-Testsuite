@@ -12,7 +12,7 @@ from ansible import context
 from ansible.cli import CLI
 from ansible.executor.playbook_executor import PlaybookExecutor
 from configparser import ConfigParser
-from multiprocessing import Process, Queue
+import threading
 import contextlib
 import io
 
@@ -136,7 +136,7 @@ def provisionAndBootstrap(test,
                           noTerraform):
     """Provision infrastructure and/or bootstrap the k8s cluster."""
 
-    if noTerraform is True:
+    if noTerraform is True: # Only ansible
         mainTfDir = testsRoot + test
         kubeconfig = "%s/src/tests/%s/config" % (baseCWD, test) # "config"
         openUserDefault = "root"
@@ -163,7 +163,7 @@ def provisionAndBootstrap(test,
             writeToFile(toLog, "...%s CLUSTER CREATED (masterIP: %s) => STARTING TESTS\n" % (test,masterIP), True)
 
             return True, ""
-    else:
+    else: # Both terraform and ansible
         return terraformProvisionment(test,
                                   nodes,
                                   flavor,
@@ -454,6 +454,10 @@ def terraformProvisionment(
     return True, ""
 
 
+def threadedPrint(f,test):
+    for line in f.getvalue().splitlines():
+        print("[ %s ] %s" % (test,line))
+
 def ansiblePlaybook(mainTfDir, baseCWD, providerName, kubeconfig, noTerraform, test, sshKeyPath, openUser, configs):
     """Runs ansible-playbook with the given playbook."""
 
@@ -489,29 +493,40 @@ def ansiblePlaybook(mainTfDir, baseCWD, providerName, kubeconfig, noTerraform, t
                                        inventory=inventory,
                                        version_info=CLI.version_info(gitinfo=False))
 
-    # ----- to hide ansible logs
-    #with open('src/logging/ansibleLogs%s' % test, 'w') as f: # TODO: add cluster ID (test) to the logs from this function
-    #with open('src/logging/ansibleLogs', 'w') as f: # TODO: add cluster ID (test) to the logs from this function
-    #    with contextlib.redirect_stdout(f):
-    #        return PlaybookExecutor(playbooks=[playbookPath],
-    #                                inventory=inventory,
-    #                                variable_manager=variable_manager,
-    #                                loader=loader,
-    #                                passwords=None).run(),getMasterIP(hostsFilePath)
+    # ----- to hide ansible logs # TODO: add cluster ID (test) to the logs from this function
+    #with open('src/logging/ansibleLogs%s' % test, 'w') as f:
+    #with open('src/logging/ansibleLogs', 'w') as f:
+    #"""
+    with open('ansibleLogs', 'a') as f: # TODO: this places the terraform destroy logs between the terraform provisionment logs and the ansible ones!
+        with contextlib.redirect_stdout(f):
+            with contextlib.redirect_stderr(f):
+                res = PlaybookExecutor(playbooks=[playbookPath],
+                                        inventory=inventory,
+                                        variable_manager=variable_manager,
+                                        loader=loader,
+                                        passwords=None).run(),getMasterIP(hostsFilePath)
+    """
 
+
+    # this works but shows the stuff only after the ansible run
     f = io.StringIO()
     with contextlib.redirect_stdout(f):
-        res = PlaybookExecutor(playbooks=[playbookPath],
-                                inventory=inventory,
-                                variable_manager=variable_manager,
-                                loader=loader,
-                                passwords=None).run(),getMasterIP(hostsFilePath)
-    for line in f.getvalue().splitlines():
-        print("[ %s ] %s" % (test,line))
+        thread1 = threading.Thread(target=threadedPrint, args=(f,test))
+        with contextlib.redirect_stderr(f): # logs (both stdout and stderr) happening inside this are redirected to 'f'
+            res = PlaybookExecutor(playbooks=[playbookPath],
+                                   inventory=inventory,
+                                   variable_manager=variable_manager,
+                                   loader=loader,
+                                   passwords=None).run(),getMasterIP(hostsFilePath)
+
+    #for line in f.getvalue().splitlines():
+    #    print("[ %s ] %s" % (test,line))
+    #"""
+
     return res
 
 
-def getIP(resource, provider):
+def getIP(resource, provider): # TODO: use terraform show -json | jq .values.root_module.resources[0].provider_name to avoid having to provide the provider here
     """Given a terraform resource json description, returns the resource's
        IP address if such exists"""
     try:
