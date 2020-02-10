@@ -1,17 +1,17 @@
-================================================
-OCRE Test-Suite for cloud validation - CERN
-================================================
+============================================
+EOSC Cloud Validation Test Suite
+============================================
 
 This tool is intended to be used to test and validate commercial cloud services across the stack for research and education environments.
-This Test-Suite is being used as a validation tool for commercial cloud services procurement in OCRE (Open Clouds for Research Environments) project sponsored by the European Commission.
+This Test-Suite is being used as a validation tool for commercial cloud services procurement in European Commission sponsored projects such as OCRE and ARCHIVER.
 
-More information at: http://ocre-project.eu.
+More information at: https://www.eosc-portal.eu/.
 
 .. header-end
 
 Documentation
 ---------------------------------------------
-Full documentation can be found at: `http://ocre-testsuite.rtfd.io <https://ocre-testsuite.readthedocs.io/en/latest/>`_
+Full documentation can be found at: `http://eosc-testsuite.rtfd.io <https://eosc-testsuite.readthedocs.io/en/latest/>`_
 
 .. body
 

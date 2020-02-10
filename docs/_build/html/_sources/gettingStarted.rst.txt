@@ -83,8 +83,8 @@ Please clone the repository as follows and cd into it:
 
 .. code-block:: console
 
-    $ git clone https://github.com/cern-it-efp/OCRE-Testsuite.git
-    $ cd OCRE-Testsuite
+    $ git clone https://github.com/cern-it-efp/EOSC-Testsuite.git
+    $ cd EOSC-Testsuite
 
 Configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^

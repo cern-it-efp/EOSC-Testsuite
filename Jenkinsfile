@@ -5,7 +5,7 @@ pipeline {
       steps{
         cleanWs()
         git(
-           url: 'git@github.com:cern-it-efp/OCRE-Testsuite.git',
+           url: 'git@github.com:cern-it-efp/EOSC-Testsuite.git',
            credentialsId: 'Jakub',
            branch: "supportMainClouds"
         )
@@ -15,7 +15,7 @@ pipeline {
     stage('delete old logs') {
       steps{
         dir ("$WORKSPACE/src/logging") {
-        pwd() 
+        pwd()
         sh "rm -f header killMe footer hpcTest dlTest shared logs"
         sh "touch logs run.txt"
         }
@@ -53,17 +53,17 @@ pipeline {
             }
           }
         }
-        
+
       stage('tests run') {
         steps{
-          script{ 
+          script{
           dir ("$WORKSPACE/src/logging") {
           sh """
               #!/bin/bash
               touch logs header shared dlTest hpcTest footer
               echo "Logs to the file logs"
-          """     
-            try { 
+          """
+            try {
                 dir ("$WORKSPACE/src") {
                 sh "python3 -B main.py &> ../logs"
                 }
@@ -77,7 +77,7 @@ pipeline {
         }
         post {
           always {
-            sh """                        
+            sh """
             echo 'finished' >  $WORKSPACE/src/logging/run.txt
             cat $ld/footer >> $ld/logs
             cat $ld/logs

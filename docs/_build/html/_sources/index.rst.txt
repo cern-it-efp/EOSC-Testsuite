@@ -1,7 +1,7 @@
 .. include:: ../README.rst
    :end-before: header-end
 
-Please find the the repository here: https://github.com/cern-it-efp/OCRE-Testsuite
+Please find the the repository here: https://github.com/cern-it-efp/EOSC-Testsuite
 
 *****
 

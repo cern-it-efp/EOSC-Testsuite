@@ -55,6 +55,6 @@ RUN mkdir /root/.ssh && \
     chmod 600 /root/.ssh/id_rsa
 
 # ------------------ Clone TS repo and get bash
-ENTRYPOINT git clone -q https://github.com/cern-it-efp/OCRE-Testsuite.git && \
-           cd OCRE-Testsuite  && \
+ENTRYPOINT git clone -q https://github.com/cern-it-efp/EOSC-Testsuite.git && \
+           cd EOSC-Testsuite  && \
            bash

@@ -28,7 +28,7 @@ def header(noLogo=False, provider=None, results=None):
     """Prints the header according to parameters.
 
     Parameters:
-        noLogo (bool): Specifies whether "OCRE" has to be shown or not.
+        noLogo (bool): Specifies whether "EOSC" has to be shown or not.
         provider (str): Provider on which the suite is being run.
         results (str): Path to the results folder for the current run.
     """
@@ -36,18 +36,18 @@ def header(noLogo=False, provider=None, results=None):
     if noLogo is True:
         if provider is not None:
             if results is None:
-                showThis = ["OCRE Cloud Benchmarking Validation Test Suite",
+                showThis = ["EOSC Cloud Validation Test Suite",
                     "Developed by CERN IT-EFP (ignacio.peluaga.lozada@cern.ch)",
                     ".........................................................",
                     "Provider: %s" % provider]
             else:
-                showThis = ["OCRE Cloud Benchmarking Validation Test Suite",
+                showThis = ["EOSC Cloud Validation Test Suite",
                     "Developed by CERN IT-EFP (ignacio.peluaga.lozada@cern.ch)",
                     ".........................................................",
                     "Provider: %s" % provider,
                     "Results: results/%s" % results]
         else:
-            showThis = ["OCRE Cloud Benchmarking Validation Test Suite",
+            showThis = ["EOSC Cloud Validation Test Suite",
                 "Developed by CERN IT-EFP (ignacio.peluaga.lozada@cern.ch)",
                 "........................................................."]
 
@@ -58,24 +58,24 @@ def header(noLogo=False, provider=None, results=None):
     else:
         if provider is not None:
             if results is None:
-                showThis = ["                  | Cloud Benchmarking & Validation Test Suite", # TODO: this has to show EOSC
-                     "█▀▀█ █▀▀ █▀▀█ █▀▀ | Developed by CERN IT-EFP",
-                     "█  █ █   █▄▄▀ █▀▀ | Contact: ignacio.peluaga.lozada@cern.ch",
-                     "▀▀▀▀ ▀▀▀ ▀ ▀▀ ▀▀▀ | ..........................................",
-                     " ocre-project.eu  | Provider: %s" % provider]
+                showThis = ["                 | Cloud Validation Test Suite",
+                     "█▀▀ █▀▀█ █▀▀ █▀▀ | Developed by CERN IT-EFP",
+                     "█▀▀ █  █  ▀▄ █   | Contact: ignacio.peluaga.lozada@cern.ch",
+                     "▀▀▀ ▀▀▀▀ ▀▀▀ ▀▀▀ | ..........................................",
+                     "  eosc-portal.eu | Provider: %s" % provider]
             else:
-                showThis = ["                  | Cloud Benchmarking & Validation Test Suite",
-                     "█▀▀█ █▀▀ █▀▀█ █▀▀ | Developed by CERN IT-EFP",
-                     "█  █ █   █▄▄▀ █▀▀ | Contact: ignacio.peluaga.lozada@cern.ch",
-                     "▀▀▀▀ ▀▀▀ ▀ ▀▀ ▀▀▀ | ..........................................",
-                     " ocre-project.eu  | Provider: %s" % provider,
-                     "                  | Results: results/%s" % results]
+                showThis = ["                 | Cloud Validation Test Suite",
+                     "█▀▀ █▀▀█ █▀▀ █▀▀ | Developed by CERN IT-EFP",
+                     "█▀▀ █  █  ▀▄ █   | Contact: ignacio.peluaga.lozada@cern.ch",
+                     "▀▀▀ ▀▀▀▀ ▀▀▀ ▀▀▀ | ..........................................",
+                     "  eosc-portal.eu | Provider: %s" % provider,
+                     "                 | Results: results/%s" % results]
         else:
-            showThis = ["                  | Cloud Benchmarking & Validation Test Suite",
-                 "█▀▀█ █▀▀ █▀▀█ █▀▀ | Developed by CERN IT-EFP",
-                 "█  █ █   █▄▄▀ █▀▀ | Contact: ignacio.peluaga.lozada@cern.ch",
-                 "▀▀▀▀ ▀▀▀ ▀ ▀▀ ▀▀▀ | ..........................................",
-                 " ocre-project.eu  | "]
+            showThis = ["                 | Cloud Validation Test Suite",
+                 "█▀▀ █▀▀█ █▀▀ █▀▀ | Developed by CERN IT-EFP",
+                 "█▀▀ █  █  ▀▄ █   | Contact: ignacio.peluaga.lozada@cern.ch",
+                 "▀▀▀ ▀▀▀▀ ▀▀▀ ▀▀▀ | ..........................................",
+                 "  eosc-portal.eu | "]
 
         # this fixes encode errors experienced in some clouds
         try:
@@ -117,7 +117,7 @@ retry = None
 destroy = None
 destroyOnCompletion = None
 clustersToDestroy = None
-publicRepo = "https://ocre-testsuite.rtfd.io"
+publicRepo = "https://eosc-testsuite.rtfd.io"
 clusters = ["shared", "dlTest", "hpcTest"]
 
 #logo, no results, no provider

@@ -1,6 +1,6 @@
-================================================
-OCRE Test-Suite for cloud validation - CERN
-================================================
+============================================
+EOSC Test-Suite for cloud validation
+============================================
 
 This tool is intended to be used for cloud services validation and testing.
 When applicable, the test-suite executes four main steps:
