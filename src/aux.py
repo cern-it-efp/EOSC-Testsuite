@@ -192,12 +192,12 @@ def validateYaml(configs, testsCatalog, noTerraform, extraSupportedClouds):
         configsSchema = "src/schemas/configs_sch_%s.yaml" % configs["providerName"] if configs["providerName"] \
             in extraSupportedClouds else "src/schemas/configs_sch_general.yaml"
     else:
-        configsSchema = "src/schemas/configs_sch_noTerraform.yaml" # TODO: should check that the IP arrays exist for the selected tests
+        configsSchema = "src/schemas/configs_sch_noTerraform.yaml" 
 
     try:
         jsonschema.validate(configs, loadFile(configsSchema))
     except jsonschema.exceptions.ValidationError as ex:
-        print("Error validating configs.yaml: \n %s" % ex)
+        print("Error validating configs file: \n %s" % ex.message)
         stop(1)
 
     try:
@@ -205,5 +205,5 @@ def validateYaml(configs, testsCatalog, noTerraform, extraSupportedClouds):
             testsCatalog,
             loadFile("src/schemas/testsCatalog_sch.yaml"))
     except jsonschema.exceptions.ValidationError as ex:
-        print("Error validating testsCatalog.yaml: \n %s" % ex)
+        print("Error validating testsCatalog file: \n %s" % ex.message)
         stop(1)

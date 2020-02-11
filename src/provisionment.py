@@ -454,9 +454,18 @@ def terraformProvisionment(
     return True, ""
 
 
-def threadedPrint(f,test):
+def threadedPrint_original(f,text):
     for line in f.getvalue().splitlines():
         print("[ %s ] %s" % (test,line))
+
+def threadedPrint():
+    # TODO: keep reading /tmp/ansibleLogs and everytime a new line is written to it take it, add the clusterID and write it to 'logs'
+    line = None
+    with open("/tmp/ansibleLogs") as f:
+        while True:
+            while line = None:
+                line = f.readline()
+
 
 def ansiblePlaybook(mainTfDir, baseCWD, providerName, kubeconfig, noTerraform, test, sshKeyPath, openUser, configs):
     """Runs ansible-playbook with the given playbook."""
@@ -497,9 +506,13 @@ def ansiblePlaybook(mainTfDir, baseCWD, providerName, kubeconfig, noTerraform, t
     #with open('src/logging/ansibleLogs%s' % test, 'w') as f:
     #with open('src/logging/ansibleLogs', 'w') as f:
     #"""
-    with open('ansibleLogs', 'a') as f: # TODO: this places the terraform destroy logs between the terraform provisionment logs and the ansible ones!
+    with open('/tmp/ansibleLogs', 'a') as f: # TODO: this places the terraform destroy logs between the terraform provisionment logs and the ansible ones!
+
+        thread1 = threading.Thread(target=threadedPrint, args=())
+        thread1.start()
         with contextlib.redirect_stdout(f):
             with contextlib.redirect_stderr(f):
+
                 res = PlaybookExecutor(playbooks=[playbookPath],
                                         inventory=inventory,
                                         variable_manager=variable_manager,

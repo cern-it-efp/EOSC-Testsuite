@@ -58,7 +58,7 @@ def initAndChecks(noTerraform, extraSupportedClouds, testsSharingCluster, custom
 
     validateYaml(configs, testsCatalog, noTerraform, extraSupportedClouds)
 
-    instanceDefinition = loadFile("%s/instanceDefinition" % cfgPath) # TODO: these would fails when using '-c'
+    instanceDefinition = loadFile("%s/instanceDefinition" % cfgPath) # TODO: these would fail when using '-c'
     extraInstanceConfig = loadFile("%s/extraInstanceConfig" % cfgPath)
     dependencies = loadFile("%s/dependencies" % cfgPath)
     credentials = loadFile("%s/credentials" % cfgPath)

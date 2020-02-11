@@ -86,12 +86,6 @@ def header(noLogo=False, provider=None, results=None):
             header(noLogo=True,provider=provider,results=results)
 
 
-def wasSuccessfullyProvisioned(cluster):
-    """Checks if a cluster was successfully provisioned"""
-    #get the object from the queue related to cluster, if True, return True. False otherwise
-    return True
-
-
 onlyTest = False
 killResources = False
 noTerraform = False
@@ -135,10 +129,10 @@ except getopt.GetoptError as err:
 for currentOption, currentValue in options:
     if currentOption in ['-c', '--configs']:
         cfgPath = currentValue
-        print("Using configs path: %s" % cfgPath)
+        #print("Using configs path: %s" % cfgPath)
     elif currentOption in ['-t', '--testsCatalog']:
         tcPath = currentValue
-        print("Using testsCatalog path: %s" % tcPath)
+        #print("Using testsCatalog path: %s" % tcPath)
     elif currentOption in ['--only-test']:
         writeToFile("src/logging/header", "(ONLY TEST EXECUTION)", True)
         onlyTest = True
@@ -148,13 +142,13 @@ for currentOption, currentValue in options:
         if checkClustersToDestroy(currentValue, clusters): # shared, dlTest, hpcTest
             answer = input("WARNING - destroy infrastructure (%s)? yes/no: " % currentValue)
             if answer == "yes":
-                print(destroyTF(baseCWD,clusters=currentValue.split(',')))
+                destroyTF(baseCWD,clusters=currentValue.split(','))
             else:
                 print("Aborting operation")
         elif currentValue == "all":
             answer = input("WARNING - destroy infrastructure (%s)? yes/no: " % currentValue)
             if answer == "yes":
-                print(destroyTF(baseCWD,clusters=clusters))
+                destroyTF(baseCWD,clusters=clusters)
             else:
                 print("Aborting operation")
         else:
@@ -267,20 +261,22 @@ if checkResultsExist(resDir) is True:
         else:
             logger([msg1, "Results on the S3 bucket"], "#", "src/logging/footer")
     else:
-        logger(msg1, "°", "src/logging/footer") # conflict here?
+        logger(msg1, "°", "src/logging/footer")
+
+    # TODO: how does this deal with --only-test ?
+    if destroyOnCompletion == True:
+        for cluster in clustersToDestroy:
+            if destroyTF(baseCWD, clusters=[cluster])[0] != 0:
+                msg = "   ...destroy failed. Check 'logs' file for details"
+            else:
+                msg = "   ...cluster destroyed"
+            writeToFile("src/logging/footer", msg, True)
 else:
 
     #logo with provider, no results
     header(provider=configs["providerName"])
     shutil.rmtree("results/" + s3ResDirBase, True)
 
-
-# TODO: how does this deal with --only-test ?
-# TODO: if the cluster is not reachable this shouldn't be even tried
-if destroyOnCompletion == True: # TODO: if anything fails during provision, this option should be ignored. This should be taken into account only if the run succeeded til the end.
-    for cluster in clustersToDestroy:
-        if wasSuccessfullyProvisioned(cluster): # TODO: do not run for a cluster if its provisioning and/or bootstraping failed
-            destroyTF(baseCWD, clusters=[cluster])
 
 logger("Test-Suite run completed!", "#", "src/logging/end")
 stop(0)

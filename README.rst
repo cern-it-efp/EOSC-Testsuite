@@ -19,7 +19,7 @@ The test-suite executes four main steps:
 
 1) Infrastructure provisioning: VMs are created using Terraform and then Kubernetes and Docker are installed on them to create several k8s cluster according to the selected tests.
 
-2) Deploy the tests: Kubernetes resource definition files (YAML) are used to deploy the tests, either as single pods or deployments.
+2) Deploy the tests: Kubernetes resource definition files (YAML) are used to deploy the tests, either as single pods, jobs or deployments.
 
 3) Harvest results: at the end of each test run a result file -written in JSON- is created. This file is harvested from the cluster and stored locally.
 
@@ -34,7 +34,7 @@ The developers would like to thank all test owners and contributors to this proj
 +------------------------------+---------------------------------------------------------------------------------+
 |OS on launcher machine        | Ubuntu, CentOS, CoreOS, Debian, RedHat, Fedora                                  |
 +------------------------------+---------------------------------------------------------------------------------+
-|OS running on provider's VMs  | CentOS7, Ubuntu 18.04                                                           |
+|OS running on provider's VMs  | CentOS7, Ubuntu 16.04, Ubuntu 18.04                                             |
 +------------------------------+---------------------------------------------------------------------------------+
 |Providers / clouds            | | AWS                                                                           |
 |                              | | Google Cloud                                                                  |
@@ -58,13 +58,13 @@ Release notes
 
 -Using Ansible for VM configuration instead of Terraform's provisioners.
 
--Added options to destroy the provisioned infrastructure.
+-Added support for non-Terraform providers.
 
--Added support for non-Terraform providers
+-Added support to use Ubuntu on VMs.
 
--Automated creation of bastion (single node k8s cluster) for runs on providers that use NAT.
+-Added options to destroy provisioned infrastructure.
 
--Added options to specify custom location of configs.yaml and testsCatalog.yaml.
+-Added options to specify custom paths to configs.yaml and testsCatalog.yaml.
 
 ``19.12``
 
