@@ -13,6 +13,7 @@ from ansible.cli import CLI
 from ansible.executor.playbook_executor import PlaybookExecutor
 from configparser import ConfigParser
 import threading
+from multiprocessing import Process, Queue
 import contextlib
 import io
 
@@ -22,6 +23,9 @@ from init import *
 provisionFailMsg = "Failed to provision raw VMs. Check 'logs' file for details"
 bootstrapFailMsg = "Failed to bootstrap '%s' k8s cluster. Check 'logs' file"
 playbookPath = "src/provisionment/playbooks/bootstraper.yaml"
+
+aggregateLogs = False # True: both terraform and ansible logs are gathered in 'logs'. False: terraform logs are sent to 'logs', ansible ones are available only at ansibleLogs
+ansibleLogs = "/tmp/ansibleLogs%s"
 
 def runTerraform(toLog, cmd, mainTfDir, baseCWD, test, msg):
     """Run Terraform cmds.
@@ -454,22 +458,20 @@ def terraformProvisionment(
     return True, ""
 
 
-def threadedPrint_original(f,text):
-    for line in f.getvalue().splitlines():
-        print("[ %s ] %s" % (test,line))
-
-def threadedPrint():
-    # TODO: keep reading /tmp/ansibleLogs and everytime a new line is written to it take it, add the clusterID and write it to 'logs'
+def subprocPrint(test):
+    """This runs on a child process. Reads the ansible log file, adds clusterID
+       to each line and prints it."""
+       
     line = None
-    with open("/tmp/ansibleLogs") as f:
+    with open(ansibleLogs % test, 'r') as f:
         while True:
-            while line = None:
-                line = f.readline()
+            line = f.readline()
+            if len(line) > 0 and line != '\n':
+                print("[ %s ] %s" % (test,line.replace('\n','')))
 
 
 def ansiblePlaybook(mainTfDir, baseCWD, providerName, kubeconfig, noTerraform, test, sshKeyPath, openUser, configs):
     """Runs ansible-playbook with the given playbook."""
-
 
     writeToFile("src/logging/%s" % test, "...bootstraping Kubernetes cluster...", True)
 
@@ -502,40 +504,22 @@ def ansiblePlaybook(mainTfDir, baseCWD, providerName, kubeconfig, noTerraform, t
                                        inventory=inventory,
                                        version_info=CLI.version_info(gitinfo=False))
 
-    # ----- to hide ansible logs # TODO: add cluster ID (test) to the logs from this function
-    #with open('src/logging/ansibleLogs%s' % test, 'w') as f:
-    #with open('src/logging/ansibleLogs', 'w') as f:
-    #"""
-    with open('/tmp/ansibleLogs', 'a') as f: # TODO: this places the terraform destroy logs between the terraform provisionment logs and the ansible ones!
+    # ----- to hide ansible logs
+    if aggregateLogs:
+        p = Process(target=subprocPrint, args=(test,))
+        p.start()
 
-        thread1 = threading.Thread(target=threadedPrint, args=())
-        thread1.start()
+    with open(ansibleLogs % test, 'a') as f:
         with contextlib.redirect_stdout(f):
             with contextlib.redirect_stderr(f):
-
                 res = PlaybookExecutor(playbooks=[playbookPath],
                                         inventory=inventory,
                                         variable_manager=variable_manager,
                                         loader=loader,
                                         passwords=None).run(),getMasterIP(hostsFilePath)
-    """
 
-
-    # this works but shows the stuff only after the ansible run
-    f = io.StringIO()
-    with contextlib.redirect_stdout(f):
-        thread1 = threading.Thread(target=threadedPrint, args=(f,test))
-        with contextlib.redirect_stderr(f): # logs (both stdout and stderr) happening inside this are redirected to 'f'
-            res = PlaybookExecutor(playbooks=[playbookPath],
-                                   inventory=inventory,
-                                   variable_manager=variable_manager,
-                                   loader=loader,
-                                   passwords=None).run(),getMasterIP(hostsFilePath)
-
-    #for line in f.getvalue().splitlines():
-    #    print("[ %s ] %s" % (test,line))
-    #"""
-
+    if aggregateLogs:
+        p.terminate()
     return res
 
 

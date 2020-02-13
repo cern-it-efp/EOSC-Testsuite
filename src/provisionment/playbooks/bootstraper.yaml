@@ -4,7 +4,7 @@
   tasks:
   - name: Waiting for VMs to be ready...
     wait_for_connection:
-      timeout: 300
+      timeout: 200
 
 # ------------------------------------ Allow root ssh
 - hosts: all
