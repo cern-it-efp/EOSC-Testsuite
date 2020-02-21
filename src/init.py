@@ -17,11 +17,25 @@ extraSupportedClouds = loadFile("src/schemas/provDict.yaml",
                                 required=True)["extraSupportedClouds"]
 obtainCost = True
 
-def initAndChecks(noTerraform, extraSupportedClouds, testsSharingCluster, customClustersTests, cfgPath=None, tcPath=None):
+
+def initAndChecks(noTerraform,
+                  extraSupportedClouds,
+                  testsSharingCluster,
+                  customClustersTests,
+                  cfgPath=None,
+                  tcPath=None):
     """Initial checks and initialization of variables.
 
+    Parameters:
+        noTerraform (bool): Specifies whether current run uses terraform.
+        extraSupportedClouds (dict): Extra supported clouds.
+        testsSharingCluster (Array<str>): Tests sharing general purpose cluster.
+        customClustersTests (Array<str>): Tests using custom dedicated clusters.
+        cfgPath (str): path to configs.yaml file.
+        tcPath (str): path to testsCatalog.yaml file.
+
     Returns:
-        Array(str): Array containing the selected tests (strings)
+        Arrayay(str): Array containing the selected tests.
     """
 
     global obtainCost
@@ -58,15 +72,16 @@ def initAndChecks(noTerraform, extraSupportedClouds, testsSharingCluster, custom
 
     validateYaml(configs, testsCatalog, noTerraform, extraSupportedClouds)
 
-    instanceDefinition = loadFile("%s/instanceDefinition" % cfgPath) # TODO: these would fail when using '-c'
-    extraInstanceConfig = loadFile("%s/extraInstanceConfig" % cfgPath)
-    dependencies = loadFile("%s/dependencies" % cfgPath)
-    credentials = loadFile("%s/credentials" % cfgPath)
+    # these are for providers that support terraform but are not in provDict
+    instanceDefinition = loadFile("configurations/instanceDefinition")
+    extraInstanceConfig = loadFile("configurations/extraInstanceConfig")
+    dependencies = loadFile("configurations/dependencies")
+    credentials = loadFile("configurations/credentials")
 
-    #if configs['providerName'] not in provDict: # TODO: since we will give support to providers that do not support terraform (like cloudsigma) this check has to be moved to the case --no-terraform is not used
-    #    writeToFile("src/logging/header", "Provider '%s' not supported" %
-    #                configs['providerName'], True)
-    #    stop(1)
+    if noTerraform is False and configs['providerName'] not in provDict:
+        writeToFile("src/logging/header", "Provider '%s' not supported" %
+                    configs['providerName'], True)
+        stop(1)
 
     # --------General config checks
     if configs['providerName'] not in extraSupportedClouds \
@@ -123,6 +138,10 @@ def initAndChecks(noTerraform, extraSupportedClouds, testsSharingCluster, custom
             configs["costCalculation"]["generalInstancePrice"])
 
     if noTerraform is True:
-        checkProvidedIPs(selected, testsSharingCluster, customClustersTests, configs, testsCatalog)
+        checkProvidedIPs(selected,
+                         testsSharingCluster,
+                         customClustersTests,
+                         configs,
+                         testsCatalog)
 
     return selected

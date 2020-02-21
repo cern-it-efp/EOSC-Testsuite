@@ -24,8 +24,9 @@ provisionFailMsg = "Failed to provision raw VMs. Check 'logs' file for details"
 bootstrapFailMsg = "Failed to bootstrap '%s' k8s cluster. Check 'logs' file"
 playbookPath = "src/provisionment/playbooks/bootstraper.yaml"
 
-aggregateLogs = False # True: both terraform and ansible logs are gathered in 'logs'. False: terraform logs are sent to 'logs', ansible ones are available only at ansibleLogs
-ansibleLogs = "/tmp/ansibleLogs%s"
+aggregateLogs = False
+ansibleLogs = "src/logging/ansibleLogs%s"
+
 
 def runTerraform(toLog, cmd, mainTfDir, baseCWD, test, msg):
     """Run Terraform cmds.
@@ -63,7 +64,15 @@ def runTerraform(toLog, cmd, mainTfDir, baseCWD, test, msg):
 def destroyTF(baseCWD, clusters=None):
     """Destroy infrastructure. 'clusters' is an array whose objects specify
        the clusters that should be destroyed. In case no array is given, all
-       clusters will be destroyed"""
+       clusters will be destroyed.
+
+    Parameters:
+        baseCWD (str): Path to go back.
+        clusters (Array<str>): Clusters to destroy.
+
+    Returns:
+        Array<int>: 0 for success, 1 for failure
+    """
 
     if clusters is None:
         clusters = ["shared", "dlTest", "hpcTest"]
@@ -123,6 +132,27 @@ def stackVersioning(variables, configs):
     return variables
 
 
+def waitForSA(kubeconfig):
+    """Wait for cluster's service account to be ready.
+
+    Parameters:
+        kubeconfig (str): Path to a kubeconfig file.
+
+    Returns:
+        int: 0 for success, 1 for failure
+    """
+
+    res = 1
+    for i in range(15):
+        if runCMD(
+            'kubectl --kubeconfig %s get sa default' % kubeconfig,
+                hideLogs=True) == 0:
+            res = 0
+            break
+        time.sleep(2)
+    return res
+
+
 def provisionAndBootstrap(test,
                           nodes,
                           flavor,
@@ -138,50 +168,77 @@ def provisionAndBootstrap(test,
                           provDict,
                           extraSupportedClouds,
                           noTerraform):
-    """Provision infrastructure and/or bootstrap the k8s cluster."""
+    """Provision infrastructure and/or bootstrap the k8s cluster.
 
-    if noTerraform is True: # Only ansible
+    Parameters:
+        test (str): Indicates the test for which to provision the cluster
+        nodes (int): Number of nodes the cluster must contain.
+        flavor (str): Flavor to be used for the VMs.
+        extraInstanceConfig (str): Extra HCL code to configure VM
+        toLog (str): File to which write the log msg.
+        configs (dict): Object containing configs.yaml's configurations.
+        testsRoot (str): Tests directory root.
+        retry (bool): If true, retrying after a failure.
+        instanceDefinition (str): HCL code definition of an instance.
+        credentials (str): HCL code related to authentication/credentials.
+        dependencies (str): HCL code related to infrastructure dependencies.
+        baseCWD (str): Path to the base directory.
+        provDict (dict): Dictionary containing the supported clouds.
+        extraSupportedClouds (dict): Extra supported clouds.
+
+    Returns:
+        bool: True if the cluster was succesfully provisioned. False otherwise.
+        str: Message informing of the provisionment task result.
+    """
+
+    if noTerraform is True:  # Only ansible
         mainTfDir = testsRoot + test
-        kubeconfig = "%s/src/tests/%s/config" % (baseCWD, test) # "config"
+        kubeconfig = "%s/src/tests/%s/config" % (baseCWD, test)  # "config"
         openUserDefault = "root"
-        msgExcept = "WARNING: using default user '%s' for ssh connections (running on %s)" % (
-            openUserDefault, configs["providerName"])
+        msgExcept = "WARNING: using default user '%s' for ssh connections " \
+            "(running on %s)" % (
+                openUserDefault, configs["providerName"])
         openUser = tryTakeFromYaml(
             configs, "openUser", openUserDefault, msgExcept=msgExcept)
         if test == "shared":
             mainTfDir = testsRoot + "shared"
             os.makedirs(mainTfDir, exist_ok=True)
             kubeconfig = "~/.kube/config"
-        result,masterIP = ansiblePlaybook(mainTfDir, baseCWD, configs["providerName"] , kubeconfig, noTerraform, test, configs["pathToKey"], openUser, configs)
+        result, masterIP = ansiblePlaybook(mainTfDir,
+                                           baseCWD,
+                                           configs["providerName"],
+                                           kubeconfig,
+                                           noTerraform,
+                                           test,
+                                           configs["pathToKey"],
+                                           openUser,
+                                           configs)
         if result != 0:
             return False, bootstrapFailMsg % test
         else:
-            # ---------------- wait for default service account to be ready and finish
-            # TODO: this must have a timeout
-            while runCMD(
-                'kubectl --kubeconfig %s get sa default' %
-                kubeconfig,
-                    hideLogs=True) != 0:
-                time.sleep(1)
-
-            writeToFile(toLog, "...%s CLUSTER CREATED (masterIP: %s) => STARTING TESTS\n" % (test,masterIP), True)
-
-            return True, ""
-    else: # Both terraform and ansible
+            # -------- wait for default service account to be ready and finish
+            if waitForSA(kubeconfig) == 0:
+                writeToFile(toLog, "...%s CLUSTER CREATED (masterIP: %s) => "
+                            "STARTING TESTS\n" % (test, masterIP), True)
+                return True, ""
+            else:
+                return False, "ERROR: timed out waiting for %s cluster's " \
+                    "service account\n" % test
+    else:  # Both terraform and ansible
         return terraformProvisionment(test,
-                                  nodes,
-                                  flavor,
-                                  extraInstanceConfig,
-                                  toLog,
-                                  configs,
-                                  testsRoot,
-                                  retry,
-                                  instanceDefinition,
-                                  credentials,
-                                  dependencies,
-                                  baseCWD,
-                                  provDict,
-                                  extraSupportedClouds)
+                                      nodes,
+                                      flavor,
+                                      extraInstanceConfig,
+                                      toLog,
+                                      configs,
+                                      testsRoot,
+                                      retry,
+                                      instanceDefinition,
+                                      credentials,
+                                      dependencies,
+                                      baseCWD,
+                                      provDict,
+                                      extraSupportedClouds)
 
 
 def terraformProvisionment(
@@ -208,14 +265,14 @@ def terraformProvisionment(
         extraInstanceConfig (str): Extra HCL code to configure VM
         toLog (str): File to which write the log msg.
         configs (dict): Object containing configs.yaml's configurations.
-        testsRoot (str):
-        retry ():
-        instanceDefinition ():
-        credentials ():
-        dependencies ():
-        baseCWD ():
-        provDict ():
-        extraSupportedClouds ():
+        testsRoot (str): Tests directory root.
+        retry (bool): If true, retrying after a failure.
+        instanceDefinition (str): HCL code definition of an instance.
+        credentials (str): HCL code related to authentication/credentials.
+        dependencies (str): HCL code related to infrastructure dependencies.
+        baseCWD (str): Path to the base directory.
+        provDict (dict): Dictionary containing the supported clouds.
+        extraSupportedClouds (dict): Extra supported clouds.
 
     Returns:
         bool: True if the cluster was succesfully provisioned. False otherwise.
@@ -229,7 +286,7 @@ def terraformProvisionment(
         templatesPath += "general"
 
     mainTfDir = testsRoot + test
-    kubeconfig = "%s/src/tests/%s/config" % (baseCWD, test) # "config"
+    kubeconfig = "%s/src/tests/%s/config" % (baseCWD, test)  # "config"
     if test == "shared":
         flavor = configs["flavor"]
         mainTfDir = testsRoot + "shared"
@@ -245,15 +302,14 @@ def terraformProvisionment(
                     (configs["providerName"], test, str(randomId))).lower()
 
         # ---------------- delete TF stuff from previous run if existing
-        # TODO: here, if there are tf files, first should try to: talk to it, check number of nodes available, etc
-        #       and in case of success use the existing cluster.
         cleanupTF(mainTfDir)
 
         # ---------------- manage general variables
 
         openUserDefault = "root"
-        msgExcept = "WARNING: using default user '%s' for ssh connections (running on %s)" % (
-            openUserDefault, configs["providerName"])
+        msgExcept = "WARNING: using default user '%s' for ssh connections " \
+            "(running on %s)" % (
+                openUserDefault, configs["providerName"])
         openUser = tryTakeFromYaml(
             configs, "openUser", openUserDefault, msgExcept=msgExcept)
 
@@ -304,7 +360,7 @@ def terraformProvisionment(
             availabilityZone = tryTakeFromYaml(configs, "availabilityZone", "")
             securityGroups = tryTakeFromYaml(configs, "securityGroups", "[]")
 
-            # ---------------- main.tf: manage openstack specific vars and add them
+            # ---------------- main.tf: get openstack related vars and add them
             variables = variables.replace(
                 "FLAVOR_PH", flavor).replace(
                 "IMAGE_PH", configs['imageName']).replace(
@@ -324,7 +380,7 @@ def terraformProvisionment(
             gpuCount = str(nodes) if test == "dlTest" else "0"
             gpuType = tryTakeFromYaml(configs, "gpuType", "")
 
-            # ---------------- main.tf: manage google specific vars and add them
+            # ---------------- main.tf: manage google related vars and add them
             variables = variables.replace(
                 "CREDENTIALS_PATH_PH", configs['pathToCredentials']).replace(
                 "PROJECT_PH", configs['project']).replace(
@@ -349,9 +405,10 @@ def terraformProvisionment(
                 awsTemplate = "%s/rawProvision_noVolumeSize.tf" % templatesPath
 
             # ---------------- main.tf: manage aws specific vars and add them
+            scf = configs['sharedCredentialsFile']
             variables = variables.replace(
                 "REGION_PH", configs['region']).replace(
-                "SHARED_CREDENTIALS_FILE_PH", configs['sharedCredentialsFile']).replace(
+                "SHARED_CREDENTIALS_FILE_PH", scf).replace(
                 "INSTANCE_TYPE_PH", flavor).replace(
                 "AMI_PH", configs['ami']).replace(
                 "NAME_KEY_PH", configs['keyName']).replace(
@@ -410,14 +467,17 @@ def terraformProvisionment(
             writeToFile(mainTfDir + "/main.tf", variables, False)
 
             # ---------------- main.tf: add raw VMs provisioner
-            instanceDefinition = "%s \n %s" % (flavor, instanceDefinition.replace(
-                "NAME_PH", "${var.instanceName}-${count.index}"
-            ))
+            instanceDefinition = "%s \n %s" % \
+                (flavor,
+                instanceDefinition.replace(
+                    "NAME_PH", "${var.instanceName}-${count.index}"
+                    ))
 
             if extraInstanceConfig:
                 instanceDefinition += "\n" + extraInstanceConfig
 
-            rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath).replace(
+            rawProvisioning = loadFile("%s/rawProvision.tf" %
+                                       templatesPath).replace(
                 "CREDENTIALS_PLACEHOLDER", credentials).replace(
                 "DEPENDENCIES_PLACEHOLDER", dependencies.replace(
                     "DEP_COUNT_PH", "count = %s" % nodes)).replace(
@@ -439,45 +499,85 @@ def terraformProvisionment(
                         "Provisioning '%s' VMs..." % flavor) != 0:
             return False, provisionFailMsg
 
-
     # ---------------- RUN ANSIBLE (first create hosts file)
-    result,masterIP = ansiblePlaybook(mainTfDir, baseCWD, configs["providerName"] , kubeconfig, None, test, configs["pathToKey"], openUser, configs)
+    result, masterIP = ansiblePlaybook(mainTfDir,
+                                       baseCWD,
+                                       configs["providerName"],
+                                       kubeconfig,
+                                       None,
+                                       test,
+                                       configs["pathToKey"],
+                                       openUser,
+                                       configs)
     if result != 0:
         return False, bootstrapFailMsg % test
 
     # ---------------- wait for default service account to be ready and finish
-    # TODO: this must have a timeout
-    while runCMD(
-        'kubectl --kubeconfig %s get sa default' %
-        kubeconfig,
-            hideLogs=True) != 0:
-        time.sleep(1)
-
-    writeToFile(toLog, "...%s CLUSTER CREATED (masterIP: %s) => STARTING TESTS\n" % (test,masterIP), True)
+    if waitForSA(kubeconfig) == 0:
+        writeToFile(toLog, "...%s CLUSTER CREATED (masterIP: %s) => "
+                    "STARTING TESTS\n" % (test, masterIP), True)
+        return True, ""
+    else:
+        return False, "ERROR: timed out waiting for %s cluster's " \
+            "service account\n" % test
 
     return True, ""
 
 
 def subprocPrint(test):
     """This runs on a child process. Reads the ansible log file, adds clusterID
-       to each line and prints it."""
-       
+       to each line and prints it.
+
+    Parameters:
+        test (str): Cluster identification.
+    """
+
     line = None
     with open(ansibleLogs % test, 'r') as f:
         while True:
             line = f.readline()
             if len(line) > 0 and line != '\n':
-                print("[ %s ] %s" % (test,line.replace('\n','')))
+                print("[ %s ] %s" % (test, line.replace('\n', '')))
 
 
-def ansiblePlaybook(mainTfDir, baseCWD, providerName, kubeconfig, noTerraform, test, sshKeyPath, openUser, configs):
-    """Runs ansible-playbook with the given playbook."""
+def ansiblePlaybook(mainTfDir,
+                    baseCWD,
+                    providerName,
+                    kubeconfig,
+                    noTerraform,
+                    test,
+                    sshKeyPath,
+                    openUser,
+                    configs):
+    """Runs ansible-playbook with the given playbook.
 
-    writeToFile("src/logging/%s" % test, "...bootstraping Kubernetes cluster...", True)
+    Parameters:
+        mainTfDir (str): Path where the .tf file is.
+        baseCWD (str): Path to go back.
+        providerName (str): Provider name.
+        kubeconfig (str): Path to kubeconfig file.
+        noTerraform (bool): Specifies whether current run uses terraform.
+        test (str): Cluster identification.
+        sshKeyPath (str): Path to SSH key file.
+        openUser (str): User for initial SSH connection.
+        configs (dict): Content of configs.yaml.
+
+    Returns:
+        int: 0 for success, 1 for failure
+    """
+
+    btspMsg = "...bootstraping Kubernetes cluster..."
+    writeToFile("src/logging/%s" % test, btspMsg, True)
 
     hostsFilePath = "%s/hosts" % mainTfDir
 
-    createHostsFile(mainTfDir, baseCWD, providerName, hostsFilePath, configs, noTerraform=noTerraform, test=test)
+    createHostsFile(mainTfDir,
+                    baseCWD,
+                    providerName,
+                    hostsFilePath,
+                    configs,
+                    noTerraform=noTerraform,
+                    test=test)
 
     loader = DataLoader()
 
@@ -490,7 +590,7 @@ def ansiblePlaybook(mainTfDir, baseCWD, providerName, kubeconfig, noTerraform, t
         ssh_common_args='-o StrictHostKeyChecking=no',
         extra_vars=[{'kubeconfig': kubeconfig}],
         forks=100,
-        verbosity=False, #True,
+        verbosity=False,  # True,
         listtags=False,
         listtasks=False,
         listhosts=False,
@@ -502,7 +602,8 @@ def ansiblePlaybook(mainTfDir, baseCWD, providerName, kubeconfig, noTerraform, t
     inventory = InventoryManager(loader=loader, sources=hostsFilePath)
     variable_manager = VariableManager(loader=loader,
                                        inventory=inventory,
-                                       version_info=CLI.version_info(gitinfo=False))
+                                       version_info=CLI.version_info(
+                                           gitinfo=False))
 
     # ----- to hide ansible logs
     if aggregateLogs:
@@ -513,19 +614,29 @@ def ansiblePlaybook(mainTfDir, baseCWD, providerName, kubeconfig, noTerraform, t
         with contextlib.redirect_stdout(f):
             with contextlib.redirect_stderr(f):
                 res = PlaybookExecutor(playbooks=[playbookPath],
-                                        inventory=inventory,
-                                        variable_manager=variable_manager,
-                                        loader=loader,
-                                        passwords=None).run(),getMasterIP(hostsFilePath)
+                                       inventory=inventory,
+                                       variable_manager=variable_manager,
+                                       loader=loader,
+                                       passwords=None).run(), getMasterIP(
+                    hostsFilePath)
 
     if aggregateLogs:
         p.terminate()
     return res
 
 
-def getIP(resource, provider): # TODO: use terraform show -json | jq .values.root_module.resources[0].provider_name to avoid having to provide the provider here
+def getIP(resource, provider):
     """Given a terraform resource json description, returns the resource's
-       IP address if such exists"""
+       IP address if such exists
+
+    Parameters:
+        resource (object): Terraform resource definition.
+        provider (str): Provider name.
+
+    Returns:
+        str: Resource's IP address.
+    """
+
     try:
         if provider == "exoscale" or provider == "cloudstack":
             return resource["values"]["ip_address"]
@@ -541,15 +652,35 @@ def getIP(resource, provider): # TODO: use terraform show -json | jq .values.roo
         return None
 
 
-def createHostsFile(mainTfDir, baseCWD, provider, destination, configs, noTerraform=None, test=None):
+def createHostsFile(mainTfDir,
+                    baseCWD,
+                    provider,
+                    destination,
+                    configs,
+                    noTerraform=None,
+                    test=None):
     """Creates the hosts file required by ansible. Note destination contains
-       the string 'hosts' too."""
+       the string 'hosts' too.
+
+    Parameters:
+        mainTfDir (str): Path where the .tf file is.
+        baseCWD (str): Path to go back.
+        provider (str): Provider name.
+        destination (str): Destination of hosts file.
+        configs (dict): Content of configs.yaml.
+        noTerraform (bool): Specifies whether current run uses terraform.
+        test (str): Cluster identification.
+
+    Returns:
+        int: 0 for success, 1 for failure
+    """
 
     IPs = []
 
     if noTerraform is not True:
         os.chdir(mainTfDir)
-        resources = json.loads(os.popen("terraform show -json").read().strip())["values"]["root_module"]["resources"]
+        resources = json.loads(os.popen("terraform show -json").read()
+                               .strip())["values"]["root_module"]["resources"]
         os.chdir(baseCWD)
 
         for resource in resources:
@@ -557,13 +688,13 @@ def createHostsFile(mainTfDir, baseCWD, provider, destination, configs, noTerraf
             if ip is not None:
                 IPs.append(ip)
     else:
-        IPs = configs["clusters"][test] # one of shared, dlTest, hpcTest
+        IPs = configs["clusters"][test]  # one of shared, dlTest, hpcTest
 
     config = ConfigParser(allow_no_value=True)
     config.add_section('master')
     config.add_section('slaves')
-    config.set('master',IPs[0])
+    config.set('master', IPs[0])
     for ip in IPs[1:]:
-        config.set('slaves',ip)
+        config.set('slaves', ip)
     with open(destination, 'w') as hostsfile:
         config.write(hostsfile)

@@ -19,7 +19,14 @@ except ModuleNotFoundError as ex:
 
 def getMasterIP(hosts):
     """Given the path to an ansible hosts file, returns the IP specified
-       under the master section of the file."""
+       under the master section of the file.
+
+    Parameters:
+        hosts (str): Path to an ansible hosts file.
+
+    Returns:
+        str: IP of the master node.
+    """
 
     config = ConfigParser(allow_no_value=True)
     config.read(hosts)
@@ -84,10 +91,10 @@ def loadFile(loadThis, required=None):
             except AttributeError:
                 try:
                     return yaml.load(inputfile)
-                except: # yaml.scanner.ScannerError:
+                except:  # yaml.scanner.ScannerError:
                     print("Error loading yaml file " + loadThis)
                     stop(1)
-            except: # yaml.scanner.ScannerError:
+            except:  # yaml.scanner.ScannerError:
                 print("Error loading yaml file " + loadThis)
                 stop(1)
         else:
@@ -184,15 +191,19 @@ def validateYaml(configs, testsCatalog, noTerraform, extraSupportedClouds):
     """ Validates configs.yaml and testsCatalog.yaml file against schemas.
 
     Parameters:
-        provider (str): Provider on which the suite is being run. According to
-                        it a specific YAML schema is used.
+        configs (dict): Object containing configs.yaml's configurations.
+        testsCatalog (dict): Object containing testsCatalog.yaml's content.
+        noTerraform (bool): Specifies whether current run uses terraform.
+        extraSupportedClouds (dict): Extra supported clouds.
+
     """
 
     if noTerraform is False:
-        configsSchema = "src/schemas/configs_sch_%s.yaml" % configs["providerName"] if configs["providerName"] \
+        configsSchema = "src/schemas/configs_sch_%s.yaml" % \
+        configs["providerName"] if configs["providerName"] \
             in extraSupportedClouds else "src/schemas/configs_sch_general.yaml"
     else:
-        configsSchema = "src/schemas/configs_sch_noTerraform.yaml" 
+        configsSchema = "src/schemas/configs_sch_noTerraform.yaml"
 
     try:
         jsonschema.validate(configs, loadFile(configsSchema))

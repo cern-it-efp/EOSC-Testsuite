@@ -58,13 +58,13 @@ Release notes
 
 -Using Ansible for VM configuration instead of Terraform's provisioners.
 
--Added support for non-Terraform providers.
-
--Added support to use Ubuntu on VMs.
+-Added support for non-Terraform providers (only bootstrap phase).
 
 -Added options to destroy provisioned infrastructure.
 
 -Added options to specify custom paths to configs.yaml and testsCatalog.yaml.
+
+-Added support to use Ubuntu on VMs.
 
 ``19.12``
 

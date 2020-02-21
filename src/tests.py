@@ -5,16 +5,19 @@ from provisionment import *
 from kubern8s import *
 from aux import *
 from multiprocessing import Process, Queue
-
 import init
 
 
-def sharedClusterTests(msgArr,onlyTest,retry,noTerraform,resDir):
-    """Runs the test that shared the general purpose cluster.
+def sharedClusterTests(msgArr, onlyTest, retry, noTerraform, resDir):
+    """Runs the test that share the general purpose cluster.
 
     Parameters:
         msgArray (Array<str>): Stuff to show on the banner. Contains the
                                tests to be deployed on the shared cluster.
+        onlyTest (bool): If true, skip provisioning phase.
+        retry (bool): If true, try to reuse existing infrastructure.
+        noTerraform (bool): Specifies whether current run uses terraform.
+        resDir (str): Path to the results folder for the current run.
 
     Returns:
         None: In case of errors the function stops (returns None)
@@ -26,34 +29,34 @@ def sharedClusterTests(msgArr,onlyTest,retry,noTerraform,resDir):
     logger(msgArr, "=", "src/logging/shared")
     if onlyTest is False:
         prov, msg = provisionAndBootstrap("shared",
-                                           len(msgArr) - 1,
-                                           None,
-                                           None,
-                                           "src/logging/shared",
-                                           init.configs,
-                                           testsRoot,
-                                           retry,
-                                           instanceDefinition,
-                                           credentials,
-                                           dependencies,
-                                           baseCWD,
-                                           provDict,
-                                           extraSupportedClouds,
-                                           noTerraform)
+                                          len(msgArr) - 1,
+                                          None,
+                                          None,
+                                          "src/logging/shared",
+                                          init.configs,
+                                          testsRoot,
+                                          retry,
+                                          instanceDefinition,
+                                          credentials,
+                                          dependencies,
+                                          baseCWD,
+                                          provDict,
+                                          extraSupportedClouds,
+                                          noTerraform)
         if prov is False:
             writeFail(resDir, "sharedCluster_result.json",
                       msg, "src/logging/shared")
             return
     else:
         if not checkCluster("shared"):
-            return  # Cluster not reachable, do not add cost for this test
+            return # Cluster not reachable, do not add cost for this test
     for test in msgArr[1:]:
-        p = Process(target=eval(test),args=(resDir,))
+        p = Process(target=eval(test), args=(resDir,))
         sharedClusterProcs.append(p)
         p.start()
     for p in sharedClusterProcs:
         p.join()
-    if init.obtainCost is True:  # duration * instancePrice * numberOfInstances
+    if init.obtainCost is True: # duration * instancePrice * numberOfInstances
         testCost = ((time.time() - start) / 3600) * \
             init.configs["costCalculation"]["generalInstancePrice"] * \
             len(msgArr[1:])
@@ -61,7 +64,11 @@ def sharedClusterTests(msgArr,onlyTest,retry,noTerraform,resDir):
 
 
 def s3Test(resDir):
-    """Run S3 endpoints test."""
+    """Run S3 endpoints test.
+
+    Parameters:
+        resDir (str): Path to the results folder for the current run.
+    """
 
     res = False
     testCost = 0
@@ -100,7 +107,11 @@ def s3Test(resDir):
 
 
 def dataRepatriationTest(resDir):
-    """Run Data Repatriation Test -Exporting from cloud to Zenodo-."""
+    """Run Data Repatriation Test -Exporting from cloud to Zenodo-.
+
+    Parameters:
+        resDir (str): Path to the results folder for the current run.
+    """
 
     res = False
     testCost = 0
@@ -116,8 +127,10 @@ def dataRepatriationTest(resDir):
             file="%sdata_repatriation/repatriation_pod.yaml" %
             testsRoot,
             toLog="src/logging/shared") != 0:
-        writeFail(resDir, "data_repatriation_test.json",
-                  "Error deploying data_repatriation pod.", "src/logging/shared")
+        writeFail(resDir,
+                  "data_repatriation_test.json",
+                  "Error deploying data_repatriation pod.",
+                  "src/logging/shared")
 
     else:
         fetchResults(
@@ -130,11 +143,16 @@ def dataRepatriationTest(resDir):
         kubectl(Action.delete, type=Type.pod, name="repatriation-pod")
         res = True
 
-    init.queue.put(({"test": "dataRepatriationTest", "deployed": res}, testCost))
+    init.queue.put(
+        ({"test": "dataRepatriationTest", "deployed": res}, testCost))
 
 
 def cpuBenchmarking(resDir):
-    """Run containerised CPU Benchmarking test."""
+    """Run containerised CPU Benchmarking test.
+
+    Parameters:
+        resDir (str): Path to the results folder for the current run.
+    """
 
     res = False
     testCost = 0
@@ -150,8 +168,10 @@ def cpuBenchmarking(resDir):
             file="%scpu_benchmarking/cpu_benchmarking_pod.yaml" %
             testsRoot,
             toLog="src/logging/shared") != 0:
-        writeFail(resDir, "cpu_benchmarking.json",
-                  "Error deploying cpu_benchmarking_pod.", "src/logging/shared")
+        writeFail(resDir,
+                  "cpu_benchmarking.json",
+                  "Error deploying cpu_benchmarking_pod.",
+                  "src/logging/shared")
     else:
         fetchResults(
             resDir,
@@ -167,7 +187,11 @@ def cpuBenchmarking(resDir):
 
 
 def perfsonarTest(resDir):
-    """Run Networking Performance test -perfSONAR toolkit-."""
+    """Run Networking Performance test -perfSONAR toolkit-.
+
+    Parameters:
+        resDir (str): Path to the results folder for the current run.
+    """
 
     res = False
     testCost = 0
@@ -192,8 +216,10 @@ def perfsonarTest(resDir):
         runScriptCMD = "python /tmp/ps_test.py --ep %s" % endpoint
         runOnPodCMD = "%s && %s" % (dependenciesCMD, runScriptCMD)
         if kubectl(Action.exec, name="ps-pod", cmd="%s" % runOnPodCMD) != 0:
-            writeFail(resDir, "perfsonar_results.json",
-                      "Error running script test on pod.", "src/logging/shared")
+            writeFail(resDir,
+                      "perfsonar_results.json",
+                      "Error running script test on pod.",
+                      "src/logging/shared")
         else:
 
             fetchResults(resDir, "ps-pod:/tmp/perfsonar_results.json",
@@ -207,7 +233,11 @@ def perfsonarTest(resDir):
 
 
 def dodasTest(resDir):
-    """Run DODAS test."""
+    """Run DODAS test.
+
+    Parameters:
+        resDir (str): Path to the results folder for the current run.
+    """
 
     res = False
     testCost = 0
@@ -231,21 +261,29 @@ def dodasTest(resDir):
                 Action.exec,
                 name="dodas-pod",
                 cmd="sh /CMSSW/CMSSW_9_4_0/src/custom_entrypoint.sh") != 0:
-            writeFail(resDir, "dodas_results.json",
-                      "Error running script test on pod.", "src/logging/shared")
+            writeFail(resDir,
+                      "dodas_results.json",
+                      "Error running script test on pod.",
+                      "src/logging/shared")
         else:
             fetchResults(resDir, "dodas-pod:/tmp/dodas_test.json",
                          "dodas_results.json", "src/logging/shared")
             res = True
         # cleanup
         writeToFile("src/logging/shared", "Cluster cleanup...", True)
-        kubectl(Action.delete, type=Type.pod, name="dodas-pod") # TODO: debug
+        kubectl(Action.delete, type=Type.pod, name="dodas-pod")
 
     init.queue.put(({"test": "dodasTest", "deployed": res}, testCost))
 
 
-def dlTest(onlyTest,retry,noTerraform,resDir):
+def dlTest(onlyTest, retry, noTerraform, resDir):
     """Run Deep Learning test -GAN training- on GPU nodes.
+
+    Parameters:
+        onlyTest (bool): If true, skip provisioning phase.
+        retry (bool): If true, try to reuse existing infrastructure.
+        noTerraform (bool): Specifies whether current run uses terraform.
+        resDir (str): Path to the results folder for the current run.
 
     Returns:
         None: In case of errors the function stops (returns None)
@@ -257,22 +295,23 @@ def dlTest(onlyTest,retry,noTerraform,resDir):
     kubeconfig = "src/tests/dlTest/config"
     if onlyTest is False:
         prov, msg = provisionAndBootstrap("dlTest",
-                                           dl["nodes"],
-                                           dl["flavor"],
-                                           extraInstanceConfig,
-                                           "src/logging/dlTest",
-                                           init.configs,
-                                           testsRoot,
-                                           retry,
-                                           instanceDefinition,
-                                           credentials,
-                                           dependencies,
-                                           baseCWD,
-                                           provDict,
-                                           extraSupportedClouds,
-                                           noTerraform)
+                                          dl["nodes"],
+                                          dl["flavor"],
+                                          extraInstanceConfig,
+                                          "src/logging/dlTest",
+                                          init.configs,
+                                          testsRoot,
+                                          retry,
+                                          instanceDefinition,
+                                          credentials,
+                                          dependencies,
+                                          baseCWD,
+                                          provDict,
+                                          extraSupportedClouds,
+                                          noTerraform)
         if prov is False:
-            writeFail(resDir, "bb_train_history.json", msg, "src/logging/dlTest")
+            writeFail(resDir, "bb_train_history.json",
+                      msg, "src/logging/dlTest")
             return
     else:
         if not checkCluster("dlTest"):
@@ -299,7 +338,8 @@ def dlTest(onlyTest,retry,noTerraform,resDir):
     # (contains driver too) and dl_stack.sh for kubeflow and mpi.
     # (backend run assumes dl support)
     if checkDLsupport() is False and viaBackend is False:
-        writeToFile("src/logging/dlTest", "Preparing cluster for DL test...", True)
+        writeToFile("src/logging/dlTest",
+                    "Preparing cluster for DL test...", True)
         masterIP = runCMD(
             "kubectl --kubeconfig %s get nodes -owide |\
             grep master | awk '{print $6}'" %
@@ -371,8 +411,14 @@ def dlTest(onlyTest,retry,noTerraform,resDir):
     init.queue.put(({"test": "dlTest", "deployed": res}, testCost))
 
 
-def hpcTest(onlyTest,retry,noTerraform,resDir):
+def hpcTest(onlyTest, retry, noTerraform, resDir):
     """HPC test.
+
+    Parameters:
+        onlyTest (bool): If true, skip provisioning phase.
+        retry (bool): If true, try to reuse existing infrastructure.
+        noTerraform (bool): Specifies whether current run uses terraform.
+        resDir (str): Path to the results folder for the current run.
 
     Returns:
         None: In case of errors the function stops (returns None)
@@ -383,22 +429,23 @@ def hpcTest(onlyTest,retry,noTerraform,resDir):
     hpc = init.testsCatalog["hpcTest"]
     if onlyTest is False:
         prov, msg = provisionAndBootstrap("hpcTest",
-                                           hpc["nodes"],
-                                           hpc["flavor"],
-                                           None,
-                                           "src/logging/hpcTest",
-                                           init.configs,
-                                           testsRoot,
-                                           retry,
-                                           instanceDefinition,
-                                           credentials,
-                                           dependencies,
-                                           baseCWD,
-                                           provDict,
-                                           extraSupportedClouds,
-                                           noTerraform)
+                                          hpc["nodes"],
+                                          hpc["flavor"],
+                                          None,
+                                          "src/logging/hpcTest",
+                                          init.configs,
+                                          testsRoot,
+                                          retry,
+                                          instanceDefinition,
+                                          credentials,
+                                          dependencies,
+                                          baseCWD,
+                                          provDict,
+                                          extraSupportedClouds,
+                                          noTerraform)
         if prov is False:
-            writeFail(resDir, "hpcTest_result.json", msg, "src/logging/hpcTest")
+            writeFail(resDir, "hpcTest_result.json",
+                      msg, "src/logging/hpcTest")
             return
     else:
         if not checkCluster("hpcTest"):

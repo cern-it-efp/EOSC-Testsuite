@@ -2,7 +2,7 @@
 
 import os
 from aux import *
-#from init import *
+
 
 def checkCost(obtainCost, value):
     """ Checks the provided value is not None and is greater than 0.
@@ -45,10 +45,16 @@ def checkResultsExist(resDir):
         return len(files) > 0
 
 
-def checkProvidedIPs(selected, testsSharingCluster, customClustersTests, configs, testsCatalog):
+def checkProvidedIPs(testsSharingCluster, customClustersTests, configs, testsCatalog):
     """Checks, when the option '--no-terraform' has been used that the
-       IPs for the selected tests were provided at testsCatalog.yaml"""
+       IPs for the selected tests were provided at testsCatalog.yaml
 
+    Parameters:
+        testsSharingCluster (Array<str>): Tests sharing general purpose cluster.
+        customClustersTests (Array<str>): Tests using custom dedicated clusters.
+        configs (dict): Object containing configs.yaml's configurations.
+        testsCatalog (dict): Object containing testsCatalog.yaml's content.
+    """
 
     for test in testsSharingCluster:
         if testsCatalog[test]["run"] is True:
@@ -70,30 +76,49 @@ def checkProvidedIPs(selected, testsSharingCluster, customClustersTests, configs
 
 def checkRequiredTFexist(selectedTests):
     """Called when --retry option is used, checks the main.tf files exist for
-       the required tests: those with run: true at testsCatalog.yaml"""
+       the required tests: those with run: true at testsCatalog.yaml
+
+    Parameters:
+        selectedTests (Array<str>): Array containing the selected tests.
+    """
 
     pathToMain = "src/tests/%s/main.tf"
 
-    if ("s3Test" in selectedTests or \
-        "dataRepatriationTest" in selectedTests or \
-        "cpuBenchmarking" in selectedTests or \
-        "perfsonarTest" in selectedTests or \
-        "dodasTest" in selectedTests) \
-        and os.path.isfile(pathToMain % "shared") is False:
-        writeToFile("src/logging/header", "ERROR: terraform files not found for shared cluster. Normal run is required before run with '--retry'.", True)
+    if ("s3Test" in selectedTests or
+            "dataRepatriationTest" in selectedTests or
+            "cpuBenchmarking" in selectedTests or
+            "perfsonarTest" in selectedTests or
+            "dodasTest" in selectedTests) \
+            and os.path.isfile(pathToMain % "shared") is False:
+        writeToFile("src/logging/header",
+                    "ERROR: terraform files not found for shared cluster. "
+                    "\nNormal run is required before run with '--retry'.", True)
         stop(1)
 
-    if "dlTest" in selectedTests and os.path.isfile(pathToMain % "dlTest") is False:
-        writeToFile("src/logging/header", "ERROR: terraform files not found for dlTest. Normal run is required before run with '--retry'.", True)
+    if "dlTest" in selectedTests and not os.path.isfile(pathToMain % "dlTest"):
+        writeToFile("src/logging/header",
+                    "ERROR: terraform files not found for dlTest. "
+                    "\nNormal run is required before run with '--retry'.", True)
         stop(1)
 
-    if "hpcTest" in selectedTests and os.path.isfile(pathToMain % "hpcTest") is False:
-        writeToFile("src/logging/header", "ERROR: terraform files not found for hpcTest. Normal run is required before run with '--retry'.", True)
+    if "hpcTest" in selectedTests and not os.path.isfile(pathToMain % "hpcTest"):
+        writeToFile("src/logging/header",
+                    "ERROR: terraform files not found for hpcTest. "
+                    "\nNormal run is required before run with '--retry'.", True)
         stop(1)
 
 
 def checkClustersToDestroy(cliParameterValue, clusters):
-    """Checks the given argument matches cluster to be destroyed"""
+    """Checks the given argument matches cluster to be destroyed
+
+    Parameters:
+        cliParameterValue (str): CLI arguments.
+        clusters (Array<str>): Array containing 'shared','dlTest' and 'hpcTest'.
+
+    Returns:
+        bool: True in case the given argument is correct. False otherwise.
+    """
+
     try:
         for value in cliParameterValue.split(','):
             if value not in clusters:

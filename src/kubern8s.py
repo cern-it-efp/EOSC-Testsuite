@@ -14,7 +14,7 @@ try:
     import tarfile
     from pathlib import Path
     from enum import Enum
-    import contextlib # to hide logs
+    import contextlib  
     import io
 
 except ModuleNotFoundError as ex:
@@ -53,13 +53,14 @@ def fetchResults(resDir, source, file, toLog):
     """Fetch tests results file from pod.
 
     Parameters:
+        resDir (str): Path to the results dir for the current run.
         source (str): Location of the results file.
         file (str): Name to be given to the file.
         toLog (str): Path to the log file to which logs have to be sent
     """
 
     while os.path.exists(resDir + "/" + file) is False:
-        with contextlib.redirect_stdout(io.StringIO()): # to hide logs
+        with contextlib.redirect_stdout(io.StringIO()):  # to hide logs
             print("Fetching results...")
             kubectl(Action.cp, podPath=source, localPath="%s/%s" %
                     (resDir, file), fetch=True)
@@ -214,7 +215,8 @@ def kubectl(
 
     elif action is Action.exec:
         try:
-            cmd = "(%s) &> /dev/null ; echo $?" % cmd # w/a to get the exit code
+            # w/a to get the exit code
+            cmd = "(%s) &> /dev/null ; echo $?" % cmd
             resp = stream(
                 client.CoreV1Api().connect_get_namespaced_pod_exec,
                 name,

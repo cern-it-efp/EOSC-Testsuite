@@ -2,9 +2,7 @@
 
 ld="src/logging" # logging dir
 
-echo "" > /tmp/someLogs
-
-rm -f $ld/header $ld/killMe $ld/footer $ld/hpcTest $ld/dlTest $ld/shared $ld/logs $ld/end &> /dev/null #Delete log files from previous failed runs
+rm -f $ld/header $ld/killMe $ld/footer $ld/hpcTest $ld/dlTest $ld/shared $ld/logs $ld/end $ld/ansibleLogs* &> /dev/null
 
 opts=""
 while [[ "$1" != "" ]]; do
@@ -12,10 +10,8 @@ while [[ "$1" != "" ]]; do
     jenkins=true
     shift
   elif [[ "$1" == '--destroy' ]]; then
-    #cd src
     python3 -B -u src/main.py $1 $2
     outStat=$?
-    #cd ..
     exit $outStat
   else
     opts+=" "$1
@@ -52,11 +48,8 @@ watchFunct(){
 
 ############# TEST SUITE RUN #############
 watchFunct &
-#cd src
-#python3 -B -u main.py $opts &> ../logs
 python3 -B -u src/main.py $opts &> logs
 outStat=$?
-#cd ..
 ##########################################
 
 #TS run complete, kill logger and cat logs to main terminal:
