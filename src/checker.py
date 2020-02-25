@@ -45,7 +45,10 @@ def checkResultsExist(resDir):
         return len(files) > 0
 
 
-def checkProvidedIPs(testsSharingCluster, customClustersTests, configs, testsCatalog):
+def checkProvidedIPs(testsSharingCluster,
+                     customClustersTests,
+                     configs,
+                     testsCatalog):
     """Checks, when the option '--no-terraform' has been used that the
        IPs for the selected tests were provided at testsCatalog.yaml
 

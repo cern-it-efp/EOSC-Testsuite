@@ -56,5 +56,4 @@ RUN mkdir /root/.ssh && \
 
 # ------------------ Clone TS repo and get bash
 ENTRYPOINT git clone -q https://github.com/cern-it-efp/EOSC-Testsuite.git && \
-           cd EOSC-Testsuite  && \
-           bash
+           cd EOSC-Testsuite ; bash

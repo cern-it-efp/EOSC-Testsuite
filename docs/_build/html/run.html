@@ -182,9 +182,8 @@
 <dt><kbd><span class="option">--only-test</span></kbd></dt>
 <dd><p>Run without creating the infrastructure (VMs and cluster), only deploy tests. Not valid for the first run.</p>
 </dd>
-<dt><kbd><span class="option">--retry</span></kbd></dt>
-<dd><p>In case of errors on the first run, use this option for retrying. This will make the test-suite try and reuse already provisioned infrastructure. Not valid for the first run, use only when VMs were provisioned but kubernetes bootstrapping failed.</p>
-</dd>
+</dl>
+<dl class="option-list">
 <dt><kbd><span class="option">--destroy <var>&lt;cluster&gt;</var></span></kbd></dt>
 <dd><p>No test suite run, only destroy provisioned infrastructure. Argument can be:</p>
 <p>‘shared’: Destroy the shared cluster.</p>

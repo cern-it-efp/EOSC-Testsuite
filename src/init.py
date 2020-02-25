@@ -17,7 +17,6 @@ extraSupportedClouds = loadFile("src/schemas/provDict.yaml",
                                 required=True)["extraSupportedClouds"]
 obtainCost = True
 
-
 def initAndChecks(noTerraform,
                   extraSupportedClouds,
                   testsSharingCluster,
