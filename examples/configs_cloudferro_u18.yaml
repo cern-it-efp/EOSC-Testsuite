@@ -1,0 +1,17 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: openstack
+pathToKey: "/root/.ssh/id_rsa"
+openUser: eouser
+flavor: "eo1.medium"
+imageName: "Ubuntu 18.04 LTS"
+keyPair: mykey
+securityGroups: "[\"default\",\"allow_ping_ssh_rdp\"]"
+region:
+availabilityZone:
+
+#---------------COST CALCULATION------------------------------------------------
+costCalculation:
+  generalInstancePrice:
+  GPUInstancePrice:
+  HPCInstancePrice: 0.2
+  s3bucketPrice: 0.1

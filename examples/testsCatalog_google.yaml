@@ -1,8 +1,8 @@
 s3Test:
   run: true
-  endpoint: https://s3.amazonaws.com
-  accessKey: asdfasd
-  secretKey: dsfadsf
+  endpoint: https://s3.com
+  accessKey: 1234abc
+  secretKey: 1234abc
 dataRepatriationTest:
   run: true
 cpuBenchmarking:
@@ -13,10 +13,10 @@ perfsonarTest:
 dodasTest:
   run: true
 dlTest:
-  run:
-  nodes: 3
-  flavor: "Small"
+  run: true
+  nodes: 4
+  flavor: "n1-standard-2"
 hpcTest:
-  run:
-  nodes: 2
-  flavor: "Small"
+  run: true
+  nodes: 4
+  flavor: "n1-standard-2"
