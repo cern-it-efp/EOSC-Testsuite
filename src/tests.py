@@ -6,6 +6,8 @@ from kubern8s import *
 from aux import *
 from multiprocessing import Process, Queue
 import init
+import contextlib
+import io
 
 
 def sharedClusterTests(msgArr, onlyTest, retry, noTerraform, resDir):
@@ -204,13 +206,13 @@ def perfsonarTest(resDir):
         writeFail(resDir, "perfsonar_results.json",
                   "Error deploying perfsonar pod.", "src/logging/shared")
     else:
-        while kubectl(
-            Action.cp,
-            podPath="ps-pod:/tmp",
-            localPath=testsRoot +
-            "perfsonar/ps_test.py",
+        with contextlib.redirect_stdout(io.StringIO()):  # to hide logs
+            while kubectl(
+                Action.cp,
+                podPath="ps-pod:/tmp",
+                localPath=testsRoot + "perfsonar/ps_test.py",
                 fetch=False) != 0:
-            pass  # Copy script to pod
+                pass  # Copy script to pod
         # Run copied script
         dependenciesCMD = "yum -y install python-dateutil python-requests"
         runScriptCMD = "python /tmp/ps_test.py --ep %s" % endpoint
@@ -249,13 +251,13 @@ def dodasTest(resDir):
         writeFail(resDir, "dodas_test.json",
                   "Error deploying DODAS pod.", "src/logging/shared")
     else:
-        while kubectl(
+        with contextlib.redirect_stdout(io.StringIO()):  # to hide logs
+            while kubectl(
                 Action.cp,
-                localPath="%sdodas/custom_entrypoint.sh" %
-                testsRoot,
                 podPath="dodas-pod:/CMSSW/CMSSW_9_4_0/src",
+                localPath="%sdodas/custom_entrypoint.sh" % testsRoot,
                 fetch=False) != 0:
-            pass  # Copy script to pod
+                pass  # Copy script to pod
         # Run copied script
         if kubectl(
                 Action.exec,

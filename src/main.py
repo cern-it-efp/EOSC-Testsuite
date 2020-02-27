@@ -281,7 +281,7 @@ if checkResultsExist(resDir) is True:
             logger([msg1, "Results on the S3 bucket"],
                    "#", "src/logging/footer")
     else:
-        logger(msg1, "°", "src/logging/footer")
+        logger(msg1, "*", "src/logging/footer") 
 
     if destroyOnCompletion == True:
         for cluster in clustersToDestroy:

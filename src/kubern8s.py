@@ -231,9 +231,9 @@ def kubectl(
                 stdout=True,
                 tty=False)
             # ------------------------------------------
-            print("resp raw: " + resp)
+            #print("resp raw: " + resp)
             resp = int(resp)
-            print("resp cast to int: " + str(resp))
+            #print("resp cast to int: " + str(resp))
             # ------------------------------------------
             return resp
         except BaseException as e:

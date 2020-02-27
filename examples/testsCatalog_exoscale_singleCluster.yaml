@@ -1,8 +1,8 @@
 s3Test:
   run: True
   endpoint: https://sos-ch-gva-2.exo.io/
-  accessKey: EXOe3ca3e7621b7cd7a20f7e0de
-  secretKey: 2_JvzFcZQL_Rg1nZSRNVheYQh9oYlL5aX3zX-eILiL4
+  accessKey: asdfadf
+  secretKey: asdfasdf
 dataRepatriationTest:
   run: true
 cpuBenchmarking:
@@ -13,7 +13,7 @@ perfsonarTest:
 dodasTest:
   run: true
 dlTest:
-  run: 
+  run:
   nodes: 3
   flavor: "Small"
 hpcTest:
