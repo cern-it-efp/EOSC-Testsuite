@@ -1,5 +1,5 @@
 provider "google" {
-  credentials = "${file("~/Desktop/.gcp.json")}"
+  credentials = file("~/Desktop/.gcp.json")
   project     = "ocrets"
 }
 

@@ -6,8 +6,6 @@ flavor: "eo1.medium"
 imageName: "CentOS 7"
 keyPair: mykey
 securityGroups: "[\"default\",\"allow_ping_ssh_rdp\"]"
-region:
-availabilityZone: 
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:

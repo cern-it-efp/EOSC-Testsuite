@@ -137,8 +137,7 @@ def initAndChecks(noTerraform,
             configs["costCalculation"]["generalInstancePrice"])
 
     if noTerraform is True:
-        checkProvidedIPs(selected,
-                         testsSharingCluster,
+        checkProvidedIPs(testsSharingCluster,
                          customClustersTests,
                          configs,
                          testsCatalog)

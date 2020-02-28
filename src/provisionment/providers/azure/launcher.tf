@@ -1,5 +1,6 @@
 provider "azurerm" {
   subscription_id = "54f623f0-8c18-40dd-9530-d32d2f1ee14f"
+  features {}
 }
 
 # Create virtual network (This can actually be done IN ADVANCE)
@@ -14,7 +15,7 @@ resource "azurerm_virtual_network" "myterraformnetwork" {
 resource "azurerm_subnet" "myterraformsubnet" {
   name                 = "mySubnet"
   resource_group_name  = "ocrets"
-  virtual_network_name = "${azurerm_virtual_network.myterraformnetwork.name}"
+  virtual_network_name = azurerm_virtual_network.myterraformnetwork.name
   address_prefix       = "10.0.1.0/24"
 }
 
@@ -50,13 +51,13 @@ resource "azurerm_network_interface" "terraformnic" {
   name                      = "myNIC"
   location                  = "West Europe"
   resource_group_name       = "ocrets"
-  network_security_group_id = "${azurerm_network_security_group.myterraformnsg.id}"
+  #network_security_group_id = azurerm_network_security_group.myterraformnsg.id # deprecated starting azure's provider version 2
 
   ip_configuration {
     name                          = "myNicConfiguration"
-    subnet_id                     = "${azurerm_subnet.myterraformsubnet.id}"
+    subnet_id                     = azurerm_subnet.myterraformsubnet.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = "${azurerm_public_ip.myterraformpublicip.id}"
+    public_ip_address_id          = azurerm_public_ip.myterraformpublicip.id
   }
 }
 
@@ -67,7 +68,7 @@ resource "azurerm_virtual_machine" "main" {
   location              = "West Europe"
   vm_size               = "Standard_D2s_v3"
   resource_group_name   = "ocrets"
-  network_interface_ids = ["${azurerm_network_interface.terraformnic.id}"]
+  network_interface_ids = [azurerm_network_interface.terraformnic.id]
 
   storage_os_disk {
     name              = "myOsDisk"
@@ -102,7 +103,7 @@ resource null_resource "allow_root" {
   depends_on = [azurerm_virtual_machine.main]
   provisioner "remote-exec" {
     connection {
-      host        = "${azurerm_public_ip.myterraformpublicip.ip_address}"
+      host        = azurerm_public_ip.myterraformpublicip.ip_address
       type        = "ssh"
       user        = "uroot"
       private_key = file("~/.ssh/id_rsa")

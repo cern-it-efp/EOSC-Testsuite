@@ -48,6 +48,9 @@ def sharedClusterTests(msgArr, onlyTest, retry, noTerraform, resDir):
         if prov is False:
             writeFail(resDir, "sharedCluster_result.json",
                       msg, "src/logging/shared")
+            init.queue.put(({"test": "shared",
+                             "deployed": False,
+                             "reason": "ProvisionFailed"}, testCost))
             return
     else:
         if not checkCluster("shared"):
@@ -293,6 +296,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir):
 
     start = time.time()
     testCost = 0
+    res = False
     dl = init.testsCatalog["dlTest"]
     kubeconfig = "src/tests/dlTest/config"
     if onlyTest is False:
@@ -314,11 +318,13 @@ def dlTest(onlyTest, retry, noTerraform, resDir):
         if prov is False:
             writeFail(resDir, "bb_train_history.json",
                       msg, "src/logging/dlTest")
+            init.queue.put(({"test": "dlTest",
+                             "deployed": res,
+                             "reason": "ProvisionFailed"}, testCost))
             return
     else:
         if not checkCluster("dlTest"):
             return  # Cluster not reachable, do not add cost for this test
-    res = False
 
     #### This should be done at the end of this function #####################
     if init.obtainCost is True:
@@ -428,6 +434,7 @@ def hpcTest(onlyTest, retry, noTerraform, resDir):
 
     start = time.time()
     testCost = 0
+    res = False
     hpc = init.testsCatalog["hpcTest"]
     if onlyTest is False:
         prov, msg = provisionAndBootstrap("hpcTest",
@@ -448,12 +455,14 @@ def hpcTest(onlyTest, retry, noTerraform, resDir):
         if prov is False:
             writeFail(resDir, "hpcTest_result.json",
                       msg, "src/logging/hpcTest")
+            init.queue.put(({"test": "hpcTest",
+                             "deployed": res,
+                             "reason": "ProvisionFailed"}, testCost))
             return
     else:
         if not checkCluster("hpcTest"):
             return  # Cluster not reachable, do not add cost for this test
     writeToFile("src/logging/hpcTest", "(to be done)", True)
-    res = False
 
     if init.obtainCost is True:
         testCost = ((time.time() - start) / 3600) * \

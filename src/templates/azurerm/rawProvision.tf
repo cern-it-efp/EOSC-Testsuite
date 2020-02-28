@@ -1,5 +1,6 @@
 provider "azurerm" {
   subscription_id = var.subscriptionId
+  features {}
 }
 
 resource "azurerm_network_interface" "terraformnic" {
@@ -7,7 +8,7 @@ resource "azurerm_network_interface" "terraformnic" {
   name                      = "myNIC${count.index}-${var.clusterRandomID}"
   location                  = var.location
   resource_group_name       = var.resourceGroupName
-  network_security_group_id = var.secGroupId
+  #network_security_group_id = var.secGroupId
   ip_configuration {
     name                          = "myNicConfiguration"
     subnet_id                     = var.subnetId

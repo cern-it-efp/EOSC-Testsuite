@@ -18,7 +18,7 @@ resource "openstack_compute_instance_v2" "tslauncher" {
 resource "null_resource" "allow_root" {
   provisioner "remote-exec" {
     connection {
-      host        = "${var.publicIP}"
+      host        = var.publicIP
       type        = "ssh"
       user        = "eouser"
       private_key = file("/home/ipelu/.ssh/id_rsa")

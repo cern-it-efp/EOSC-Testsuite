@@ -129,3 +129,26 @@ def checkClustersToDestroy(cliParameterValue, clusters):
     except:
         return False
     return True
+
+
+def checkClusterWasProvisioned(cluster, generalResultsTesting): # TODO: try this using a flavor that do not exist for one of the clusters hpc
+    """Checks whether a cluster was provisioned.
+
+    Parameters:
+        cluster (str): Cluster ID.
+        generalResults (object): "testing" section of general.json.
+
+    Returns:
+        bool: True in case the given cluster was indeed provisioned.
+         otherwise.
+    """
+
+    res = True
+    for test in generalResultsTesting:
+        if test["test"] == cluster and test["deployed"] is False:
+            try:
+                test["reason"]
+                res = False
+            except KeyError:
+                res = True # no 'reason' parameter: provisionment OK
+    return res

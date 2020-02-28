@@ -15,8 +15,8 @@ dodasTest:
 dlTest:
   run: true
   nodes: 3
-  #  flavor: 
+  flavor: "this flavor does not exist"
 hpcTest:
   run: true
   nodes: 2
-  #  flavor:
+  flavor: "this flavor does not exist"

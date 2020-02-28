@@ -1,11 +1,13 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
-providerName: "cloudsigma"
+providerName: "cloudstack"
 pathToKey: "/home/ipelu/.ssh/id_rsa"
-openUser: cloudsigma
-clusters:
-  shared: ["31.171.250.161","31.171.240.76"]
-  hpcTest: ["31.171.250.45","31.171.250.49"]
-  dlTest: ["31.171.250.252","31.171.250.204"]
+configPath: "/home/ipelu/Desktop/exoCreds"
+flavor: "Medium"
+zone: "ch-gva-2"
+template: "Linux Ubuntu 16.04 LTS 64-bit"
+keyPair: "k_cl"
+securityGroups: "[\"default\"]"
+diskSize: 100
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:

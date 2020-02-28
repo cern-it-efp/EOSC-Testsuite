@@ -226,7 +226,7 @@ for test in testsSharingCluster:
         msgArr.append(test)
 
 if len(msgArr) > 1:
-    p = Process(target=sharedClusterTests, args=(
+    p = Process(target=sharedClusterTests, args=( # shared cluster provisioning
         msgArr, onlyTest, retry, noTerraform, resDir))
     procs.append(p)
     p.start()
@@ -236,7 +236,7 @@ for test in customClustersTests:
     if testsCatalog[test]["run"] is True:
         logger("CLUSTER %s: %s" % (cluster, test),
                "=", "src/logging/%s" % test)
-        p = Process(target=eval(test), args=(
+        p = Process(target=eval(test), args=( # custom clusters provisioning
             onlyTest, retry, noTerraform, resDir))
         procs.append(p)
         p.start()
@@ -281,15 +281,16 @@ if checkResultsExist(resDir) is True:
             logger([msg1, "Results on the S3 bucket"],
                    "#", "src/logging/footer")
     else:
-        logger(msg1, "*", "src/logging/footer") 
+        logger(msg1, "*", "src/logging/footer")
 
     if destroyOnCompletion == True:
-        for cluster in clustersToDestroy:
-            if destroyTF(baseCWD, clusters=[cluster])[0] != 0:
-                msg = "   ...destroy failed. Check 'logs' file for details"
-            else:
-                msg = "   ...cluster destroyed"
-            writeToFile("src/logging/footer", msg, True)
+        for cluster in clustersToDestroy: # TODO: check here whether VMs for the cluster were indeed provisioned before trying to destroy them. Maybe use for that general.json
+            if checkClusterWasProvisioned(cluster, generalResults["testing"]):
+                if destroyTF(baseCWD, clusters=[cluster])[0] != 0:
+                    msg = "   ...destroy failed. Check 'logs' file for details"
+                else:
+                    msg = "   ...cluster destroyed"
+                writeToFile("src/logging/footer", msg, True)
 else:
 
     # logo with provider, no results
