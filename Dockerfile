@@ -35,11 +35,6 @@ RUN TERRAFORM_VERSION=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/te
     unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
     mv terraform /bin
 
-# ------------------ Install ansible
-RUN apt-get install -y software-properties-common; \
-    apt-add-repository --yes --update ppa:ansible/ansible; \
-    apt-get install -y ansible
-
 # ------------------ Install kubectl
 RUN KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt) && \
     curl -LO https://storage.googleapis.com/kubernetes-release/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl && \

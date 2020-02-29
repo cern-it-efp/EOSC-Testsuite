@@ -1,24 +1,30 @@
 #!/usr/bin/env python3
 
-import os
-import time
-import random
-import string
-from ansible.module_utils.common.collections import ImmutableDict
-from ansible.parsing.dataloader import DataLoader
-from ansible.vars.manager import VariableManager
-from ansible.inventory.manager import InventoryManager
-from ansible import context
-from ansible.cli import CLI
-from ansible.executor.playbook_executor import PlaybookExecutor
-from configparser import ConfigParser
-import threading
-from multiprocessing import Process, Queue
-import contextlib
-import io
 
+import sys
+try:
+    import os
+    import time
+    import random
+    import string
+    from ansible.module_utils.common.collections import ImmutableDict
+    from ansible.parsing.dataloader import DataLoader
+    from ansible.vars.manager import VariableManager
+    from ansible.inventory.manager import InventoryManager
+    from ansible import context
+    from ansible.cli import CLI
+    from ansible.executor.playbook_executor import PlaybookExecutor
+    from configparser import ConfigParser
+    import threading
+    from multiprocessing import Process, Queue
+    import contextlib
+    import io
+except ModuleNotFoundError as ex:
+    print(ex)
+    sys.exit(1)
 from aux import *
 from init import *
+
 
 provisionFailMsg = "Failed to provision raw VMs. Check 'logs' file for details"
 bootstrapFailMsg = "Failed to bootstrap '%s' k8s cluster. Check 'logs' file"

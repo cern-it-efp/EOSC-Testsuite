@@ -17,7 +17,7 @@ Options
     Specifies custom location of testsCatalog.yaml. If not used, default will be the 'configurations' folder.
 
 --no-terraform
-    Option to avoid terraform provisionment, only ansible-playbook bootstrapping. To be used on providers that do not support terraform.
+    Option to skip terraform provisionment, only ansible-playbook bootstrapping. To be used on providers that do not support terraform.
 
 --only-test
     Run without creating the infrastructure (VMs and cluster), only deploy tests. Not valid for the first run.
@@ -38,7 +38,6 @@ Options
 
 --destroy-on-completion <clusters>
     Destroy infrastructure once the test suite completes its run. Same arguments as for '--destroy' apply.
-
 
 
 Other commands

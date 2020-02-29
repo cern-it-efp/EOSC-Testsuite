@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 
+import sys
+try:
+    from multiprocessing import Process, Queue
+    import contextlib
+    import io
+except ModuleNotFoundError as ex:
+    print(ex)
+    sys.exit(1)
 from checker import *
 from provisionment import *
 from kubern8s import *
 from aux import *
-from multiprocessing import Process, Queue
 import init
-import contextlib
-import io
 
 
 def sharedClusterTests(msgArr, onlyTest, retry, noTerraform, resDir):
@@ -299,10 +304,16 @@ def dlTest(onlyTest, retry, noTerraform, resDir):
     res = False
     dl = init.testsCatalog["dlTest"]
     kubeconfig = "src/tests/dlTest/config"
+
+    if noTerraform is True:
+        flavor = None
+    else:
+        flavor = dl["flavor"]
+
     if onlyTest is False:
         prov, msg = provisionAndBootstrap("dlTest",
                                           dl["nodes"],
-                                          dl["flavor"],
+                                          flavor,
                                           extraInstanceConfig,
                                           "src/logging/dlTest",
                                           init.configs,
@@ -436,10 +447,16 @@ def hpcTest(onlyTest, retry, noTerraform, resDir):
     testCost = 0
     res = False
     hpc = init.testsCatalog["hpcTest"]
+
+    if noTerraform is True:
+        flavor = None
+    else:
+        flavor = hpc["flavor"]
+
     if onlyTest is False:
         prov, msg = provisionAndBootstrap("hpcTest",
                                           hpc["nodes"],
-                                          hpc["flavor"],
+                                          flavor,
                                           None,
                                           "src/logging/hpcTest",
                                           init.configs,
