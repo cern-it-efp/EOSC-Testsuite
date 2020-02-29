@@ -1,9 +1,3 @@
-src/provisionment/providers/*
-
-!src/provisionment/providers/*/*.tf
-!src/provisionment/providers/*/*.yaml
-!src/provisionment/providers/*/terraform.tfvars
-
 logs
 ansibleLogs*
 
