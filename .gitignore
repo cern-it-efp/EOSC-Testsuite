@@ -1,12 +1,4 @@
-src/provisionment/providers/aws/*
-src/provisionment/providers/azure/*
-src/provisionment/providers/cloudferro/*
-src/provisionment/providers/cloudscale/*
-src/provisionment/providers/exoscale/*
-src/provisionment/providers/ibm/*
-src/provisionment/providers/openstack/*
-src/provisionment/providers/gcp/*
-src/provisionment/providers/cloudstack/*
+src/provisionment/providers/*
 
 !src/provisionment/providers/*/*.tf
 !src/provisionment/providers/*/*.yaml
