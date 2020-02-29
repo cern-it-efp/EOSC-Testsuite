@@ -1,3 +1,6 @@
+src/provisionment/providers/*/.terraform*
+src/provisionment/providers/*/terraform.tfstate*
+
 logs
 ansibleLogs*
 
