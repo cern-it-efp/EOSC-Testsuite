@@ -14,12 +14,16 @@ try:
     import tarfile
     from pathlib import Path
     from enum import Enum
+    import contextlib
+    import io
 
 except ModuleNotFoundError as ex:
     print(ex)
     sys.exit(1)
 
 from aux import *
+
+
 Action = Enum('Action', 'create delete cp exec')
 Type = Enum('Type', 'pod daemonset mpijob configmap pv')
 
@@ -36,10 +40,10 @@ def checkCluster(test):
 
     cmd = "kubectl get nodes --request-timeout=4s"
     if test != "shared":
-        cmd += " --kubeconfig tests/%s/config" % (test)
+        cmd += " --kubeconfig src/tests/%s/config" % (test)
     if runCMD(cmd, hideLogs=True) != 0:
         writeToFile(
-            "logging/%s" % test,
+            "src/logging/%s" % test,
             "%s cluster not reachable, was infrastructure created?" % test,
             True)
         return False
@@ -50,15 +54,17 @@ def fetchResults(resDir, source, file, toLog):
     """Fetch tests results file from pod.
 
     Parameters:
+        resDir (str): Path to the results dir for the current run.
         source (str): Location of the results file.
         file (str): Name to be given to the file.
         toLog (str): Path to the log file to which logs have to be sent
     """
 
     while os.path.exists(resDir + "/" + file) is False:
-        print("Fetching results...")
-        kubectl(Action.cp, podPath=source, localPath="%s/%s" %
-                (resDir, file), fetch=True)
+        with contextlib.redirect_stdout(io.StringIO()):  # to hide logs
+            print("Fetching results...")
+            kubectl(Action.cp, podPath=source, localPath="%s/%s" %
+                    (resDir, file), fetch=True)
     writeToFile(toLog, file + " fetched!", True)
 
 
@@ -210,7 +216,8 @@ def kubectl(
 
     elif action is Action.exec:
         try:
-            cmd = "(%s) &> /dev/null ; echo $?" % cmd # w/a to get the exit code
+            # w/a to get the exit code
+            cmd = "(%s) &> /dev/null ; echo $?" % cmd
             resp = stream(
                 client.CoreV1Api().connect_get_namespaced_pod_exec,
                 name,
@@ -224,9 +231,9 @@ def kubectl(
                 stdout=True,
                 tty=False)
             # ------------------------------------------
-            print("resp raw: " + resp)
+            #print("resp raw: " + resp)
             resp = int(resp)
-            print("resp cast to int: " + str(resp))
+            #print("resp cast to int: " + str(resp))
             # ------------------------------------------
             return resp
         except BaseException as e:

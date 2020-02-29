@@ -38,7 +38,9 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="4. Using existing clusters" href="existingClusters.html" />
-    <link rel="prev" title="2. Tests Catalog" href="testsCatalog.html" /> 
+    <link rel="prev" title="2. Tests Catalog" href="testsCatalog.html" />
+    <link href="_static/style.css" rel="stylesheet" type="text/css">
+
 </head>
 
 <body class="wy-body-for-nav">
@@ -167,40 +169,48 @@
 </div>
 <div class="section" id="options">
 <h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
-<p>The following table describes all the available options:</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="10%" />
-<col width="90%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Name</th>
-<th class="head">Explanation / Values</th>
-</tr>
-</thead>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
 <tbody valign="top">
-<tr class="row-even"><td>–only-test</td>
-<td><div class="first last line-block">
-<div class="line">Run without creating the infrastructure (VMs and cluster), only deploy tests.</div>
-<div class="line">Not valid for the first run.</div>
-</div>
-</td>
+<tr><td class="option-group">
+<kbd><span class="option">-c</span>, <span class="option">--configs</span></kbd></td>
+<td>Specifies custom location of configs.yaml. If not used, default will be the ‘configurations’ folder.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-t</span>, <span class="option">--testsCatalog</span></kbd></td>
 </tr>
-<tr class="row-odd"><td>–retry</td>
-<td><div class="first last line-block">
-<div class="line">In case of errors on the first run, use this option for retrying. This will make the test-suite</div>
-<div class="line">try and reuse already provisioned infrastructure.</div>
-<div class="line">Not valid for the first run, use only when VMs were provisioned but kubernetes</div>
-<div class="line">bootstrapping failed.</div>
-</div>
-</td>
+<tr><td>&#160;</td><td>Specifies custom location of testsCatalog.yaml. If not used, default will be the ‘configurations’ folder.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--no-terraform</span></kbd></td>
+<td>Option to skip terraform provisionment, only ansible-playbook bootstrapping. To be used on providers that do not support terraform.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--only-test</span></kbd></td>
+<td>Run without creating the infrastructure (VMs and cluster), only deploy tests. Not valid for the first run.</td></tr>
+</tbody>
+</table>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--destroy <var>&lt;cluster&gt;</var></span></kbd></td>
 </tr>
+<tr><td>&#160;</td><td><p class="first">No test suite run, only destroy provisioned infrastructure. Argument can be:</p>
+<p>‘shared’: Destroy the shared cluster.</p>
+<p>‘dlTest’: Destroy the GPU cluster.</p>
+<p>‘hpcTest’: Destroy the HPC cluster.</p>
+<p class="last">‘all’: Destroy all clusters.</p>
+</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--destroy-on-completion <var>&lt;clusters&gt;</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Destroy infrastructure once the test suite completes its run. Same arguments as for ‘–destroy’ apply.</td></tr>
 </tbody>
 </table>
 </div>
 <div class="section" id="other-commands">
 <h2>Other commands<a class="headerlink" href="#other-commands" title="Permalink to this headline">¶</a></h2>
-<p>Once the test suite is running, you can view the Terraform logs by doing:</p>
+<p>Once the test suite is running, you can view the provisionment logs by doing:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> tail -f logs
 </pre></div>
 </div>

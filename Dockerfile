@@ -25,7 +25,8 @@ RUN apt-get install -y \
 RUN pip3 install \
     pyyaml \
     kubernetes \
-    jsonschema
+    jsonschema \
+    ansible
 RUN pip3 install --upgrade requests
 
 # ------------------ Install terraform
@@ -43,14 +44,11 @@ RUN KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/
 # ------------------ Install az CLI
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
-
-
 # ------------------ Create ssh key file
 RUN mkdir /root/.ssh && \
     touch /root/.ssh/id_rsa && \
     chmod 600 /root/.ssh/id_rsa
 
 # ------------------ Clone TS repo and get bash
-ENTRYPOINT git clone -q https://github.com/cern-it-efp/OCRE-Testsuite.git && \
-           cd OCRE-Testsuite  && \
-           bash
+ENTRYPOINT git clone -q https://github.com/cern-it-efp/EOSC-Testsuite.git && \
+           cd EOSC-Testsuite ; bash

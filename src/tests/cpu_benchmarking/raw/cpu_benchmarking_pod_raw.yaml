@@ -21,6 +21,8 @@ spec:
   - name: cpu-benchmarking-cont
     image: gitlab-registry.cern.ch/cloud-infrastructure/cloud-benchmark-suite/cloud-benchmark-suite-standalone:1.8
     imagePullPolicy: Always
+    securityContext:
+      privileged: true
     command: ["/bin/sh","-c"]
     args:
       - cern-benchmark --benchmarks="kv;whetstone;DB12;hyper-benchmark" --freetext="Run as part of the Cloud Provider Validation Test-Suite CERN" --cloud="PROVIDER_PH" -o &&

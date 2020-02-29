@@ -16,10 +16,13 @@ spec:
             values:
             - test-pod
         topologyKey: kubernetes.io/hostname
+  hostNetwork: true
   containers:
   - name: repatriation-cont
     image: cernefp/data_repatriation_test_image:latest
     imagePullPolicy: Always
+    securityContext:
+      privileged: true
     env:
     - name: PROVIDER
       value: PROVIDER_PH

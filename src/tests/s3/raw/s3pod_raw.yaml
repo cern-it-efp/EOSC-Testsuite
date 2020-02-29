@@ -16,9 +16,12 @@ spec:
             values:
             - test-pod
         topologyKey: kubernetes.io/hostname
+  hostNetwork: true
   containers:
   - name: s3cont
     image: cernefp/s3_test_image:latest
+    securityContext:
+      privileged: true
     imagePullPolicy: Always
     env:
     - name: AWS_ACCESS_KEY_ID

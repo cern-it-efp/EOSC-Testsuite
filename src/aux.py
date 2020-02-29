@@ -8,11 +8,30 @@ try:
     import datetime
     import time
     import subprocess
+    import jsonschema
     import shutil
+    from configparser import ConfigParser
 
 except ModuleNotFoundError as ex:
     print(ex)
     sys.exit(1)
+
+
+def getMasterIP(hosts):
+    """Given the path to an ansible hosts file, returns the IP specified
+       under the master section of the file.
+
+    Parameters:
+        hosts (str): Path to an ansible hosts file.
+
+    Returns:
+        str: IP of the master node.
+    """
+
+    config = ConfigParser(allow_no_value=True)
+    config.read(hosts)
+    return config.items('master')[0][0]
+
 
 def runCMD(cmd, hideLogs=None, read=None):
     """ Run the command.
@@ -72,10 +91,10 @@ def loadFile(loadThis, required=None):
             except AttributeError:
                 try:
                     return yaml.load(inputfile)
-                except: # yaml.scanner.ScannerError:
+                except:  # yaml.scanner.ScannerError:
                     print("Error loading yaml file " + loadThis)
                     stop(1)
-            except: # yaml.scanner.ScannerError:
+            except:  # yaml.scanner.ScannerError:
                 print("Error loading yaml file " + loadThis)
                 stop(1)
         else:
@@ -124,7 +143,7 @@ def logger(text, sym, file, override=None):
         file (bool): File the logs should be sent to
     """
 
-    size = 66  # longest msg on code (was 61)
+    size = 69  # longest msg on code (was 61)
     frame = sym * (size + 6)
     blank = sym + "  " + " " * size + "  " + sym
     toPrint = frame + "\n" + blank
@@ -166,3 +185,40 @@ def tryTakeFromYaml(dict, key, defaultValue, msgExcept=None):
         if msgExcept is not None:
             print(msgExcept)
         return defaultValue
+
+
+def validateYaml(configs, testsCatalog, noTerraform, extraSupportedClouds):
+    """ Validates configs.yaml and testsCatalog.yaml file against schemas.
+
+    Parameters:
+        configs (dict): Object containing configs.yaml's configurations.
+        testsCatalog (dict): Object containing testsCatalog.yaml's content.
+        noTerraform (bool): Specifies whether current run uses terraform.
+        extraSupportedClouds (dict): Extra supported clouds.
+
+    """
+
+    if noTerraform is False:
+        configsSchema = "src/schemas/configs_sch_%s.yaml" % \
+        configs["providerName"] if configs["providerName"] \
+            in extraSupportedClouds else "src/schemas/configs_sch_general.yaml"
+        testsCatalogSchema = "src/schemas/testsCatalog_sch.yaml"
+    else:
+        configsSchema = "src/schemas/configs_sch_noTerraform.yaml"
+        testsCatalogSchema = "src/schemas/testsCatalog_sch_noTerraform.yaml"
+
+    # ------ configs.yaml
+    try:
+        jsonschema.validate(configs, loadFile(configsSchema))
+    except jsonschema.exceptions.ValidationError as ex:
+        print("Error validating configs file: \n %s" % ex.message)
+        stop(1)
+    # ------------------
+
+    # ------ testsCatalog.yaml
+    try:
+        jsonschema.validate(testsCatalog, loadFile(testsCatalogSchema))
+    except jsonschema.exceptions.ValidationError as ex:
+        print("Error validating testsCatalog file: \n %s" % ex.message)
+        stop(1)
+    # ------------------

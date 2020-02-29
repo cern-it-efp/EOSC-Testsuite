@@ -1,0 +1,17 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: openstack
+pathToKey: "/home/ipelu/.ssh/id_rsa"
+#openUser:
+flavor: "m2.medium"
+imageName: "CC7 - x86_64 [2020-01-20]"
+keyPair: "exo"
+securityGroups:
+region:
+availabilityZone:
+
+#---------------COST CALCULATION------------------------------------------------
+costCalculation:
+  generalInstancePrice:
+  GPUInstancePrice:
+  HPCInstancePrice: 0.2
+  s3bucketPrice: 0.1

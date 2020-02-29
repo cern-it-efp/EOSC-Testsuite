@@ -5,9 +5,6 @@ variable "customCount" {
 variable "pathToKey" {
   default = "PATH_TO_KEY_VALUE"
 }
-variable "kubeconfigDst" {
-  default = "KUBECONFIG_DST"
-}
 variable "openUser" {
   default = "OPEN_USER_PH"
 }
@@ -29,10 +26,7 @@ variable "keyPair" {
 
 # -------------------------- General -------------------------------------------
 variable "sshConnect" {
-  default = "../../terraform/ssh_connect.sh"
-}
-variable "clusterCreator" {
-  default = "../../terraform/cluster_creator.sh"
+  default = "../../provisionment/ssh_connect.sh"
 }
 variable "sshcTimeout" {
   default = "2000"
@@ -55,7 +49,7 @@ variable "flavor" {
 variable "imageName" {
   default = "IMAGE_PH"
 }
-variable "availabilityZone" { 
+variable "availabilityZone" {
   default = "AV_ZONE_PH"
 }
 

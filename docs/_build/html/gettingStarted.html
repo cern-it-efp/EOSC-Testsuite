@@ -38,7 +38,9 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="2. Tests Catalog" href="testsCatalog.html" />
-    <link rel="prev" title="OCRE Test-Suite for cloud validation - CERN" href="index.html" /> 
+    <link rel="prev" title="EOSC Cloud Validation Test Suite" href="index.html" />
+    <link href="_static/style.css" rel="stylesheet" type="text/css">
+
 </head>
 
 <body class="wy-body-for-nav">
@@ -87,6 +89,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">1. Getting started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#dependencies">1.1 Dependencies</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#terraform">Terraform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ansible">Ansible</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#kubernetes-client">Kubernetes client</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#python">Python</a></li>
 </ul>
@@ -187,6 +190,10 @@ install <a href="https://learn.hashicorp.com/terraform/getting-started/install.h
 In some cases, providers are not fully supported by Terraform, however they might provide plugins to bridge this gap. In such cases, please refer to the documentation of the provider to download the plugin.
 Once downloaded, this must be placed at <em>~/.terraform.d/plugins</em> and execution permissions must be given to it (<em>+x</em>).</p>
 </div>
+<div class="section" id="ansible">
+<h3>Ansible<a class="headerlink" href="#ansible" title="Permalink to this headline">¶</a></h3>
+<p>Ansible is used to configure the VMs and install packages on them in order to bootstrap the cluster. Follow the steps <a href="https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-with-pip" target="_blank">here</a> to install it.</p>
+</div>
 <div class="section" id="kubernetes-client">
 <h3>Kubernetes client<a class="headerlink" href="#kubernetes-client" title="Permalink to this headline">¶</a></h3>
 <p>In order to manage the Kubernetes cluster locally instead of using the master node, install <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/" target="_blank">kubectl</a> on your machine.</p>
@@ -260,8 +267,8 @@ triggered from there.</p>
 <div class="section" id="cloning-repository">
 <h3>Cloning repository<a class="headerlink" href="#cloning-repository" title="Permalink to this headline">¶</a></h3>
 <p>Please clone the repository as follows and cd into it:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> git clone https://github.com/cern-it-efp/OCRE-Testsuite.git
-<span class="gp">$</span> <span class="nb">cd</span> OCRE-Testsuite
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> git clone https://github.com/cern-it-efp/EOSC-Testsuite.git
+<span class="gp">$</span> <span class="nb">cd</span> EOSC-Testsuite
 </pre></div>
 </div>
 </div>
@@ -751,7 +758,7 @@ Also, if image’s <em>publisher</em>, <em>offer</em>, <em>sku</em> and <em>vers
         <a href="testsCatalog.html" class="btn btn-neutral float-right" title="2. Tests Catalog" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral float-left" title="OCRE Test-Suite for cloud validation - CERN" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="EOSC Cloud Validation Test Suite" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

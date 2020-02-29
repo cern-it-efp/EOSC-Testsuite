@@ -1,17 +1,17 @@
-================================================
-OCRE Test-Suite for cloud validation - CERN
-================================================
+============================================
+EOSC Cloud Validation Test Suite
+============================================
 
 This tool is intended to be used to test and validate commercial cloud services across the stack for research and education environments.
-This Test-Suite is being used as a validation tool for commercial cloud services procurement in OCRE (Open Clouds for Research Environments) project sponsored by the European Commission.
+This Test-Suite is being used as a validation tool for commercial cloud services procurement in European Commission sponsored projects such as OCRE and ARCHIVER.
 
-More information at: http://ocre-project.eu.
+More information at: https://www.eosc-portal.eu/.
 
 .. header-end
 
 Documentation
 ---------------------------------------------
-Full documentation can be found at: `http://ocre-testsuite.rtfd.io <https://ocre-testsuite.readthedocs.io/en/latest/>`_
+Full documentation can be found at: `http://eosc-testsuite.rtfd.io <https://eosc-testsuite.readthedocs.io/en/latest/>`_
 
 .. body
 
@@ -19,7 +19,7 @@ The test-suite executes four main steps:
 
 1) Infrastructure provisioning: VMs are created using Terraform and then Kubernetes and Docker are installed on them to create several k8s cluster according to the selected tests.
 
-2) Deploy the tests: Kubernetes resource definition files (YAML) are used to deploy the tests, either as single pods or deployments.
+2) Deploy the tests: Kubernetes resource definition files (YAML) are used to deploy the tests, either as single pods, jobs or deployments.
 
 3) Harvest results: at the end of each test run a result file -written in JSON- is created. This file is harvested from the cluster and stored locally.
 
@@ -34,7 +34,7 @@ The developers would like to thank all test owners and contributors to this proj
 +------------------------------+---------------------------------------------------------------------------------+
 |OS on launcher machine        | Ubuntu, CentOS, CoreOS, Debian, RedHat, Fedora                                  |
 +------------------------------+---------------------------------------------------------------------------------+
-|OS running on provider's VMs  | CentOS7                                                                         |
+|OS running on provider's VMs  | CentOS7, Ubuntu 16.04, Ubuntu 18.04                                             |
 +------------------------------+---------------------------------------------------------------------------------+
 |Providers / clouds            | | AWS                                                                           |
 |                              | | Google Cloud                                                                  |
@@ -45,6 +45,7 @@ The developers would like to thank all test owners and contributors to this proj
 |                              | | Cloudscale (OpenStack)                                                        |
 |                              | | CloudStack                                                                    |
 |                              | | OpenStack                                                                     |
+|                              | | CloudSigma                                                                    |
 +------------------------------+---------------------------------------------------------------------------------+
 
 The test suite is being tested in several additional cloud providers. As tests are concluded the cloud providers names will be added in the table above.
@@ -52,6 +53,18 @@ The test suite is being tested in several additional cloud providers. As tests a
 Release notes
 ---------------------------------------------
 (Note the versions are numbered with the date of the release: YEAR.MONTH)
+
+``20.2``
+
+-Using Ansible for VM configuration instead of Terraform's provisioners.
+
+-Added support for non-Terraform providers (only bootstrap phase).
+
+-Added options to destroy provisioned infrastructure.
+
+-Added options to specify custom paths to configs.yaml and testsCatalog.yaml.
+
+-Added support to use Ubuntu on VMs.
 
 ``19.12``
 

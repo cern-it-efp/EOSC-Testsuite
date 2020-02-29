@@ -38,7 +38,9 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="3. Run the test-suite" href="run.html" />
-    <link rel="prev" title="1. Getting started" href="gettingStarted.html" /> 
+    <link rel="prev" title="1. Getting started" href="gettingStarted.html" />
+    <link href="_static/style.css" rel="stylesheet" type="text/css">
+
 </head>
 
 <body class="wy-body-for-nav">
@@ -166,11 +168,13 @@
             
   <div class="section" id="tests-catalog">
 <h1>2. Tests Catalog<a class="headerlink" href="#tests-catalog" title="Permalink to this headline">¶</a></h1>
-<p>In the root of the cloned repository, you will find a file named <em>testsCatalog.yaml</em>, in which you have to specify the tests you want to run. To run a certain test simply set its <em>run</em> variable to the True Boolean value. On the other hand, if you don’t want it to be run set this value to False. Please find below, a description of each test that has already been integrated in the Test-Suite:</p>
+<p>In the root of the cloned repository, you will find a file named <em>testsCatalog.yaml</em>, in which you have to specify the tests you want to run. To run a certain test simply set its <em>run</em> variable to the True Boolean value.
+On the other hand, if you don’t want it to be run set this value to False. Please find below, a description of each test that has already been integrated in the Test-Suite:</p>
 <div class="section" id="deep-learning-using-gpus">
 <h2>Deep Learning using GPUs<a class="headerlink" href="#deep-learning-using-gpus" title="Permalink to this headline">¶</a></h2>
 <p>(This test is currently under development and will be available if following versions)</p>
-<p>The 3DGAN application is a prototype developed to investigate the possibility to use a Deep Learning approach to speed-up the simulation of particle physics detectors. The benchmark measures the total time needed to train a 3D convolutional Generative Adversarial Network (GAN) using a data-parallel approach on distributed systems.
+<p>The 3DGAN application is a prototype developed to investigate the possibility to use a Deep Learning approach to speed-up the simulation of particle physics detectors. The benchmark measures the total time needed to train a
+3D convolutional Generative Adversarial Network (GAN) using a data-parallel approach on distributed systems.
 It is based on MPI for communication. As such, it tests the performance of single nodes (GPUs cards) but also latency and bandwidth of nodes interconnects and data access. The training uses a Kubernetes cluster (GPU flavored) with Kubeflow and MPI.</p>
 <p>If selected, the suite will provision a Kubernetes cluster -GPU flavored- specifically for this test.
 For this test, apart from the <em>run</em> variable, the following can be set in the <em>testsCatalog.yaml</em> file:</p>

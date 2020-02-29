@@ -146,7 +146,11 @@ def url_get(url,          # GET URL
 
     try:
         request = requests.get(
-            url, params=params, verify=False, allow_redirects=True, timeout=customTO)
+            url,
+            params=params,
+            verify=False,
+            allow_redirects=True,
+            timeout=customTO)
         status = request.status_code
         text = request.text
     except requests.exceptions.Timeout:
@@ -184,7 +188,8 @@ if os.system("pscheduler ping %s" % endpoint) != 0:
     fail("perfSONAR not reachable at '%s'" % endpoint, quit=True)
 
 # Wait for test tools to be ready on the server
-while len(url_get("https://localhost/pscheduler/tests", params={"detail": True})[1]) < 1:
+while len(url_get("https://localhost/pscheduler/tests",
+    params={"detail": True})[1]) < 1:
     #print("Tools not ready yet...")
     time.sleep(10)
     pass

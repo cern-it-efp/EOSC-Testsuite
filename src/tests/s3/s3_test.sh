@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Some setup
-bucketBase="ocrets-s3-bucket"
+bucketBase="eoscts-s3-bucket"
 export bucket="s3://"$bucketBase
 opts="--endpoint-url=$ENDPOINT"
 fail="\e[31mFailure\e[39;49m"

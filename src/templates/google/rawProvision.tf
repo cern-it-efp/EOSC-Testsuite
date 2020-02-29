@@ -1,18 +1,18 @@
 provider "google" {
   credentials = file(var.credentials)
-  project     = "${var.project}"
+  project     = var.project
 }
 
 resource "google_compute_instance" "kubenode" {
 
-  count        = "${var.customCount}"
-  machine_type = "${var.machineType}" # "n1-standard-2"
+  count        = var.customCount
+  machine_type = var.machineType
   name         = "${var.instanceName}-${count.index}"
-  zone         = "${var.zone}" # "us-west1-a"
+  zone         = var.zone
 
   boot_disk {
     initialize_params {
-      image = "${var.image}" # "centos-cloud/centos-7"
+      image = var.image
       size  = 100
     }
   }
@@ -23,8 +23,8 @@ resource "google_compute_instance" "kubenode" {
 
   # Extra stuff for GPU
   guest_accelerator {
-    count = "${var.gpuCount}" # in case the GAN test is set, this has to be used
-    type  = "${var.gpuType}"  # "nvidia-tesla-p100"
+    count = var.gpuCount # in case the GAN test is set, this has to be used
+    type  = var.gpuType
   }
   scheduling {
     on_host_maintenance = "TERMINATE"

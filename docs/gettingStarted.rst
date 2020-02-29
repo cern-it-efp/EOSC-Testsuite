@@ -19,6 +19,14 @@ Once downloaded, this must be placed at *~/.terraform.d/plugins* and execution p
 
   <a href="https://learn.hashicorp.com/terraform/getting-started/install.html" target="_blank">Terraform</a>
 
+Ansible
+^^^^^^^^^^^^^^^^
+Ansible is used to configure the VMs and install packages on them in order to bootstrap the cluster. Follow the steps |Ansible_link| to install it.
+
+.. |Ansible_link| raw:: html
+
+  <a href="https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-with-pip" target="_blank">here</a>
+
 Kubernetes client
 ^^^^^^^^^^^^^^^^^^^^^
 In order to manage the Kubernetes cluster locally instead of using the master node, install |kubectl_link| on your machine.
@@ -83,8 +91,8 @@ Please clone the repository as follows and cd into it:
 
 .. code-block:: console
 
-    $ git clone https://github.com/cern-it-efp/OCRE-Testsuite.git
-    $ cd OCRE-Testsuite
+    $ git clone https://github.com/cern-it-efp/EOSC-Testsuite.git
+    $ cd EOSC-Testsuite
 
 Configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^

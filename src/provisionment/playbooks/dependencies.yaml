@@ -1,0 +1,32 @@
+- name: Install Docker
+  package:
+    name: docker-ce
+    state: latest
+
+- name: Start Docker
+  service:
+    name: docker
+    state: started
+
+- name: Install kubeadm, kubelet and kubectl
+  package:
+    name: kubeadm,kubectl,kubelet
+    state: latest
+
+- name: Increase image pull progress deadline on nodes
+  block:
+    - name: Increase image pull progress deadline on nodes (redhat)
+      copy:
+        dest: /etc/sysconfig/kubelet
+        content: "KUBELET_EXTRA_ARGS=\"--image-pull-progress-deadline=30m\""
+  rescue:
+    - name: Increase image pull progress deadline on nodes (debian)
+      copy:
+        dest: /etc/default/kubelet
+        content: "KUBELET_EXTRA_ARGS=\"--image-pull-progress-deadline=30m\""
+
+- name:  Start kubelet
+  service:
+    name: kubelet
+    enabled: yes
+    state: started

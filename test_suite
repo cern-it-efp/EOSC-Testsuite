@@ -1,13 +1,18 @@
 #!/bin/bash
 
 ld="src/logging" # logging dir
-rm -f $ld/header $ld/killMe $ld/footer $ld/hpcTest $ld/dlTest $ld/shared $ld/logs &> /dev/null #Delete log files from previous failed runs
+
+rm -f $ld/header $ld/killMe $ld/footer $ld/hpcTest $ld/dlTest $ld/shared $ld/logs $ld/end $ld/ansibleLogs* &> /dev/null
 
 opts=""
 while [[ "$1" != "" ]]; do
   if [[ "$1" == '-j' ]]; then
     jenkins=true
     shift
+  elif [[ "$1" == '--destroy' ]]; then
+    python3 -B -u src/main.py $1 $2
+    outStat=$?
+    exit $outStat
   else
     opts+=" "$1
     shift
@@ -18,7 +23,7 @@ catAll(){
   if [[ -s header ]]; then
     cat header > logs; echo "" >> logs
   fi
-  for f in shared dlTest hpcTest; do
+  for f in shared dlTest hpcTest footer; do
     if [[ -s $f ]]; then # cat only the files that contain something
       cat $f >> logs; echo "" >> logs
     fi
@@ -31,7 +36,7 @@ export -f catAll
 
 watchFunct(){
   cd $ld
-  touch logs header shared dlTest hpcTest footer
+  touch logs header shared dlTest hpcTest footer end
   if  [[ $jenkins = true ]]; then
     echo "Logs in file $(pwd)/logs"
     while true; do catAll; sleep 2; done & echo $! > killMe
@@ -43,17 +48,15 @@ watchFunct(){
 
 ############# TEST SUITE RUN #############
 watchFunct &
-cd src
-python3 -B -u main.py $opts &> ../logs
+python3 -B -u src/main.py $opts &> logs
 outStat=$?
-cd ..
 ##########################################
 
-#TS run complete, kill logger and cat logs+footer to original console:
+#TS run complete, kill logger and cat logs to main terminal:
 kill $(cat $ld/killMe)
 sleep 1
-if [[ -s $ld/footer ]]; then
-  cat $ld/footer >> $ld/logs
+if [[ -s $ld/end ]]; then
+  cat $ld/end >> $ld/logs
 fi
 cat $ld/logs
 

@@ -1,0 +1,65 @@
+type: object
+required:
+    - providerName
+    - pathToKey
+    - openUser
+    - clusters
+properties:
+    providerName:
+        type: string
+    pathToKey:
+        type: string
+    openUser:
+        type: string
+    clusters:
+        type:
+            - object
+        additionalProperties: false
+        minProperties: 1
+        properties:
+            shared:
+                type: array
+                items:
+                  type: string
+            dlTest:
+                type: array
+                items:
+                  type: string
+            hpcTest:
+                type: array
+                items:
+                  type: string
+    dockerCE:
+        type: string
+    dockerEngine:
+        type: string
+    kubernetes:
+        type: string
+    costCalculation:
+        type:
+            - object
+            - "null"
+        required:
+            - generalInstancePrice
+            - GPUInstancePrice
+            - HPCInstancePrice
+            - s3bucketPrice
+        additionalProperties: false
+        properties:
+            generalInstancePrice:
+                type:
+                    - number
+                    - "null"
+            GPUInstancePrice:
+                type:
+                    - number
+                    - "null"
+            HPCInstancePrice:
+                type:
+                    - number
+                    - "null"
+            s3bucketPrice:
+                type:
+                    - number
+                    - "null"
+additionalProperties: false
