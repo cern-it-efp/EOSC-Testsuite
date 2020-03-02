@@ -285,7 +285,7 @@ def terraformProvisionment(
         str: Message informing of the provisionment task result.
     """
 
-    templatesPath = "src/templates/"
+    templatesPath = "src/provisionment/tfTemplates/"
     if configs["providerName"] in extraSupportedClouds:
         templatesPath += configs["providerName"]
     else:
@@ -319,7 +319,7 @@ def terraformProvisionment(
         openUser = tryTakeFromYaml(
             configs, "openUser", openUserDefault, msgExcept=msgExcept)
 
-        variables = loadFile("src/templates/general/variables.tf",
+        variables = loadFile("src/provisionment/tfTemplates/general/variables.tf",
                              required=True).replace(
             "NODES_PH", str(nodes)).replace(
             "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(

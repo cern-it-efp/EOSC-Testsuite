@@ -1,13 +1,7 @@
-src/provisionment/providers/*/.terraform*
-src/provisionment/providers/*/terraform.tfstate*
+src/provisionment/bastions/*/.terraform*
+src/provisionment/bastions/*/terraform.tfstate*
 
 logs
-ansibleLogs*
-
-src/provisionment/main.tf
-src/provisionment/join.sh
-src/provisionment/.terraform*
-src/provisionment/terraform.tfstate*
 
 src/tests/s3/s3pod.yaml
 src/tests/cpu_benchmarking/cpu_benchmarking_pod.yaml

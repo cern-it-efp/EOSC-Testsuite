@@ -51,11 +51,12 @@ def sharedClusterTests(msgArr, onlyTest, retry, noTerraform, resDir):
                                           extraSupportedClouds,
                                           noTerraform)
         if prov is False:
+            toPut = {"test": "shared", "deployed": False}
+            if "provision" in msg:
+                toPut["reason"] = "ProvisionFailed"
             writeFail(resDir, "sharedCluster_result.json",
                       msg, "src/logging/shared")
-            init.queue.put(({"test": "shared",
-                             "deployed": False,
-                             "reason": "ProvisionFailed"}, testCost))
+            init.queue.put((toPut, testCost))
             return
     else:
         if not checkCluster("shared"):
@@ -82,6 +83,7 @@ def s3Test(resDir):
 
     res = False
     testCost = 0
+    podName = "s3pod"
     with open(testsRoot + "s3/raw/s3pod_raw.yaml", 'r') as infile:
         with open(testsRoot + "s3/s3pod.yaml", 'w') as outfile:
             outfile.write(
@@ -102,12 +104,16 @@ def s3Test(resDir):
         writeFail(resDir, "s3Test.json",
                   "Error deploying s3pod.", "src/logging/shared")
     else:
-        fetchResults(resDir, "s3pod:/home/s3_test.json",
-                     "s3_test.json", "src/logging/shared")
+        if fetchResults(resDir, podName, "/home/s3_test.json",
+                     "s3_test.json", "src/logging/shared") is False:
+            writeFail(resDir,
+                      "s3Test.json",
+                      "%s pod was destroyed." % podName,
+                      "src/logging/shared")
         end = time.time()  # bucket deletion
         # cleanup
         writeToFile("src/logging/shared", "Cluster cleanup...", True)
-        kubectl(Action.delete, type=Type.pod, name="s3pod")
+        kubectl(Action.delete, type=Type.pod, name=podName)
         res = True
         if init.obtainCost is True:
             testCost = float(init.configs["costCalculation"]
@@ -125,6 +131,7 @@ def dataRepatriationTest(resDir):
 
     res = False
     testCost = 0
+    podName = "repatriation-pod"
     with open(testsRoot + "data_repatriation/raw/repatriation_pod_raw.yaml",
               'r') as infile:
         with open(testsRoot + "data_repatriation/repatriation_pod.yaml",
@@ -143,14 +150,17 @@ def dataRepatriationTest(resDir):
                   "src/logging/shared")
 
     else:
-        fetchResults(
-            resDir,
-            "repatriation-pod:/home/data_repatriation_test.json",
+        if fetchResults(resDir,
+            podName,"/home/data_repatriation_test.json",
             "data_repatriation_test.json",
-            "src/logging/shared")
+            "src/logging/shared") is False:
+            writeFail(resDir,
+                      "data_repatriation_test.json",
+                      "%s pod was destroyed." % podName,
+                      "src/logging/shared")
         # cleanup
         writeToFile("src/logging/shared", "Cluster cleanup...", True)
-        kubectl(Action.delete, type=Type.pod, name="repatriation-pod")
+        kubectl(Action.delete, type=Type.pod, name=podName)
         res = True
 
     init.queue.put(
@@ -166,6 +176,7 @@ def cpuBenchmarking(resDir):
 
     res = False
     testCost = 0
+    podName = "cpu-bmk-pod"
     with open(testsRoot + "cpu_benchmarking/raw/cpu_benchmarking_pod_raw.yaml",
               'r') as infile:
         with open(testsRoot + "cpu_benchmarking/cpu_benchmarking_pod.yaml",
@@ -183,14 +194,17 @@ def cpuBenchmarking(resDir):
                   "Error deploying cpu_benchmarking_pod.",
                   "src/logging/shared")
     else:
-        fetchResults(
-            resDir,
-            "cpu-bmk-pod:/tmp/cern-benchmark_root/bmk_tmp/result_profile.json",
+        if fetchResults(resDir,
+            podName,"/tmp/cern-benchmark_root/bmk_tmp/result_profile.json",
             "cpu_benchmarking.json",
-            "src/logging/shared")
+            "src/logging/shared") is False:
+            writeFail(resDir,
+                      "cpu_benchmarking.json",
+                      "%s pod was destroyed." % podName,
+                      "src/logging/shared")
         # cleanup
         writeToFile("src/logging/shared", "Cluster cleanup...", True)
-        kubectl(Action.delete, type=Type.pod, name="cpu-bmk-pod")
+        kubectl(Action.delete, type=Type.pod, name=podName)
         res = True
 
     init.queue.put(({"test": "cpuBenchmarking", "deployed": res}, testCost))
@@ -205,6 +219,7 @@ def perfsonarTest(resDir):
 
     res = False
     testCost = 0
+    podName = "ps-pod"
     endpoint = init.testsCatalog["perfsonarTest"]["endpoint"]
     if kubectl(
         Action.create,
@@ -215,9 +230,9 @@ def perfsonarTest(resDir):
                   "Error deploying perfsonar pod.", "src/logging/shared")
     else:
         with contextlib.redirect_stdout(io.StringIO()):  # to hide logs
-            while kubectl(
+            while kubectl( # TODO: if the pod is deleted before this, this while will never exit
                 Action.cp,
-                podPath="ps-pod:/tmp",
+                podPath="%s:/tmp" % podName,
                 localPath=testsRoot + "perfsonar/ps_test.py",
                 fetch=False) != 0:
                 pass  # Copy script to pod
@@ -225,19 +240,22 @@ def perfsonarTest(resDir):
         dependenciesCMD = "yum -y install python-dateutil python-requests"
         runScriptCMD = "python /tmp/ps_test.py --ep %s" % endpoint
         runOnPodCMD = "%s && %s" % (dependenciesCMD, runScriptCMD)
-        if kubectl(Action.exec, name="ps-pod", cmd="%s" % runOnPodCMD) != 0:
+        if kubectl(Action.exec, name=podName, cmd="%s" % runOnPodCMD) != 0:
             writeFail(resDir,
                       "perfsonar_results.json",
-                      "Error running script test on pod.",
+                      "Error running script test on pod %s" % podName,
                       "src/logging/shared")
         else:
-
-            fetchResults(resDir, "ps-pod:/tmp/perfsonar_results.json",
-                         "perfsonar_results.json", "src/logging/shared")
+            if fetchResults(resDir, podName,"/tmp/perfsonar_results.json",
+                         "perfsonar_results.json", "src/logging/shared") is False:
+                writeFail(resDir,
+                          "perfsonar_results.json",
+                          "%s pod was destroyed." % podName,
+                          "src/logging/shared")
             res = True
         # cleanup
         writeToFile("src/logging/shared", "Cluster cleanup...", True)
-        kubectl(Action.delete, type=Type.pod, name="ps-pod")
+        kubectl(Action.delete, type=Type.pod, name=podName)
 
     init.queue.put(({"test": "perfsonarTest", "deployed": res}, testCost))
 
@@ -251,6 +269,7 @@ def dodasTest(resDir):
 
     res = False
     testCost = 0
+    podName = "dodas-pod"
     if kubectl(
         Action.create,
         file=testsRoot +
@@ -260,28 +279,32 @@ def dodasTest(resDir):
                   "Error deploying DODAS pod.", "src/logging/shared")
     else:
         with contextlib.redirect_stdout(io.StringIO()):  # to hide logs
-            while kubectl(
+            while kubectl( # TODO: if the pod is deleted before this, this while will never exit
                 Action.cp,
-                podPath="dodas-pod:/CMSSW/CMSSW_9_4_0/src",
+                podPath="%s:/CMSSW/CMSSW_9_4_0/src" % podName,
                 localPath="%sdodas/custom_entrypoint.sh" % testsRoot,
                 fetch=False) != 0:
                 pass  # Copy script to pod
         # Run copied script
         if kubectl(
                 Action.exec,
-                name="dodas-pod",
+                name=podName,
                 cmd="sh /CMSSW/CMSSW_9_4_0/src/custom_entrypoint.sh") != 0:
             writeFail(resDir,
                       "dodas_results.json",
-                      "Error running script test on pod.",
+                      "Error running script test on pod %s" % podName,
                       "src/logging/shared")
         else:
-            fetchResults(resDir, "dodas-pod:/tmp/dodas_test.json",
-                         "dodas_results.json", "src/logging/shared")
+            if fetchResults(resDir, podName, "/tmp/dodas_test.json",
+                         "dodas_results.json", "src/logging/shared") is False:
+                writeFail(resDir,
+                          "dodas_results.json",
+                          "%s pod was destroyed." % podName,
+                          "src/logging/shared")
             res = True
         # cleanup
         writeToFile("src/logging/shared", "Cluster cleanup...", True)
-        kubectl(Action.delete, type=Type.pod, name="dodas-pod")
+        kubectl(Action.delete, type=Type.pod, name=podName)
 
     init.queue.put(({"test": "dodasTest", "deployed": res}, testCost))
 
@@ -327,11 +350,12 @@ def dlTest(onlyTest, retry, noTerraform, resDir):
                                           extraSupportedClouds,
                                           noTerraform)
         if prov is False:
+            toPut = {"test": "dlTest", "deployed": res}
+            if "provision" in msg:
+                toPut["reason"] = "ProvisionFailed"
             writeFail(resDir, "bb_train_history.json",
                       msg, "src/logging/dlTest")
-            init.queue.put(({"test": "dlTest",
-                             "deployed": res,
-                             "reason": "ProvisionFailed"}, testCost))
+            init.queue.put((toPut, testCost))
             return
     else:
         if not checkCluster("dlTest"):
@@ -413,7 +437,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir):
             "Cluster doesn't have enough GPU support. GPU flavor required.",
             "src/logging/dlTest")
     else:
-        fetchResults(
+        fetchResults( # TODO: do the "pod was destroyed" thing here
             resDir,
             "train-mpijob-worker-0:/mpi_learn/bb_train_history.json",
             "bb_train_history.json",
@@ -470,11 +494,12 @@ def hpcTest(onlyTest, retry, noTerraform, resDir):
                                           extraSupportedClouds,
                                           noTerraform)
         if prov is False:
+            toPut = {"test": "hpcTest", "deployed": res}
+            if "provision" in msg:
+                toPut["reason"] = "ProvisionFailed"
             writeFail(resDir, "hpcTest_result.json",
                       msg, "src/logging/hpcTest")
-            init.queue.put(({"test": "hpcTest",
-                             "deployed": res,
-                             "reason": "ProvisionFailed"}, testCost))
+            init.queue.put((toPut, testCost))
             return
     else:
         if not checkCluster("hpcTest"):

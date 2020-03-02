@@ -54,6 +54,10 @@ Release notes
 ---------------------------------------------
 (Note the versions are numbered with the date of the release: YEAR.MONTH)
 
+``20.5``
+
+-
+
 ``20.2``
 
 -Using Ansible for VM configuration instead of Terraform's provisioners.

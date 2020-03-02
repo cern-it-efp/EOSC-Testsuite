@@ -131,7 +131,7 @@ def checkClustersToDestroy(cliParameterValue, clusters):
     return True
 
 
-def checkClusterWasProvisioned(cluster, generalResultsTesting): # TODO: try this using a flavor that do not exist for one of the clusters hpc
+def checkClusterWasProvisioned(cluster, generalResultsTesting):
     """Checks whether a cluster was provisioned.
 
     Parameters:
