@@ -167,28 +167,28 @@ This Test-Suite is being used as a validation tool for commercial cloud services
 </div>
 <p>The test-suite executes four main steps:</p>
 <ol class="arabic simple">
-<li>Infrastructure provisioning: VMs are created using Terraform and then Kubernetes and Docker are installed on them to create several k8s cluster according to the selected tests.</li>
-<li>Deploy the tests: Kubernetes resource definition files (YAML) are used to deploy the tests, either as single pods, jobs or deployments.</li>
-<li>Harvest results: at the end of each test run a result file -written in JSON- is created. This file is harvested from the cluster and stored locally.</li>
-<li>Through a verification system, the Test-Suite can also be triggered from a service running at CERN. In this case, results are then pushed to a S3 Bucket at CERN. (Under development)</li>
+<li><p>Infrastructure provisioning: VMs are created using Terraform and then Kubernetes and Docker are installed on them to create several k8s cluster according to the selected tests.</p></li>
+<li><p>Deploy the tests: Kubernetes resource definition files (YAML) are used to deploy the tests, either as single pods, jobs or deployments.</p></li>
+<li><p>Harvest results: at the end of each test run a result file -written in JSON- is created. This file is harvested from the cluster and stored locally.</p></li>
+<li><p>Through a verification system, the Test-Suite can also be triggered from a service running at CERN. In this case, results are then pushed to a S3 Bucket at CERN. (Under development)</p></li>
 </ol>
 <p>The test set described below is based on the tests used in <a class="reference external" href="https://www.hnscicloud.eu/">Helix Nebula The Science Cloud</a> PCP project funded by the European Commission.</p>
 <p>The developers would like to thank all test owners and contributors to this project.</p>
 <p><strong>This test-suite has been tested on:</strong></p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="27%" />
-<col width="73%" />
+<col style="width: 27%" />
+<col style="width: 73%" />
 </colgroup>
-<tbody valign="top">
-<tr class="row-odd"><td>OS on launcher machine</td>
-<td>Ubuntu, CentOS, CoreOS, Debian, RedHat, Fedora</td>
+<tbody>
+<tr class="row-odd"><td><p>OS on launcher machine</p></td>
+<td><p>Ubuntu, CentOS, CoreOS, Debian, RedHat, Fedora</p></td>
 </tr>
-<tr class="row-even"><td>OS running on provider’s VMs</td>
-<td>CentOS7, Ubuntu 16.04, Ubuntu 18.04</td>
+<tr class="row-even"><td><p>OS running on provider’s VMs</p></td>
+<td><p>CentOS7, Ubuntu 16.04, Ubuntu 18.04</p></td>
 </tr>
-<tr class="row-odd"><td>Providers / clouds</td>
-<td><div class="first last line-block">
+<tr class="row-odd"><td><p>Providers / clouds</p></td>
+<td><div class="line-block">
 <div class="line">AWS</div>
 <div class="line">Google Cloud</div>
 <div class="line">Microsoft Azure</div>
