@@ -74,6 +74,66 @@ def sharedClusterTests(msgArr, onlyTest, retry, noTerraform, resDir):
     init.queue.put((None, testCost))
 
 
+def runTest(resource, # TODO: not all the tests have resource_raw and substitution
+            toLog,
+            testName,
+            resDir,
+            resultFile,
+            podName,
+            resultOnPod,
+            resource_raw=None,
+            substitution=None,
+            copyToPodAndRun_flag=None,
+            podPath=None,
+            localPath=None,
+            cmd=None,
+            additionalResourcePrice=None):
+    """Runs tests"""
+
+    testCost = 0
+    if resource_raw is not None:
+        with open(resource_raw, 'r') as infile:
+            infile = infile.read()
+            for sub in substitution:
+                infile = infile.replace(sub["before"], sub["after"])
+            with open(resource, 'w') as outfile:
+                outfile.write(infile)
+
+    #---------------------------------------------------------------------------
+    start = time.time() # For tests with additional resources (i.e S3 bucket)
+    #---------------------------------------------------------------------------
+
+    if kubectl(Action.create, file=resource, toLog=toLog) != 0:
+        init.queue.put(({"test": testName, "deployed": False}, testCost))
+        writeFail(resDir, resultFile, "%s pod deploy failed." % podName, toLog)
+    else:
+        if copyToPodAndRun_flag is True:
+            copyToPodAndRun(
+                podName,
+                resDir,
+                toLog,
+                resultFile,
+                podPath,
+                localPath,
+                cmd,
+                resultFile,
+                resultOnPod)
+        else:
+            fetchResults(resDir, podName, resultOnPod, resultFile, toLog)
+
+        #-----------------------------------------------------------------------
+        testDuration = time.time() - start # For tests with additional resources
+        if init.obtainCost is True and additionalResourcePrice is not None:
+            for price in additionalResourcePrice:
+                testCost = float(price) * testDuration / 3600
+        #-----------------------------------------------------------------------
+
+        # cleanup
+        writeToFile(toLog, "Cluster cleanup...", True)
+        kubectl(Action.delete, type=Type.pod, name=podName)
+        init.queue.put(({"test": testName, "deployed": True}, testCost))
+
+
 def s3Test(resDir):
     """Run S3 endpoints test.
 
@@ -81,45 +141,40 @@ def s3Test(resDir):
         resDir (str): Path to the results folder for the current run.
     """
 
-    res = False
     testCost = 0
     podName = "s3pod"
-    with open(testsRoot + "s3/raw/s3pod_raw.yaml", 'r') as infile:
-        with open(testsRoot + "s3/s3pod.yaml", 'w') as outfile:
-            outfile.write(
-                infile.read().replace(
-                    "ENDPOINT_PH",
-                    init.testsCatalog["s3Test"]["endpoint"]) .replace(
-                    "ACCESS_PH",
-                    init.testsCatalog["s3Test"]["accessKey"]) .replace(
-                    "SECRET_PH",
-                    init.testsCatalog["s3Test"]["secretKey"]))
+    resource_raw = "%ss3/raw/s3pod_raw.yaml" % testsRoot
+    resource = "%ss3/s3pod.yaml" % testsRoot
+    resultFile = "s3Test.json"
+    toLog = "src/logging/shared"
+    testName = "s3Test"
+    resultOnPod = "/home/s3_test.json"
+    additionalResourcePrice = [init.configs["costCalculation"]["s3bucketPrice"]] # TODO: No exception bc s3bucketPrice is a required property (can be set to None), desired?
+    substitution = [
+        {
+            "before": "ENDPOINT_PH",
+            "after": init.testsCatalog["s3Test"]["endpoint"]
+        },
+        {
+            "before": "ACCESS_PH",
+            "after": init.testsCatalog["s3Test"]["accessKey"]
+        },
+        {
+            "before": "SECRET_PH",
+            "after": init.testsCatalog["s3Test"]["secretKey"]
+        }
+    ]
 
-    start = time.time()  # create bucket
-    if kubectl(
-        Action.create,
-        file=testsRoot +
-        "s3/s3pod.yaml",
-            toLog="src/logging/shared") != 0:
-        writeFail(resDir, "s3Test.json",
-                  "Error deploying s3pod.", "src/logging/shared")
-    else:
-        if fetchResults(resDir, podName, "/home/s3_test.json",
-                     "s3_test.json", "src/logging/shared") is False:
-            writeFail(resDir,
-                      "s3Test.json",
-                      "%s pod was destroyed." % podName,
-                      "src/logging/shared")
-        end = time.time()  # bucket deletion
-        # cleanup
-        writeToFile("src/logging/shared", "Cluster cleanup...", True)
-        kubectl(Action.delete, type=Type.pod, name=podName)
-        res = True
-        if init.obtainCost is True:
-            testCost = float(init.configs["costCalculation"]
-                             ["s3bucketPrice"]) * (end - start) / 3600
-
-    init.queue.put(({"test": "s3Test", "deployed": res}, testCost))
+    runTest(resource,
+            toLog,
+            testName,
+            resDir,
+            resultFile,
+            podName,
+            resultOnPod,
+            resource_raw=resource_raw,
+            substitution=substitution,
+            additionalResourcePrice=additionalResourcePrice)
 
 
 def dataRepatriationTest(resDir):
@@ -129,42 +184,29 @@ def dataRepatriationTest(resDir):
         resDir (str): Path to the results folder for the current run.
     """
 
-    res = False
-    testCost = 0
     podName = "repatriation-pod"
-    with open(testsRoot + "data_repatriation/raw/repatriation_pod_raw.yaml",
-              'r') as infile:
-        with open(testsRoot + "data_repatriation/repatriation_pod.yaml",
-                  'w') as outfile:
-            outfile.write(infile.read().replace(
-                "PROVIDER_PH", init.configs["providerName"]))
+    toLog = "src/logging/shared"
+    resource_raw = "%sdata_repatriation/raw/repatriation_pod_raw.yaml" % testsRoot
+    resource = "%sdata_repatriation/repatriation_pod.yaml" % testsRoot
+    resultFile = "data_repatriation_test.json"
+    testName = "cpuBenchmarking"
+    resultOnPod = "/home/data_repatriation_test.json"
+    substitution = [
+        {
+            "before": "PROVIDER_PH",
+            "after": init.configs["providerName"]
+        }
+    ]
 
-    if kubectl(
-            Action.create,
-            file="%sdata_repatriation/repatriation_pod.yaml" %
-            testsRoot,
-            toLog="src/logging/shared") != 0:
-        writeFail(resDir,
-                  "data_repatriation_test.json",
-                  "Error deploying data_repatriation pod.",
-                  "src/logging/shared")
-
-    else:
-        if fetchResults(resDir,
-            podName,"/home/data_repatriation_test.json",
-            "data_repatriation_test.json",
-            "src/logging/shared") is False:
-            writeFail(resDir,
-                      "data_repatriation_test.json",
-                      "%s pod was destroyed." % podName,
-                      "src/logging/shared")
-        # cleanup
-        writeToFile("src/logging/shared", "Cluster cleanup...", True)
-        kubectl(Action.delete, type=Type.pod, name=podName)
-        res = True
-
-    init.queue.put(
-        ({"test": "dataRepatriationTest", "deployed": res}, testCost))
+    runTest(resource,
+            toLog,
+            testName,
+            resDir,
+            resultFile,
+            podName,
+            resultOnPod,
+            resource_raw=resource_raw,
+            substitution=substitution)
 
 
 def cpuBenchmarking(resDir):
@@ -174,40 +216,29 @@ def cpuBenchmarking(resDir):
         resDir (str): Path to the results folder for the current run.
     """
 
-    res = False
-    testCost = 0
     podName = "cpu-bmk-pod"
-    with open(testsRoot + "cpu_benchmarking/raw/cpu_benchmarking_pod_raw.yaml",
-              'r') as infile:
-        with open(testsRoot + "cpu_benchmarking/cpu_benchmarking_pod.yaml",
-                  'w') as outfile:
-            outfile.write(infile.read().replace(
-                "PROVIDER_PH", init.configs["providerName"]))
+    resource_raw = "%scpu_benchmarking/raw/cpu_benchmarking_pod_raw.yaml" % testsRoot
+    resource = "%scpu_benchmarking/cpu_benchmarking_pod.yaml" % testsRoot
+    resultFile = "cpu_benchmarking.json"
+    toLog = "src/logging/shared"
+    testName = "cpuBenchmarking"
+    resultOnPod = "/tmp/cern-benchmark_root/bmk_tmp/result_profile.json"
+    substitution = [
+        {
+            "before": "PROVIDER_PH",
+            "after": init.configs["providerName"]
+        }
+    ]
 
-    if kubectl(
-            Action.create,
-            file="%scpu_benchmarking/cpu_benchmarking_pod.yaml" %
-            testsRoot,
-            toLog="src/logging/shared") != 0:
-        writeFail(resDir,
-                  "cpu_benchmarking.json",
-                  "Error deploying cpu_benchmarking_pod.",
-                  "src/logging/shared")
-    else:
-        if fetchResults(resDir,
-            podName,"/tmp/cern-benchmark_root/bmk_tmp/result_profile.json",
-            "cpu_benchmarking.json",
-            "src/logging/shared") is False:
-            writeFail(resDir,
-                      "cpu_benchmarking.json",
-                      "%s pod was destroyed." % podName,
-                      "src/logging/shared")
-        # cleanup
-        writeToFile("src/logging/shared", "Cluster cleanup...", True)
-        kubectl(Action.delete, type=Type.pod, name=podName)
-        res = True
-
-    init.queue.put(({"test": "cpuBenchmarking", "deployed": res}, testCost))
+    runTest(resource,
+            toLog,
+            testName,
+            resDir,
+            resultFile,
+            podName,
+            resultOnPod,
+            resource_raw=resource_raw,
+            substitution=substitution)
 
 
 def perfsonarTest(resDir):
@@ -217,7 +248,6 @@ def perfsonarTest(resDir):
         resDir (str): Path to the results folder for the current run.
     """
 
-    res = False
     podName = "ps-pod"
     testName = "perfSONAR"
     endpoint = init.testsCatalog["perfsonarTest"]["endpoint"]
@@ -232,30 +262,17 @@ def perfsonarTest(resDir):
     localPath=testsRoot + "perfsonar/ps_test.py"
     resultOnPod = "/tmp/perfsonar_results.json"
 
-    if kubectl(Action.create, file=resource, toLog=toLog) != 0:
-        init.queue.put(({"test": testName, "deployed": False}, 0))
-        writeFail(resDir, resultFile, "%s pod deploy failed." % podName, toLog)
-    else:
-        init.queue.put(({"test": testName, "deployed": True}, 0))
-        with contextlib.redirect_stdout(io.StringIO()):  # to hide logs
-            copyToPod(
-                podName,
-                resDir,
-                toLog,
-                resultFile,
-                podPath,
-                localPath)
-
-        if kubectl(Action.exec, name=podName, cmd=cmd) != 0:
-            writeFail(resDir,
-                      resultFile,
-                      "Error running script test on pod %s" % podName,
-                      toLog)
-        else:
-            fetchResults(resDir, podName, resultOnPod, resultFile, toLog)
-        # cleanup
-        writeToFile(toLog, "Cluster cleanup...", True)
-        kubectl(Action.delete, type=Type.pod, name=podName)
+    runTest(resource,
+            toLog,
+            testName,
+            resDir,
+            resultFile,
+            podName,
+            resultOnPod,
+            copyToPodAndRun_flag=True,
+            podPath=podPath,
+            localPath=localPath,
+            cmd=cmd)
 
 
 def dodasTest(resDir):
@@ -275,30 +292,17 @@ def dodasTest(resDir):
     localPath = "%sdodas/custom_entrypoint.sh" % testsRoot
     cmd = "sh /CMSSW/CMSSW_9_4_0/src/custom_entrypoint.sh"
 
-    if kubectl(Action.create, file=resource, toLog=toLog) != 0:
-        init.queue.put(({"test": testName, "deployed": False}, 0))
-        writeFail(resDir, resultFile, "%s pod deploy failed." % podName, toLog)
-    else:
-        init.queue.put(({"test": testName, "deployed": True}, 0))
-        with contextlib.redirect_stdout(io.StringIO()):  # to hide logs
-            copyToPod(
-                podName,
-                resDir,
-                toLog,
-                resultFile,
-                podPath,
-                localPath)
-
-        if kubectl(Action.exec, name=podName, cmd=cmd) != 0:
-            writeFail(resDir,
-                      resultFile,
-                      "Error running script test on pod %s" % podName,
-                      toLog)
-        else:
-            fetchResults(resDir, podName, resultOnPod, resultFile, toLog)
-        # cleanup
-        writeToFile(toLog, "Cluster cleanup...", True)
-        kubectl(Action.delete, type=Type.pod, name=podName)
+    runTest(resource,
+            toLog,
+            testName,
+            resDir,
+            resultFile,
+            podName,
+            resultOnPod,
+            copyToPodAndRun_flag=True,
+            podPath=podPath,
+            localPath=localPath,
+            cmd=cmd)
 
 
 def dlTest(onlyTest, retry, noTerraform, resDir):

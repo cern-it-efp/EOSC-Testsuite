@@ -132,19 +132,36 @@ def fetchResults(resDir, podName, source, file, toLog):
     writeToFile(toLog, file + " fetched!", True)
 
 
-def copyToPod(podName, resDir, toLog, file, podPath, localPath):
-    """Copy from local to pod"""
+def copyToPodAndRun(
+        podName,
+        resDir,
+        toLog,
+        file,
+        podPath,
+        localPath,
+        cmd,
+        resultFile,
+        resultOnPod):
+    """Copy from local to pod and run"""
 
-    while True:
-        if checkPodAlive(podName,
-                         resDir,
-                         toLog,
-                         file) is False: return
-        if kubectl(Action.cp,
-                  podPath=podPath,
-                  localPath=localPath,
-                  fetch=False) == 0:
-            break
+    with contextlib.redirect_stdout(io.StringIO()):  # to hide logs
+        while True:
+            if checkPodAlive(podName,
+                             resDir,
+                             toLog,
+                             file) is False: return
+            if kubectl(Action.cp,
+                      podPath=podPath,
+                      localPath=localPath,
+                      fetch=False) == 0:
+                break
+    if kubectl(Action.exec, name=podName, cmd=cmd) != 0:
+        writeFail(resDir,
+                  resultFile,
+                  "Error running script test on pod %s" % podName,
+                  toLog)
+    else:
+        fetchResults(resDir, podName, resultOnPod, resultFile, toLog)
 
 
 def checkDestinationIsDir(podName, pathOnPod, namespace=None):
