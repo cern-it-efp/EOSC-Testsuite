@@ -218,46 +218,44 @@ def perfsonarTest(resDir):
     """
 
     res = False
-    testCost = 0
     podName = "ps-pod"
+    testName = "perfSONAR"
     endpoint = init.testsCatalog["perfsonarTest"]["endpoint"]
-    if kubectl(
-        Action.create,
-        file=testsRoot +
-        "perfsonar/ps_pod.yaml",
-            toLog="src/logging/shared") != 0:
-        writeFail(resDir, "perfsonar_results.json",
-                  "Error deploying perfsonar pod.", "src/logging/shared")
-    else:
-        with contextlib.redirect_stdout(io.StringIO()):  # to hide logs
-            while kubectl( # TODO: if the pod is deleted before this, this while will never exit
-                Action.cp,
-                podPath="%s:/tmp" % podName,
-                localPath=testsRoot + "perfsonar/ps_test.py",
-                fetch=False) != 0:
-                pass  # Copy script to pod
-        # Run copied script
-        dependenciesCMD = "yum -y install python-dateutil python-requests"
-        runScriptCMD = "python /tmp/ps_test.py --ep %s" % endpoint
-        runOnPodCMD = "%s && %s" % (dependenciesCMD, runScriptCMD)
-        if kubectl(Action.exec, name=podName, cmd="%s" % runOnPodCMD) != 0:
-            writeFail(resDir,
-                      "perfsonar_results.json",
-                      "Error running script test on pod %s" % podName,
-                      "src/logging/shared")
-        else:
-            if fetchResults(resDir, podName,"/tmp/perfsonar_results.json",
-                         "perfsonar_results.json", "src/logging/shared") is False:
-                writeFail(resDir,
-                          "perfsonar_results.json",
-                          "%s pod was destroyed." % podName,
-                          "src/logging/shared")
-            res = True
-        # cleanup
-        writeToFile("src/logging/shared", "Cluster cleanup...", True)
-        kubectl(Action.delete, type=Type.pod, name=podName)
+    dependenciesCMD = "yum -y install python-dateutil python-requests"
+    runScriptCMD = "python /tmp/ps_test.py --ep %s" % endpoint
+    runOnPodCMD = "%s && %s" % (dependenciesCMD, runScriptCMD)
+    cmd = "%s" % runOnPodCMD
+    resultFile = "perfsonar_results.json"
+    resource = "%sperfsonar/ps_pod.yaml" % testsRoot
+    toLog = "src/logging/shared"
+    podPath="%s:/tmp" % podName
+    localPath=testsRoot + "perfsonar/ps_test.py"
+    resultOnPod = "/tmp/perfsonar_results.json"
 
-    init.queue.put(({"test": "perfsonarTest", "deployed": res}, testCost))
+    if kubectl(Action.create, file=resource, toLog=toLog) != 0:
+        init.queue.put(({"test": testName, "deployed": False}, 0))
+        writeFail(resDir, resultFile, "%s pod deploy failed." % podName, toLog)
+    else:
+        init.queue.put(({"test": testName, "deployed": True}, 0))
+        with contextlib.redirect_stdout(io.StringIO()):  # to hide logs
+            copyToPod(
+                podName,
+                resDir,
+                toLog,
+                resultFile,
+                podPath,
+                localPath)
+
+        if kubectl(Action.exec, name=podName, cmd=cmd) != 0:
+            writeFail(resDir,
+                      resultFile,
+                      "Error running script test on pod %s" % podName,
+                      toLog)
+        else:
+            fetchResults(resDir, podName, resultOnPod, resultFile, toLog)
+        # cleanup
+        writeToFile(toLog, "Cluster cleanup...", True)
+        kubectl(Action.delete, type=Type.pod, name=podName)
 
 
 def dodasTest(resDir):
@@ -267,46 +265,40 @@ def dodasTest(resDir):
         resDir (str): Path to the results folder for the current run.
     """
 
-    res = False
-    testCost = 0
     podName = "dodas-pod"
-    if kubectl(
-        Action.create,
-        file=testsRoot +
-        "dodas/dodas_pod.yaml",
-            toLog="src/logging/shared") != 0:
-        writeFail(resDir, "dodas_test.json",
-                  "Error deploying DODAS pod.", "src/logging/shared")
-    else:
-        with contextlib.redirect_stdout(io.StringIO()):  # to hide logs
-            while kubectl( # TODO: if the pod is deleted before this, this while will never exit
-                Action.cp,
-                podPath="%s:/CMSSW/CMSSW_9_4_0/src" % podName,
-                localPath="%sdodas/custom_entrypoint.sh" % testsRoot,
-                fetch=False) != 0:
-                pass  # Copy script to pod
-        # Run copied script
-        if kubectl(
-                Action.exec,
-                name=podName,
-                cmd="sh /CMSSW/CMSSW_9_4_0/src/custom_entrypoint.sh") != 0:
-            writeFail(resDir,
-                      "dodas_results.json",
-                      "Error running script test on pod %s" % podName,
-                      "src/logging/shared")
-        else:
-            if fetchResults(resDir, podName, "/tmp/dodas_test.json",
-                         "dodas_results.json", "src/logging/shared") is False:
-                writeFail(resDir,
-                          "dodas_results.json",
-                          "%s pod was destroyed." % podName,
-                          "src/logging/shared")
-            res = True
-        # cleanup
-        writeToFile("src/logging/shared", "Cluster cleanup...", True)
-        kubectl(Action.delete, type=Type.pod, name=podName)
+    toLog = "src/logging/shared"
+    resultFile = "dodas_results.json"
+    resultOnPod = "/tmp/%s" % resultFile
+    resource = "%sdodas/dodas_pod.yaml" % testsRoot
+    testName = "dodasTest"
+    podPath = "%s:/CMSSW/CMSSW_9_4_0/src" % podName
+    localPath = "%sdodas/custom_entrypoint.sh" % testsRoot
+    cmd = "sh /CMSSW/CMSSW_9_4_0/src/custom_entrypoint.sh"
 
-    init.queue.put(({"test": "dodasTest", "deployed": res}, testCost))
+    if kubectl(Action.create, file=resource, toLog=toLog) != 0:
+        init.queue.put(({"test": testName, "deployed": False}, 0))
+        writeFail(resDir, resultFile, "%s pod deploy failed." % podName, toLog)
+    else:
+        init.queue.put(({"test": testName, "deployed": True}, 0))
+        with contextlib.redirect_stdout(io.StringIO()):  # to hide logs
+            copyToPod(
+                podName,
+                resDir,
+                toLog,
+                resultFile,
+                podPath,
+                localPath)
+
+        if kubectl(Action.exec, name=podName, cmd=cmd) != 0:
+            writeFail(resDir,
+                      resultFile,
+                      "Error running script test on pod %s" % podName,
+                      toLog)
+        else:
+            fetchResults(resDir, podName, resultOnPod, resultFile, toLog)
+        # cleanup
+        writeToFile(toLog, "Cluster cleanup...", True)
+        kubectl(Action.delete, type=Type.pod, name=podName)
 
 
 def dlTest(onlyTest, retry, noTerraform, resDir):

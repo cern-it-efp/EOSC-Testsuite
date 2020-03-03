@@ -4,6 +4,17 @@ import os
 from aux import *
 
 
+def checkPodAlive(podName, resDir, toLog, resultFile):
+    """Checks if a pod is alive"""
+
+    if runCMD("kubectl get pod %s" % podName, hideLogs=True) != 0:
+        writeFail(resDir,
+                  resultFile,
+                  "%s pod was destroyed." % podName,
+                  toLog)
+        return False
+    return True
+
 def checkCost(obtainCost, value):
     """ Checks the provided value is not None and is greater than 0.
 

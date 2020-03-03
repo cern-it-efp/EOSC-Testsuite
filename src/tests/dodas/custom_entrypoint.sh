@@ -11,9 +11,9 @@ cmsRun -j jobReport.xml RSGravitonToZZ_kMpl01_M_1000_TuneCUETP8M1_13TeV_pythia8_
 cmsRunOut=$?
 
 if grep -q "$passString" cmsRunLogs; then
-  echo "{\"result\":\"success\"}" > /tmp/dodas_test.json
+  echo "{\"result\":\"success\"}" > /tmp/dodas_results.json
 else
-  echo "{\"result\":\"fail\"}" > /tmp/dodas_test.json
+  echo "{\"result\":\"fail\"}" > /tmp/dodas_results.json
 fi
 
 exit $cmsRunOut
