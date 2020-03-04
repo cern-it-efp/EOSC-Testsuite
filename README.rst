@@ -56,7 +56,7 @@ Release notes
 
 ``20.5``
 
--
+-In case of existing terraform files from a previous run a prompt is shown to ask for confirmation.
 
 ``20.2``
 

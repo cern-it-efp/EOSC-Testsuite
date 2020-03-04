@@ -4,6 +4,16 @@ import os
 from aux import *
 
 
+def formerProvisionExists():
+    """Checks whether there are .tf files from a previous run."""
+
+    if os.path.exists("src/tests/dlTest/main.tf") or \
+       os.path.exists("src/tests/hpcTest/main.tf") or \
+       os.path.exists("src/tests/shared/main.tf"):
+        return True
+    return False
+
+
 def checkPodAlive(podName, resDir, toLog, resultFile):
     """Checks if a pod is alive"""
 

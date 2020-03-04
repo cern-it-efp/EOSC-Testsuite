@@ -90,7 +90,7 @@ def destroyTF(baseCWD, clusters=None):
         mainTfDir = "src/tests/%s" % cluster
         cmd = "terraform destroy -auto-approve"
         exitCode = runTerraform(toLog, cmd, mainTfDir, baseCWD, cluster, msg)
-
+        cleanupTF("src/tests/%s/" % cluster)
         res.append(exitCode)
 
     return res
@@ -104,7 +104,8 @@ def cleanupTF(mainTfDir):
     """
 
     for filename in [
-        "join.sh",
+        "hosts",
+        "config",
         "main.tf",
         "terraform.tfstate",
         "terraform.tfstate.backup",
