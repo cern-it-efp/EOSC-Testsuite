@@ -169,52 +169,44 @@
 </div>
 <div class="section" id="options">
 <h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
-<table class="docutils option-list" frame="void" rules="none">
-<col class="option" />
-<col class="description" />
-<tbody valign="top">
-<tr><td class="option-group">
-<kbd><span class="option">-c</span>, <span class="option">--configs</span></kbd></td>
-<td>Specifies custom location of configs.yaml. If not used, default will be the ‘configurations’ folder.</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-t</span>, <span class="option">--testsCatalog</span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Specifies custom location of testsCatalog.yaml. If not used, default will be the ‘configurations’ folder.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--no-terraform</span></kbd></td>
-<td>Option to skip terraform provisionment, only ansible-playbook bootstrapping. To be used on providers that do not support terraform.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--only-test</span></kbd></td>
-<td>Run without creating the infrastructure (VMs and cluster), only deploy tests. Not valid for the first run.</td></tr>
-</tbody>
-</table>
-<table class="docutils option-list" frame="void" rules="none">
-<col class="option" />
-<col class="description" />
-<tbody valign="top">
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--destroy <var>&lt;cluster&gt;</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td><p class="first">No test suite run, only destroy provisioned infrastructure. Argument can be:</p>
+<dl class="option-list">
+<dt><kbd><span class="option">-c</span>, <span class="option">--configs</span></kbd></dt>
+<dd><p>Specifies custom location of configs.yaml. If not used, default will be the ‘configurations’ folder.</p>
+</dd>
+<dt><kbd><span class="option">-t</span>, <span class="option">--testsCatalog</span></kbd></dt>
+<dd><p>Specifies custom location of testsCatalog.yaml. If not used, default will be the ‘configurations’ folder.</p>
+</dd>
+<dt><kbd><span class="option">--no-terraform</span></kbd></dt>
+<dd><p>Option to skip terraform provisionment, only ansible-playbook bootstrapping. To be used on providers that do not support terraform.</p>
+</dd>
+<dt><kbd><span class="option">--only-test</span></kbd></dt>
+<dd><p>Run without creating the infrastructure (VMs and cluster), only deploy tests. Not valid for the first run.</p>
+</dd>
+</dl>
+<dl class="option-list">
+<dt><kbd><span class="option">--destroy <var>&lt;cluster&gt;</var></span></kbd></dt>
+<dd><p>No test suite run, only destroy provisioned infrastructure. Argument can be:</p>
 <p>‘shared’: Destroy the shared cluster.</p>
 <p>‘dlTest’: Destroy the GPU cluster.</p>
 <p>‘hpcTest’: Destroy the HPC cluster.</p>
-<p class="last">‘all’: Destroy all clusters.</p>
-</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--destroy-on-completion <var>&lt;clusters&gt;</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Destroy infrastructure once the test suite completes its run. Same arguments as for ‘–destroy’ apply.</td></tr>
-</tbody>
-</table>
+<p>‘all’: Destroy all clusters.</p>
+</dd>
+<dt><kbd><span class="option">--destroy-on-completion <var>&lt;clusters&gt;</var></span></kbd></dt>
+<dd><p>Destroy infrastructure once the test suite completes its run. Same arguments as for ‘–destroy’ apply.</p>
+</dd>
+</dl>
 </div>
 <div class="section" id="other-commands">
 <h2>Other commands<a class="headerlink" href="#other-commands" title="Permalink to this headline">¶</a></h2>
-<p>Once the test suite is running, you can view the provisionment logs by doing:</p>
+<p>Once the test suite is running, you can view the Terraform provisionment logs by doing:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> tail -f logs
 </pre></div>
 </div>
-<p>Once the provisioning has completed and tests are deployed, you can see the pods statuses by doing:</p>
+<p>You can see the Ansible bootstrapping logs by doing:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> tail -f src/logging/ansibleLogs*
+</pre></div>
+</div>
+<p>Once the bootstrapping has completed and tests are deployed, you can see the pods statuses by doing:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> watch kubectl get pods
 </pre></div>
 </div>
@@ -246,7 +238,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, CERN IT-DI-EFP
+        &copy; Copyright 2020, CERN IT-DI-EFP
 
     </p>
   </div>

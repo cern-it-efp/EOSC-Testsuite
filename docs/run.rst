@@ -43,13 +43,19 @@ Options
 Other commands
 ==================
 
-Once the test suite is running, you can view the provisionment logs by doing:
+Once the test suite is running, you can view the Terraform provisionment logs by doing:
 
 .. code-block:: console
 
     $ tail -f logs
 
-Once the provisioning has completed and tests are deployed, you can see the pods statuses by doing:
+You can see the Ansible bootstrapping logs by doing:
+
+.. code-block:: console
+
+    $ tail -f src/logging/ansibleLogs*
+
+Once the bootstrapping has completed and tests are deployed, you can see the pods statuses by doing:
 
 .. code-block:: console
 

@@ -4,6 +4,27 @@ import os
 from aux import *
 
 
+def formerProvisionExists():
+    """Checks whether there are .tf files from a previous run."""
+
+    if os.path.exists("src/tests/dlTest/main.tf") or \
+       os.path.exists("src/tests/hpcTest/main.tf") or \
+       os.path.exists("src/tests/shared/main.tf"):
+        return True
+    return False
+
+
+def checkPodAlive(podName, resDir, toLog, resultFile):
+    """Checks if a pod is alive"""
+
+    if runCMD("kubectl get pod %s" % podName, hideLogs=True) != 0:
+        writeFail(resDir,
+                  resultFile,
+                  "%s pod was destroyed." % podName,
+                  toLog)
+        return False
+    return True
+
 def checkCost(obtainCost, value):
     """ Checks the provided value is not None and is greater than 0.
 
@@ -131,7 +152,7 @@ def checkClustersToDestroy(cliParameterValue, clusters):
     return True
 
 
-def checkClusterWasProvisioned(cluster, generalResultsTesting): # TODO: try this using a flavor that do not exist for one of the clusters hpc
+def checkClusterWasProvisioned(cluster, generalResultsTesting):
     """Checks whether a cluster was provisioned.
 
     Parameters:

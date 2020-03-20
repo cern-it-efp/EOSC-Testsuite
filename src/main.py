@@ -123,7 +123,7 @@ header()
 try:
     options, values = getopt.getopt(
         sys.argv[1:],
-        "c:t:",
+        "c:t:f",
         ["only-test", "via-backend", "retry", "destroy=",
         "destroy-on-completion=", "no-terraform", "configs=", "testsCatalog="])
 except getopt.GetoptError as err:
@@ -178,7 +178,6 @@ for currentOption, currentValue in options:
         noTerraform = True
 
 # -----------------CHECKS AND PREPARATION---------------------------------
-
 selectedTests = init.initAndChecks(noTerraform,
                                    extraSupportedClouds,
                                    testsSharingCluster,
@@ -284,7 +283,7 @@ if checkResultsExist(resDir) is True:
         logger(msg1, "*", "src/logging/footer")
 
     if destroyOnCompletion == True:
-        for cluster in clustersToDestroy: # TODO: check here whether VMs for the cluster were indeed provisioned before trying to destroy them. Maybe use for that general.json
+        for cluster in clustersToDestroy: 
             if checkClusterWasProvisioned(cluster, generalResults["testing"]):
                 if destroyTF(baseCWD, clusters=[cluster])[0] != 0:
                     msg = "   ...destroy failed. Check 'logs' file for details"

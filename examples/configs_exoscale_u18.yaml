@@ -14,4 +14,4 @@ costCalculation:
   generalInstancePrice: 0.2
   GPUInstancePrice: 0.2
   HPCInstancePrice: 0.2
-  s3bucketPrice: 0.1
+  s3bucketPrice: 
