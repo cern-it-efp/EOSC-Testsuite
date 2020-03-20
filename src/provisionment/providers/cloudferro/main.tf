@@ -14,21 +14,3 @@ resource "openstack_compute_instance_v2" "tslauncher" {
 }
 
 # here: get and associate floating IP
-
-resource "null_resource" "allow_root" {
-  provisioner "remote-exec" {
-    connection {
-      host        = var.publicIP
-      type        = "ssh"
-      user        = "eouser"
-      private_key = file("/home/ipelu/.ssh/id_rsa")
-      timeout     = "20m"
-    }
-    inline = [
-      "sudo mkdir /root/.ssh",
-      "sudo cp /home/eouser/.ssh/authorized_keys /root/.ssh",
-      "sudo sed -i '1iPermitRootLogin yes\n' /etc/ssh/sshd_config",
-      "sudo systemctl restart sshd || sudo service sshd restart"
-    ]
-  }
-}

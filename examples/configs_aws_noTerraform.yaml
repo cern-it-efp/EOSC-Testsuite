@@ -1,13 +1,11 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
-providerName: "aws"
-pathToKey: "/home/ipelu/.ssh/id_rsa"
-openUser: centos
-flavor: "t2.medium"
-region: "eu-central-1"
-sharedCredentialsFile: "/home/ipelu/.aws/credentials"
-ami: "ami-0957ba512eafd08d9" # "ami-08ee2516c7709ea48"
-keyName: "exo"
-volumeSize: 50
+providerName: "TISparkle"
+pathToKey: "/root/.ssh/id_rsa"
+openUser: ubuntu
+clusters:
+  shared: ["172.31.38.40","172.31.46.159","172.31.36.149","172.31.32.163"]
+  hpcTest: ["31.171.240.156","31.171.250.153"]
+  dlTest: ["31.171.250.190","31.171.250.185"]
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:

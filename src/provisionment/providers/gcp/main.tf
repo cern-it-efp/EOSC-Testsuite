@@ -36,20 +36,3 @@ resource "google_compute_instance" "launcher" {
    access_config {}
  }
 }
-
-resource null_resource "allow_root" {
-  provisioner "remote-exec" {
-    connection {
-      host        = google_compute_instance.launcher.network_interface.0.access_config.0.nat_ip
-      type        = "ssh"
-      user        = var.openUser
-      private_key = file("~/.ssh/id_rsa")
-    }
-    inline = [
-      "sudo mkdir /root/.ssh",
-      "sudo cp /home/${var.openUser}/.ssh/authorized_keys /root/.ssh",
-      "sudo sed -i 's/PermitRootLogin no/PermitRootLogin yes/g' /etc/ssh/sshd_config",
-      "sudo systemctl restart sshd"
-    ]
-  }
-}

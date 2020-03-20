@@ -98,21 +98,3 @@ resource "azurerm_virtual_machine" "main" {
     }
   }
 }
-
-resource null_resource "allow_root" {
-  depends_on = [azurerm_virtual_machine.main]
-  provisioner "remote-exec" {
-    connection {
-      host        = azurerm_public_ip.myterraformpublicip.ip_address
-      type        = "ssh"
-      user        = "uroot"
-      private_key = file("~/.ssh/id_rsa")
-    }
-    inline = [
-      "sudo mkdir /root/.ssh",
-      "sudo cp /home/uroot/.ssh/authorized_keys /root/.ssh",
-      "sudo sed -i 's/PermitRootLogin no/PermitRootLogin yes/g' /etc/ssh/sshd_config",
-      "sudo systemctl restart sshd"
-    ]
-  }
-}

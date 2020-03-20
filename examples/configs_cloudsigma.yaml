@@ -3,7 +3,7 @@ providerName: "cloudsigma"
 pathToKey: "/home/ipelu/.ssh/id_rsa"
 openUser: cloudsigma
 clusters:
-  shared: ["31.171.240.229","31.171.250.250"]
+  shared: ["31.171.240.23","31.171.250.86","31.171.250.79","31.171.240.52"]
   hpcTest: ["31.171.240.156","31.171.250.153"]
   dlTest: ["31.171.250.190","31.171.250.185"]
 
