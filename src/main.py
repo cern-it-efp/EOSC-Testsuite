@@ -261,6 +261,9 @@ if checkResultsExist(resDir) is True:
             True)
 
     # -----------------MANAGE RESULTS------------------------------------------
+
+    generalResults["info"] = configs
+
     with open("results/" + s3ResDirBase + "/general.json", 'w') as outfile:
         json.dump(generalResults, outfile, indent=4, sort_keys=True)
 
@@ -283,7 +286,7 @@ if checkResultsExist(resDir) is True:
         logger(msg1, "*", "src/logging/footer")
 
     if destroyOnCompletion == True:
-        for cluster in clustersToDestroy: 
+        for cluster in clustersToDestroy:
             if checkClusterWasProvisioned(cluster, generalResults["testing"]):
                 if destroyTF(baseCWD, clusters=[cluster])[0] != 0:
                     msg = "   ...destroy failed. Check 'logs' file for details"
