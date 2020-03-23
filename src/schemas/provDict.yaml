@@ -1,3 +1,4 @@
+# TODO: why separated?
 allProviders:
   openstack: 'openstack_compute_instance_v2.kubenode[count.index].network[0].fixed_ip_v4'
   aws: 'element(aws_instance.kubenode.*.private_ip, count.index)'
@@ -5,6 +6,7 @@ allProviders:
   google: 'element(google_compute_instance.kubenode.*.network_interface.0.network_ip, count.index)'
   exoscale: 'element(exoscale_compute.kubenode.*.ip_address, count.index)'
   cloudstack: 'element(cloudstack_instance.kubenode.*.ip_address, count.index)'
+  opentelekomcloud:
 extraSupportedClouds:
   - azurerm
   - openstack
@@ -12,3 +14,4 @@ extraSupportedClouds:
   - google
   - exoscale
   - cloudstack
+  - opentelekomcloud

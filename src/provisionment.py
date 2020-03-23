@@ -381,6 +381,9 @@ def terraformProvisionment(
             rawProvisioning = loadFile(
                 "%s/rawProvision.tf" % templatesPath, required=True)
 
+        elif configs["providerName"] == "opentelekomcloud":
+            print("TODO")
+
         elif configs["providerName"] == "google":
 
             # manage gpu related vars

@@ -40,6 +40,7 @@ The developers would like to thank all test owners and contributors to this proj
 |                              | | Google Cloud                                                                  |
 |                              | | Microsoft Azure                                                               |
 |                              | | Exoscale (CloudStack)                                                         |
+|                              | | T-Systems' Open Telekom Cloud (OpenStack)                                     |
 |                              | | CERN Private Cloud (OpenStack)                                                |
 |                              | | CloudFerro (OpenStack)                                                        |
 |                              | | Cloudscale (OpenStack)                                                        |
