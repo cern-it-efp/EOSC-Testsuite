@@ -91,8 +91,7 @@ def loadFile(loadThis, required=None):
                 return yaml.load(inputfile, Loader=yaml.FullLoader)
             except AttributeError:
                 try:
-                    #return yaml.load(inputfile) # TODO: fixed across all providers?
-                    return yaml.load(inputfile, Loader=None)
+                    return yaml.load(inputfile) 
                 except:  # yaml.scanner.ScannerError:
                     print("Error loading yaml file " + loadThis)
                     stop(1)
