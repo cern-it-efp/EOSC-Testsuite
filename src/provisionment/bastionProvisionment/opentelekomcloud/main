@@ -1,13 +1,13 @@
-variable "access_key" {
-  default = ""
-}
-variable "secret_key" {
-  default = ""
+variable "public_ip" {
+  default = "80.158.22.125"
 }
 variable "keyPair" {
   default = "exo"
 }
-variable "flavorName" {
+variable "diskSize" {
+  default = 10
+}
+variable "flavorName" { # https://open-telekom-cloud.com/resource/blob/data/173316/3c1e928bf9537cbef2b1407655a0d25c/open-telekom-cloud-service-description.pdf
   default = "s2.medium.1"
 }
 variable "imageName" {
@@ -17,7 +17,7 @@ variable "secGroups" {
   default = ["default"]
 }
 variable "configsPath" {
-  default = "~/tsk.yml"
+  default = "~/Desktop/tsk.yml"
 }
 # ------------------------------------------------------------------------------
 variable "domain_name" {
@@ -28,11 +28,16 @@ variable "tenant_name" {
 }
 
 provider "opentelekomcloud" {
-  access_key = yamldecode(file(var.configsPath))["accK"] # TODO: do this for all other vars instead of placeholder + replace()
+  access_key = yamldecode(file(var.configsPath))["accK"]
   secret_key = yamldecode(file(var.configsPath))["secK"]
   domain_name = var.domain_name
   tenant_name = var.tenant_name
   auth_url    = "https://iam.eu-de.otc.t-systems.com/v3"
+}
+
+resource "opentelekomcloud_blockstorage_volume_v2" "volume" {
+  name = "volume"
+  size = var.diskSize
 }
 
 resource "opentelekomcloud_compute_instance_v2" "tslauncher" {
@@ -41,4 +46,15 @@ resource "opentelekomcloud_compute_instance_v2" "tslauncher" {
   image_name = var.imageName
   key_pair = var.keyPair
   security_groups = var.secGroups
+
+}
+
+resource "opentelekomcloud_compute_volume_attach_v2" "va_1" {
+  instance_id = opentelekomcloud_compute_instance_v2.tslauncher.id
+  volume_id   = opentelekomcloud_blockstorage_volume_v2.volume.id
+}
+
+resource "opentelekomcloud_compute_floatingip_associate_v2" "myip" {
+  floating_ip = var.public_ip
+  instance_id = opentelekomcloud_compute_instance_v2.tslauncher.id
 }

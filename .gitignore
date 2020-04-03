@@ -1,5 +1,5 @@
-src/provisionment/bastions/*/.terraform*
-src/provisionment/bastions/*/terraform.tfstate*
+src/provisionment/bastionProvisionment/*/.terraform*
+src/provisionment/bastionProvisionment/*/terraform.tfstate*
 
 logs
 
