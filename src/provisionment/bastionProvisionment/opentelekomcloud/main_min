@@ -1,5 +1,3 @@
-# TODO: By default not enough space on the device: block_device is optional and default disk is 4GB for ubu18.
-# Document requirements for launcher machine (PC/VM) on the docs
 variable "public_ip" {
   default = "80.158.22.125"
 }
@@ -10,7 +8,7 @@ variable "diskSize" {
   default = 50
 }
 variable "flavor" { # https://open-telekom-cloud.com/resource/blob/data/173316/3c1e928bf9537cbef2b1407655a0d25c/open-telekom-cloud-service-description.pdf
-  default = "s2.medium.1"
+  default = "s2.medium.4"
 }
 variable "imageID" {
   # default = "" # Centos
