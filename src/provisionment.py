@@ -23,6 +23,7 @@ except ModuleNotFoundError as ex:
     print(ex)
     sys.exit(1)
 from aux import *
+#from init import *
 from init import *
 
 
@@ -166,6 +167,7 @@ def provisionAndBootstrap(test,
                           extraInstanceConfig,
                           toLog,
                           configs,
+                          cfgPath,
                           testsRoot,
                           retry,
                           instanceDefinition,
@@ -238,6 +240,7 @@ def provisionAndBootstrap(test,
                                       extraInstanceConfig,
                                       toLog,
                                       configs,
+                                      cfgPath,
                                       testsRoot,
                                       retry,
                                       instanceDefinition,
@@ -255,6 +258,7 @@ def terraformProvisionment(
         extraInstanceConfig,
         toLog,
         configs,
+        cfgPath,
         testsRoot,
         retry,
         instanceDefinition,
@@ -381,9 +385,6 @@ def terraformProvisionment(
             rawProvisioning = loadFile(
                 "%s/rawProvision.tf" % templatesPath, required=True)
 
-        elif configs["providerName"] == "opentelekomcloud":
-            print("TODO")
-
         elif configs["providerName"] == "google":
 
             # manage gpu related vars
@@ -472,6 +473,20 @@ def terraformProvisionment(
             rawProvisioning = loadFile(
                 "%s/rawProvision.tf" % templatesPath, required=True)
 
+        elif configs["providerName"] == "opentelekomcloud":
+
+            # securityGroups is optional
+            # requires instanceName (is part of the general variables) and configsFile
+            variables = variables.replace( # TODO: these have to be passed as var to ansiblePlaybook and used on InmutableDict's extra_vars like kubeconfig
+            "CONFIG_PATH_PH", cfgPath).replace(
+            "AUTH_PATH_PH", configs["authFile"])
+
+            # ---------------- main.tf: write general vars
+            writeToFile(mainTfDir + "/main.tf", variables, False)
+
+            # ---------------- main.tf: add raw VMs provisioner
+            rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath, required=True)
+
         else:
             # ---------------- main.tf: add vars
             writeToFile(mainTfDir + "/main.tf", variables, False)
@@ -510,7 +525,7 @@ def terraformProvisionment(
             return False, provisionFailMsg
 
     # ---------------- RUN ANSIBLE (first create hosts file)
-    result, masterIP = ansiblePlaybook(mainTfDir,
+    result, masterIP = ansiblePlaybook(mainTfDir, # TODO: take here the extra vars like authFile, configsFile and securityGroups
                                        baseCWD,
                                        configs["providerName"],
                                        kubeconfig,
@@ -658,6 +673,8 @@ def getIP(resource, provider):
             return resource["values"]["network"][0]["fixed_ip_v4"]
         elif provider == "google":
             return resource["values"]["network_interface"][0]["network_ip"]
+        elif provider == "opentelekomcloud":
+            return resource["values"]["access_ip_v4"]
     except KeyError:
         return None
 

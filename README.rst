@@ -55,7 +55,9 @@ Release notes
 ---------------------------------------------
 (Note the versions are numbered with the date of the release: YEAR.MONTH)
 
-``20.5``
+``20.4``
+
+-Improved support for running on T-Systems' OTC
 
 -In case of existing terraform files from a previous run a prompt is shown to ask for confirmation.
 

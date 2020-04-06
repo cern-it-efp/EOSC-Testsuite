@@ -3,8 +3,14 @@ required:
     - providerName
     - pathToKey
     - flavor
-    - imageName
+    - imageID
     - keyPair
+    - openUser
+    - domainName
+    - tenantName
+    - authFile
+    - diskSize
+
 properties:
     providerName:
         type: string
@@ -12,12 +18,20 @@ properties:
         type: string
     flavor:
         type: string
-    imageName:
+    imageID:
         type: string
     keyPair:
         type: string
     openUser:
         type: string
+    domainName:
+        type: string
+    tenantName:
+        type: string
+    authFile:
+        type: string
+    diskSize:
+        type: number
     dockerCE:
         type: string
     dockerEngine:
@@ -25,11 +39,8 @@ properties:
     kubernetes:
         type: string
     securityGroups:
-        type: string
-    region:
-        type: string
-    availabilityZone:
-        type: string
+        type:
+            - array
     costCalculation:
         type:
             - object

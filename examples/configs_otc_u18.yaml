@@ -1,0 +1,21 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: opentelekomcloud
+pathToKey: "/home/ipelu/.ssh/id_rsa"
+openUser: ubuntu
+flavor: "s2.medium.1"
+imageID: "1616e0b6-503a-4698-946f-cf9942c4c73b"
+keyPair: "exo"
+#securityGroups: "[\"default\"]"
+securityGroups: ["default"]
+domainName: "OTC-EU-DE-00000000001000046175"
+tenantName: "eu-de"
+diskSize: 10
+authFile: /home/ipelu/Desktop/tsk.yml
+
+
+#---------------COST CALCULATION------------------------------------------------
+costCalculation:
+  generalInstancePrice:
+  GPUInstancePrice:
+  HPCInstancePrice: 0.2
+  s3bucketPrice: 0.1

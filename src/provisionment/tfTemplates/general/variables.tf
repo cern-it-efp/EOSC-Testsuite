@@ -14,10 +14,10 @@ variable "instanceName" {
 variable "zone" {
   default = "ZONE_PH"
 }
-variable "region" { # neither CERN nor cf allow setting region (at least from the UI)
+variable "region" {
   default = "REGION_PH"
 }
-variable "securityGroups" { # this is an array: ["default","allow_ping_ssh_rdp"]
+variable "securityGroups" {
   default = "SEC_GROUPS_PH"
 }
 variable "keyPair" {
@@ -147,6 +147,14 @@ variable "template" {
 }
 variable "diskSize" {
   default = "DISK_SIZE_PH"
+}
+
+############################ OPENTELEKOMCLOUD ##################################
+variable "configsFile" { # TODO: must be extra_vars
+  default = "../../../CONFIG_PATH_PH"
+}
+variable "authFile" {
+  default = "AUTH_PATH_PH"
 }
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~ END OF VARS  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

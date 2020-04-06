@@ -28,8 +28,8 @@ onlyTest = False
 killResources = False
 noTerraform = False
 testsCatalog = ""
-cfgPath = None
-tcPath = None
+cfgPathCLI = None
+tcPathCLI = None
 instanceDefinition = ""
 extraInstanceConfig = ""
 dependencies = ""
@@ -131,11 +131,11 @@ except getopt.GetoptError as err:
     stop(1)
 for currentOption, currentValue in options:
     if currentOption in ['-c', '--configs']:
-        cfgPath = currentValue
-        #print("Using configs path: %s" % cfgPath)
+        cfgPathCLI = currentValue
+        #print("Using configs path: %s" % cfgPathCLI)
     elif currentOption in ['-t', '--testsCatalog']:
-        tcPath = currentValue
-        #print("Using testsCatalog path: %s" % tcPath)
+        tcPathCLI = currentValue
+        #print("Using testsCatalog path: %s" % tcPathCLI)
     elif currentOption in ['--only-test']:
         writeToFile("src/logging/header", "(ONLY TEST EXECUTION)", True)
         onlyTest = True
@@ -182,8 +182,8 @@ selectedTests = init.initAndChecks(noTerraform,
                                    extraSupportedClouds,
                                    testsSharingCluster,
                                    customClustersTests,
-                                   cfgPath=cfgPath,
-                                   tcPath=tcPath)
+                                   cfgPathCLI=cfgPathCLI,
+                                   tcPathCLI=tcPathCLI)
 
 configs = init.configs
 testsCatalog = init.testsCatalog

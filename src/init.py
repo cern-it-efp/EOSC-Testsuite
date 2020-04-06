@@ -5,6 +5,8 @@ from checker import *
 
 configs = ""
 testsCatalog = ""
+cfgPath = None
+tcPath = None
 instanceDefinition = ""
 extraInstanceConfig = ""
 dependencies = ""
@@ -21,8 +23,8 @@ def initAndChecks(noTerraform,
                   extraSupportedClouds,
                   testsSharingCluster,
                   customClustersTests,
-                  cfgPath=None,
-                  tcPath=None):
+                  cfgPathCLI=None,
+                  tcPathCLI=None):
     """Initial checks and initialization of variables.
 
     Parameters:
@@ -39,6 +41,8 @@ def initAndChecks(noTerraform,
 
     global obtainCost
     global configs
+    global cfgPath
+    global tcPath
     global testsCatalog
     global instanceDefinition
     global extraInstanceConfig
@@ -53,11 +57,17 @@ def initAndChecks(noTerraform,
         print("kubectl is not installed")
         stop(1)
 
-    if cfgPath is None:
+    if cfgPathCLI is None:
         cfgPath = "configurations/configs.yaml"
-    if tcPath is None:
+    else:
+        cfgPath = cfgPathCLI
+    if tcPathCLI is None:
         tcPath = "configurations/testsCatalog.yaml"
-
+    else:
+        tcPath = tcPathCLI
+    print("Values: %s %s" % (cfgPath, tcPath))
+    print("configs: %s" % configs)
+    
     configs = loadFile(cfgPath, required=True)
     testsCatalog = loadFile(tcPath, required=True)
 
