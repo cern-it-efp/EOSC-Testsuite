@@ -21,7 +21,7 @@ variable "secGroups" {
   default = ["default"]
 }
 variable "configsPath" {
-  default = "~/Desktop/tsk.yml"
+  default = "~/Desktop/tsk.yaml"
 }
 # ------------------------------------------------------------------------------
 variable "domain_name" {
