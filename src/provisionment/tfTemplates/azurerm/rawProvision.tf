@@ -37,7 +37,7 @@ resource "azurerm_virtual_machine" "kubenode" {
   }
   os_profile {
     computer_name  = "${var.instanceName}-${count.index}"
-    admin_username = var.openUser
+    admin_username = var.openUser # TODO: get this from terraform_cli_vars
   }
   os_profile_linux_config {
     disable_password_authentication = true

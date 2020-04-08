@@ -150,11 +150,11 @@ variable "diskSize" {
 }
 
 ############################ OPENTELEKOMCLOUD ##################################
-variable "configsFile" { # TODO: must be extra_vars
-  default = "../../../CONFIG_PATH_PH"
+variable "configsFile" {
+  default = ""
 }
 variable "authFile" {
-  default = "AUTH_PATH_PH"
+  default = ""
 }
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~ END OF VARS  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

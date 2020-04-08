@@ -9,9 +9,11 @@ provider "opentelekomcloud" {
 resource "opentelekomcloud_compute_instance_v2" "kubenode" {
   count = var.customCount
   name = "${var.instanceName}-${count.index}"
-  flavor_name = yamldecode(file(var.configsFile))["flavor"]
+  #flavor_name = yamldecode(file(var.configsFile))["flavor"]
+  flavor_name = var.flavor
   key_pair = yamldecode(file(var.configsFile))["keyPair"]
-  security_groups = yamldecode(file(var.configsFile))["securityGroups"]
+  #security_groups = yamldecode(file(var.configsFile))["securityGroups"]
+  security_groups = var.securityGroups
 
   block_device {
     uuid                  = yamldecode(file(var.configsFile))["imageID"]

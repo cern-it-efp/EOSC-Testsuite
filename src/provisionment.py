@@ -35,7 +35,7 @@ aggregateLogs = False
 ansibleLogs = "src/logging/ansibleLogs%s"
 
 
-def runTerraform(toLog, cmd, mainTfDir, baseCWD, test, msg):
+def runTerraform(toLog, cmd, mainTfDir, baseCWD, test, msg, terraform_cli_vars=None):
     """Run Terraform cmds.
 
     Parameters:
@@ -43,10 +43,16 @@ def runTerraform(toLog, cmd, mainTfDir, baseCWD, test, msg):
         baseCWD (str): Path to go back.
         test (str): Cluster identification.
         msg (str): Message to be shown.
+        terraform_cli_vars (str): CLI vars to be appended to the cmd.
 
     Returns:
         int: 0 for success, 1 for failure
     """
+
+    if terraform_cli_vars is not None:
+        with open(mainTfDir + "/terraform.tfvars", "a") as varfile:
+            for var in terraform_cli_vars:
+                varfile.write("%s=%s\n" % (var[0],var[1])) #TODO: type issues
 
     writeToFile(toLog, msg, True)
     os.chdir(mainTfDir)
@@ -108,6 +114,7 @@ def cleanupTF(mainTfDir):
         "hosts",
         "config",
         "main.tf",
+        "terraform.tfvars",
         "terraform.tfstate",
         "terraform.tfstate.backup",
             ".terraform"]:
@@ -297,6 +304,7 @@ def terraformProvisionment(
         templatesPath += "general"
 
     mainTfDir = testsRoot + test
+    terraform_cli_vars = []
     kubeconfig = "%s/src/tests/%s/config" % (baseCWD, test)  # "config"
     if test == "shared":
         flavor = configs["flavor"]
@@ -328,7 +336,6 @@ def terraformProvisionment(
                              required=True).replace(
             "NODES_PH", str(nodes)).replace(
             "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(
-            "OPEN_USER_PH", openUser).replace(
             "NAME_PH", nodeName)
         variables = stackVersioning(variables, configs)
 
@@ -475,14 +482,16 @@ def terraformProvisionment(
 
         elif configs["providerName"] == "opentelekomcloud":
 
-            # securityGroups is optional
-            # requires instanceName (is part of the general variables) and configsFile
-            variables = variables.replace( # TODO: these have to be passed as var to ansiblePlaybook and used on InmutableDict's extra_vars like kubeconfig
-            "CONFIG_PATH_PH", cfgPath).replace(
-            "AUTH_PATH_PH", configs["authFile"])
+            # ---------------- specific vars
+            terraform_cli_vars.append(["configsFile", cfgPath]) # TODO: this requires the full path
+            terraform_cli_vars.append(["authFile", configs["authFile"]])
+            terraform_cli_vars.append(["flavor", flavor,])
+            terraform_cli_vars.append(["securityGroups", tryTakeFromYaml(configs, "securityGroups", "[]")])
 
-            # ---------------- main.tf: write general vars
+            # ---------------- general vars
             writeToFile(mainTfDir + "/main.tf", variables, False)
+            terraform_cli_vars.append(["customCount",str(nodes)])
+            terraform_cli_vars.append(["instanceName",nodeName])
 
             # ---------------- main.tf: add raw VMs provisioner
             rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath, required=True)
@@ -521,11 +530,12 @@ def terraformProvisionment(
                         mainTfDir,
                         baseCWD,
                         test,
-                        "Provisioning '%s' VMs..." % flavor) != 0:
+                        "Provisioning '%s' VMs..." % flavor,
+                        terraform_cli_vars=terraform_cli_vars) != 0:
             return False, provisionFailMsg
 
     # ---------------- RUN ANSIBLE (first create hosts file)
-    result, masterIP = ansiblePlaybook(mainTfDir, # TODO: take here the extra vars like authFile, configsFile and securityGroups
+    result, masterIP = ansiblePlaybook(mainTfDir,
                                        baseCWD,
                                        configs["providerName"],
                                        kubeconfig,

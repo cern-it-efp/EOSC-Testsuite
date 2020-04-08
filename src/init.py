@@ -65,8 +65,6 @@ def initAndChecks(noTerraform,
         tcPath = "configurations/testsCatalog.yaml"
     else:
         tcPath = tcPathCLI
-    print("Values: %s %s" % (cfgPath, tcPath))
-    print("configs: %s" % configs)
     
     configs = loadFile(cfgPath, required=True)
     testsCatalog = loadFile(tcPath, required=True)

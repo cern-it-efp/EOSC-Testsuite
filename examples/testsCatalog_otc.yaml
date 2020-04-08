@@ -14,7 +14,7 @@ dodasTest:
   run: true
 dlTest:
   run: true
-  nodes: 3
+  nodes: 2 # default quota is 10 
   flavor: "s2.medium.3"
 hpcTest:
   run: true

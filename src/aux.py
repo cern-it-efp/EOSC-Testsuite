@@ -91,7 +91,7 @@ def loadFile(loadThis, required=None):
                 return yaml.load(inputfile, Loader=yaml.FullLoader)
             except AttributeError:
                 try:
-                    return yaml.load(inputfile) 
+                    return yaml.load(inputfile)
                 except:  # yaml.scanner.ScannerError:
                     print("Error loading yaml file " + loadThis)
                     stop(1)
@@ -144,7 +144,7 @@ def logger(text, sym, file, override=None):
         file (bool): File the logs should be sent to
     """
 
-    size = 69  # longest msg on code (was 61)
+    size = 74  # longest msg on code (was 61)
     frame = sym * (size + 6)
     blank = sym + "  " + " " * size + "  " + sym
     toPrint = frame + "\n" + blank
