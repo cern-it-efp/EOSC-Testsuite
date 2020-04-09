@@ -493,7 +493,7 @@ def terraformProvisionment(
             terraform_cli_vars["configsFile"] = cfgPath # ---------------- specific vars
             terraform_cli_vars["authFile"] = configs["authFile"]
             terraform_cli_vars["flavor"] = flavor
-            terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", "[]")
+            terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", [])
             terraform_cli_vars["customCount"] = nodes # ---------------- general vars
             terraform_cli_vars["instanceName"] = nodeName
 
