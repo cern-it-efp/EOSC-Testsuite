@@ -11,14 +11,14 @@ src/tests/dlTest/train-mpi_3dGAN.yaml
 src/tests/dlTest/main.tf
 src/tests/dlTest/config
 src/tests/dlTest/.terraform*
-src/tests/dlTest/terraform.tfstate*
+src/tests/dlTest/terraform.tf*
 src/tests/dlTest/join.sh
 
 src/tests/hpcTest/fdmnes
 src/tests/hpcTest/main.tf
 src/tests/hpcTest/config
 src/tests/hpcTest/.terraform*
-src/tests/hpcTest/terraform.tfstate*
+src/tests/hpcTest/terraform.tf*
 src/tests/hpcTest/join.sh
 
 src/__pycache__

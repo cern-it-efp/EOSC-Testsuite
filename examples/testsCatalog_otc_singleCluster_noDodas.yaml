@@ -15,8 +15,8 @@ dodasTest:
 dlTest:
   run:
   nodes: 3
-  flavor: "s2.medium.3"
+  flavor: "s2.medium.2"
 hpcTest:
-  run: 
+  run:
   nodes: 2
   flavor: "s2.medium.2"

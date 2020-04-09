@@ -23,7 +23,6 @@ except ModuleNotFoundError as ex:
     print(ex)
     sys.exit(1)
 from aux import *
-#from init import *
 from init import *
 
 
@@ -50,9 +49,10 @@ def runTerraform(toLog, cmd, mainTfDir, baseCWD, test, msg, terraform_cli_vars=N
     """
 
     if terraform_cli_vars is not None:
-        with open(mainTfDir + "/terraform.tfvars", "a") as varfile:
-            for var in terraform_cli_vars:
-                varfile.write("%s=%s\n" % (var[0],var[1])) #TODO: type issues
+        with open(mainTfDir + "/terraform.tfvars.json", 'w') as varfile:
+            json.dump(terraform_cli_vars, varfile, indent=4, sort_keys=True)
+
+
 
     writeToFile(toLog, msg, True)
     os.chdir(mainTfDir)
@@ -97,7 +97,11 @@ def destroyTF(baseCWD, clusters=None):
         mainTfDir = "src/tests/%s" % cluster
         cmd = "terraform destroy -auto-approve"
         exitCode = runTerraform(toLog, cmd, mainTfDir, baseCWD, cluster, msg)
-        cleanupTF("src/tests/%s/" % cluster)
+        #if all(x == 0 for x in exitCode) is True:
+        if exitCode is 0:
+            cleanupTF("src/tests/%s/" % cluster)
+        else:
+            print("WARNING: terraform destroy did not succeeded completely, tf files not deleted.")
         res.append(exitCode)
 
     return res
@@ -115,6 +119,7 @@ def cleanupTF(mainTfDir):
         "config",
         "main.tf",
         "terraform.tfvars",
+        "terraform.tfvars.json",
         "terraform.tfstate",
         "terraform.tfstate.backup",
             ".terraform"]:
@@ -304,7 +309,8 @@ def terraformProvisionment(
         templatesPath += "general"
 
     mainTfDir = testsRoot + test
-    terraform_cli_vars = []
+    terraform_cli_vars = {}
+    cfgPath = "%s/%s" % (baseCWD, cfgPath)
     kubeconfig = "%s/src/tests/%s/config" % (baseCWD, test)  # "config"
     if test == "shared":
         flavor = configs["flavor"]
@@ -482,16 +488,14 @@ def terraformProvisionment(
 
         elif configs["providerName"] == "opentelekomcloud":
 
-            # ---------------- specific vars
-            terraform_cli_vars.append(["configsFile", cfgPath]) # TODO: this requires the full path
-            terraform_cli_vars.append(["authFile", configs["authFile"]])
-            terraform_cli_vars.append(["flavor", flavor,])
-            terraform_cli_vars.append(["securityGroups", tryTakeFromYaml(configs, "securityGroups", "[]")])
+            writeToFile(mainTfDir + "/main.tf", variables, False) # TODO: do this with terraform_cli_vars too (yamldecode)
 
-            # ---------------- general vars
-            writeToFile(mainTfDir + "/main.tf", variables, False)
-            terraform_cli_vars.append(["customCount",str(nodes)])
-            terraform_cli_vars.append(["instanceName",nodeName])
+            terraform_cli_vars["configsFile"] = cfgPath # ---------------- specific vars
+            terraform_cli_vars["authFile"] = configs["authFile"]
+            terraform_cli_vars["flavor"] = flavor
+            terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", "[]")
+            terraform_cli_vars["customCount"] = nodes # ---------------- general vars
+            terraform_cli_vars["instanceName"] = nodeName
 
             # ---------------- main.tf: add raw VMs provisioner
             rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath, required=True)
@@ -501,11 +505,9 @@ def terraformProvisionment(
             writeToFile(mainTfDir + "/main.tf", variables, False)
 
             # ---------------- main.tf: add raw VMs provisioner
-            instanceDefinition = "%s \n %s" % \
-                (flavor,
+            instanceDefinition = "%s \n %s" % (flavor,
                 instanceDefinition.replace(
-                    "NAME_PH", "${var.instanceName}-${count.index}"
-                    ))
+                    "NAME_PH", "${var.instanceName}-${count.index}"))
 
             if extraInstanceConfig:
                 instanceDefinition += "\n" + extraInstanceConfig

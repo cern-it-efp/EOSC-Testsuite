@@ -11,11 +11,11 @@ perfsonarTest:
   run: true
   endpoint: psb01-gva.cern.ch
 dodasTest:
-  run: 
+  run:
 dlTest:
   run: true
   nodes: 3
-  flavor: "s2.medium.3"
+  flavor: "s2.medium.2"
 hpcTest:
   run: true
   nodes: 2
