@@ -49,6 +49,7 @@ retry = None
 destroy = None
 destroyOnCompletion = None
 clustersToDestroy = None
+customNodes = None
 publicRepo = "https://eosc-testsuite.rtfd.io"
 clusters = ["shared", "dlTest", "hpcTest"]
 
@@ -124,8 +125,15 @@ try:
     options, values = getopt.getopt(
         sys.argv[1:],
         "c:t:f",
-        ["only-test", "via-backend", "retry", "destroy=",
-        "destroy-on-completion=", "no-terraform", "configs=", "testsCatalog="])
+        ["only-test",
+         "via-backend",
+         "retry",
+         "no-terraform",
+         "destroy=",
+         "destroy-on-completion=",
+         "custom-nodes=",
+         "configs=",
+         "testsCatalog="])
 except getopt.GetoptError as err:
     print(err)
     stop(1)
@@ -141,6 +149,13 @@ for currentOption, currentValue in options:
         onlyTest = True
     elif currentOption in ['--retry']:
         retry = True
+    elif currentOption in ['--custom-nodes']:
+        if currentValue.isdigit():
+        #if intAndGreaterThan0(currentValue):
+            customNodes = currentValue
+        else:
+            print("The value for --custom-nodes must be integer > 0. ")
+            stop(1)
     elif currentOption in ['--destroy']:
         if checkClustersToDestroy(currentValue, clusters):
             answer = input(
@@ -159,8 +174,7 @@ for currentOption, currentValue in options:
             else:
                 print("Aborting operation")
         else:
-            print(
-                "The provided value '%s' for the option " \
+            print("The provided value '%s' for the option " \
                 "--destroy is not valid." % currentValue)
         stop(0)
     elif currentOption in ['--destroy-on-completion']:
@@ -225,8 +239,12 @@ for test in testsSharingCluster:
         msgArr.append(test)
 
 if len(msgArr) > 1:
+    if customNodes is not None:
+        numberOfNodes = customNodes
+    else:
+        numberOfNodes = len(msgArr) - 1
     p = Process(target=sharedClusterTests, args=( # shared cluster provisioning
-        msgArr, onlyTest, retry, noTerraform, resDir))
+        msgArr, onlyTest, retry, noTerraform, resDir, numberOfNodes))
     procs.append(p)
     p.start()
     cluster += 1

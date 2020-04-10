@@ -39,6 +39,9 @@ Options
 --destroy-on-completion <clusters>
     Destroy infrastructure once the test suite completes its run. Same arguments as for '--destroy' apply.
 
+--custom-nodes <value>
+    Set the number of instances that should be deployed for the shared cluster.
+
 
 Other commands
 ==================

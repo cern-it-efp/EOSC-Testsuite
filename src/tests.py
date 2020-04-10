@@ -15,7 +15,7 @@ from aux import *
 import init
 
 
-def sharedClusterTests(msgArr, onlyTest, retry, noTerraform, resDir):
+def sharedClusterTests(msgArr, onlyTest, retry, noTerraform, resDir, numberOfNodes):
     """Runs the test that share the general purpose cluster.
 
     Parameters:
@@ -25,6 +25,7 @@ def sharedClusterTests(msgArr, onlyTest, retry, noTerraform, resDir):
         retry (bool): If true, try to reuse existing infrastructure.
         noTerraform (bool): Specifies whether current run uses terraform.
         resDir (str): Path to the results folder for the current run.
+        numberOfNodes (int): Number of nodes to provision.
 
     Returns:
         None: In case of errors the function stops (returns None)
@@ -36,7 +37,7 @@ def sharedClusterTests(msgArr, onlyTest, retry, noTerraform, resDir):
     logger(msgArr, "=", "src/logging/shared")
     if onlyTest is False:
         prov, msg = provisionAndBootstrap("shared",
-                                          len(msgArr) - 1,
+                                          numberOfNodes,
                                           None,
                                           None,
                                           "src/logging/shared",

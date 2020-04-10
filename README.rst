@@ -61,6 +61,10 @@ Release notes
 
 -In case of existing terraform files from a previous run a prompt is shown to ask for confirmation.
 
+-Added option --custom-nodes to set the number of instances that should be deployed for the shared cluster.
+
+-Using Terraform's yamldecode with configs.yaml for variables instead of Python's replace function with placeholders.
+
 ``20.2``
 
 -Using Ansible for VM configuration instead of Terraform's provisioners.
