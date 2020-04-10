@@ -403,7 +403,7 @@ Variables for configs.yaml:
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 |diskSize               | VM's disk size.                                                                                                             |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|configPath             | Path to the file containing the CloudStack credentials. See below the structure of such file. (required)                    |
+|authFile             | Path to the file containing the CloudStack credentials. See below the structure of such file. (required)                    |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 
 CloudStack credentials file's structure:
@@ -445,7 +445,7 @@ Variables for configs.yaml:
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 |diskSize               | VM's disk size. (required)                                                                                                  |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|configPath             | Path to the file containing the Exoscale credentials. See below the structure of such file. (required)                      |
+|authFile             | Path to the file containing the Exoscale credentials. See below the structure of such file. (required)                      |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 
 Exoscale credentials file's structure:

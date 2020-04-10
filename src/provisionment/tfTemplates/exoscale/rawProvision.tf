@@ -1,14 +1,14 @@
 provider "exoscale" {
-  config = var.configPath
+  config = yamldecode(file(var.configsFile))["authFile"]
 }
 
 resource "exoscale_compute" "kubenode" {
   count           = var.customCount
-  zone            = var.zone
-  size            = var.size
   display_name    = "${var.instanceName}-${count.index}"
-  template        = var.template
-  key_pair        = var.keyPair
+  zone            = yamldecode(file(var.configsFile))["zone"]
+  size            = var.flavor
+  template        = yamldecode(file(var.configsFile))["template"]
+  key_pair        = yamldecode(file(var.configsFile))["keyPair"]
+  disk_size       = yamldecode(file(var.configsFile))["diskSize"]
   security_groups = var.securityGroups
-  disk_size       = var.diskSize
 }

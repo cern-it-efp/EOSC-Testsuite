@@ -1,6 +1,6 @@
 provider "opentelekomcloud" {
-  access_key = yamldecode(file(var.authFile))["accK"]
-  secret_key = yamldecode(file(var.authFile))["secK"]
+  access_key = yamldecode(file(yamldecode(file(var.configsFile))["authFile"]))["accK"] # TODO: try this
+  secret_key = yamldecode(file(yamldecode(file(var.configsFile))["authFile"]))["secK"]
   domain_name = yamldecode(file(var.configsFile))["domainName"]
   tenant_name = yamldecode(file(var.configsFile))["tenantName"]
   auth_url    = "https://iam.eu-de.otc.t-systems.com/v3"
@@ -9,10 +9,8 @@ provider "opentelekomcloud" {
 resource "opentelekomcloud_compute_instance_v2" "kubenode" {
   count = var.customCount
   name = "${var.instanceName}-${count.index}"
-  #flavor_name = yamldecode(file(var.configsFile))["flavor"]
   flavor_name = var.flavor
   key_pair = yamldecode(file(var.configsFile))["keyPair"]
-  #security_groups = yamldecode(file(var.configsFile))["securityGroups"]
   security_groups = var.securityGroups
 
   block_device {

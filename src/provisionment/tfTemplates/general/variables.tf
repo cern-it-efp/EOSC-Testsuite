@@ -1,4 +1,7 @@
 ############################ COMMON ONES #######################################
+variable "configsFile" {
+  default = ""
+}
 variable "customCount" {
   default = NODES_PH
 }
@@ -133,28 +136,6 @@ variable "volumeSize" {
 }
 variable "sharedCredentialsFile" {
   default = "SHARED_CREDENTIALS_FILE_PH"
-}
-
-############################ CLOUDSTACK & EXOSCALE #############################
-variable "configPath" {
-  default = "CONFIG_PATH_PH"
-}
-variable "size" {
-  default = "EXO_SIZE_PH"
-}
-variable "template" {
-  default = "TEMPLATE_PH"
-}
-variable "diskSize" {
-  default = "DISK_SIZE_PH"
-}
-
-############################ OPENTELEKOMCLOUD ##################################
-variable "configsFile" {
-  default = ""
-}
-variable "authFile" {
-  default = ""
 }
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~ END OF VARS  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

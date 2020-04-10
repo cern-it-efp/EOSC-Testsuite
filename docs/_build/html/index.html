@@ -167,32 +167,33 @@ This Test-Suite is being used as a validation tool for commercial cloud services
 </div>
 <p>The test-suite executes four main steps:</p>
 <ol class="arabic simple">
-<li><p>Infrastructure provisioning: VMs are created using Terraform and then Kubernetes and Docker are installed on them to create several k8s cluster according to the selected tests.</p></li>
-<li><p>Deploy the tests: Kubernetes resource definition files (YAML) are used to deploy the tests, either as single pods, jobs or deployments.</p></li>
-<li><p>Harvest results: at the end of each test run a result file -written in JSON- is created. This file is harvested from the cluster and stored locally.</p></li>
-<li><p>Through a verification system, the Test-Suite can also be triggered from a service running at CERN. In this case, results are then pushed to a S3 Bucket at CERN. (Under development)</p></li>
+<li>Infrastructure provisioning: VMs are created using Terraform and then Kubernetes and Docker are installed on them to create several k8s cluster according to the selected tests.</li>
+<li>Deploy the tests: Kubernetes resource definition files (YAML) are used to deploy the tests, either as single pods, jobs or deployments.</li>
+<li>Harvest results: at the end of each test run a result file -written in JSON- is created. This file is harvested from the cluster and stored locally.</li>
+<li>Through a verification system, the Test-Suite can also be triggered from a service running at CERN. In this case, results are then pushed to a S3 Bucket at CERN. (Under development)</li>
 </ol>
 <p>The test set described below is based on the tests used in <a class="reference external" href="https://www.hnscicloud.eu/">Helix Nebula The Science Cloud</a> PCP project funded by the European Commission.</p>
 <p>The developers would like to thank all test owners and contributors to this project.</p>
 <p><strong>This test-suite has been tested on:</strong></p>
-<table class="docutils align-default">
+<table border="1" class="docutils">
 <colgroup>
-<col style="width: 27%" />
-<col style="width: 73%" />
+<col width="27%" />
+<col width="73%" />
 </colgroup>
-<tbody>
-<tr class="row-odd"><td><p>OS on launcher machine</p></td>
-<td><p>Ubuntu, CentOS, CoreOS, Debian, RedHat, Fedora</p></td>
+<tbody valign="top">
+<tr class="row-odd"><td>OS on launcher machine</td>
+<td>Ubuntu, CentOS, CoreOS, Debian, RedHat, Fedora</td>
 </tr>
-<tr class="row-even"><td><p>OS running on provider’s VMs</p></td>
-<td><p>CentOS7, Ubuntu 16.04, Ubuntu 18.04</p></td>
+<tr class="row-even"><td>OS running on provider’s VMs</td>
+<td>CentOS7, Ubuntu 16.04, Ubuntu 18.04</td>
 </tr>
-<tr class="row-odd"><td><p>Providers / clouds</p></td>
-<td><div class="line-block">
+<tr class="row-odd"><td>Providers / clouds</td>
+<td><div class="first last line-block">
 <div class="line">AWS</div>
 <div class="line">Google Cloud</div>
 <div class="line">Microsoft Azure</div>
 <div class="line">Exoscale (CloudStack)</div>
+<div class="line">T-Systems’ Open Telekom Cloud (OpenStack)</div>
 <div class="line">CERN Private Cloud (OpenStack)</div>
 <div class="line">CloudFerro (OpenStack)</div>
 <div class="line">Cloudscale (OpenStack)</div>
@@ -208,10 +209,11 @@ This Test-Suite is being used as a validation tool for commercial cloud services
 <div class="section" id="release-notes">
 <h2>Release notes<a class="headerlink" href="#release-notes" title="Permalink to this headline">¶</a></h2>
 <p>(Note the versions are numbered with the date of the release: YEAR.MONTH)</p>
-<p><code class="docutils literal notranslate"><span class="pre">20.5</span></code></p>
-<ul class="simple">
-<li></li>
-</ul>
+<p><code class="docutils literal notranslate"><span class="pre">20.4</span></code></p>
+<p>-Improved support for running on T-Systems’ OTC</p>
+<p>-In case of existing terraform files from a previous run a prompt is shown to ask for confirmation.</p>
+<p>-Added option –custom-nodes to set the number of instances that should be deployed for the shared cluster.</p>
+<p>-Using Terraform’s yamldecode with configs.yaml for variables instead of Python’s replace function with placeholders.</p>
 <p><code class="docutils literal notranslate"><span class="pre">20.2</span></code></p>
 <p>-Using Ansible for VM configuration instead of Terraform’s provisioners.</p>
 <p>-Added support for non-Terraform providers (only bootstrap phase).</p>

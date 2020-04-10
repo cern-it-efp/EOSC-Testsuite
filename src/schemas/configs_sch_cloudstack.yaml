@@ -4,7 +4,7 @@ required:
     - zone
     - template
     - keyPair
-    - configPath
+    - authFile
     - pathToKey
     - providerName
 properties:
@@ -22,7 +22,7 @@ properties:
         type: string
     kubernetes:
         type: string
-    configPath:
+    authFile:
         type: string
     zone:
         type: string
@@ -30,10 +30,11 @@ properties:
         type: string
     keyPair:
         type: string
+    securityGroups:
+        type:
+            - array
     diskSize:
         type: number
-    securityGroups:
-        type: string
     costCalculation:
         type:
             - object

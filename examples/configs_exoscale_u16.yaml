@@ -1,7 +1,7 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
 providerName: "exoscale"
 pathToKey: "/home/ipelu/.ssh/id_rsa"
-configPath: "/home/ipelu/Desktop/exoCreds"
+authFile: "/home/ipelu/Desktop/exoCreds"
 flavor: "Medium"
 zone: "ch-gva-2"
 template: "Linux Ubuntu 16.04 LTS 64-bit"

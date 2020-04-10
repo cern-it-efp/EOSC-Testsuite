@@ -1,12 +1,12 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
 providerName: "cloudstack"
 pathToKey: "/home/ipelu/.ssh/id_rsa"
-configPath: "/home/ipelu/Desktop/exoCreds"
+authFile: "/home/ipelu/Desktop/.exoCreds"
 flavor: "this flavor does not exist"
 zone: "ch-gva-2"
 template: "Linux CentOS 7 64-bit"
 keyPair: "k_cl"
-securityGroups: "[\"default\"]"
+securityGroups: ["default"]
 diskSize: 100
 
 #---------------COST CALCULATION------------------------------------------------

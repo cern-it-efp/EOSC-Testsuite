@@ -444,54 +444,42 @@ def terraformProvisionment(
 
         elif configs["providerName"] == "cloudstack":
 
+            writeToFile(mainTfDir + "/main.tf", variables, False) # TODO: do this with terraform_cli_vars too (yamldecode)
+
             # manage optional vars
-            securityGroups = tryTakeFromYaml(configs, "securityGroups", "[]")
             diskSize = tryTakeFromYaml(configs, "diskSize", "")
             if diskSize is "":
                 csTemplate = "%s/rawProvision_noDiskSize.tf" % templatesPath
             else:
                 csTemplate = "%s/rawProvision.tf" % templatesPath
 
-            # ---------------- main.tf: manage aws specific vars and add them
-            variables = variables.replace(
-                "CONFIG_PATH_PH", configs['configPath']).replace(
-                "ZONE_PH", configs['zone']).replace(
-                "EXO_SIZE_PH", flavor).replace(
-                "TEMPLATE_PH", configs['template']).replace(
-                "KEY_PAIR_PH", configs['keyPair']).replace(
-                "\"SEC_GROUPS_PH\"", securityGroups).replace(
-                "DISK_SIZE_PH", str(diskSize))
-            writeToFile(mainTfDir + "/main.tf", variables, False)
+            terraform_cli_vars["configsFile"] = cfgPath
+            terraform_cli_vars["flavor"] = flavor
+            terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", [])
+            terraform_cli_vars["customCount"] = nodes
+            terraform_cli_vars["instanceName"] = nodeName
 
             # ---------------- main.tf: add raw VMs provisioner
             rawProvisioning = loadFile(csTemplate, required=True)
 
         elif configs["providerName"] == "exoscale":
 
-            # manage optional vars
-            securityGroups = tryTakeFromYaml(configs, "securityGroups", "[]")
+            writeToFile(mainTfDir + "/main.tf", variables, False) # TODO: do this with terraform_cli_vars too (yamldecode)
 
-            # ---------------- main.tf: manage aws specific vars and add them
-            variables = variables.replace(
-                "CONFIG_PATH_PH", configs['configPath']).replace(
-                "ZONE_PH", configs['zone']).replace(
-                "EXO_SIZE_PH", flavor).replace(
-                "TEMPLATE_PH", configs['template']).replace(
-                "KEY_PAIR_PH", configs['keyPair']).replace(
-                "\"SEC_GROUPS_PH\"", securityGroups).replace(
-                "DISK_SIZE_PH", str(configs['diskSize']))
-            writeToFile(mainTfDir + "/main.tf", variables, False)
+            terraform_cli_vars["configsFile"] = cfgPath
+            terraform_cli_vars["flavor"] = flavor
+            terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", [])
+            terraform_cli_vars["customCount"] = nodes
+            terraform_cli_vars["instanceName"] = nodeName
 
             # ---------------- main.tf: add raw VMs provisioner
-            rawProvisioning = loadFile(
-                "%s/rawProvision.tf" % templatesPath, required=True)
+            rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath, required=True)
 
         elif configs["providerName"] == "opentelekomcloud":
 
             writeToFile(mainTfDir + "/main.tf", variables, False) # TODO: do this with terraform_cli_vars too (yamldecode)
 
             terraform_cli_vars["configsFile"] = cfgPath # ---------------- specific vars
-            terraform_cli_vars["authFile"] = configs["authFile"]
             terraform_cli_vars["flavor"] = flavor
             terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", [])
             terraform_cli_vars["customCount"] = nodes # ---------------- general vars

@@ -1,13 +1,13 @@
 type: object
 required:
-    - providerName
-    - pathToKey
-    - flavor
     - diskSize
+    - flavor
     - zone
     - template
-    - configPath
     - keyPair
+    - authFile
+    - pathToKey
+    - providerName
 properties:
     providerName:
         type: string
@@ -21,7 +21,7 @@ properties:
         type: string
     kubernetes:
         type: string
-    configPath:
+    authFile:
         type: string
     zone:
         type: string
@@ -30,7 +30,8 @@ properties:
     keyPair:
         type: string
     securityGroups:
-        type: string
+        type:
+            - array
     diskSize:
         type: number
     costCalculation:

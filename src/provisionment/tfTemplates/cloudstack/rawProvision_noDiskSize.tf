@@ -1,14 +1,14 @@
 provider "cloudstack" {
-  config  = var.configPath
+  config  = yamldecode(file(var.configsFile))["authFile"]
   profile = "cloudstack"
 }
 
 resource "cloudstack_instance" "kubenode" {
   count                = var.customCount
-  zone                 = var.zone
-  service_offering     = var.size
   name                 = "${var.instanceName}-${count.index}"
-  template             = var.template
-  keypair              = var.keyPair
+  zone                 = yamldecode(file(var.configsFile))["zone"]
+  service_offering     = yamldecode(file(var.configsFile))["flavor"]
+  template             = yamldecode(file(var.configsFile))["template"]
+  keypair              = yamldecode(file(var.configsFile))["keyPair"]
   security_group_names = var.securityGroups
 }
