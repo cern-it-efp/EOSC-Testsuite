@@ -19,3 +19,16 @@ resource "aws_instance" "launcher" { # With no more code, this VM will use the d
       volume_size = 50
   }
 }
+
+resource "null_resource" "allow_root" {
+  depends_on = [aws_instance.launcher]
+  connection {
+    type        = "ssh"
+    host = aws_instance.launcher.public_ip
+    user        = var.openUser
+    private_key = file("~/.ssh/id_rsa")
+  }
+  provisioner "remote-exec" { # Not needed as the ami has docker: "sudo yum update -y ; sudo yum install docker.io -y"
+    inline = ["sudo docker run -itd --net=host cernefp/tslauncher"]
+  }
+}

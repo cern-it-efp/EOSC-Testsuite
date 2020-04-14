@@ -33,6 +33,9 @@ properties:
         type: string
     kubernetes:
         type: string
+    securityGroups:
+        type:
+            - array
     costCalculation:
         type:
             - object

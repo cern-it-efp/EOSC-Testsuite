@@ -1,7 +1,6 @@
 ############################ COMMON ONES #######################################
-variable "configsFile" {
-  default = ""
-}
+variable "configsFile" {}
+
 variable "customCount" {
   default = NODES_PH
 }

@@ -1,15 +1,15 @@
 provider "aws" {
-  region                  = var.region
-  shared_credentials_file = var.sharedCredentialsFile
+  region                  = yamldecode(file(var.configsFile))["region"]
+  shared_credentials_file = yamldecode(file(var.configsFile))["sharedCredentialsFile"]
 }
 
 resource "aws_instance" "kubenode" {
-
   count         = var.customCount
-  instance_type = var.instanceType
   tags = {
     Name = "${var.instanceName}-${count.index}"
   }
-  ami      = var.ami
-  key_name = var.keyName
+  security_groups = var.securityGroups
+  instance_type = yamldecode(file(var.configsFile))["flavor"]
+  ami      = yamldecode(file(var.configsFile))["ami"]
+  key_name = yamldecode(file(var.configsFile))["keyName"]
 }
