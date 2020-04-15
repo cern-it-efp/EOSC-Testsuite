@@ -1,13 +1,13 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
 providerName: "aws"
-pathToKey: "/root/.ssh/id_rsa"
+pathToKey: "/home/ipelu/.ssh/id_rsa"
 openUser: ubuntu
 flavor: "t2.medium"
 region: "us-east-2"
 sharedCredentialsFile: "/creds"
 ami: "ami-0fc20dd1da406780b"
 keyName: "exo"
-volumeSize: 50
+#volumeSize: 50 # this and securityGroups are optional
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:

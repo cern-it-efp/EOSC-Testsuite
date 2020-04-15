@@ -423,47 +423,29 @@ def terraformProvisionment(
 
             writeToFile(mainTfDir + "/main.tf", variables, False) # TODO: do this with terraform_cli_vars too (yamldecode)
 
-            # manage optional vars
-            awsTemplate = "%s/rawProvision.tf" % templatesPath
-            volumeSize = tryTakeFromYaml(configs, "volumeSize", "")
-            if volumeSize is "":
-                awsTemplate = "%s/rawProvision_noVolumeSize.tf" % templatesPath
-
-            # ---------------- main.tf: manage aws specific vars and add them
-                "REGION_PH", configs['region'])
-                "SHARED_CREDENTIALS_FILE_PH", configs['sharedCredentialsFile'])
-                "INSTANCE_TYPE_PH", flavor)
-                "AMI_PH", configs['ami'])
-                "NAME_KEY_PH", configs['keyName'])
-                "VOLUME_SIZE_PH", volumeSize)
-
-                        terraform_cli_vars["configsFile"] = cfgPath
-                        terraform_cli_vars["flavor"] = flavor
-                        terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", [])
-                        terraform_cli_vars["customCount"] = nodes
-                        terraform_cli_vars["instanceName"] = nodeName
+            terraform_cli_vars["configsFile"] = cfgPath
+            terraform_cli_vars["flavor"] = flavor
+            terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", [])
+            terraform_cli_vars["customCount"] = nodes
+            terraform_cli_vars["instanceName"] = nodeName
+            terraform_cli_vars["volumeSize"] = tryTakeFromYaml(configs, "volumeSize", 0)
 
             # ---------------- main.tf: add raw VMs provisioner
-            rawProvisioning = loadFile(awsTemplate, required=True)
+            rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath, required=True)
 
         elif configs["providerName"] == "cloudstack":
 
             writeToFile(mainTfDir + "/main.tf", variables, False) # TODO: do this with terraform_cli_vars too (yamldecode)
-
-            # manage optional vars
-            csTemplate = "%s/rawProvision.tf" % templatesPath
-            diskSize = tryTakeFromYaml(configs, "diskSize", "")
-            if diskSize is "":
-                csTemplate = "%s/rawProvision_noDiskSize.tf" % templatesPath
 
             terraform_cli_vars["configsFile"] = cfgPath
             terraform_cli_vars["flavor"] = flavor
             terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", [])
             terraform_cli_vars["customCount"] = nodes
             terraform_cli_vars["instanceName"] = nodeName
+            terraform_cli_vars["diskSize"] = tryTakeFromYaml(configs, "diskSize", 0)
 
             # ---------------- main.tf: add raw VMs provisioner
-            rawProvisioning = loadFile(csTemplate, required=True)
+            rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath, required=True)
 
         elif configs["providerName"] == "opentelekomcloud" or configs["providerName"] == "exoscale":
 
