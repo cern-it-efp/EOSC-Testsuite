@@ -1,39 +1,28 @@
 provider "google" {
-  credentials = file(var.credentials)
-  project     = var.project
+  credentials = file(yamldecode(file(var.configsFile))["pathToCredentials"])
+  project     = yamldecode(file(var.configsFile))["project"]
 }
 
 resource "google_compute_instance" "kubenode" {
-
   count        = var.customCount
-  machine_type = var.machineType
+  machine_type = var.flavor
   name         = "${var.instanceName}-${count.index}"
-  zone         = var.zone
-
+  zone         = yamldecode(file(var.configsFile))["zone"]
   boot_disk {
     initialize_params {
-      image = var.image
-      size  = 100
+      image = yamldecode(file(var.configsFile))["image"]
+      size  = 100 # TODO: should not be fixed
     }
   }
   network_interface {
     network = "default"
     access_config {}
   }
-
-  # Extra stuff for GPU
-  guest_accelerator {
-    count = var.gpuCount # in case the GAN test is set, this has to be used
+  guest_accelerator { # Extra stuff for GPUs
+    count = var.gpuCount
     type  = var.gpuType
   }
-  scheduling {
+  scheduling { # Required when using GPUs
     on_host_maintenance = "TERMINATE"
   }
-  ############################
-
-  ############################
-  # key pairs: The general example uses project-wide SSH keys: user linked to a SSH key defined at project level, these can access all the VMs under the project unless specified (checked "Block project-wide SSH keys")
-  # Sec. groups: VMs connected to the "default" network have the right traffic
-  ############################
-
 }

@@ -1,6 +1,6 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
 providerName: "google"
-pathToKey: "/root/.ssh/id_rsa"
+pathToKey: "/home/ipelu/.ssh/id_rsa"
 openUser: openu
 flavor: "n1-standard-2"
 zone: "us-west1-a"

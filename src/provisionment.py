@@ -400,24 +400,19 @@ def terraformProvisionment(
 
         elif configs["providerName"] == "google":
 
-            # manage gpu related vars
-            gpuCount = str(nodes) if test == "dlTest" else "0"
-            gpuType = tryTakeFromYaml(configs, "gpuType", "")
+            writeToFile(mainTfDir + "/main.tf", variables, False) # TODO: do this with terraform_cli_vars too (yamldecode)
 
-            # ---------------- main.tf: manage google related vars and add them
-            variables = variables.replace(
-                "CREDENTIALS_PATH_PH", configs['pathToCredentials']).replace(
-                "PROJECT_PH", configs['project']).replace(
-                "MACHINE_TYPE_PH", flavor).replace(
-                "ZONE_PH", configs['zone']).replace(
-                "IMAGE_PH", configs['image']).replace(
-                "GPU_COUNT_PH", gpuCount).replace(
-                "GPU_TYPE_PH", gpuType)
-            writeToFile(mainTfDir + "/main.tf", variables, False)
+            terraform_cli_vars["configsFile"] = cfgPath
+            terraform_cli_vars["flavor"] = flavor
+            terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", [])
+            terraform_cli_vars["customCount"] = nodes
+            terraform_cli_vars["instanceName"] = nodeName
+            terraform_cli_vars["gpuCount"] = nodes if test == "dlTest" else "0"
+            terraform_cli_vars["gpuType"] = tryTakeFromYaml(configs, "gpuType", "")
+            #terraform_cli_vars["volumeSize"] = tryTakeFromYaml(configs, "volumeSize", 0) # TODO: this is fixed to 100
 
             # ---------------- main.tf: add raw VMs provisioner
-            rawProvisioning = loadFile(
-                "%s/rawProvision.tf" % templatesPath, required=True)
+            rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath, required=True)
 
         elif configs["providerName"] == "aws":
 
