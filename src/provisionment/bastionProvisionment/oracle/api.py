@@ -46,7 +46,7 @@ try: # Both throw the same error NotAuthorizedOrNotFound
     #computeClient.launch_instance(launch_instance_details)
 except BaseException as e:
     print(e)
-    sys.exit()
+sys.exit()
 
 vcns = networkClient.list_vcns(compartment_ocid)
 
