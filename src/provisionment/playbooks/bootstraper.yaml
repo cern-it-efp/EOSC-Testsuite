@@ -20,10 +20,7 @@
   tasks:
   - name: Disable swap (if configured)
     command: swapoff -a
-  - name: Disable firewall # redhat distros
-    ignore_errors: yes
-    no_log: true
-    command: systemctl stop firewalld
+  - include_tasks: firewall.yaml
   - include_tasks: pkgManagerRepo.yaml
   - include_tasks: dependencies.yaml
 

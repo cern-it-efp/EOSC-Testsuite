@@ -1,0 +1,72 @@
+resource "oci_core_security_list" "tslauncher_security_list" {
+  compartment_id = yamldecode(file(var.auth))["compartment_ocid"]
+  vcn_id = oci_core_vcn.tslauncher_vcn.id
+
+  egress_security_rules { # Egress: allow everything
+    destination = "0.0.0.0/0"
+    protocol = "all"
+  }
+
+  # ping (icmp) ingress required
+
+  ingress_security_rules { # Ingress: ssh (tcp) / 22
+    source = "0.0.0.0/0"
+    protocol = 6
+    tcp_options {
+      max = 22
+      min = 22
+    }
+  }
+
+  ingress_security_rules { # Ingress: kube API (tcp) / 6443
+    source = "0.0.0.0/0"
+    protocol = 6
+    tcp_options {
+      max = 6443
+      min = 6443
+    }
+  }
+
+  ingress_security_rules { # Ingress: node access API (tcp) / 10250
+    source = "0.0.0.0/0"
+    protocol = 6
+    tcp_options {
+      max = 10250
+      min = 10250
+    }
+  }
+
+  ingress_security_rules { # Ingress: flannel network (udp) / 8472
+    source = "0.0.0.0/0"
+    protocol = 17
+    udp_options {
+      max = 8472
+      min = 8472
+    }
+  }
+}
+
+
+##################### former:
+
+
+resource "oci_core_security_list" "tslauncher_security_list" { 
+  compartment_id = yamldecode(file(var.auth))["compartment_ocid"]
+  vcn_id = oci_core_vcn.tslauncher_vcn.id
+  egress_security_rules { # https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
+    destination = "0.0.0.0/0"
+    protocol = 1
+  }
+  egress_security_rules {
+    destination = "0.0.0.0/0"
+    protocol = 6
+  }
+  ingress_security_rules {
+    source = "0.0.0.0/0"
+    protocol = 1
+  }
+  ingress_security_rules {
+    source = "0.0.0.0/0"
+    protocol = 6
+  }
+}

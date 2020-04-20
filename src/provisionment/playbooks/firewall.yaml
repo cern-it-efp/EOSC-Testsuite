@@ -1,0 +1,19 @@
+- name: Disable firewall on redhat distros
+  ignore_errors: yes
+  #no_log: true
+  command: systemctl stop firewalld
+
+- name: Disable firewall on any distro
+  ignore_errors: yes
+  #no_log: true
+  command: # TODO: correct syntax?
+  - sudo iptables-save > /root/firewall.rules
+  - iptables -F
+  - iptables -X
+  - iptables -t nat -F
+  - iptables -t nat -X
+  - iptables -t mangle -F
+  - iptables -t mangle -X
+  - iptables -P INPUT ACCEPT
+  - iptables -P OUTPUT ACCEPT
+  - iptables -P FORWARD ACCEPT

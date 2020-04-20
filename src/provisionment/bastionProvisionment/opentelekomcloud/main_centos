@@ -11,7 +11,7 @@ variable "diskSize" {
   default = 50
 }
 variable "flavor" { # https://open-telekom-cloud.com/resource/blob/data/173316/3c1e928bf9537cbef2b1407655a0d25c/open-telekom-cloud-service-description.pdf
-  default = "fp1c.2xlarge.11"
+  default = "s2.medium.4"
 }
 variable "imageID" {
   # default = "" # Centos
@@ -77,9 +77,3 @@ resource "null_resource" "allow_root" {
     ]
   }
 }
-
-# TODO: with ansible (would require another docker image, for example "bastion-launcher", to avoid dependencies):
-# -Allow root (needed?)
-# -Install and start docker
-# -Run test suite container in background (note this would save the user from running the tslauncher image, that would be transparent for him/her)
-# -Connect ssh and exec into the container

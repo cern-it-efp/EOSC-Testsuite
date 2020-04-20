@@ -1,17 +1,14 @@
+# WORK IN PROGRESS: CREATED THE NODES BY HAND, THIS IS TO TEST CONNECTIVITY
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
-providerName: "exoscale"
-pathToKey: "/home/ipelu/.ssh/id_rsa"
-authFile: "/home/ipelu/Desktop/.exoCreds"
-flavor: "Medium"
-zone: "ch-gva-2"
-template: "Linux Ubuntu 18.04 LTS 64-bit"
-keyPair: "k_cl"
-securityGroups: ["default"]
-diskSize: 100
+providerName: "oci"
+pathToKey: "/root/.ssh/id_rsa"
+openUser: opc
+clusters:
+  shared: ["10.0.0.3","10.0.0.4","10.0.0.5"]
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:
   generalInstancePrice: 0.2
   GPUInstancePrice: 0.2
   HPCInstancePrice: 0.2
-  s3bucketPrice:
+  s3bucketPrice: 0.1
