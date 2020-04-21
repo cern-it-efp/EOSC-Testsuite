@@ -1,0 +1,80 @@
+type: object
+required:
+    - providerName
+    - pathToKey
+    - flavor
+    - openUser
+    - auth_private_key_path
+    - user_ocid
+    - tenancy_ocid
+    - fingerprint
+    - region
+    - subnet_ocid
+    - availability_domain
+    - compartment_ocid
+    - image_ocid
+    - ssh_public_key_path
+properties:
+    providerName:
+        type: string
+    pathToKey:
+        type: string
+    flavor:
+        type: string
+    openUser:
+        type: string
+    auth_private_key_path:
+        type: string
+    user_ocid:
+        type: string
+    tenancy_ocid:
+        type: string
+    fingerprint:
+        type: string
+    region:
+        type: string
+    subnet_ocid:
+        type: string
+    availability_domain:
+        type: string
+    compartment_ocid:
+        type: string
+    image_ocid:
+        type: string
+    ssh_public_key_path:
+        type: string
+    dockerCE:
+        type: string
+    dockerEngine:
+        type: string
+    kubernetes:
+        type: string
+    diskSize:
+        type: number
+    costCalculation:
+        type:
+            - object
+            - "null"
+        required:
+            - generalInstancePrice
+            - GPUInstancePrice
+            - HPCInstancePrice
+            - s3bucketPrice
+        properties:
+            generalInstancePrice:
+                type:
+                    - number
+                    - "null"
+            GPUInstancePrice:
+                type:
+                    - number
+                    - "null"
+            HPCInstancePrice:
+                type:
+                    - number
+                    - "null"
+            s3bucketPrice:
+                type:
+                    - number
+                    - "null"
+additionalProperties: false

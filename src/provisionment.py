@@ -414,6 +414,19 @@ def terraformProvisionment(
             # ---------------- main.tf: add raw VMs provisioner
             rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath, required=True)
 
+        elif configs["providerName"] == "oci":
+
+            writeToFile(mainTfDir + "/main.tf", variables, False) # TODO: do this with terraform_cli_vars too (yamldecode)
+
+            terraform_cli_vars["configsFile"] = cfgPath
+            terraform_cli_vars["flavor"] = flavor
+            terraform_cli_vars["customCount"] = nodes
+            terraform_cli_vars["instanceName"] = nodeName
+            terraform_cli_vars["diskSize"] = tryTakeFromYaml(configs, "diskSize", None) # TODO: instead of 0, use None which is terraform's null
+
+            # ---------------- main.tf: add raw VMs provisioner
+            rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath, required=True)
+
         elif configs["providerName"] == "aws":
 
             writeToFile(mainTfDir + "/main.tf", variables, False) # TODO: do this with terraform_cli_vars too (yamldecode)
@@ -642,6 +655,8 @@ def getIP(resource, provider):
             return resource["values"]["network_interface"][0]["network_ip"]
         elif provider == "opentelekomcloud":
             return resource["values"]["access_ip_v4"]
+        elif provider == "oci":
+            return resource["values"]["private_ip"]
     except KeyError:
         return None
 

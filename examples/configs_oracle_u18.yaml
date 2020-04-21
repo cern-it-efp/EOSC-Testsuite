@@ -1,0 +1,24 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: "oci"
+auth_private_key_path: /home/ipelu/.ssh/oracle.pem # TODO: document that this is for authenticating to OCI, and pathToKey is for internode SSH communication
+user_ocid: ocid1.user.oc1..aaaaaaaarlpii2ymcliiprocmxyw7dbam7n76t5d3uannw5yzt6cgh5zfeka
+tenancy_ocid: ocid1.tenancy.oc1..aaaaaaaakr2urkzeh437nc7myq52f5k6idd44cwkgkw6o76jowxrffpnvxkq
+fingerprint: d9:5a:05:58:e5:3a:d3:86:1b:6c:09:d5:70:99:83:ca
+region: eu-frankfurt-1
+
+subnet_ocid: ocid1.subnet.oc1.eu-frankfurt-1.aaaaaaaatdsyjkyu7ie6ttwi6lbdeftnk7gvy6eyr34jj72ll6vn4225gpfa
+openUser: ubuntu
+flavor: VM.Standard1.1
+#diskSize: 100 # optional
+availability_domain: BKrI:EU-FRANKFURT-1-AD-3 # this one has gpu
+compartment_ocid: ocid1.compartment.oc1..aaaaaaaancwe6dcw2rvht2wjrysyxxnyxwknq2hxrltpct53acnpyhjcys7a
+image_ocid: ocid1.image.oc1.eu-frankfurt-1.aaaaaaaawtnpiyjp36tyx7hkkymil2efkvitkrrnqi5qjpahcuoyvtcwhc5q # Ubuntu 18.04
+pathToKey: /home/ipelu/.ssh/id_rsa
+ssh_public_key_path: /home/ipelu/.ssh/id_rsa.pub # TODO: document that this is the public key of pathToKey
+
+#---------------COST CALCULATION------------------------------------------------
+costCalculation:
+  generalInstancePrice: 0.2
+  GPUInstancePrice: 0.2
+  HPCInstancePrice: 0.2
+  s3bucketPrice: 0.1

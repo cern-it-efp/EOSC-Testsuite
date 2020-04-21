@@ -29,10 +29,13 @@ variable "fingerprint" {
   default = "d9:5a:05:58:e5:3a:d3:86:1b:6c:09:d5:70:99:83:ca"
 }
 variable "image_ocid" {
-  default = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaawtnpiyjp36tyx7hkkymil2efkvitkrrnqi5qjpahcuoyvtcwhc5q" # Ubuntu 18.04
+  #default = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaawtnpiyjp36tyx7hkkymil2efkvitkrrnqi5qjpahcuoyvtcwhc5q" # Ubuntu 18.04
+  default = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaagjbl7scqx2wfepx4ztdvndjiua2fofrmujbjyhuodsmysijwu7wq" # Ubuntu 16.04
+  #default = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaa6zpubgqnm3j46smrd7fjehmmj3emusyfljypxcwzrmlcnuno7gra" # CentOS 7
 }
 variable "openUser" {
   default = "ubuntu"
+  #default = "opc"
 }
 
 provider "oci" {
@@ -46,6 +49,7 @@ provider "oci" {
 resource "oci_core_vcn" "tslauncher_vcn" {
   cidr_block     = var.cidr_block_vcn
   compartment_id = yamldecode(file(var.auth))["compartment_ocid"]
+  dns_label = "vcnDNSlabel"
 }
 
 resource "oci_core_internet_gateway" "tslauncher_internet_gateway" {
@@ -62,7 +66,7 @@ resource "oci_core_default_route_table" "default_route_table" {
   }
 }
 
-resource "oci_core_security_list" "tslauncher_security_list" { 
+resource "oci_core_security_list" "tslauncher_security_list" {
   compartment_id = yamldecode(file(var.auth))["compartment_ocid"]
   vcn_id = oci_core_vcn.tslauncher_vcn.id
 
@@ -129,6 +133,7 @@ resource "oci_core_subnet" "tslauncher_subnet" {
   vcn_id              = oci_core_vcn.tslauncher_vcn.id
   security_list_ids   = [oci_core_security_list.tslauncher_security_list.id]
   route_table_id      = oci_core_vcn.tslauncher_vcn.default_route_table_id
+  dns_label = "subnetDNSlabel"
 }
 
 resource "oci_core_instance" "tslauncher_instance" {
@@ -164,5 +169,9 @@ resource "null_resource" "docker" {
       "sudo apt-get update -y ; sudo apt-get install docker.io -y",
       "sudo docker run -itd --net=host cernefp/tslauncher"
     ]
+    #inline = [
+    #  "sudo yum update -y ; sudo yum install docker -y",
+    #  "sudo docker run -itd --net=host cernefp/tslauncher"
+    #]
   }
 }

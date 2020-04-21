@@ -2,7 +2,6 @@
 
 from checker import *
 
-
 configs = ""
 testsCatalog = ""
 cfgPath = None
@@ -65,7 +64,7 @@ def initAndChecks(noTerraform,
         tcPath = "configurations/testsCatalog.yaml"
     else:
         tcPath = tcPathCLI
-    
+
     configs = loadFile(cfgPath, required=True)
     testsCatalog = loadFile(tcPath, required=True)
 

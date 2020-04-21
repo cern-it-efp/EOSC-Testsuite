@@ -2,7 +2,7 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
 providerName: "oci"
 pathToKey: "/root/.ssh/id_rsa"
-openUser: opc
+openUser: ubuntu
 clusters:
   shared: ["10.0.0.3","10.0.0.4","10.0.0.5"]
 

@@ -1,4 +1,4 @@
-# TODO: why separated?
+# TODO: unify?
 allProviders:
   openstack: 'openstack_compute_instance_v2.kubenode[count.index].network[0].fixed_ip_v4'
   aws: 'element(aws_instance.kubenode.*.private_ip, count.index)'
@@ -7,6 +7,7 @@ allProviders:
   exoscale: 'element(exoscale_compute.kubenode.*.ip_address, count.index)'
   cloudstack: 'element(cloudstack_instance.kubenode.*.ip_address, count.index)'
   opentelekomcloud: 'element(opentelekomcloud_compute_instance_v2.kubenode.*.access_ip_v4, count.index)'
+  oci:
 extraSupportedClouds:
   - azurerm
   - openstack
@@ -15,3 +16,4 @@ extraSupportedClouds:
   - exoscale
   - cloudstack
   - opentelekomcloud
+  - oci

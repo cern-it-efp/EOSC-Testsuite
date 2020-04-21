@@ -1,17 +1,19 @@
 ############################ COMMON ONES #######################################
 variable "configsFile" {}
 
-variable "customCount" {
-  default = NODES_PH
-}
+variable "diskSize" {}
+
+variable "flavor" {}
+
+variable "customCount" {}
+
+variable "instanceName" {}
+
 variable "pathToKey" {
   default = "PATH_TO_KEY_VALUE"
 }
 variable "openUser" {
   default = "OPEN_USER_PH"
-}
-variable "instanceName" {
-  default = "NAME_PH"
 }
 variable "zone" {
   default = "ZONE_PH"
@@ -45,9 +47,6 @@ variable "k8sVer" {
 }
 
 ############################ OPENSTACK #########################################
-variable "flavor" {
-  default = "FLAVOR_PH"
-}
 variable "imageName" {
   default = "IMAGE_PH"
 }

@@ -1,5 +1,5 @@
 variable "subnet_id" {
-  default = "ocid1.subnet.oc1.eu-frankfurt-1.aaaaaaaan3gvymfka62o3zp76uwdhxh4i6xqjsexob6mrtpdtttqjfxom43q"
+  default = "ocid1.subnet.oc1.eu-frankfurt-1.aaaaaaaacwre2yjceq2bg6sh6paqqpp673zukisc75hup23o7u2vuo5iis3a"
 }
 variable "auth" {
   default = "/home/ipelu/Desktop/oracle.yaml"
@@ -51,6 +51,28 @@ resource "oci_core_instance" "kubenode" {
     subnet_id        = var.subnet_id
     assign_public_ip = true
     #assign_public_ip = false # public IPs are prohibited in the subnet created by OKE
+  }
+  source_details {
+    source_type = "image"
+    source_id   = var.image_ocid
+    boot_volume_size_in_gbs = var.diskSize
+  }
+  metadata = {
+    ssh_authorized_keys = file(var.ssh_public_key_path)
+  }
+}
+
+#####
+
+resource "oci_core_instance" "tslauncher_instance" {
+  display_name        = "tslauncher"
+  availability_domain = var.availability_domain
+  compartment_id      = yamldecode(file(var.auth))["compartment_ocid"]
+  shape               = var.instance_shape
+
+  create_vnic_details {
+    subnet_id        = oci_core_subnet.tslauncher_subnet.id
+    assign_public_ip = true
   }
   source_details {
     source_type = "image"

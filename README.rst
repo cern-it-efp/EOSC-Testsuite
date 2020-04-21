@@ -39,6 +39,7 @@ The developers would like to thank all test owners and contributors to this proj
 |Providers / clouds            | | AWS                                                                           |
 |                              | | Google Cloud                                                                  |
 |                              | | Microsoft Azure                                                               |
+|                              | | Oracle Cloud Infrastructure                                                   |
 |                              | | Exoscale (CloudStack)                                                         |
 |                              | | T-Systems' Open Telekom Cloud (OpenStack)                                     |
 |                              | | CERN Private Cloud (OpenStack)                                                |
@@ -57,7 +58,7 @@ Release notes
 
 ``20.4``
 
--Improved support for running on T-Systems' OTC
+-Improved support for running on Oracle Cloud Infrastructure and T-Systems' OTC.
 
 -In case of existing terraform files from a previous run a prompt is shown to ask for confirmation.
 
