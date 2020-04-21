@@ -1,19 +1,44 @@
-- name: Disable firewall on redhat distros
-  ignore_errors: yes
-  #no_log: true
-  command: systemctl stop firewalld
+#- name: Disable firewall on redhat distros
+#  ignore_errors: yes
+#  command: systemctl stop firewalld
 
-- name: Disable firewall on any distro
+- name: Backup original rules
   ignore_errors: yes
-  #no_log: true
-  command: # TODO: correct syntax?
-  - sudo iptables-save > /root/firewall.rules
-  - iptables -F
-  - iptables -X
-  - iptables -t nat -F
-  - iptables -t nat -X
-  - iptables -t mangle -F
-  - iptables -t mangle -X
-  - iptables -P INPUT ACCEPT
-  - iptables -P OUTPUT ACCEPT
-  - iptables -P FORWARD ACCEPT
+  shell: "iptables-save > /root/firewall.rules"
+
+# ----------------- FLUSH TABLES
+
+- name: Flush filter table
+  ignore_errors: yes
+  iptables:
+    flush: yes
+- name: Flush nat table
+  ignore_errors: yes
+  iptables:
+    table: nat
+    flush: yes
+- name: Flush mangle table
+  ignore_errors: yes
+  iptables:
+    table: mangle
+    flush: yes
+
+# ----------------- SET POLICIES
+
+- name: Set the policy for the INPUT chain to ACCEPT
+  ignore_errors: yes
+  iptables:
+    chain: INPUT
+    policy: ACCEPT
+
+- name: Set the policy for the OUTPUT chain to ACCEPT
+  ignore_errors: yes
+  iptables:
+    chain: OUTPUT
+    policy: ACCEPT
+
+- name: Set the policy for the FORWARD chain to ACCEPT
+  ignore_errors: yes
+  iptables:
+    chain: FORWARD
+    policy: ACCEPT
