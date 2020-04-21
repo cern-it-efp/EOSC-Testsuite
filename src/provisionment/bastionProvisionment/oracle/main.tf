@@ -14,13 +14,16 @@ variable "region" {
   default = "eu-frankfurt-1"
 }
 variable "availability_domain" {
-  default = "BKrI:EU-FRANKFURT-1-AD-1"
+  default = "BKrI:EU-FRANKFURT-1-AD-3"
 }
-variable "private_key_path" {
+variable "auth_private_key_path" {
   default = "/home/ipelu/.ssh/oracle.pem"
 }
+variable "ssh_private_key_path" {
+  default = "/home/ipelu/.ssh/id_rsa"
+}
 variable "ssh_public_key_path" {
-  default = "/home/ipelu/.ssh/oracle.pub" # no pem
+  default = "/home/ipelu/.ssh/id_rsa.pub" # no pem
 }
 variable "diskSize" {
   default = 50
@@ -42,7 +45,7 @@ provider "oci" {
   tenancy_ocid = yamldecode(file(var.auth))["tenancy_ocid"]
   user_ocid = yamldecode(file(var.auth))["user_ocid"]
   fingerprint = var.fingerprint
-  private_key_path = var.private_key_path
+  private_key_path = var.auth_private_key_path
   region = var.region
 }
 
@@ -162,7 +165,7 @@ resource "null_resource" "docker" {
   connection {
     host = oci_core_instance.tslauncher_instance.public_ip
     user        = var.openUser
-    private_key = file(var.private_key_path)
+    private_key = file(var.ssh_private_key_path)
   }
   provisioner "remote-exec" {
     inline = [

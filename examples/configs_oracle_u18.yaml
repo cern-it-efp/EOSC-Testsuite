@@ -1,4 +1,5 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+# TODO: auth related stuff should be on another file to avoid pushing that info to the repo
 providerName: "oci"
 auth_private_key_path: /home/ipelu/.ssh/oracle.pem # TODO: document that this is for authenticating to OCI, and pathToKey is for internode SSH communication
 user_ocid: ocid1.user.oc1..aaaaaaaarlpii2ymcliiprocmxyw7dbam7n76t5d3uannw5yzt6cgh5zfeka
@@ -13,6 +14,7 @@ flavor: VM.Standard1.1
 availability_domain: BKrI:EU-FRANKFURT-1-AD-3 # this one has gpu
 compartment_ocid: ocid1.compartment.oc1..aaaaaaaancwe6dcw2rvht2wjrysyxxnyxwknq2hxrltpct53acnpyhjcys7a
 image_ocid: ocid1.image.oc1.eu-frankfurt-1.aaaaaaaawtnpiyjp36tyx7hkkymil2efkvitkrrnqi5qjpahcuoyvtcwhc5q # Ubuntu 18.04
+#image_ocid: "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaa6zpubgqnm3j46smrd7fjehmmj3emusyfljypxcwzrmlcnuno7gra" # CentOS 7
 pathToKey: /home/ipelu/.ssh/id_rsa
 ssh_public_key_path: /home/ipelu/.ssh/id_rsa.pub # TODO: document that this is the public key of pathToKey
 

@@ -20,7 +20,7 @@ variable "imageID" {
 variable "secGroups" {
   default = ["default"]
 }
-variable "configsPath" {
+variable "authFile" {
   default = "~/Desktop/tsk.yaml"
 }
 # ------------------------------------------------------------------------------
@@ -32,8 +32,8 @@ variable "tenant_name" {
 }
 
 provider "opentelekomcloud" {
-  access_key = yamldecode(file(var.configsPath))["accK"]
-  secret_key = yamldecode(file(var.configsPath))["secK"]
+  access_key = yamldecode(file(var.authFile))["accK"]
+  secret_key = yamldecode(file(var.authFile))["secK"]
   domain_name = var.domain_name
   tenant_name = var.tenant_name
   auth_url    = "https://iam.eu-de.otc.t-systems.com/v3"
