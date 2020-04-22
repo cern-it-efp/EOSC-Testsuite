@@ -1,11 +1,11 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
 providerName: openstack
-pathToKey: "/root/.ssh/id_rsa"
+pathToKey: "/home/ipelu/.ssh/id_rsa"
 openUser: eouser
 flavor: "eo1.medium"
 imageName: "CentOS 7"
 keyPair: mykey
-securityGroups: "[\"default\",\"allow_ping_ssh_rdp\"]"
+securityGroups: ["default","allow_ping_ssh_rdp"]
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:

@@ -30,8 +30,7 @@ properties:
     keyPair:
         type: string
     securityGroups:
-        type:
-            - array
+        type: array
     diskSize:
         type: number
     costCalculation:

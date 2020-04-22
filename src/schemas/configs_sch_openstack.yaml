@@ -25,7 +25,7 @@ properties:
     kubernetes:
         type: string
     securityGroups:
-        type: string
+        type: array
     region:
         type: string
     availabilityZone:

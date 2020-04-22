@@ -379,24 +379,19 @@ def terraformProvisionment(
 
         elif configs["providerName"] == "openstack":
 
-            # manage optional related vars
-            region = tryTakeFromYaml(configs, "region", "")
-            availabilityZone = tryTakeFromYaml(configs, "availabilityZone", "")
-            securityGroups = tryTakeFromYaml(configs, "securityGroups", "[]")
+            writeToFile(mainTfDir + "/main.tf", variables, False) # TODO: do this with terraform_cli_vars too (yamldecode)
 
-            # ---------------- main.tf: get openstack related vars and add them
-            variables = variables.replace(
-                "FLAVOR_PH", flavor).replace(
-                "IMAGE_PH", configs['imageName']).replace(
-                "KEY_PAIR_PH", configs['keyPair']).replace(
-                "\"SEC_GROUPS_PH\"", securityGroups).replace(
-                "REGION_PH", region).replace(
-                "AV_ZONE_PH", availabilityZone)
-            writeToFile(mainTfDir + "/main.tf", variables, False)
+            terraform_cli_vars["configsFile"] = cfgPath
+            terraform_cli_vars["flavor"] = flavor
+            terraform_cli_vars["customCount"] = nodes
+            terraform_cli_vars["instanceName"] = nodeName
+            terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", [])
+            terraform_cli_vars["region"] = tryTakeFromYaml(configs, "region", None)
+            terraform_cli_vars["availabilityZone"] = tryTakeFromYaml(configs, "availabilityZone", None)
 
             # ---------------- main.tf: add raw VMs provisioner
-            rawProvisioning = loadFile(
-                "%s/rawProvision.tf" % templatesPath, required=True)
+            rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath, required=True)
+
 
         elif configs["providerName"] == "google":
 

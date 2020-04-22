@@ -15,8 +15,8 @@ dodasTest:
 dlTest:
   run: true
   nodes: 4
-  flavor: "eo1.medium"
+  flavor: "eo1.xmedium"
 hpcTest:
   run: true
   nodes: 4
-  flavor: "eo1.medium"
+  flavor: "eo1.small"

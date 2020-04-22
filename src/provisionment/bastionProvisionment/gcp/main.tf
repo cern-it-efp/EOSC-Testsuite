@@ -23,3 +23,20 @@ resource "google_compute_instance" "launcher" {
    access_config {}
  }
 }
+
+# ~~~~~~~~~~~~~~
+
+resource "null_resource" "docker" {
+  connection {
+    host = google_compute_instance.launcher.network_interface.0.access_config.0.nat_ip
+    user        = var.openUser
+    private_key = file("~/.ssh/id_rsa")
+  }
+  provisioner "remote-exec" {
+    inline = [
+      "sudo yum update -y ; sudo yum install docker -y ; systemctl start docker",
+      "sudo docker run --name tslauncher -itd --net=host cernefp/tslauncher",
+      "echo sudo docker exec -it tslauncher bash >> ~/.bashrc"
+    ]
+  }
+}
