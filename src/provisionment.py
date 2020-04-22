@@ -455,7 +455,7 @@ def terraformProvisionment(
             # ---------------- main.tf: add raw VMs provisioner
             rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath, required=True)
 
-        elif configs["providerName"] == "opentelekomcloud" or configs["providerName"] == "exoscale":
+        elif configs["providerName"] in ("opentelekomcloud", "exoscale"):
 
             writeToFile(mainTfDir + "/main.tf", variables, False) # TODO: do this with terraform_cli_vars too (yamldecode)
 
@@ -688,7 +688,7 @@ def createHostsFile(mainTfDir,
 
     if noTerraform is not True:
         os.chdir(mainTfDir)
-        resources = json.loads(os.popen("terraform show -json").read()
+        resources = json.loads(os.popen("terraform show -json").read() # TODO: user runCMD here
                                .strip())["values"]["root_module"]["resources"]
         os.chdir(baseCWD)
 

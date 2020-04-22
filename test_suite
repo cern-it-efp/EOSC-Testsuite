@@ -67,7 +67,7 @@ prompt(){
         -f src/tests/dlTest/main.tf ||
         -f src/tests/hpcTest/main.tf ||
         -f src/tests/shared/main.tf) ]]; then
-    read -p "WARNING: Looks like infrastructure already exists. Overwrite? " yn
+    read -p "WARNING: Looks like infrastructure already exists. Overwrite? " yn # TODO: this is printed before validating the options
     case $yn in
         [Yy]* ) :;;
         * ) echo "Aborting"; exit;;
@@ -76,7 +76,7 @@ prompt(){
 }
 
 ############# TEST SUITE RUN #############
-prompt
+#prompt
 watchFunct &
 python3 -B -u src/main.py $opts &> logs
 outStat=$?

@@ -1,3 +1,12 @@
+variable "image_ocid" {
+  default = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaawtnpiyjp36tyx7hkkymil2efkvitkrrnqi5qjpahcuoyvtcwhc5q" # Ubuntu 18.04
+  #default = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaagjbl7scqx2wfepx4ztdvndjiua2fofrmujbjyhuodsmysijwu7wq" # Ubuntu 16.04
+  #default = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaa6zpubgqnm3j46smrd7fjehmmj3emusyfljypxcwzrmlcnuno7gra" # CentOS 7
+}
+variable "openUser" {
+  default = "ubuntu"
+  #default = "opc"
+}
 variable "auth" {
   default = "/home/ipelu/Desktop/oracle.yaml"
 }
@@ -30,15 +39,6 @@ variable "diskSize" {
 }
 variable "fingerprint" {
   default = "d9:5a:05:58:e5:3a:d3:86:1b:6c:09:d5:70:99:83:ca"
-}
-variable "image_ocid" {
-  #default = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaawtnpiyjp36tyx7hkkymil2efkvitkrrnqi5qjpahcuoyvtcwhc5q" # Ubuntu 18.04
-  default = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaagjbl7scqx2wfepx4ztdvndjiua2fofrmujbjyhuodsmysijwu7wq" # Ubuntu 16.04
-  #default = "ocid1.image.oc1.eu-frankfurt-1.aaaaaaaa6zpubgqnm3j46smrd7fjehmmj3emusyfljypxcwzrmlcnuno7gra" # CentOS 7
-}
-variable "openUser" {
-  default = "ubuntu"
-  #default = "opc"
 }
 
 provider "oci" {
@@ -170,7 +170,8 @@ resource "null_resource" "docker" {
   provisioner "remote-exec" {
     inline = [
       "sudo apt-get update -y ; sudo apt-get install docker.io -y",
-      "sudo docker run -itd --net=host cernefp/tslauncher"
+      "sudo docker run --name tslauncher -itd --net=host cernefp/tslauncher",
+      "echo sudo docker exec -it tslauncher bash >> ~/.bashrc"
     ]
     #inline = [
     #  "sudo yum update -y ; sudo yum install docker -y",

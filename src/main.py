@@ -124,52 +124,45 @@ header()
 try:
     options, values = getopt.getopt(
         sys.argv[1:],
-        "c:t:f",
-        ["only-test",
-         "via-backend",
-         "retry",
-         "no-terraform",
-         "destroy=",
-         "destroy-on-completion=",
-         "custom-nodes=",
-         "configs=",
-         "testsCatalog="])
+        'c:t:o',
+        ['onlyTest',
+         'viaBackend',
+         'retry',
+         'noTerraform',
+         'destroy=',
+         'destroyOnCompletion=',
+         'customNodes=',
+         'configs=',
+         'testsCatalog='])
 except getopt.GetoptError as err:
     print(err)
     stop(1)
 for currentOption, currentValue in options:
-    if currentOption in ['-c', '--configs']:
+    if currentOption in ('-c', '--configs'):
         cfgPathCLI = currentValue
-        #print("Using configs path: %s" % cfgPathCLI)
-    elif currentOption in ['-t', '--testsCatalog']:
+    elif currentOption in ('-t', '--testsCatalog'):
         tcPathCLI = currentValue
-        #print("Using testsCatalog path: %s" % tcPathCLI)
-    elif currentOption in ['--only-test']:
+    elif currentOption in ('-o', '--onlyTest'):
         writeToFile("src/logging/header", "(ONLY TEST EXECUTION)", True)
         onlyTest = True
-    elif currentOption in ['--retry']:
+    elif currentOption == '--retry':
         retry = True
-    elif currentOption in ['--custom-nodes']:
+    elif currentOption == '--customNodes':
         if currentValue.isdigit():
-        #if intAndGreaterThan0(currentValue):
             customNodes = currentValue
         else:
-            print("The value for --custom-nodes must be integer > 0. ")
+            print("The value for --customNodes must be integer > 0. ")
             stop(1)
-    elif currentOption in ['--destroy']:
+    elif currentOption == '--destroy':
         if checkClustersToDestroy(currentValue, clusters):
-            answer = input(
-                "WARNING - destroy infrastructure (%s)? yes/no: " %
-                currentValue)
-            if answer == "yes":
+            if input("WARNING - destroy infrastructure (%s)? yes/no: " %
+                currentValue) == "yes":
                 destroyTF(baseCWD, clusters=currentValue.split(','))
             else:
                 print("Aborting operation")
         elif currentValue == "all":
-            answer = input(
-                "WARNING - destroy infrastructure (%s)? yes/no: " %
-                currentValue)
-            if answer == "yes":
+            if input("WARNING - destroy infrastructure (%s)? yes/no: " %
+                currentValue) == "yes":
                 destroyTF(baseCWD, clusters=clusters)
             else:
                 print("Aborting operation")
@@ -177,7 +170,7 @@ for currentOption, currentValue in options:
             print("The provided value '%s' for the option " \
                 "--destroy is not valid." % currentValue)
         stop(0)
-    elif currentOption in ['--destroy-on-completion']:
+    elif currentOption == '--destroyOnCompletion':
         if checkClustersToDestroy(currentValue, clusters):
             destroyOnCompletion = True
             clustersToDestroy = currentValue.split(',')
@@ -186,9 +179,9 @@ for currentOption, currentValue in options:
             clustersToDestroy = clusters
         else:
             print("The provided value '%s' for the option " \
-            "--destroy-on-completion is not valid." % currentValue)
+            "--destroyOnCompletion is not valid." % currentValue)
             stop(1)
-    elif currentOption in ['--no-terraform']:
+    elif currentOption == '--noTerraform':
         noTerraform = True
 
 # -----------------CHECKS AND PREPARATION---------------------------------

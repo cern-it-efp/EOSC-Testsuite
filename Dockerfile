@@ -50,5 +50,6 @@ RUN mkdir /root/.ssh && \
     chmod 600 /root/.ssh/id_rsa
 
 # ------------------ Clone TS repo and get bash
+RUN echo cd EOSC-Testsuite >> ~/.bashrc
 ENTRYPOINT git clone -q https://github.com/cern-it-efp/EOSC-Testsuite.git && \
            cd EOSC-Testsuite ; bash
