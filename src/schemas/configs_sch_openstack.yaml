@@ -30,6 +30,8 @@ properties:
         type: string
     availabilityZone:
         type: string
+    networkName:
+        type: string
     costCalculation:
         type:
             - object

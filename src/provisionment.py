@@ -347,39 +347,51 @@ def terraformProvisionment(
 
         if configs["providerName"] == "azurerm":
 
-            # manage image related vars
-            publisher = "OpenLogic" if configs["image"]["publisher"] is None \
-                else configs["image"]["publisher"]
-            offer = "CentOS" if configs["image"]["offer"] is None \
-                else configs["image"]["offer"]
-            sku = "7.5" if configs["image"]["sku"] is None \
-                else configs["image"]["sku"]
-            version = "latest" if configs["image"]["version"] is None \
-                else configs["image"]["version"]
+            writeToFile(mainTfDir + "/main.tf", variables, False) # TODO: do this with terraform_cli_vars too (yamldecode)
 
-            # ---------------- main.tf: manage azure specific vars and add them
-            variables = variables.replace(
-                "SUBSCRIPTION_PH", configs['subscriptionId']).replace(
-                "LOCATION_PH", configs['location']).replace(
-                "PUB_SSH_PH", configs['pubSSH']).replace(
-                "RGROUP_PH", configs['resourceGroupName']).replace(
-                "RANDOMID_PH", randomId).replace(
-                "VM_SIZE_PH", flavor).replace(
-                "SECGROUPID_PH", configs['securityGroupID']).replace(
-                "SUBNETID_PH", configs['subnetId']).replace(
-                "PUBLISHER_PH", publisher).replace(
-                "OFFER_PH", offer).replace(
-                "SKU_PH", str(sku)).replace(
-                "VERSION_PH", str(version))
-            writeToFile(mainTfDir + "/main.tf", variables, False)
+            #required ones:
+            #    - providerName # HERE
+            #    - pathToKey
+            #    - flavor
+            #    - image
+            #    - openUser
+                #    - subscriptionId # CONFIGS
+                #    - location
+                #    - resourceGroupName
+                #    - pubSSH
+                #    - securityGroupID
+                #    - subnetId
+
+            "SUBSCRIPTION_PH", configs['subscriptionId']
+            "LOCATION_PH", configs['location
+            "PUB_SSH_PH", configs['pubSSH
+            "RGROUP_PH", configs['resourceGroupName
+            "SECGROUPID_PH", configs['securityGroupID
+            "SUBNETID_PH", configs['subnetId
+
+            terraform_cli_vars["configsFile"] = cfgPath
+            terraform_cli_vars["flavor"] = flavor
+            terraform_cli_vars["customCount"] = nodes
+            terraform_cli_vars["instanceName"] = nodeName
+            terraform_cli_vars["clusterRandomID"] = randomId # var.clusterRandomID to have unique interfaces and disks names
+
+            # image related: TODO: do these with tryTakeFromYaml
+            terraform_cli_vars["publisher"] = "OpenLogic" if configs["image"]["publisher"] is None else configs["image"]["publisher"]
+            terraform_cli_vars["offer"] = "CentOS" if configs["image"]["offer"] is None else configs["image"]["offer"]
+            terraform_cli_vars["sku"] = str("7.5" if configs["image"]["sku"] is None else configs["image"]["sku"])
+            terraform_cli_vars["version"] = str("latest" if configs["image"]["version"] is None else configs["image"]["version"])
 
             # ---------------- main.tf: add raw VMs provisioner
-            rawProvisioning = loadFile(
-                "%s/rawProvision.tf" % templatesPath, required=True)
+            rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath, required=True)
 
         elif configs["providerName"] == "openstack":
 
             writeToFile(mainTfDir + "/main.tf", variables, False) # TODO: do this with terraform_cli_vars too (yamldecode)
+
+            # TODO: this cant be null at .tf, terraform complains if network.name does not exist -> network with name or no network block at all
+            terraform_cli_vars["networkName"] = tryTakeFromYaml(configs, "networkName", None)
+
+            # TODO: bigger volumes
 
             terraform_cli_vars["configsFile"] = cfgPath
             terraform_cli_vars["flavor"] = flavor
@@ -391,7 +403,6 @@ def terraformProvisionment(
 
             # ---------------- main.tf: add raw VMs provisioner
             rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath, required=True)
-
 
         elif configs["providerName"] == "google":
 
