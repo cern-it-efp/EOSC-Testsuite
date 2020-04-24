@@ -181,7 +181,11 @@ def tryTakeFromYaml(dict, key, defaultValue, msgExcept=None):
     """
 
     try:
-        return dict[key]
+        if '.' in key:
+            key1,key2 = key.split('.')
+            return dict[key1][key2]
+        else:
+            return dict[key]
     except KeyError:
         if msgExcept is not None:
             print(msgExcept)

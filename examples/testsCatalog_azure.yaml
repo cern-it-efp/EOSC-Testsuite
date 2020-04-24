@@ -15,8 +15,8 @@ dodasTest:
 dlTest:
   run: true
   nodes: 4
-  flavor: "Standard_D2s_v3"
+  flavor: "Standard_DS1_v2"
 hpcTest:
   run: true
   nodes: 4
-  flavor: "Standard_D2s_v3"
+  flavor: "Standard_B2s"

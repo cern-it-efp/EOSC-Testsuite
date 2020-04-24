@@ -1,3 +1,10 @@
+variable "openUser" {
+  default = "uroot"
+}
+variable "ssh_private_key_path" {
+  default = "~/.ssh/id_rsa"
+}
+
 provider "azurerm" {
   subscription_id = "54f623f0-8c18-40dd-9530-d32d2f1ee14f"
   features {}
@@ -19,25 +26,6 @@ resource "azurerm_subnet" "myterraformsubnet" {
   address_prefix       = "10.0.1.0/24"
 }
 
-# Create Network Security Group and rule (This can actually be done IN ADVANCE, like on Exoscale or Openstack as it is just one for all the VMs)
-resource "azurerm_network_security_group" "myterraformnsg" {
-  name                = "myNetworkSecurityGroup"
-  location            = "West Europe"
-  resource_group_name = "ocrets"
-
-  security_rule {
-    name                       = "SSH"
-    priority                   = 1001
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "22"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-}
-
 # Create public IPs
 resource "azurerm_public_ip" "myterraformpublicip" {
   name                = "myPublicIP"
@@ -51,7 +39,6 @@ resource "azurerm_network_interface" "terraformnic" {
   name                      = "myNIC"
   location                  = "West Europe"
   resource_group_name       = "ocrets"
-  #network_security_group_id = azurerm_network_security_group.myterraformnsg.id # deprecated starting azure's provider version 2
 
   ip_configuration {
     name                          = "myNicConfiguration"
@@ -85,7 +72,7 @@ resource "azurerm_virtual_machine" "main" {
   }
 
   os_profile {
-    computer_name  = "myvm"
+    computer_name  = "tslauncher"
     admin_username = "uroot" # no root here!
   }
 
@@ -96,5 +83,20 @@ resource "azurerm_virtual_machine" "main" {
       key_data = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCFPaN62APTqDCy3eB6qy+ALngWKg/RHCU0XWlL47JQ/Bj4zjHoyviFQ3+WgRgRxakKSdbpRU28qm0dUT+5Ki72doEmcmmqdzwhTa6H/0XwoeeRc12eIUw/sn2wTgdf/c57ft0deOyxeALVArAZwCXxywNeRcAjGJsvp4LW6jjZFQ=="
       path     = "/home/uroot/.ssh/authorized_keys"
     }
+  }
+}
+
+resource "null_resource" "docker" {
+  depends_on = [azurerm_virtual_machine.main]
+  connection {
+    host = azurerm_public_ip.myterraformpublicip.ip_address
+    user        = var.openUser
+    private_key = file(var.ssh_private_key_path)
+  }
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt-get update -y ; sudo apt-get install docker.io -y ; sudo docker run --name tslauncher -itd --net=host cernefp/tslauncher",
+      "echo sudo docker exec -it tslauncher bash >> ~/.bashrc"
+    ]
   }
 }

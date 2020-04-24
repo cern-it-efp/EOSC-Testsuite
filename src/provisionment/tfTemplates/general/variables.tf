@@ -3,7 +3,10 @@ variable "configsFile" {}
 variable "customCount" {}
 variable "flavor" {}
 variable "instanceName" {}
-variable "securityGroups" {}
+
+variable "securityGroups" { # this is optional in some providers (in azure doesnt even exist), then requires a default value
+  default = ""
+}
 
 variable "diskSize" {
   # TODO: for exoscale, this is the only var that does not have a value at terraform.tfvars.json. Since it is required on exoscale it is directly taken from configs.yaml like template or zone

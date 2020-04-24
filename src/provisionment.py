@@ -101,7 +101,7 @@ def destroyTF(baseCWD, clusters=None):
         if exitCode is 0:
             cleanupTF("src/tests/%s/" % cluster)
         else:
-            print("WARNING: terraform destroy did not succeeded completely, tf files not deleted.")
+            print("WARNING: terraform destroy did not succeed completely, tf files not deleted.")
         res.append(exitCode)
 
     return res
@@ -353,21 +353,13 @@ def terraformProvisionment(
             #    - providerName # HERE
             #    - pathToKey
             #    - flavor
-            #    - image
-            #    - openUser
-                #    - subscriptionId # CONFIGS
+                #    - openUser # CONFIGS
+                #    - subscriptionId
                 #    - location
                 #    - resourceGroupName
                 #    - pubSSH
                 #    - securityGroupID
                 #    - subnetId
-
-            "SUBSCRIPTION_PH", configs['subscriptionId']
-            "LOCATION_PH", configs['location
-            "PUB_SSH_PH", configs['pubSSH
-            "RGROUP_PH", configs['resourceGroupName
-            "SECGROUPID_PH", configs['securityGroupID
-            "SUBNETID_PH", configs['subnetId
 
             terraform_cli_vars["configsFile"] = cfgPath
             terraform_cli_vars["flavor"] = flavor
@@ -375,11 +367,11 @@ def terraformProvisionment(
             terraform_cli_vars["instanceName"] = nodeName
             terraform_cli_vars["clusterRandomID"] = randomId # var.clusterRandomID to have unique interfaces and disks names
 
-            # image related: TODO: do these with tryTakeFromYaml
-            terraform_cli_vars["publisher"] = "OpenLogic" if configs["image"]["publisher"] is None else configs["image"]["publisher"]
-            terraform_cli_vars["offer"] = "CentOS" if configs["image"]["offer"] is None else configs["image"]["offer"]
-            terraform_cli_vars["sku"] = str("7.5" if configs["image"]["sku"] is None else configs["image"]["sku"])
-            terraform_cli_vars["version"] = str("latest" if configs["image"]["version"] is None else configs["image"]["version"])
+            # image related: TODO: do these with tryTakeFromYaml, then image is not required
+            terraform_cli_vars["publisher"] = tryTakeFromYaml(configs, "image.publisher", "OpenLogic")
+            terraform_cli_vars["offer"] = tryTakeFromYaml(configs, "image.offer", "CentOS")
+            terraform_cli_vars["sku"] = str(tryTakeFromYaml(configs, "image.sku", 7.5))
+            terraform_cli_vars["imageVersion"] = str(tryTakeFromYaml(configs, "image.version", "latest"))
 
             # ---------------- main.tf: add raw VMs provisioner
             rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath, required=True)

@@ -8,9 +8,8 @@ required:
     - location
     - resourceGroupName
     - pubSSH
-    - securityGroupID
     - subnetId
-    - image
+    #- securityGroupID # TODO
 properties:
     subscriptionId:
         type: string
@@ -46,6 +45,7 @@ properties:
             - offer
             - sku
             - version
+        additionalProperties: false
         properties:
             publisher:
                 type: string

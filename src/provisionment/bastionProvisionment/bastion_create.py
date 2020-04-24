@@ -22,6 +22,8 @@ user = None
 ip = None
 onlySsh = False
 
+# TODO: take here the openUser, the key and other vars needed at the .tf script
+
 try:
     options, values = getopt.getopt(
         sys.argv[1:],
@@ -46,9 +48,6 @@ if tfPath is None:
 if user is None:
     print("user is a required option")
     sys.exit(1)
-if ip is None:
-    print("ip is a required option")
-    sys.exit(1)
 
 # TODO: check, if there are no .tf files at tfPath -> exit
 
@@ -64,25 +63,38 @@ def runCMD(cmd, hideLogs=None, read=None):
 
 def getIP():
 
-    # TODO: do this for all supported providers
     try:
-        #resources = json.loads(runCMD("terraform show -json | jq .values.root_module.resources",read=True).strip()) # this is for AWS
-        #for res in resources:
-        #    if res["type"] == "oci_core_instance":
-                if provider == "cloudstack":
-                    return resource["values"]["ip_address"]
-                elif provider == "aws":
+        resources = json.loads(runCMD("terraform show -json | jq .values.root_module.resources",read=True).strip())
+        for res in resources:
+            if provider == "azurerm":
+                if res["type"] == "azurerm_public_ip":
+                    return res["values"]["ip_address"]
+
+            elif provider == "oci":
+                if res["type"] == "oci_core_instance":
+                    return res["values"]["private_ip"]
+
+            elif provider == "aws":
+                if res["type"] == "aws_instance":
                     return resource["values"]["public_ip"]
-                elif provider == "azurerm":
-                    return resource["values"]["private_ip_address"]
-                elif provider == "openstack":
+
+            elif provider == "cloudstack":
+                if res["type"] == "cloudstack_instance":
+                    return resource["values"]["ip_address"]
+
+            # TODO: do this for all supported providers
+
+            elif provider == "openstack":
+                if res["type"] == "":
                     return resource["values"]["network"][0]["fixed_ip_v4"]
-                elif provider == "google":
+
+            elif provider == "google":
+                if res["type"] == "":
                     return resource["values"]["network_interface"][0]["network_ip"]
-                elif provider == "opentelekomcloud":
+
+            elif provider == "opentelekomcloud":
+                if res["type"] == "":
                     return resource["values"]["access_ip_v4"]
-                elif provider == "oci":
-                    return resource["values"]["private_ip"]
 
     except:
         print("Does the VM exist?")
@@ -92,16 +104,34 @@ def getIP():
 
 baseCWD = os.getcwd()
 
+if tfPath is ".":
+    provider = os.path.basename(os.path.normpath(os.getcwd()))
+else:
+    provider = os.path.basename(os.path.normpath(tfPath))
+
 os.chdir(tfPath)
 
 if onlySsh is not True:
-    if runCMD("terraform apply -auto-approve") is not 0:
-        print("fail terraform apply -auto-approve")
+    if provider == "azurerm": # TODO: in azurerm, w/o this the public ip is not initialized
+
+#    resource "azurerm_virtual_network" "myterraformnetwork
+#    resource "azurerm_subnet" "myterraformsubnet
+#resource "azurerm_network_security_group" "myterraformnsg
+#    resource "azurerm_public_ip" "myterraformpublicip
+#    resource "azurerm_network_interface" "terraformnic
+#resource "azurerm_virtual_machine" "main
+#resource "null_resource" "docker"
+
+        cmd = "terraform init ; terraform apply -target=azurerm_virtual_machine.main -auto-approve ; terraform apply -refresh=true -auto-approve"
+    else:
+        cmd = "terraform init ; terraform apply -auto-approve"
+
+    if runCMD(cmd) is not 0:
+        print("terraform failed")
         sys.exit(1)
 
-#ip = getIP()
+ip = getIP()
 
 os.chdir(baseCWD)
 
-#runCMD("ssh -o StrictHostKeyChecking=no %s@%s" % (user,getIP()))
 runCMD("ssh -o StrictHostKeyChecking=no %s@%s" % (user,ip))
