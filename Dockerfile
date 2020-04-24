@@ -5,7 +5,7 @@ ARG PYTHONIOENCODING=utf8
 
 # ------------------ General Stuff
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update
+RUN apt-get update -y
 RUN apt-get install -y \
     curl \
     wget \
@@ -21,7 +21,9 @@ RUN apt-get install -y \
     git \
     snapd \
     net-tools \
-    jq
+    jq \
+    iputils-ping
+
 RUN pip3 install --upgrade\
     requests \
     pyyaml \
@@ -48,6 +50,12 @@ RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 RUN mkdir /root/.ssh && \
     touch /root/.ssh/id_rsa && \
     chmod 600 /root/.ssh/id_rsa
+
+# ------------------ Add useful aliases
+RUN echo 'alias tfLogs="tail -f logs"' >> ~/.bashrc
+RUN echo 'alias ansibleLogs="tail -f src/logging/ansibleLogs*"' >> ~/.bashrc
+RUN echo 'alias gcd="git checkout development"' >> ~/.bashrc
+RUN echo 'alias watchPods="watch kubectl get pods -owide"' >> ~/.bashrc
 
 # ------------------ Clone TS repo and get bash
 RUN echo cd EOSC-Testsuite >> ~/.bashrc

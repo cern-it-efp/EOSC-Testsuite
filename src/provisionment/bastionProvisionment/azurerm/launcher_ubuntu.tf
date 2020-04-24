@@ -15,13 +15,13 @@ resource "azurerm_virtual_network" "myterraformnetwork" {
   name                = "myVnet"
   address_space       = ["10.0.0.0/16"]
   location            = "West Europe"
-  resource_group_name = "ocrets"
+  resource_group_name = "efprg"
 }
 
 # Create subnet (This can actually be done IN ADVANCE)
 resource "azurerm_subnet" "myterraformsubnet" {
   name                 = "mySubnet"
-  resource_group_name  = "ocrets"
+  resource_group_name  = "efprg"
   virtual_network_name = azurerm_virtual_network.myterraformnetwork.name
   address_prefix       = "10.0.1.0/24"
 }
@@ -30,7 +30,7 @@ resource "azurerm_subnet" "myterraformsubnet" {
 resource "azurerm_public_ip" "myterraformpublicip" {
   name                = "myPublicIP"
   location            = "West Europe"
-  resource_group_name = "ocrets"
+  resource_group_name = "efprg"
   allocation_method   = "Dynamic"
 }
 
@@ -38,7 +38,7 @@ resource "azurerm_public_ip" "myterraformpublicip" {
 resource "azurerm_network_interface" "terraformnic" {
   name                      = "myNIC"
   location                  = "West Europe"
-  resource_group_name       = "ocrets"
+  resource_group_name       = "efprg"
 
   ip_configuration {
     name                          = "myNicConfiguration"
@@ -54,7 +54,7 @@ resource "azurerm_virtual_machine" "main" {
   name                  = "tslauncher"
   location              = "West Europe"
   vm_size               = "Standard_D2s_v3"
-  resource_group_name   = "ocrets"
+  resource_group_name   = "efprg"
   network_interface_ids = [azurerm_network_interface.terraformnic.id]
 
   storage_os_disk {

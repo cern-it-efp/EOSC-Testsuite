@@ -142,6 +142,7 @@ def stackVersioning(variables, configs):
         string: modified variables section, stack versioning stuff added.
     """
 
+    # TODO: do this with terraform_cli_vars
     variables = variables.replace(
         "DOCKER_CE_PH", tryTakeFromYaml(configs, "dockerCE", ""))
     variables = variables.replace(
@@ -345,126 +346,60 @@ def terraformProvisionment(
             "NAME_PH", nodeName)
         variables = stackVersioning(variables, configs)
 
-        if configs["providerName"] == "azurerm":
+        if configs["providerName"] in extraSupportedClouds:
 
             writeToFile(mainTfDir + "/main.tf", variables, False) # TODO: do this with terraform_cli_vars too (yamldecode)
-
-            #required ones:
-            #    - providerName # HERE
-            #    - pathToKey
-            #    - flavor
-                #    - openUser # CONFIGS
-                #    - subscriptionId
-                #    - location
-                #    - resourceGroupName
-                #    - pubSSH
-                #    - securityGroupID
-                #    - subnetId
+            rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath, required=True)
 
             terraform_cli_vars["configsFile"] = cfgPath
             terraform_cli_vars["flavor"] = flavor
             terraform_cli_vars["customCount"] = nodes
             terraform_cli_vars["instanceName"] = nodeName
-            terraform_cli_vars["clusterRandomID"] = randomId # var.clusterRandomID to have unique interfaces and disks names
 
-            # image related: TODO: do these with tryTakeFromYaml, then image is not required
-            terraform_cli_vars["publisher"] = tryTakeFromYaml(configs, "image.publisher", "OpenLogic")
-            terraform_cli_vars["offer"] = tryTakeFromYaml(configs, "image.offer", "CentOS")
-            terraform_cli_vars["sku"] = str(tryTakeFromYaml(configs, "image.sku", 7.5))
-            terraform_cli_vars["imageVersion"] = str(tryTakeFromYaml(configs, "image.version", "latest"))
+            if configs["providerName"] == "azurerm":
 
-            # ---------------- main.tf: add raw VMs provisioner
-            rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath, required=True)
+                terraform_cli_vars["clusterRandomID"] = randomId # var.clusterRandomID to have unique interfaces and disks names
+                terraform_cli_vars["publisher"] = tryTakeFromYaml(configs, "image.publisher", "OpenLogic")
+                terraform_cli_vars["offer"] = tryTakeFromYaml(configs, "image.offer", "CentOS")
+                terraform_cli_vars["sku"] = str(tryTakeFromYaml(configs, "image.sku", 7.5))
+                terraform_cli_vars["imageVersion"] = str(tryTakeFromYaml(configs, "image.version", "latest"))
 
-        elif configs["providerName"] == "openstack":
+            elif configs["providerName"] == "openstack":
 
-            writeToFile(mainTfDir + "/main.tf", variables, False) # TODO: do this with terraform_cli_vars too (yamldecode)
+                # TODO: this cant be null at .tf, terraform complains if network.name does not exist -> network with name or no network block at all
+                terraform_cli_vars["networkName"] = tryTakeFromYaml(configs, "networkName", None)
 
-            # TODO: this cant be null at .tf, terraform complains if network.name does not exist -> network with name or no network block at all
-            terraform_cli_vars["networkName"] = tryTakeFromYaml(configs, "networkName", None)
+                # TODO: bigger volumes
 
-            # TODO: bigger volumes
+                terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", [])
+                terraform_cli_vars["region"] = tryTakeFromYaml(configs, "region", None)
+                terraform_cli_vars["availabilityZone"] = tryTakeFromYaml(configs, "availabilityZone", None)
 
-            terraform_cli_vars["configsFile"] = cfgPath
-            terraform_cli_vars["flavor"] = flavor
-            terraform_cli_vars["customCount"] = nodes
-            terraform_cli_vars["instanceName"] = nodeName
-            terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", [])
-            terraform_cli_vars["region"] = tryTakeFromYaml(configs, "region", None)
-            terraform_cli_vars["availabilityZone"] = tryTakeFromYaml(configs, "availabilityZone", None)
+            elif configs["providerName"] == "google":
 
-            # ---------------- main.tf: add raw VMs provisioner
-            rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath, required=True)
+                terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", [])
+                terraform_cli_vars["gpuCount"] = nodes if test == "dlTest" else "0"
+                terraform_cli_vars["gpuType"] = tryTakeFromYaml(configs, "gpuType", "")
+                #terraform_cli_vars["volumeSize"] = tryTakeFromYaml(configs, "volumeSize", 0) # TODO: this is fixed to 100
 
-        elif configs["providerName"] == "google":
+            elif configs["providerName"] == "oci":
 
-            writeToFile(mainTfDir + "/main.tf", variables, False) # TODO: do this with terraform_cli_vars too (yamldecode)
+                terraform_cli_vars["diskSize"] = tryTakeFromYaml(configs, "diskSize", None) # TODO: instead of 0, use None which is terraform's null
 
-            terraform_cli_vars["configsFile"] = cfgPath
-            terraform_cli_vars["flavor"] = flavor
-            terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", [])
-            terraform_cli_vars["customCount"] = nodes
-            terraform_cli_vars["instanceName"] = nodeName
-            terraform_cli_vars["gpuCount"] = nodes if test == "dlTest" else "0"
-            terraform_cli_vars["gpuType"] = tryTakeFromYaml(configs, "gpuType", "")
-            #terraform_cli_vars["volumeSize"] = tryTakeFromYaml(configs, "volumeSize", 0) # TODO: this is fixed to 100
+            elif configs["providerName"] == "aws":
 
-            # ---------------- main.tf: add raw VMs provisioner
-            rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath, required=True)
+                terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", [])
+                terraform_cli_vars["volumeSize"] = tryTakeFromYaml(configs, "volumeSize", 0)
 
-        elif configs["providerName"] == "oci":
+            elif configs["providerName"] == "cloudstack":
 
-            writeToFile(mainTfDir + "/main.tf", variables, False) # TODO: do this with terraform_cli_vars too (yamldecode)
+                terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", [])
+                terraform_cli_vars["diskSize"] = tryTakeFromYaml(configs, "diskSize", 0)
 
-            terraform_cli_vars["configsFile"] = cfgPath
-            terraform_cli_vars["flavor"] = flavor
-            terraform_cli_vars["customCount"] = nodes
-            terraform_cli_vars["instanceName"] = nodeName
-            terraform_cli_vars["diskSize"] = tryTakeFromYaml(configs, "diskSize", None) # TODO: instead of 0, use None which is terraform's null
 
-            # ---------------- main.tf: add raw VMs provisioner
-            rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath, required=True)
+            elif configs["providerName"] in ("opentelekomcloud", "exoscale"):
 
-        elif configs["providerName"] == "aws":
-
-            writeToFile(mainTfDir + "/main.tf", variables, False) # TODO: do this with terraform_cli_vars too (yamldecode)
-
-            terraform_cli_vars["configsFile"] = cfgPath
-            terraform_cli_vars["flavor"] = flavor
-            terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", [])
-            terraform_cli_vars["customCount"] = nodes
-            terraform_cli_vars["instanceName"] = nodeName
-            terraform_cli_vars["volumeSize"] = tryTakeFromYaml(configs, "volumeSize", 0)
-
-            # ---------------- main.tf: add raw VMs provisioner
-            rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath, required=True)
-
-        elif configs["providerName"] == "cloudstack":
-
-            writeToFile(mainTfDir + "/main.tf", variables, False) # TODO: do this with terraform_cli_vars too (yamldecode)
-
-            terraform_cli_vars["configsFile"] = cfgPath
-            terraform_cli_vars["flavor"] = flavor
-            terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", [])
-            terraform_cli_vars["customCount"] = nodes
-            terraform_cli_vars["instanceName"] = nodeName
-            terraform_cli_vars["diskSize"] = tryTakeFromYaml(configs, "diskSize", 0)
-
-            # ---------------- main.tf: add raw VMs provisioner
-            rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath, required=True)
-
-        elif configs["providerName"] in ("opentelekomcloud", "exoscale"):
-
-            writeToFile(mainTfDir + "/main.tf", variables, False) # TODO: do this with terraform_cli_vars too (yamldecode)
-
-            terraform_cli_vars["configsFile"] = cfgPath # ---------------- specific vars
-            terraform_cli_vars["flavor"] = flavor
-            terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", [])
-            terraform_cli_vars["customCount"] = nodes # ---------------- general vars
-            terraform_cli_vars["instanceName"] = nodeName
-
-            # ---------------- main.tf: add raw VMs provisioner
-            rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath, required=True)
+                terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", [])
 
         else:
             # ---------------- main.tf: add vars
