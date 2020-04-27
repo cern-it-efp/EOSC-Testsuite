@@ -49,7 +49,7 @@ properties:
         type: string
     kubernetes:
         type: string
-    diskSize:
+    storageCapacity:
         type: number
     costCalculation:
         type:

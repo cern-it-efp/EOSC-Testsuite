@@ -20,7 +20,7 @@ resource "oci_core_instance" "kubenode" {
   source_details {
     source_type = "image"
     source_id   = yamldecode(file(var.configsFile))["image_ocid"]
-    boot_volume_size_in_gbs = var.diskSize 
+    boot_volume_size_in_gbs = var.storageCapacity
   }
   metadata = {
     ssh_authorized_keys = file(yamldecode(file(var.configsFile))["ssh_public_key_path"])

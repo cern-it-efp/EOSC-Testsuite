@@ -34,7 +34,7 @@ variable "ssh_private_key_path" {
 variable "ssh_public_key_path" {
   default = "/home/ipelu/.ssh/id_rsa.pub" # no pem
 }
-variable "diskSize" {
+variable "storageCapacity" {
   default = 50
 }
 variable "fingerprint" {
@@ -152,7 +152,7 @@ resource "oci_core_instance" "tslauncher_instance" {
   source_details {
     source_type = "image"
     source_id   = var.image_ocid
-    boot_volume_size_in_gbs = var.diskSize
+    boot_volume_size_in_gbs = var.storageCapacity
   }
   metadata = {
     ssh_authorized_keys = file(var.ssh_public_key_path)

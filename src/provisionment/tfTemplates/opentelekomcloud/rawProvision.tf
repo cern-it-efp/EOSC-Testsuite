@@ -16,7 +16,7 @@ resource "opentelekomcloud_compute_instance_v2" "kubenode" {
   block_device {
     uuid                  = yamldecode(file(var.configsFile))["imageID"]
     source_type           = "image"
-    volume_size           = yamldecode(file(var.configsFile))["diskSize"]
+    volume_size           = yamldecode(file(var.configsFile))["storageCapacity"]
     boot_index            = 0
     destination_type      = "volume"
     delete_on_termination = true

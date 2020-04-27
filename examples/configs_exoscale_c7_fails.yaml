@@ -7,7 +7,7 @@ zone: "ch-gva-2"
 template: "There is no OS with this name"
 keyPair: "k_cl"
 securityGroups: "[\"default\"]"
-diskSize: 100
+storageCapacity: 100
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:

@@ -29,7 +29,6 @@ from init import *
 provisionFailMsg = "Failed to provision raw VMs. Check 'logs' file for details"
 bootstrapFailMsg = "Failed to bootstrap '%s' k8s cluster. Check 'logs' file"
 playbookPath = "src/provisionment/playbooks/bootstraper.yaml"
-msgRoot = "WARNING: default user 'root' for ssh connections (running on %s)"
 
 aggregateLogs = False
 ansibleLogs = "src/logging/ansibleLogs%s"
@@ -131,6 +130,29 @@ def cleanupTF(mainTfDir):
             shutil.rmtree(file, True)
 
 
+def stackVersioning(variables, configs):
+    """Adds stack versioning related stuff to the variables section of the
+       .tf file.
+
+    Parameters:
+        variables (str): Variables section of the .tf file.
+        configs (dict): Object containing configs.yaml's configurations.
+
+    Returns:
+        string: modified variables section, stack versioning stuff added.
+    """
+
+    # TODO: do this with terraform_cli_vars
+    variables = variables.replace(
+        "DOCKER_CE_PH", tryTakeFromYaml(configs, "dockerCE", ""))
+    variables = variables.replace(
+        "DOCKER_EN_PH", tryTakeFromYaml(configs, "dockerEngine", ""))
+    variables = variables.replace(
+        "K8S_PH", tryTakeFromYaml(configs, "kubernetes", ""))
+
+    return variables
+
+
 def waitForSA(kubeconfig):
     """Wait for cluster's service account to be ready.
 
@@ -194,13 +216,12 @@ def provisionAndBootstrap(test,
     if noTerraform is True:  # Only ansible
         mainTfDir = testsRoot + test
         kubeconfig = "%s/src/tests/%s/config" % (baseCWD, test)  # "config"
-
-
-        openUser = tryTakeFromYaml(configs,
-                                   "openUser",
-                                   "root",
-                                   msgExcept=msgRoot % configs["providerName"])
-
+        openUserDefault = "root"
+        msgExcept = "WARNING: using default user '%s' for ssh connections " \
+            "(running on %s)" % (
+                openUserDefault, configs["providerName"])
+        openUser = tryTakeFromYaml(
+            configs, "openUser", openUserDefault, msgExcept=msgExcept)
         if test == "shared":
             mainTfDir = testsRoot + "shared"
             os.makedirs(mainTfDir, exist_ok=True)
@@ -291,8 +312,7 @@ def terraformProvisionment(
     mainTfDir = testsRoot + test
     terraform_cli_vars = {}
     cfgPath = "%s/%s" % (baseCWD, cfgPath)
-    kubeconfig = "%s/src/tests/%s/config" % (baseCWD, test)
-
+    kubeconfig = "%s/src/tests/%s/config" % (baseCWD, test)  # "config"
     if test == "shared":
         flavor = configs["flavor"]
         mainTfDir = testsRoot + "shared"
@@ -300,36 +320,31 @@ def terraformProvisionment(
         kubeconfig = "~/.kube/config"
 
     if retry is None:
-        randomId = getRandomID() # One randomId per cluster
-
-        nodeName = ("kubenode-%s-%s-%s" % (
-                            configs["providerName"],
-                            test,
-                            randomId)
-                    ).lower()
+        randomId = ''.join(
+            random.SystemRandom().choice(
+                string.ascii_lowercase +
+                string.digits) for _ in range(4))  # One randomId per cluster
+        nodeName = ("kubenode-%s-%s-%s" %
+                    (configs["providerName"], test, str(randomId))).lower()
 
         # ---------------- delete TF stuff from previous run if existing
         cleanupTF(mainTfDir)
 
         # ---------------- manage general variables
 
-        openUser = tryTakeFromYaml(configs,
-                                   "openUser",
-                                   "root",
-                                   msgExcept=msgRoot % configs["providerName"])
+        openUserDefault = "root"
+        msgExcept = "WARNING: using default user '%s' for ssh connections " \
+            "(running on %s)" % (
+                openUserDefault, configs["providerName"])
+        openUser = tryTakeFromYaml(
+            configs, "openUser", openUserDefault, msgExcept=msgExcept)
 
         variables = loadFile("src/provisionment/tfTemplates/general/variables.tf",
                              required=True).replace(
             "NODES_PH", str(nodes)).replace(
             "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(
             "NAME_PH", nodeName)
-
-        #terraform_cli_vars["dockerCE"] = tryTakeFromYaml(configs, "dockerCE", "")
-        #terraform_cli_vars["dockerEngine"] = tryTakeFromYaml(configs, "dockerEngine", "")
-        #terraform_cli_vars["kubernetes"] = tryTakeFromYaml(configs, "kubernetes", "")
-        terraform_cli_vars["dockerCE"] = tryTakeFromYaml(configs, "dockerCE", None)
-        terraform_cli_vars["dockerEngine"] = tryTakeFromYaml(configs, "dockerEngine", None)
-        terraform_cli_vars["kubernetes"] = tryTakeFromYaml(configs, "kubernetes", None)
+        variables = stackVersioning(variables, configs)
 
         if configs["providerName"] in extraSupportedClouds:
 
@@ -349,30 +364,42 @@ def terraformProvisionment(
                 terraform_cli_vars["sku"] = str(tryTakeFromYaml(configs, "image.sku", 7.5))
                 terraform_cli_vars["imageVersion"] = str(tryTakeFromYaml(configs, "image.version", "latest"))
 
-            if configs["providerName"] == "openstack":
+            elif configs["providerName"] == "openstack":
 
-                networkName = tryTakeFromYaml(configs, "networkName", False)
-                if networkName is not False:
-                    terraform_cli_vars["useDefaultNetwork"] = False
+                # TODO: this cant be null at .tf, terraform complains if network.name does not exist -> network with name or no network block at all
+                terraform_cli_vars["networkName"] = tryTakeFromYaml(configs, "networkName", None)
 
                 # TODO: bigger volumes
 
+                terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", None)
                 terraform_cli_vars["region"] = tryTakeFromYaml(configs, "region", None)
                 terraform_cli_vars["availabilityZone"] = tryTakeFromYaml(configs, "availabilityZone", None)
 
-            if configs["providerName"] == "google":
-
-                terraform_cli_vars["gpuCount"] = nodes if test == "dlTest" else "0"
-                terraform_cli_vars["gpuType"] = tryTakeFromYaml(configs, "gpuType", None)
-                #terraform_cli_vars["storageCapacity"] = tryTakeFromYaml(configs, "storageCapacity", 0) # TODO: this is fixed to 100
-
-            if configs["providerName"] in ("aws", "cloudstack", "google", "openstack", "opentelekomcloud", "exoscale"):
+            elif configs["providerName"] == "google":
 
                 terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", None)
+                terraform_cli_vars["gpuCount"] = nodes if test == "dlTest" else "0"
+                terraform_cli_vars["gpuType"] = tryTakeFromYaml(configs, "gpuType", "")
+                #terraform_cli_vars["storageCapacity"] = tryTakeFromYaml(configs, "storageCapacity", 0) # TODO: this is fixed to 100
 
-            if configs["providerName"] in ("cloudstack", "oci", "aws"):
+            elif configs["providerName"] == "oci":
 
-                terraform_cli_vars["storageCapacity"] = tryTakeFromYaml(configs, "storageCapacity", None)
+                terraform_cli_vars["storageCapacity"] = tryTakeFromYaml(configs, "storageCapacity", None) # TODO: instead of 0, use None which is terraform's null
+
+            elif configs["providerName"] == "aws":
+
+                terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", None)
+                terraform_cli_vars["storageCapacity"] = tryTakeFromYaml(configs, "storageCapacity", None) # 8gb
+
+            elif configs["providerName"] == "cloudstack":
+
+                terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", None)
+                terraform_cli_vars["storageCapacity"] = tryTakeFromYaml(configs, "storageCapacity", 0)
+
+
+            elif configs["providerName"] in ("opentelekomcloud", "exoscale"):
+
+                terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", None)
 
         else:
             # ---------------- main.tf: add vars

@@ -7,7 +7,7 @@ region: "eu-central-1"
 sharedCredentialsFile: "/root/credentials"
 ami: "ami-0957ba512eafd08d9" # "ami-08ee2516c7709ea48"
 keyName: "exo"
-#volumeSize: 50
+#storageCapacity: 50
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:

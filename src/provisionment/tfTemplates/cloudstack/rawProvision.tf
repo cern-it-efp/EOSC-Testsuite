@@ -11,5 +11,5 @@ resource "cloudstack_instance" "kubenode" {
   template             = yamldecode(file(var.configsFile))["template"]
   keypair              = yamldecode(file(var.configsFile))["keyPair"]
   security_group_names = var.securityGroups
-  root_disk_size       = var.diskSize
+  root_disk_size       = var.storageCapacity
 }

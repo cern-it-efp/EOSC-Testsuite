@@ -8,7 +8,7 @@ keyPair: "exo"
 securityGroups: ["default"]
 domainName: "OTC-EU-DE-00000000001000046175"
 tenantName: "eu-de"
-diskSize: 50
+storageCapacity: 50
 authFile: /home/ipelu/Desktop/tsk.yaml
 
 

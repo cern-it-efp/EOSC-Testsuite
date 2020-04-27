@@ -7,7 +7,7 @@ variable "openUser" {
 variable "keyPair" {
   default = "exo"
 }
-variable "diskSize" {
+variable "storageCapacity" {
   default = 50
 }
 variable "flavor" { # https://open-telekom-cloud.com/resource/blob/data/173316/3c1e928bf9537cbef2b1407655a0d25c/open-telekom-cloud-service-description.pdf
@@ -48,7 +48,7 @@ resource "opentelekomcloud_compute_instance_v2" "tslauncher" {
   block_device {
     uuid                  = var.imageID
     source_type           = "image"
-    volume_size           = var.diskSize
+    volume_size           = var.storageCapacity
     boot_index            = 0
     destination_type      = "volume"
     delete_on_termination = true

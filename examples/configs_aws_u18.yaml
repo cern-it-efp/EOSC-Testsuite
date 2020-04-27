@@ -7,7 +7,8 @@ region: "us-east-2"
 sharedCredentialsFile: "/creds"
 ami: "ami-0fc20dd1da406780b"
 keyName: "exo"
-#volumeSize: 50 # this and securityGroups are optional
+#storageCapacity: 50 # optional
+#securityGroups: ["launch-wizard-1"] # optional
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:

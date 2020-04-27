@@ -25,7 +25,7 @@ properties:
         type: string
     keyName:
         type: string
-    volumeSize:
+    storageCapacity:
         type: number
     dockerCE:
         type: string

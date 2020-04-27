@@ -33,7 +33,7 @@ properties:
     securityGroups:
         type:
             - array
-    diskSize:
+    storageCapacity:
         type: number
     costCalculation:
         type:

@@ -13,6 +13,6 @@ resource "aws_instance" "kubenode" {
   ami      = yamldecode(file(var.configsFile))["ami"]
   key_name = yamldecode(file(var.configsFile))["keyName"]
   root_block_device {
-    volume_size = var.volumeSize
+    volume_size = var.storageCapacity
   }
 }

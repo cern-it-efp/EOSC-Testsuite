@@ -9,6 +9,6 @@ resource "exoscale_compute" "kubenode" {
   size            = var.flavor
   template        = yamldecode(file(var.configsFile))["template"]
   key_pair        = yamldecode(file(var.configsFile))["keyPair"]
-  disk_size       = yamldecode(file(var.configsFile))["diskSize"]
+  disk_size       = yamldecode(file(var.configsFile))["storageCapacity"]
   security_groups = var.securityGroups
 }

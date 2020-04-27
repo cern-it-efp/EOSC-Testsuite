@@ -9,7 +9,7 @@ required:
     - domainName
     - tenantName
     - authFile
-    - diskSize
+    - storageCapacity
 
 properties:
     providerName:
@@ -30,7 +30,7 @@ properties:
         type: string
     authFile:
         type: string
-    diskSize:
+    storageCapacity:
         type: number
     dockerCE:
         type: string

@@ -1,6 +1,6 @@
 type: object
 required:
-    - diskSize
+    - storageCapacity
     - flavor
     - zone
     - template
@@ -31,7 +31,7 @@ properties:
         type: string
     securityGroups:
         type: array
-    diskSize:
+    storageCapacity:
         type: number
     costCalculation:
         type:

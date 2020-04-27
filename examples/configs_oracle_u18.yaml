@@ -10,7 +10,7 @@ region: eu-frankfurt-1
 subnet_ocid: ocid1.subnet.oc1.eu-frankfurt-1.aaaaaaaafpq23sxzjyoynieldsjhp65ntmbjuo6cti4nryvp5ebjmsq6ow2a
 openUser: ubuntu
 flavor: VM.Standard1.1
-#diskSize: 100 # optional
+#storageCapacity: 100 # optional
 availability_domain: BKrI:EU-FRANKFURT-1-AD-3 # this one has gpu
 compartment_ocid: ocid1.compartment.oc1..aaaaaaaancwe6dcw2rvht2wjrysyxxnyxwknq2hxrltpct53acnpyhjcys7a
 image_ocid: ocid1.image.oc1.eu-frankfurt-1.aaaaaaaawtnpiyjp36tyx7hkkymil2efkvitkrrnqi5qjpahcuoyvtcwhc5q # Ubuntu 18.04

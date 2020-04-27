@@ -10,6 +10,8 @@ try:
     import subprocess
     import jsonschema
     import shutil
+    import random
+    import string
     from configparser import ConfigParser
 
 except ModuleNotFoundError as ex:
@@ -17,6 +19,14 @@ except ModuleNotFoundError as ex:
     sys.exit(1)
 
 yaml.warnings({'YAMLLoadWarning': False}) # https://github.com/yaml/pyyaml/wiki/PyYAML-yaml.load(input)-Deprecation
+
+
+def getRandomID():
+    """Returns a random ID"""
+
+    randomId = ''.join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(4))
+    return str(randomId)
+
 
 def getMasterIP(hosts):
     """Given the path to an ansible hosts file, returns the IP specified
