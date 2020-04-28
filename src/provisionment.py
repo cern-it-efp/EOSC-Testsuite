@@ -354,9 +354,6 @@ def terraformProvisionment(
                 networkName = tryTakeFromYaml(configs, "networkName", False)
                 if networkName is not False:
                     terraform_cli_vars["useDefaultNetwork"] = False
-
-                # TODO: bigger volumes
-
                 terraform_cli_vars["region"] = tryTakeFromYaml(configs, "region", None)
                 terraform_cli_vars["availabilityZone"] = tryTakeFromYaml(configs, "availabilityZone", None)
 
@@ -594,8 +591,10 @@ def createHostsFile(mainTfDir,
 
     if noTerraform is not True:
         os.chdir(mainTfDir)
-        resources = json.loads(os.popen("terraform show -json").read() # TODO: user runCMD here
-                               .strip())["values"]["root_module"]["resources"]
+
+        tfShowJson = json.loads(runCMD("terraform show -json", read=True))
+        resources = tfShowJson["values"]["root_module"]["resources"]
+
         os.chdir(baseCWD)
 
         for resource in resources:

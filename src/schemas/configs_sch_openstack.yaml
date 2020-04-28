@@ -3,8 +3,10 @@ required:
     - providerName
     - pathToKey
     - flavor
-    - imageName
+    - imageID
     - keyPair
+    - storageCapacity
+
 properties:
     providerName:
         type: string
@@ -12,10 +14,12 @@ properties:
         type: string
     flavor:
         type: string
-    imageName:
+    imageID:
         type: string
     keyPair:
         type: string
+    storageCapacity:
+        type: number
     openUser:
         type: string
     dockerCE:

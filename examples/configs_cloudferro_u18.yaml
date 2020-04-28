@@ -3,9 +3,11 @@ providerName: openstack
 pathToKey: "/root/.ssh/id_rsa"
 openUser: eouser
 flavor: "eo1.medium"
-imageName: "Ubuntu 18.04 LTS"
+imageID: "880a6cc1-7ede-4da0-8020-86d07d54c4f9" # Ubuntu 18.04 LTS
+storageCapacity: 12
 keyPair: mykey
 securityGroups: "[\"default\",\"allow_ping_ssh_rdp\"]"
+#networkName: testing
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:

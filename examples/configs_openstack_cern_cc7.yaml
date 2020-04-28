@@ -3,7 +3,8 @@ providerName: openstack
 pathToKey: "/home/ipelu/.ssh/id_rsa"
 #openUser:
 flavor: "m2.medium"
-imageName: "CC7 - x86_64 [2020-01-20]"
+imageID: "ea3575af-6013-4608-9d75-00800a855bb7" # CC7
+storageCapacity: 50
 keyPair: "exo"
 securityGroups:
 region:

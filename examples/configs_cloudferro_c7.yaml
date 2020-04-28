@@ -3,7 +3,8 @@ providerName: openstack
 pathToKey: "/home/ipelu/.ssh/id_rsa"
 openUser: eouser
 flavor: "eo1.medium"
-imageName: "CentOS 7"
+imageID: "9f954559-da79-4c6a-a0a0-aedb889e0c6a" # CentOS 7
+storageCapacity: 13
 keyPair: mykey
 securityGroups: ["default","allow_ping_ssh_rdp"]
 #networkName: testing

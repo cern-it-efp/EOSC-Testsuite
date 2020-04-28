@@ -56,7 +56,7 @@ Release notes
 ---------------------------------------------
 (Note the versions are numbered with the date of the release: YEAR.MONTH)
 
-``20.4``
+``20.5``
 
 -Improved support for running on Oracle Cloud Infrastructure and T-Systems' OTC.
 
