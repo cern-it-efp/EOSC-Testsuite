@@ -15,7 +15,7 @@ resource "google_compute_instance" "launcher" {
  boot_disk {
    initialize_params {
      image = "centos-cloud/centos-7"
-     size = 50
+     size = 30 # null equals to 20
    }
  }
  network_interface {
@@ -34,7 +34,7 @@ resource "null_resource" "docker" {
   }
   provisioner "remote-exec" {
     inline = [
-      "sudo yum update -y ; sudo yum install docker -y ; systemctl start docker",
+      "sudo yum update -y ; sudo yum install docker -y ; sudo systemctl start docker",
       "sudo docker run --name tslauncher -itd --net=host cernefp/tslauncher",
       "echo sudo docker exec -it tslauncher bash >> ~/.bashrc"
     ]

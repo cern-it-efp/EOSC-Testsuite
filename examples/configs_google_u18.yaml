@@ -8,6 +8,7 @@ image: "ubuntu-os-cloud/ubuntu-1804-lts"
 pathToCredentials: "/gcp.json"
 project: "ocrets"
 gpuType: "nvidia-tesla-p100"
+storageCapacity: 21
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:

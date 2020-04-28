@@ -361,13 +361,12 @@ def terraformProvisionment(
 
                 terraform_cli_vars["gpuCount"] = nodes if test == "dlTest" else "0"
                 terraform_cli_vars["gpuType"] = tryTakeFromYaml(configs, "gpuType", None)
-                #terraform_cli_vars["storageCapacity"] = tryTakeFromYaml(configs, "storageCapacity", 0) # TODO: this is fixed to 100
 
             if configs["providerName"] in ("aws", "cloudstack", "google", "openstack", "opentelekomcloud", "exoscale"):
 
                 terraform_cli_vars["securityGroups"] = tryTakeFromYaml(configs, "securityGroups", None)
 
-            if configs["providerName"] in ("cloudstack", "oci", "aws"):
+            if configs["providerName"] in ("cloudstack", "oci", "aws", "google"):
 
                 terraform_cli_vars["storageCapacity"] = tryTakeFromYaml(configs, "storageCapacity", None)
 

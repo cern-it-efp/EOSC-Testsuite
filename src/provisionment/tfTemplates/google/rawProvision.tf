@@ -11,7 +11,7 @@ resource "google_compute_instance" "kubenode" {
   boot_disk {
     initialize_params {
       image = yamldecode(file(var.configsFile))["image"]
-      size  = 100 # TODO: should not be fixed
+      size  = var.storageCapacity
     }
   }
   network_interface {

@@ -6,7 +6,7 @@ flavor: "Medium"
 zone: "ch-gva-2"
 template: "Linux CentOS 8 64-bit"
 keyPair: "k_cl"
-securityGroups: "[\"default\"]"
+securityGroups: ["default"]
 storageCapacity: 100
 
 #---------------COST CALCULATION------------------------------------------------

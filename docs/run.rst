@@ -46,6 +46,8 @@ Options
 Other commands
 ==================
 
+TODO: document container aliases tfLogs, ansibleLogs, watchPods
+
 Once the test suite is running, you can view the Terraform provisionment logs by doing:
 
 .. code-block:: console
