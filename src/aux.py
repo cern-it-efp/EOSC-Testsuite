@@ -237,3 +237,58 @@ def validateYaml(configs, testsCatalog, noTerraform, extraSupportedClouds):
         print("Error validating testsCatalog file: \n %s" % ex.message)
         stop(1)
     # ------------------
+
+
+def getNodeName(configs, test, randomId):
+    """Generates a node name containing the provider name, test and a unique
+       identifier. """
+
+    nodeName = "kubenode-%s-%s-%s" % (configs["providerName"],test,randomId)
+    return nodeName.lower()
+
+
+def subprocPrint(test):
+    """This runs on a child process. Reads the ansible log file, adds clusterID
+       to each line and prints it.
+
+    Parameters:
+        test (str): Cluster identification.
+    """
+
+    line = None
+    with open(ansibleLogs % test, 'r') as f:
+        while True:
+            line = f.readline()
+            if len(line) > 0 and line != '\n':
+                print("[ %s ] %s" % (test, line.replace('\n', '')))
+
+
+def getIP(resource, provider):
+    """Given a terraform resource json description, returns the resource's
+       IP address if such exists
+
+    Parameters:
+        resource (object): Terraform resource definition.
+        provider (str): Provider name.
+
+    Returns:
+        str: Resource's IP address.
+    """
+
+    try:
+        if provider == "exoscale" or provider == "cloudstack":
+            return resource["values"]["ip_address"]
+        elif provider == "aws":
+            return resource["values"]["private_ip"]
+        elif provider == "azurerm":
+            return resource["values"]["private_ip_address"]
+        elif provider == "openstack":
+            return resource["values"]["network"][0]["fixed_ip_v4"]
+        elif provider == "google":
+            return resource["values"]["network_interface"][0]["network_ip"]
+        elif provider == "opentelekomcloud":
+            return resource["values"]["access_ip_v4"]
+        elif provider == "oci":
+            return resource["values"]["private_ip"]
+    except KeyError:
+        return None

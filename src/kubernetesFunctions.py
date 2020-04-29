@@ -407,3 +407,21 @@ def kubectl(
             res = False
 
     return 0 if res is True else 1
+
+
+def waitForSA(kubeconfig):
+    """Wait for cluster's service account to be ready.
+
+    Parameters:
+        kubeconfig (str): Path to a kubeconfig file.
+
+    Returns:
+        int: 0 for success, 1 for failure
+    """
+
+    for i in range(15):
+        if runCMD('kubectl --kubeconfig %s get sa default' % kubeconfig,
+                hideLogs=True) == 0:
+            return 0
+        time.sleep(2)
+    return 1

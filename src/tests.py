@@ -10,7 +10,7 @@ except ModuleNotFoundError as ex:
     sys.exit(1)
 from checker import *
 from provisionment import *
-from kubern8s import *
+from kubernetesFunctions import *
 from aux import *
 import init
 
