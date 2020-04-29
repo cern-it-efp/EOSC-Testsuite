@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-
 import sys
 try:
     import os
@@ -17,7 +16,6 @@ from aux import *
 from init import *
 from kubernetesFunctions import *
 from ansibleFunctions import *
-
 
 provisionFailMsg = "Failed to provision raw VMs. Check 'logs' file for details"
 bootstrapFailMsg = "Failed to bootstrap '%s' k8s cluster. Check 'logs' file"
@@ -134,7 +132,6 @@ def terraformProvisionment(
         credentials,
         dependencies,
         baseCWD,
-        provDict,
         extraSupportedClouds):
     """Provisions VMs on the provider side and creates a k8s cluster with them.
 
@@ -151,7 +148,6 @@ def terraformProvisionment(
         credentials (str): HCL code related to authentication/credentials.
         dependencies (str): HCL code related to infrastructure dependencies.
         baseCWD (str): Path to the base directory.
-        provDict (dict): Dictionary containing the supported clouds.
         extraSupportedClouds (dict): Extra supported clouds.
 
     Returns:

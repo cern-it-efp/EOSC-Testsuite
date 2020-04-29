@@ -1,5 +1,5 @@
 provider "opentelekomcloud" {
-  access_key = yamldecode(file(yamldecode(file(var.configsFile))["authFile"]))["accK"] # TODO: try this
+  access_key = yamldecode(file(yamldecode(file(var.configsFile))["authFile"]))["accK"] 
   secret_key = yamldecode(file(yamldecode(file(var.configsFile))["authFile"]))["secK"]
   domain_name = yamldecode(file(var.configsFile))["domainName"]
   tenant_name = yamldecode(file(var.configsFile))["tenantName"]

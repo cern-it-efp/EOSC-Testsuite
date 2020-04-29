@@ -78,14 +78,14 @@ resource "oci_core_security_list" "tslauncher_security_list" {
     protocol = "all"
   }
 
-  ingress_security_rules { # Ingress: icmp. TODO: both types 8 and 0 ?
+  ingress_security_rules {
     source = "0.0.0.0/0"
     protocol = 1
     icmp_options {
       type = 8
     }
   }
-  ingress_security_rules { # Ingress: icmp. TODO: both types 8 and 0 ?
+  ingress_security_rules { 
     source = "0.0.0.0/0"
     protocol = 1
     icmp_options {

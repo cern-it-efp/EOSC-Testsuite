@@ -49,7 +49,6 @@ def sharedClusterTests(msgArr, onlyTest, retry, noTerraform, resDir, numberOfNod
                                           credentials,
                                           dependencies,
                                           baseCWD,
-                                          provDict,
                                           extraSupportedClouds,
                                           noTerraform)
         if prov is False:
@@ -345,7 +344,6 @@ def dlTest(onlyTest, retry, noTerraform, resDir):
                                           credentials,
                                           dependencies,
                                           baseCWD,
-                                          provDict,
                                           extraSupportedClouds,
                                           noTerraform)
         if prov is False:
@@ -490,7 +488,6 @@ def hpcTest(onlyTest, retry, noTerraform, resDir):
                                           credentials,
                                           dependencies,
                                           baseCWD,
-                                          provDict,
                                           extraSupportedClouds,
                                           noTerraform)
         if prov is False:

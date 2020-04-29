@@ -31,7 +31,7 @@ variable "useDefaultNetwork" { default = true } # default uses existing network 
 
 ############################ AZURE #############################################
 variable "clusterRandomID" { default = "" }
-variable "vmSize" { default = "" } # TODO
+variable "vmSize" { default = "" } 
 #variable "secGroupId" {
 #  default = "SECGROUPID_PH"
 #}

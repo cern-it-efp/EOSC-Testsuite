@@ -12,8 +12,7 @@ dependencies = ""
 credentials = ""
 testsRoot = "src/tests/"
 baseCWD = os.getcwd()
-provDict = loadFile("src/schemas/provDict.yaml",
-                    required=True)["allProviders"]
+#provDict = loadFile("src/schemas/provDict.yaml", required=True)["allProviders"]
 extraSupportedClouds = loadFile("src/schemas/provDict.yaml",
                                 required=True)["extraSupportedClouds"]
 obtainCost = True
@@ -68,6 +67,13 @@ def initAndChecks(noTerraform,
     configs = loadFile(cfgPath, required=True)
     testsCatalog = loadFile(tcPath, required=True)
 
+    # TODO: here should check: if noTerraform is false, if the provider is supported by terraform
+    #if noTerraform is False and configs['providerName'] not in provDict:
+    if noTerraform is False and supportedProvider(configs['providerName']) is False:
+        writeToFile("src/logging/header", "Provider '%s' not supported" %
+                    configs['providerName'], True)
+        stop(1)
+
     # SSH key checks: exists and permissions set to 600
     if os.path.isfile(configs["pathToKey"]) is False:
         print("Key file not found at '%s'" % configs["pathToKey"])
@@ -78,16 +84,11 @@ def initAndChecks(noTerraform,
 
     validateYaml(configs, testsCatalog, noTerraform, extraSupportedClouds)
 
-    # these are for providers that support terraform but are not in provDict
+    # these are for providers that support terraform but are not in extraSupportedClouds
     instanceDefinition = loadFile("configurations/instanceDefinition")
     extraInstanceConfig = loadFile("configurations/extraInstanceConfig")
     dependencies = loadFile("configurations/dependencies")
     credentials = loadFile("configurations/credentials")
-
-    if noTerraform is False and configs['providerName'] not in provDict:
-        writeToFile("src/logging/header", "Provider '%s' not supported" %
-                    configs['providerName'], True)
-        stop(1)
 
     # --------General config checks
     if configs['providerName'] not in extraSupportedClouds \

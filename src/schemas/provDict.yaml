@@ -1,17 +1,17 @@
-# TODO: unify?
-allProviders:
-  openstack: 'openstack_compute_instance_v2.kubenode[count.index].network[0].fixed_ip_v4'
-  aws: 'element(aws_instance.kubenode.*.private_ip, count.index)'
-  azurerm: 'element(azurerm_network_interface.terraformnic.*.private_ip_address, count.index)'
-  google: 'element(google_compute_instance.kubenode.*.network_interface.0.network_ip, count.index)'
-  exoscale: 'element(exoscale_compute.kubenode.*.ip_address, count.index)'
-  cloudstack: 'element(cloudstack_instance.kubenode.*.ip_address, count.index)'
-  opentelekomcloud: 'element(opentelekomcloud_compute_instance_v2.kubenode.*.access_ip_v4, count.index)'
-  oci:
+# TODO: unify! this is loaded at src/init.py, used at src/provisionment.py, src/terraformFunctions.py, src/tests.py, src/main.py
+#allProviders:
+#  openstack: #'openstack_compute_instance_v2.kubenode[count.index].network[0].fixed_ip_v4'
+#  aws: #'element(aws_instance.kubenode.*.private_ip, count.index)'
+#  azurerm: #'element(azurerm_network_interface.terraformnic.*.private_ip_address, count.index)'
+#  google: #'element(google_compute_instance.kubenode.*.network_interface.0.network_ip, count.index)'
+#  exoscale: #'element(exoscale_compute.kubenode.*.ip_address, count.index)'
+#  cloudstack: #'element(cloudstack_instance.kubenode.*.ip_address, count.index)'
+#  opentelekomcloud: #'element(opentelekomcloud_compute_instance_v2.kubenode.*.access_ip_v4, count.index)'
+#  oci:
 extraSupportedClouds:
-  - azurerm
   - openstack
   - aws
+  - azurerm
   - google
   - exoscale
   - cloudstack

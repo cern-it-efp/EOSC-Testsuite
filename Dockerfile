@@ -58,6 +58,6 @@ RUN echo 'alias gcd="git checkout development"' >> ~/.bashrc
 RUN echo 'alias watchPods="watch kubectl get pods -owide"' >> ~/.bashrc
 
 # ------------------ Clone TS repo and get bash
-RUN echo cd EOSC-Testsuite >> ~/.bashrc
+RUN echo cd /EOSC-Testsuite >> ~/.bashrc
 ENTRYPOINT git clone -q https://github.com/cern-it-efp/EOSC-Testsuite.git && \
            cd EOSC-Testsuite ; bash

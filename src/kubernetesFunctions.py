@@ -22,7 +22,7 @@ except ModuleNotFoundError as ex:
     sys.exit(1)
 
 from aux import *
-from checker import * # TODO: in case of fail, move checkPodAlive from checker.py here
+from checker import * 
 
 
 Action = Enum('Action', 'create delete cp exec')

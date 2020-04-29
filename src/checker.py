@@ -4,6 +4,15 @@ import os
 from aux import *
 
 
+def supportedProvider(provider):
+    """Return true in case the provider is supported by Terraform.
+       False otherwise"""
+
+    #TODO
+
+    return True
+
+
 def formerProvisionExists():
     """Checks whether there are .tf files from a previous run."""
 

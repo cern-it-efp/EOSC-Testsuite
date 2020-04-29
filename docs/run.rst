@@ -46,13 +46,12 @@ Options
 Other commands
 ==================
 
-TODO: document container aliases tfLogs, ansibleLogs, watchPods
-
 Once the test suite is running, you can view the Terraform provisionment logs by doing:
 
 .. code-block:: console
 
     $ tail -f logs
+
 
 You can see the Ansible bootstrapping logs by doing:
 
@@ -60,11 +59,13 @@ You can see the Ansible bootstrapping logs by doing:
 
     $ tail -f src/logging/ansibleLogs*
 
+
 Once the bootstrapping has completed and tests are deployed, you can see the pods statuses by doing:
 
 .. code-block:: console
 
     $ watch kubectl get pods
+
 
 If GPU and HPC tests were deployed, see their pods by doing:
 
@@ -72,3 +73,16 @@ If GPU and HPC tests were deployed, see their pods by doing:
 
     $ watch kubectl --kubeconfig src/tests/dlTest/config get pods # For GPU cluster
     $ watch kubectl --kubeconfig src/tests/hpcTest/config get pods # For HPC cluster
+
+
+The following aliases are available when using the provided Docker image:
+
++--------------+------------------------------------------------------------------------+
+|Alias         | Equivalence                                                            |
++==============+========================================================================+
+|tfLogs        |'tail -f logs' (must be run inside /EOSC-Testsuite)                     |
++--------------+------------------------------------------------------------------------+
+|ansibleLogs   |'tail -f src/logging/ansibleLogs*' (must be run inside /EOSC-Testsuite) |
++--------------+------------------------------------------------------------------------+
+|watchPods     |'watch kubectl get pods -owide'                                         |
++--------------+------------------------------------------------------------------------+

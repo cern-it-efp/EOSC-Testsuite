@@ -48,7 +48,6 @@ def provisionAndBootstrap(test,
                           credentials,
                           dependencies,
                           baseCWD,
-                          provDict,
                           extraSupportedClouds,
                           noTerraform):
     """Provision infrastructure and/or bootstrap the k8s cluster.
@@ -66,13 +65,14 @@ def provisionAndBootstrap(test,
         credentials (str): HCL code related to authentication/credentials.
         dependencies (str): HCL code related to infrastructure dependencies.
         baseCWD (str): Path to the base directory.
-        provDict (dict): Dictionary containing the supported clouds.
         extraSupportedClouds (dict): Extra supported clouds.
 
     Returns:
         bool: True if the cluster was succesfully provisioned. False otherwise.
         str: Message informing of the provisionment task result.
     """
+
+    #TODO: the calls to terraform and ansible should all be done from here (currently terraformFunctions calls ansiblePlaybook, bc of calling terraformProvisionment in line 113 here)
 
     if noTerraform is True:  # Only ansible
         mainTfDir = testsRoot + test
@@ -121,5 +121,4 @@ def provisionAndBootstrap(test,
                                       credentials,
                                       dependencies,
                                       baseCWD,
-                                      provDict,
                                       extraSupportedClouds)
