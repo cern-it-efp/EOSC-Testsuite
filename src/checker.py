@@ -1,15 +1,21 @@
 #!/usr/bin/env python3
 
 import os
+import requests
 from aux import *
 
 
-def supportedProvider(provider):
-    """Return true in case the provider is supported by Terraform.
-       False otherwise"""
+def supportedProvider(configs):
+    """Return True in case the provider supports Terraform officially or
+       unofficially (plugin required).
+       In other words, check if docs exist for it."""
 
-    #TODO
-
+    if requests.get("https://www.terraform.io/docs/providers/%s"
+        % configs["providerName"]).status_code == 404:
+        try:
+            return configs["unofficialPlugin"]
+        except:
+            return False
     return True
 
 
@@ -33,6 +39,7 @@ def checkPodAlive(podName, resDir, toLog, resultFile):
                   toLog)
         return False
     return True
+
 
 def checkCost(obtainCost, value):
     """ Checks the provided value is not None and is greater than 0.

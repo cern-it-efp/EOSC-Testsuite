@@ -10,8 +10,8 @@ securityGroups: ["default"]
 storageCapacity: 100
 
 #---------------COST CALCULATION------------------------------------------------
-costCalculation:
-  generalInstancePrice: 0.2
-  GPUInstancePrice: 0.2
-  HPCInstancePrice: 0.2
-  s3bucketPrice:
+#costCalculation:
+#  generalInstancePrice: 0.2
+#  GPUInstancePrice: 0.2
+#  HPCInstancePrice: 0.2
+#  s3bucketPrice:

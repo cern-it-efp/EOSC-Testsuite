@@ -12,10 +12,16 @@ dependencies = ""
 credentials = ""
 testsRoot = "src/tests/"
 baseCWD = os.getcwd()
-#provDict = loadFile("src/schemas/provDict.yaml", required=True)["allProviders"]
-extraSupportedClouds = loadFile("src/schemas/provDict.yaml",
-                                required=True)["extraSupportedClouds"]
 obtainCost = True
+extraSupportedClouds = ["openstack",
+                        "aws",
+                        "azurerm",
+                        "google",
+                        "exoscale",
+                        "cloudstack",
+                        "opentelekomcloud",
+                        "oci"]
+
 
 def initAndChecks(noTerraform,
                   extraSupportedClouds,
@@ -67,9 +73,9 @@ def initAndChecks(noTerraform,
     configs = loadFile(cfgPath, required=True)
     testsCatalog = loadFile(tcPath, required=True)
 
-    # TODO: here should check: if noTerraform is false, if the provider is supported by terraform
-    #if noTerraform is False and configs['providerName'] not in provDict:
-    if noTerraform is False and supportedProvider(configs['providerName']) is False:
+    validateYaml(configs, testsCatalog, noTerraform, extraSupportedClouds)
+
+    if noTerraform is False and supportedProvider(configs) is False:
         writeToFile("src/logging/header", "Provider '%s' not supported" %
                     configs['providerName'], True)
         stop(1)
@@ -81,8 +87,6 @@ def initAndChecks(noTerraform,
     if "600" not in oct(os.stat(configs["pathToKey"]).st_mode & 0o777):
         print("Key permissions must be set to 600")
         stop(1)
-
-    validateYaml(configs, testsCatalog, noTerraform, extraSupportedClouds)
 
     # these are for providers that support terraform but are not in extraSupportedClouds
     instanceDefinition = loadFile("configurations/instanceDefinition")
@@ -99,6 +103,8 @@ def initAndChecks(noTerraform,
             "ERROR: NAME_PH was not found in instanceDefinition file.",
             True)
         stop(1)
+
+    #TODO: costCalculation is an optional property
 
     # --------Tests config checks
     selected = []

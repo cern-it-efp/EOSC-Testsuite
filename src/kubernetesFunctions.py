@@ -22,7 +22,7 @@ except ModuleNotFoundError as ex:
     sys.exit(1)
 
 from aux import *
-from checker import * 
+from checker import *
 
 
 Action = Enum('Action', 'create delete cp exec')
@@ -49,64 +49,6 @@ def checkCluster(test):
             True)
         return False
     return True
-
-
-def fetchResults_while(resDir, pod, source, file, toLog): # the original
-    """Fetch tests results file from pod.
-
-    Parameters:
-        resDir (str): Path to the results dir for the current run.
-        pod (str): Pod from which the result file has to be collected.
-        source (str): Location of the results file on the pod.
-        file (str): Name to be given to the file.
-        toLog (str): Path to the log file to which logs have to be sent
-    """
-
-    source = "%s:%s" % (pod,source)
-    while os.path.exists(resDir + "/" + file) is False:
-        with contextlib.redirect_stdout(io.StringIO()):  # to hide logs
-            print("Fetching results...")
-            kubectl(Action.cp, podPath=source, localPath="%s/%s" %
-                    (resDir, file), fetch=True)
-    writeToFile(toLog, file + " fetched!", True)
-
-
-def fetchResults_if(resDir, pod, source, file, toLog):
-    """Fetch tests results file from pod.
-
-    Parameters:
-        resDir (str): Path to the results dir for the current run.
-        pod (str): Pod from which the result file has to be collected.
-        source (str): Location of the results file on the pod.
-        file (str): Name to be given to the file.
-        toLog (str): Path to the log file to which logs have to be sent
-    """
-
-    source = "%s:%s" % (pod,source)
-    if os.path.exists(resDir + "/" + file) is False:
-        with contextlib.redirect_stdout(io.StringIO()):  # to hide logs
-            print("Fetching results...")
-            kubectl(Action.cp, podPath=source, localPath="%s/%s" %
-                    (resDir, file), fetch=True)
-    else:
-        writeToFile(toLog, file + " fetched!", True)
-
-
-def fetchResults_simple(resDir, pod, source, file):
-    """Fetch tests results file from pod.
-
-    Parameters:
-        resDir (str): Path to the results dir for the current run.
-        pod (str): Pod from which the result file has to be collected.
-        source (str): Location of the results file on the pod.
-        file (str): Name to be given to the file.
-    """
-
-    source = "%s:%s" % (pod,source)
-    with contextlib.redirect_stdout(io.StringIO()):  # to hide logs
-        print("Fetching results...")
-        kubectl(Action.cp, podPath=source, localPath="%s/%s" %
-                (resDir, file), fetch=True)
 
 
 def fetchResults(resDir, podName, source, file, toLog):

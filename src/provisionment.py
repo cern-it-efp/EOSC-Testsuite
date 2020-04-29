@@ -74,40 +74,7 @@ def provisionAndBootstrap(test,
 
     #TODO: the calls to terraform and ansible should all be done from here (currently terraformFunctions calls ansiblePlaybook, bc of calling terraformProvisionment in line 113 here)
 
-    if noTerraform is True:  # Only ansible
-        mainTfDir = testsRoot + test
-        kubeconfig = "%s/src/tests/%s/config" % (baseCWD, test)  # "config"
-
-
-        openUser = tryTakeFromYaml(configs,
-                                   "openUser",
-                                   "root",
-                                   msgExcept=msgRoot % configs["providerName"])
-
-        if test == "shared":
-            mainTfDir = testsRoot + "shared"
-            os.makedirs(mainTfDir, exist_ok=True)
-            kubeconfig = "~/.kube/config"
-        result, masterIP = ansiblePlaybook(mainTfDir,
-                                           baseCWD,
-                                           configs["providerName"],
-                                           kubeconfig,
-                                           noTerraform,
-                                           test,
-                                           configs["pathToKey"],
-                                           openUser,
-                                           configs)
-        if result != 0:
-            return False, bootstrapFailMsg % test
-        else:
-            # -------- wait for default service account to be ready and finish
-            if waitForSA(kubeconfig) == 0:
-                writeToFile(toLog, clusterCreatedMsg % (test, masterIP), True)
-                return True, ""
-            else:
-                return False, TOserviceAccountMsg % test
-
-    else:  # Both terraform and ansible
+    if noTerraform is False: # Both terraform and ansible
         return terraformProvisionment(test,
                                       nodes,
                                       flavor,
@@ -122,3 +89,34 @@ def provisionAndBootstrap(test,
                                       dependencies,
                                       baseCWD,
                                       extraSupportedClouds)
+
+    else: # Only ansible
+        mainTfDir = testsRoot + test
+        kubeconfig = "%s/src/tests/%s/config" % (baseCWD, test)  # "config"
+        openUser = tryTakeFromYaml(configs,
+                                   "openUser",
+                                   "root",
+                                   msgExcept=msgRoot % configs["providerName"])
+
+        if test == "shared":
+            mainTfDir = testsRoot + "shared"
+            os.makedirs(mainTfDir, exist_ok=True)
+            kubeconfig = "~/.kube/config"
+
+        result, masterIP = ansiblePlaybook(mainTfDir,
+                                           baseCWD,
+                                           configs["providerName"],
+                                           kubeconfig,
+                                           noTerraform,
+                                           test,
+                                           configs["pathToKey"],
+                                           openUser,
+                                           configs)
+        if result != 0:
+            return False, bootstrapFailMsg % test
+
+        # -------- wait for default service account to be ready and finish
+        if waitForSA(kubeconfig) == 0:
+            writeToFile(toLog, clusterCreatedMsg % (test, masterIP), True)
+            return True, ""
+        return False, TOserviceAccountMsg % test

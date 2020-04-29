@@ -75,7 +75,7 @@ def sharedClusterTests(msgArr, onlyTest, retry, noTerraform, resDir, numberOfNod
     init.queue.put((None, testCost))
 
 
-def runTest(resource, # TODO: not all the tests have resource_raw and substitution
+def runTest(resource,
             toLog,
             testName,
             resDir,
@@ -434,7 +434,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir):
             "Cluster doesn't have enough GPU support. GPU flavor required.",
             "src/logging/dlTest")
     else:
-        fetchResults( # TODO: do the "pod was destroyed" thing here
+        fetchResults(
             resDir,
             "train-mpijob-worker-0:/mpi_learn/bb_train_history.json",
             "bb_train_history.json",

@@ -8,6 +8,7 @@ keyPair: "k_cl"
 securityGroups: ["default"]
 storageCapacity: 100
 foo: foo
+#unofficialPlugin: False
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:
