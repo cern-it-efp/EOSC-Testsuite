@@ -85,7 +85,7 @@ resource "oci_core_security_list" "tslauncher_security_list" {
       type = 8
     }
   }
-  ingress_security_rules { 
+  ingress_security_rules {
     source = "0.0.0.0/0"
     protocol = 1
     icmp_options {

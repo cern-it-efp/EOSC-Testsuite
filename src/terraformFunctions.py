@@ -269,6 +269,10 @@ def terraformProvisionment(
                         terraform_cli_vars=terraform_cli_vars) != 0:
             return False, provisionFailMsg
 
+        return True, ""
+
+
+    """
     # ---------------- RUN ANSIBLE (first create hosts file)
     result, masterIP = ansiblePlaybook(mainTfDir,
                                        baseCWD,
@@ -288,3 +292,4 @@ def terraformProvisionment(
         return True, ""
     else:
         return False, TOserviceAccountMsg % test
+    """
