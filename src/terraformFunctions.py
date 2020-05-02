@@ -15,7 +15,6 @@ except ModuleNotFoundError as ex:
 from aux import *
 from init import *
 from kubernetesFunctions import *
-from ansibleFunctions import *
 
 provisionFailMsg = "Failed to provision raw VMs. Check 'logs' file for details"
 bootstrapFailMsg = "Failed to bootstrap '%s' k8s cluster. Check 'logs' file"
@@ -270,26 +269,3 @@ def terraformProvisionment(
             return False, provisionFailMsg
 
         return True, ""
-
-
-    """
-    # ---------------- RUN ANSIBLE (first create hosts file)
-    result, masterIP = ansiblePlaybook(mainTfDir,
-                                       baseCWD,
-                                       configs["providerName"],
-                                       kubeconfig,
-                                       None,
-                                       test,
-                                       configs["pathToKey"],
-                                       openUser,
-                                       configs)
-    if result != 0:
-        return False, bootstrapFailMsg % test
-
-    # ---------------- wait for default service account to be ready and finish
-    if waitForSA(kubeconfig) == 0:
-        writeToFile(toLog, clusterCreatedMsg % (test, masterIP), True)
-        return True, ""
-    else:
-        return False, TOserviceAccountMsg % test
-    """

@@ -72,9 +72,7 @@ def provisionAndBootstrap(test,
         str: Message informing of the provisionment task result.
     """
 
-    #TODO: the calls to terraform and ansible should all be done from here (currently terraformFunctions calls ansiblePlaybook, bc of calling terraformProvisionment in line 113 here)
-
-    if noTerraform is False: # Both terraform and ansible
+    if noTerraform is False: # run terraform too
         res, msg = terraformProvisionment(test,
                                       nodes,
                                       flavor,
