@@ -76,25 +76,25 @@ def getIP():
 
             elif provider == "aws":
                 if res["type"] == "aws_instance":
-                    return resource["values"]["public_ip"]
+                    return res["values"]["public_ip"]
 
             elif provider == "cloudstack":
                 if res["type"] == "cloudstack_instance":
-                    return resource["values"]["ip_address"]
+                    return res["values"]["ip_address"]
 
             # TODO: do this for all supported providers
 
             elif provider == "openstack":
                 if res["type"] == "":
-                    return resource["values"]["network"][0]["fixed_ip_v4"]
+                    return res["values"]["network"][0]["fixed_ip_v4"]
 
             elif provider == "google":
                 if res["type"] == "":
-                    return resource["values"]["network_interface"][0]["network_ip"]
+                    return res["values"]["network_interface"][0]["network_ip"]
 
             elif provider == "opentelekomcloud":
                 if res["type"] == "":
-                    return resource["values"]["access_ip_v4"]
+                    return res["values"]["access_ip_v4"]
 
     except:
         print("Does the VM exist?")
