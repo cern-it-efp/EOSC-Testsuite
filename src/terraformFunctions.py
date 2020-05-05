@@ -240,6 +240,13 @@ def terraformProvisionment(
                 terraform_cli_vars["region"] = tryTakeFromYaml(configs, "region", None)
                 terraform_cli_vars["availabilityZone"] = tryTakeFromYaml(configs, "availabilityZone", None)
 
+            if configs["providerName"] == "opentelekomcloud":
+
+                networkID = tryTakeFromYaml(configs, "networkID", False)
+                if networkID is not False:
+                    terraform_cli_vars["useDefaultNetwork"] = False
+                terraform_cli_vars["availabilityZone"] = tryTakeFromYaml(configs, "availabilityZone", None)
+
             if configs["providerName"] == "google":
 
                 terraform_cli_vars["gpuCount"] = nodes if test == "dlTest" else "0"

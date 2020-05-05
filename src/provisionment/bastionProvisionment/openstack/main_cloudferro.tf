@@ -7,6 +7,9 @@ variable "openUser" {
 variable "key" {
   default = "~/.ssh/id_rsa"
 }
+variable "networkName" {
+  default = "private"
+}
 
 provider "openstack" {}
 
@@ -16,6 +19,9 @@ resource "openstack_compute_instance_v2" "tslauncher" {
   image_name = "CentOS 7"
   key_pair = "mykey"
   security_groups = ["default","allow_ping_ssh_rdp"]
+  network {
+    name = var.networkName
+  }
 
 }
 

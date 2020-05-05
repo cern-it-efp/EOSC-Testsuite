@@ -41,6 +41,10 @@ properties:
     securityGroups:
         type:
             - array
+    availabilityZone:
+        type: string
+    networkID:
+        type: string
     costCalculation:
         type:
             - object

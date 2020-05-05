@@ -5,11 +5,15 @@ openUser: ubuntu
 flavor: "s2.medium.4"
 imageID: "1616e0b6-503a-4698-946f-cf9942c4c73b"
 keyPair: "exo"
-securityGroups: ["default"]
 domainName: "OTC-EU-DE-00000000001000046175"
 tenantName: "eu-de"
 storageCapacity: 50
 authFile: /home/ipelu/Desktop/tsk.yaml
+
+# optional
+securityGroups: ["default"]
+availabilityZone: eu-de-02 # faulty for gpu
+networkID: "2593d7a9-0ecd-4a19-b4bc-65ca2c62e1c7"
 
 
 #---------------COST CALCULATION------------------------------------------------

@@ -23,6 +23,7 @@ ip = None
 onlySsh = False
 
 # TODO: take here the openUser, the key and other vars needed at the .tf script
+# use a file bastionConfigs.yaml
 
 try:
     options, values = getopt.getopt(
@@ -50,6 +51,7 @@ if user is None:
     sys.exit(1)
 
 # TODO: check, if there are no .tf files at tfPath -> exit
+
 
 def runCMD(cmd, hideLogs=None, read=None):
     if read is True:
@@ -82,19 +84,17 @@ def getIP():
                 if res["type"] == "cloudstack_instance":
                     return res["values"]["ip_address"]
 
-            # TODO: do this for all supported providers
-
-            elif provider == "openstack":
-                if res["type"] == "":
-                    return res["values"]["network"][0]["fixed_ip_v4"]
-
             elif provider == "google":
-                if res["type"] == "":
-                    return res["values"]["network_interface"][0]["network_ip"]
+                if res["type"] == "google_compute_instance":
+                    return res["values"]["network_interface"][0]["access_config"][0]["nat_ip"]
 
             elif provider == "opentelekomcloud":
-                if res["type"] == "":
-                    return res["values"]["access_ip_v4"]
+                if res["type"] == "opentelekomcloud_compute_floatingip_associate_v2":
+                    return res["values"]["floating_ip"]
+
+            elif provider == "openstack":
+                if res["type"] == "openstack_compute_floatingip_associate_v2":
+                    return res["values"]["floating_ip"]
 
     except:
         print("Does the VM exist?")
@@ -112,7 +112,7 @@ else:
 os.chdir(tfPath)
 
 if onlySsh is not True:
-    if provider == "azurerm": # TODO: in azurerm, w/o this the public ip is not initialized
+    if provider == "azurerm": # in azurerm, w/o this the public ip is not initialized
 
 #    resource "azurerm_virtual_network" "myterraformnetwork
 #    resource "azurerm_subnet" "myterraformsubnet

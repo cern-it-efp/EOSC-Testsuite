@@ -1,3 +1,6 @@
+variable "networkID" {
+  default = "2593d7a9-0ecd-4a19-b4bc-65ca2c62e1c7"
+}
 variable "public_ip" {
   default = "80.158.22.125"
 }
@@ -39,11 +42,16 @@ provider "opentelekomcloud" {
   auth_url    = "https://iam.eu-de.otc.t-systems.com/v3"
 }
 
-resource "opentelekomcloud_compute_instance_v2" "tslauncher" {
-  name = "tslauncher"
+resource "opentelekomcloud_compute_instance_v2" "fpgavm" {
+  count = 2
+  name = "fpgavm-${count.index}"
   flavor_name = var.flavor
   key_pair = var.keyPair
   #security_groups = var.secGroups
+
+  network { # requires the ID as 'name'
+    name = var.networkID # var.networkName
+  }
 
   block_device {
     uuid                  = var.imageID
@@ -53,27 +61,5 @@ resource "opentelekomcloud_compute_instance_v2" "tslauncher" {
     destination_type      = "volume"
     delete_on_termination = true
     volume_type           = "SATA"
-  }
-}
-
-resource "opentelekomcloud_compute_floatingip_associate_v2" "myip" {
-  floating_ip = var.public_ip
-  instance_id = opentelekomcloud_compute_instance_v2.tslauncher.id
-}
-
-resource "null_resource" "allow_root" {
-  depends_on = [opentelekomcloud_compute_floatingip_associate_v2.myip]
-  connection {
-    type        = "ssh"
-    host = var.public_ip
-    user        = var.openUser
-    private_key = file("~/.ssh/id_rsa")
-  }
-  provisioner "remote-exec" {
-    inline = [
-      "sudo apt-get update",
-      "sudo apt-get install docker.io -y",
-      "sudo docker run -itd --net=host cernefp/tslauncher"
-    ]
   }
 }
