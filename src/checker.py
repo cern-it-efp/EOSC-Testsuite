@@ -52,7 +52,10 @@ def checkCost(obtainCost, value):
         bool: True in case the given value can be used for cost estimation.
     """
 
-    return value >= 0 and obtainCost is True if value else False
+    if value:
+        return value >= 0 and obtainCost is True
+    else:
+        return False
 
 
 def checkDLsupport():
@@ -82,7 +85,7 @@ def checkResultsExist(resDir):
         return len(files) > 0
 
 
-def checkProvidedIPs(testsSharingCluster,
+def checkProvidedIPs(sharedClusterTests,
                      customClustersTests,
                      configs,
                      testsCatalog):
@@ -90,13 +93,13 @@ def checkProvidedIPs(testsSharingCluster,
        IPs for the selected tests were provided at testsCatalog.yaml
 
     Parameters:
-        testsSharingCluster (Array<str>): Tests sharing general purpose cluster.
+        sharedClusterTests (Array<str>): Tests sharing general purpose cluster.
         customClustersTests (Array<str>): Tests using custom dedicated clusters.
         configs (dict): Object containing configs.yaml's configurations.
         testsCatalog (dict): Object containing testsCatalog.yaml's content.
     """
 
-    for test in testsSharingCluster:
+    for test in sharedClusterTests:
         if testsCatalog[test]["run"] is True:
             try:
                 configs["clusters"]["shared"]

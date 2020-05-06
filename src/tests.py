@@ -150,7 +150,7 @@ def s3Test(resDir):
     toLog = "src/logging/shared"
     testName = "s3Test"
     resultOnPod = "/home/s3_test.json"
-    additionalResourcePrice = [init.configs["costCalculation"]["s3bucketPrice"]] # TODO: No exception bc s3bucketPrice is a required property (can be set to None), desired?
+    additionalResourcePrice = tryTakeFromYaml(init.configs, "costCalculation.s3bucketPrice", None)
     substitution = [
         {
             "before": "ENDPOINT_PH",

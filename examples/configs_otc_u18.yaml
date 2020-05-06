@@ -12,7 +12,7 @@ authFile: /home/ipelu/Desktop/tsk.yaml
 
 # optional
 securityGroups: ["default"]
-availabilityZone: eu-de-02 # faulty for gpu
+availabilityZone: eu-de-02 # default is eu-de-02 (faulty for gpu)
 networkID: "2593d7a9-0ecd-4a19-b4bc-65ca2c62e1c7"
 
 

@@ -37,12 +37,6 @@ credentials = ""
 totalCost = 0
 procs = []
 viaBackend = False
-testsSharingCluster = ["s3Test",
-                       "dataRepatriationTest",
-                       "perfsonarTest",
-                       "cpuBenchmarking",
-                       "dodasTest"]
-customClustersTests = ["dlTest", "hpcTest"]
 resultsExist = False
 
 retry = None
@@ -187,8 +181,6 @@ for currentOption, currentValue in options:
 # -----------------CHECKS AND PREPARATION---------------------------------
 selectedTests = init.initAndChecks(noTerraform,
                                    extraSupportedClouds,
-                                   testsSharingCluster,
-                                   customClustersTests,
                                    cfgPathCLI=cfgPathCLI,
                                    tcPathCLI=tcPathCLI)
 

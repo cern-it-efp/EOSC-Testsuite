@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from checker import *
+from aux import *
 
 configs = ""
 testsCatalog = ""
@@ -21,12 +22,16 @@ extraSupportedClouds = ["openstack",
                         "cloudstack",
                         "opentelekomcloud",
                         "oci"]
+testsSharingCluster = ["s3Test",
+                       "dataRepatriationTest",
+                       "perfsonarTest",
+                       "cpuBenchmarking",
+                       "dodasTest"]
+customClustersTests = ["dlTest", "hpcTest"]
 
 
 def initAndChecks(noTerraform,
                   extraSupportedClouds,
-                  testsSharingCluster,
-                  customClustersTests,
                   cfgPathCLI=None,
                   tcPathCLI=None):
     """Initial checks and initialization of variables.
@@ -104,51 +109,50 @@ def initAndChecks(noTerraform,
             True)
         stop(1)
 
-    #TODO: costCalculation is an optional property
-
     # --------Tests config checks
     selected = []
-    if testsCatalog["s3Test"]["run"] is True:
-        selected.append("s3Test")
-        obtainCost = checkCost(
-            obtainCost,
-            configs["costCalculation"]["generalInstancePrice"])
-        obtainCost = checkCost(
-            obtainCost, configs["costCalculation"]["s3bucketPrice"])
 
-    if testsCatalog["perfsonarTest"]["run"] is True:
-        selected.append("perfsonarTest")
-        obtainCost = checkCost(
-            obtainCost,
-            configs["costCalculation"]["generalInstancePrice"])
+    """
+        for test in testsSharingCluster:
+            if testsCatalog[test]["run"] is True:
+                selected.append(test)
+                generalInstancePrice = tryTakeFromYaml(configs, "costCalculation.generalInstancePrice", None)
+                obtainCost = checkCost(obtainCost, generalInstancePrice)
+                if test == "s3Test":
+                    s3bucketPrice = tryTakeFromYaml(configs, "costCalculation.s3bucketPrice", None)
+                    obtainCost = checkCost(obtainCost, s3bucketPrice)
 
-    if testsCatalog["dataRepatriationTest"]["run"] is True:
-        selected.append("dataRepatriationTest")
-        obtainCost = checkCost(
-            obtainCost,
-            configs["costCalculation"]["generalInstancePrice"])
+        for test in customClustersTests:
+            if testsCatalog[test]["run"] is True:
+                selected.append(test)
+                if test == "dlTest":
+                    instancePrice = tryTakeFromYaml(configs, "costCalculation.GPUInstancePrice", None)
+                if test == "hpcTest":
+                    instancePrice = tryTakeFromYaml(configs, "costCalculation.HPCInstancePrice", None)
+                obtainCost = checkCost(obtainCost, instancePrice)
 
-    if testsCatalog["cpuBenchmarking"]["run"] is True:
-        selected.append("cpuBenchmarking")
-        obtainCost = checkCost(
-            obtainCost,
-            configs["costCalculation"]["generalInstancePrice"])
+    """
 
-    if testsCatalog["dlTest"]["run"] is True:
-        selected.append("dlTest")
-        obtainCost = checkCost(
-            obtainCost, configs["costCalculation"]["GPUInstancePrice"])
+    for test in testsSharingCluster or customClustersTests:
 
-    if testsCatalog["hpcTest"]["run"] is True:
-        selected.append("hpcTest")
-        obtainCost = checkCost(
-            obtainCost, configs["costCalculation"]["GPUInstancePrice"])
+        if testsCatalog[test]["run"] is True:
+            selected.append(test)
 
-    if testsCatalog["dodasTest"]["run"] is True:
-        selected.append("dodasTest")
-        obtainCost = checkCost(
-            obtainCost,
-            configs["costCalculation"]["generalInstancePrice"])
+            if test == "dlTest":
+                instancePrice = tryTakeFromYaml(configs, "costCalculation.GPUInstancePrice", None)
+            if test == "hpcTest":
+                instancePrice = tryTakeFromYaml(configs, "costCalculation.HPCInstancePrice", None)
+            else:
+                instancePrice = tryTakeFromYaml(configs, "costCalculation.generalInstancePrice", None)
+
+            if test == "s3Test":
+                s3bucketPrice = tryTakeFromYaml(configs, "costCalculation.s3bucketPrice", None)
+                obtainCost = checkCost(obtainCost, s3bucketPrice)
+
+            obtainCost = checkCost(obtainCost, instancePrice)
+
+    if obtainCost is not True:
+        print("Cost estimation will not be provided.")
 
     if noTerraform is True:
         checkProvidedIPs(testsSharingCluster,
