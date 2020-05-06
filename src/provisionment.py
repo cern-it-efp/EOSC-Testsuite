@@ -29,12 +29,6 @@ from ansibleFunctions import *
 from terraformFunctions import *
 
 
-bootstrapFailMsg = "Failed to bootstrap '%s' k8s cluster. Check 'logs' file"
-msgRoot = "WARNING: default user 'root' for ssh connections (running on %s)"
-clusterCreatedMsg = "...%s CLUSTER CREATED (masterIP: %s) => STARTING TESTS\n"
-TOserviceAccountMsg = "ERROR: timed out waiting for %s cluster's service account\n"
-
-
 def provisionAndBootstrap(test,
                           nodes,
                           flavor,
@@ -94,10 +88,6 @@ def provisionAndBootstrap(test,
 
     mainTfDir = testsRoot + test
     kubeconfig = "%s/src/tests/%s/config" % (baseCWD, test)  # "config"
-    openUser = tryTakeFromYaml(configs,
-                               "openUser",
-                               "root",
-                               msgExcept=msgRoot % configs["providerName"])
 
     if test == "shared":
         mainTfDir = testsRoot + "shared"
@@ -111,7 +101,6 @@ def provisionAndBootstrap(test,
                                        noTerraform, # this is None in terraformFunctions
                                        test,
                                        configs["pathToKey"],
-                                       openUser,
                                        configs)
     if result != 0:
         return False, bootstrapFailMsg % test

@@ -16,11 +16,6 @@ from aux import *
 from init import *
 from kubernetesFunctions import *
 
-provisionFailMsg = "Failed to provision raw VMs. Check 'logs' file for details"
-bootstrapFailMsg = "Failed to bootstrap '%s' k8s cluster. Check 'logs' file"
-msgRoot = "WARNING: default user 'root' for ssh connections (running on %s)"
-clusterCreatedMsg = "...%s CLUSTER CREATED (masterIP: %s) => STARTING TESTS\n"
-TOserviceAccountMsg = "ERROR: timed out waiting for %s cluster's service account\n"
 
 
 def runTerraform(toLog, cmd, mainTfDir, baseCWD, test, msg, terraform_cli_vars=None):
@@ -178,11 +173,6 @@ def terraformProvisionment(
         cleanupTF(mainTfDir)
 
         # ---------------- manage general variables
-        openUser = tryTakeFromYaml(configs,
-                                   "openUser",
-                                   "root",
-                                   msgExcept=msgRoot % configs["providerName"])
-
         variables = loadFile("src/provisionment/tfTemplates/general/variables.tf", required=True)
 
         variables = variables.replace(

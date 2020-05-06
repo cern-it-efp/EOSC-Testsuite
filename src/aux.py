@@ -202,7 +202,7 @@ def tryTakeFromYaml(dict, key, defaultValue, msgExcept=None):
         return defaultValue
 
 
-def validateYaml(configs, testsCatalog, noTerraform, extraSupportedClouds):
+def validateConfigs(configs, testsCatalog, noTerraform, extraSupportedClouds):
     """ Validates configs.yaml and testsCatalog.yaml file against schemas.
 
     Parameters:
@@ -235,6 +235,24 @@ def validateYaml(configs, testsCatalog, noTerraform, extraSupportedClouds):
         jsonschema.validate(testsCatalog, loadFile(testsCatalogSchema))
     except jsonschema.exceptions.ValidationError as ex:
         print("Error validating testsCatalog file: \n %s" % ex.message)
+        stop(1)
+    # ------------------
+
+
+def validateAuth(authFile, schema):
+    """ Validates authFile schemas.
+
+    Parameters:
+        configs (dict): Object containing configs.yaml's configurations.
+        testsCatalog (dict): Object containing testsCatalog.yaml's content.
+
+    """
+
+    # ------ configs.yaml
+    try:
+        jsonschema.validate(authFile, schema)
+    except jsonschema.exceptions.ValidationError as ex:
+        print("Error validating authFile file: \n %s" % ex.message)
         stop(1)
     # ------------------
 

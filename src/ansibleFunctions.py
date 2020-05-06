@@ -23,10 +23,6 @@ except ModuleNotFoundError as ex:
 from aux import *
 from init import *
 
-playbookPath = "src/provisionment/playbooks/bootstraper.yaml"
-aggregateLogs = False
-ansibleLogs = "src/logging/ansibleLogs%s"
-
 
 def createHostsFile(mainTfDir,
                     baseCWD,
@@ -85,7 +81,6 @@ def ansiblePlaybook(mainTfDir,
                     noTerraform,
                     test,
                     sshKeyPath,
-                    openUser,
                     configs):
     """Runs ansible-playbook with the given playbook.
 
@@ -97,7 +92,6 @@ def ansiblePlaybook(mainTfDir,
         noTerraform (bool): Specifies whether current run uses terraform.
         test (str): Cluster identification.
         sshKeyPath (str): Path to SSH key file.
-        openUser (str): User for initial SSH connection.
         configs (dict): Content of configs.yaml.
 
     Returns:
@@ -123,7 +117,7 @@ def ansiblePlaybook(mainTfDir,
         tags={},
         private_key_file=sshKeyPath,
         connection='ssh',
-        remote_user=openUser,
+        remote_user=tryTakeFromYaml(configs, "openUser", "root"),
         become_method='sudo',
         ssh_common_args='-o StrictHostKeyChecking=no',
         extra_vars=[{'kubeconfig': kubeconfig}],

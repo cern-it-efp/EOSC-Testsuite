@@ -1,12 +1,7 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
-# TODO: auth related stuff should be on another file to avoid pushing that info to the repo
-providerName: "oci"
-auth_private_key_path: /home/ipelu/.ssh/oracle.pem # TODO: document that this is for authenticating to OCI, and pathToKey is for internode SSH communication
-user_ocid: ocid1.user.oc1..aaaaaaaarlpii2ymcliiprocmxyw7dbam7n76t5d3uannw5yzt6cgh5zfeka
-tenancy_ocid: ocid1.tenancy.oc1..aaaaaaaakr2urkzeh437nc7myq52f5k6idd44cwkgkw6o76jowxrffpnvxkq
-fingerprint: d9:5a:05:58:e5:3a:d3:86:1b:6c:09:d5:70:99:83:ca
-region: eu-frankfurt-1
+authFile: /home/ipelu/Desktop/oci.yaml
 
+providerName: "oci"
 subnet_ocid: ocid1.subnet.oc1.eu-frankfurt-1.aaaaaaaafpq23sxzjyoynieldsjhp65ntmbjuo6cti4nryvp5ebjmsq6ow2a
 openUser: ubuntu
 flavor: VM.Standard1.1

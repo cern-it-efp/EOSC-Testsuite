@@ -4,11 +4,6 @@ required:
     - pathToKey
     - flavor
     - openUser
-    - auth_private_key_path
-    - user_ocid
-    - tenancy_ocid
-    - fingerprint
-    - region
     - subnet_ocid
     - availability_domain
     - compartment_ocid
@@ -22,16 +17,6 @@ properties:
     flavor:
         type: string
     openUser:
-        type: string
-    auth_private_key_path:
-        type: string
-    user_ocid:
-        type: string
-    tenancy_ocid:
-        type: string
-    fingerprint:
-        type: string
-    region:
         type: string
     subnet_ocid:
         type: string

@@ -1,0 +1,19 @@
+type: object
+required:
+    - auth_private_key_path
+    - tenancy_ocid
+    - user_ocid
+    - fingerprint
+    - region
+properties:
+    auth_private_key_path:
+        type: string
+    tenancy_ocid:
+        type: string
+    user_ocid:
+        type: string
+    fingerprint:
+        type: string
+    region:
+        type: string
+additionalProperties: false

@@ -44,8 +44,6 @@ destroy = None
 destroyOnCompletion = None
 clustersToDestroy = None
 customNodes = None
-publicRepo = "https://eosc-testsuite.rtfd.io"
-clusters = ["shared", "dlTest", "hpcTest"]
 
 
 def header(noLogo=False, provider=None, results=None):

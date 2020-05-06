@@ -1,5 +1,5 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
-providerName: "TISparkle" # TODO: std run with personal aws creds succeeded, ask for TISparkle-aws credentials and try std run (no-terraform run failed on both distros)
+providerName: "TISparkle" 
 pathToKey: "/root/.ssh/id_rsa"
 openUser: ubuntu
 clusters:

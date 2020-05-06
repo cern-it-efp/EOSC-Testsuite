@@ -29,6 +29,19 @@ testsSharingCluster = ["s3Test",
                        "dodasTest"]
 customClustersTests = ["dlTest", "hpcTest"]
 
+bootstrapFailMsg = "Failed to bootstrap '%s' k8s cluster. Check 'logs' file"
+clusterCreatedMsg = "...%s CLUSTER CREATED (masterIP: %s) => STARTING TESTS\n"
+TOserviceAccountMsg = "ERROR: timed out waiting for %s cluster's service account\n"
+
+playbookPath = "src/provisionment/playbooks/bootstraper.yaml"
+aggregateLogs = False
+ansibleLogs = "src/logging/ansibleLogs%s"
+
+provisionFailMsg = "Failed to provision raw VMs. Check 'logs' file for details"
+
+publicRepo = "https://eosc-testsuite.rtfd.io"
+clusters = ["shared", "dlTest", "hpcTest"]
+
 
 def initAndChecks(noTerraform,
                   extraSupportedClouds,
@@ -78,7 +91,12 @@ def initAndChecks(noTerraform,
     configs = loadFile(cfgPath, required=True)
     testsCatalog = loadFile(tcPath, required=True)
 
-    validateYaml(configs, testsCatalog, noTerraform, extraSupportedClouds)
+    validateConfigs(configs, testsCatalog, noTerraform, extraSupportedClouds)
+
+    if configs['providerName'] in ("oci", "opentelekomcloud"): # authFile validate (only YAML) 
+        authFile = loadFile(configs["authFile"], required=True)
+        schema = loadFile("authFile_sch_%s.yaml" % configs["authFile"], required=True)
+        validateAuth(authFile, schema)
 
     if noTerraform is False and supportedProvider(configs) is False:
         writeToFile("src/logging/header", "Provider '%s' not supported" %
