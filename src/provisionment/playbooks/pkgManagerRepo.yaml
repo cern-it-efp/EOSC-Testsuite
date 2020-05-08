@@ -36,7 +36,7 @@
     - name: Add Docker GPG key (APT)
       apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
-        validate_certs: no # TODO: w/a to fix error on cloudsigma's ubuntu 18. Proper solution?
+        validate_certs: no # w/a to fix error on cloudsigma's ubuntu 18
 
     - name: Add Docker repo (APT)
       apt_repository:
@@ -45,7 +45,7 @@
     - name: Add Kubernetes apt-key for repo (APT)
       apt_key:
         url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-        validate_certs: no # TODO: w/a to fix error on cloudsigma's ubuntu 18. Proper solution?
+        validate_certs: no # w/a to fix error on cloudsigma's ubuntu 18
         state: present
 
     - name: Add Kubernetes repo (APT)
@@ -54,5 +54,5 @@
         state: present
         filename: 'kubernetes'
 
-    - name: Waiting for APT to be ready... 
+    - name: Waiting for APT to be ready...
       shell: while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 1; done;

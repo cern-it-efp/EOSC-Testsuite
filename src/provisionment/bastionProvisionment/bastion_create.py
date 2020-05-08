@@ -23,7 +23,7 @@ ip = None
 onlySsh = False
 
 # TODO: take here the openUser, the key and other vars needed at the .tf script
-# use a file bastionConfigs.yaml
+# use a file bastionConfigs.yaml (path given with option -c,--config)
 
 try:
     options, values = getopt.getopt(
@@ -50,7 +50,16 @@ if user is None:
     print("user is a required option")
     sys.exit(1)
 
-# TODO: check, if there are no .tf files at tfPath -> exit
+
+tfFilesExist = False
+for fname in os.listdir(tfPath):
+    if fname.endswith('.tf'):
+        tfFilesExist = True
+        break
+
+if tfFilesExist is False:
+    print("No infrastructure provisioned.")
+    sys.exit()
 
 
 def runCMD(cmd, hideLogs=None, read=None):
