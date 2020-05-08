@@ -1,7 +1,10 @@
 FROM ubuntu:18.04
 
-# ------------------ Fix UnicodeEncodeError: 'export PYTHONIOENCODING=utf8'
-ARG PYTHONIOENCODING=utf8
+# ------------------ Fix UnicodeEncodeError:
+#ARG PYTHONIOENCODING=utf8
+#ARG LC_ALL=C.UTF-8
+ENV PYTHONIOENCODING utf8
+ENV LC_ALL C.UTF-8
 
 # ------------------ General Stuff
 ARG DEBIAN_FRONTEND=noninteractive

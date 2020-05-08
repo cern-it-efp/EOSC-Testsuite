@@ -1,6 +1,6 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
 providerName: opentelekomcloud
-pathToKey: "/home/ipelu/.ssh/id_rsa"
+pathToKey: "/root/.ssh/id_rsa"
 openUser: ubuntu
 flavor: "s2.medium.4"
 imageID: "1616e0b6-503a-4698-946f-cf9942c4c73b"
@@ -8,7 +8,7 @@ keyPair: "exo"
 domainName: "OTC-EU-DE-00000000001000046175"
 tenantName: "eu-de"
 storageCapacity: 50
-authFile: /home/ipelu/Desktop/tsk.yaml
+authFile: /tsk.yaml
 
 # optional
 securityGroups: ["default"]

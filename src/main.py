@@ -105,7 +105,8 @@ def header(noLogo=False, provider=None, results=None):
             if onlyTest is True:
                 writeToFile("src/logging/header",
                             "(ONLY TEST EXECUTION)", True)
-        except:
+        except BaseException as e:
+            print("EOSC logo exception: " + str(e))
             header(noLogo=True, provider=provider, results=results)
 
 

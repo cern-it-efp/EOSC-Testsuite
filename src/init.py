@@ -93,9 +93,9 @@ def initAndChecks(noTerraform,
 
     validateConfigs(configs, testsCatalog, noTerraform, extraSupportedClouds)
 
-    if configs['providerName'] in ("oci", "opentelekomcloud"): # authFile validate (only YAML) 
+    if configs['providerName'] in ("oci", "opentelekomcloud"): # authFile validate (only YAML)
         authFile = loadFile(configs["authFile"], required=True)
-        schema = loadFile("authFile_sch_%s.yaml" % configs["authFile"], required=True)
+        schema = loadFile("src/schemas/authFile_sch_%s.yaml" % configs["providerName"], required=True)
         validateAuth(authFile, schema)
 
     if noTerraform is False and supportedProvider(configs) is False:

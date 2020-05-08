@@ -5,7 +5,9 @@ openUser: centos
 flavor: "t2.medium"
 region: "eu-central-1"
 sharedCredentialsFile: "/root/credentials"
-ami: "ami-0957ba512eafd08d9" # "ami-08ee2516c7709ea48"
+#ami: ami-08ee2516c7709ea48 # Centos US
+ami: ami-0957ba512eafd08d9 # Centos EU
+
 keyName: "exo"
 #storageCapacity: 50
 

@@ -1,11 +1,12 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
 providerName: "aws"
-pathToKey: "/home/ipelu/.ssh/id_rsa"
+pathToKey: "/root/.ssh/id_rsa"
 openUser: ubuntu
 flavor: "t2.medium"
-region: "us-east-2"
+region: "eu-central-1"
 sharedCredentialsFile: "/creds"
-ami: "ami-0fc20dd1da406780b"
+#ami: ami-0fc20dd1da406780b # Ubuntu US ohio
+ami: ami-07dc7ebc6545c4e3c # Ubuntu EU-central 1
 keyName: "exo"
 #storageCapacity: 50 # optional
 #securityGroups: ["launch-wizard-1"] # optional

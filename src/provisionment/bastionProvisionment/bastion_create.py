@@ -66,7 +66,12 @@ def runCMD(cmd, hideLogs=None, read=None):
 def getIP():
 
     try:
-        resources = json.loads(runCMD("terraform show -json | jq .values.root_module.resources",read=True).strip())
+        #resources = json.loads(runCMD("terraform show -json | jq .values.root_module.resources",read=True)
+
+        tfShowJson = json.loads(runCMD("terraform show -json", read=True))
+        resources = tfShowJson["values"]["root_module"]["resources"]
+
+
         for res in resources:
             if provider == "azurerm":
                 if res["type"] == "azurerm_public_ip":
@@ -74,7 +79,7 @@ def getIP():
 
             elif provider == "oci":
                 if res["type"] == "oci_core_instance":
-                    return res["values"]["private_ip"]
+                    return res["values"]["public_ip"]
 
             elif provider == "aws":
                 if res["type"] == "aws_instance":

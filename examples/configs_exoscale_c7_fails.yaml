@@ -1,7 +1,7 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
 providerName: "exoscale"
-pathToKey: "/home/ipelu/.ssh/id_rsa"
-authFile: "/home/ipelu/Desktop/.exoCreds"
+pathToKey: /home/ipelu/.ssh/id_rsa
+authFile: /home/ipelu/Desktop/.exoCreds
 flavor: "Medium"
 zone: "ch-gva-2"
 template: "There is no OS with this name"

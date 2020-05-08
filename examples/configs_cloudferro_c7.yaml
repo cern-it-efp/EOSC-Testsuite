@@ -1,6 +1,6 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
 providerName: openstack
-pathToKey: "/home/ipelu/.ssh/id_rsa"
+pathToKey: "/root/.ssh/id_rsa"
 openUser: eouser
 flavor: "eo1.medium"
 imageID: "9f954559-da79-4c6a-a0a0-aedb889e0c6a" # CentOS 7

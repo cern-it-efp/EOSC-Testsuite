@@ -9,6 +9,7 @@ required:
     - compartment_ocid
     - image_ocid
     - ssh_public_key_path
+    - authFile
 properties:
     providerName:
         type: string
@@ -27,6 +28,8 @@ properties:
     image_ocid:
         type: string
     ssh_public_key_path:
+        type: string
+    authFile:
         type: string
     dockerCE:
         type: string

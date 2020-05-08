@@ -29,6 +29,10 @@ resource "null_resource" "allow_root" {
     private_key = file("~/.ssh/id_rsa")
   }
   provisioner "remote-exec" { # Not needed as the ami has docker: "sudo yum update -y ; sudo yum install docker.io -y"
-    inline = ["sudo docker run -itd --net=host cernefp/tslauncher"]
+    inline = [
+      "sudo docker run --name tslauncher -itd --net=host cernefp/tslauncher",
+      "echo sudo docker exec -it tslauncher bash >> ~/.bashrc"
+    ]
+
   }
 }
