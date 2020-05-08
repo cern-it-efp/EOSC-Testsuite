@@ -88,7 +88,7 @@ def runTest(resource,
             podPath=None,
             localPath=None,
             cmd=None,
-            additionalResourcePrice=None):
+            additionalResourcesPrices=None): # additionalResourcePrice is an array
     """Runs tests"""
 
     testCost = 0
@@ -124,8 +124,8 @@ def runTest(resource,
 
         #-----------------------------------------------------------------------
         testDuration = time.time() - start # For tests with additional resources
-        if init.obtainCost is True and additionalResourcePrice is not None:
-            for price in additionalResourcePrice:
+        if init.obtainCost is True and additionalResourcesPrices is not None:
+            for price in additionalResourcesPrices:
                 testCost = float(price) * testDuration / 3600
         #-----------------------------------------------------------------------
 
@@ -150,7 +150,7 @@ def s3Test(resDir):
     toLog = "src/logging/shared"
     testName = "s3Test"
     resultOnPod = "/home/s3_test.json"
-    additionalResourcePrice = tryTakeFromYaml(init.configs, "costCalculation.s3bucketPrice", None)
+    additionalResourcesPrices = [tryTakeFromYaml(init.configs, "costCalculation.s3bucketPrice", None)]
     substitution = [
         {
             "before": "ENDPOINT_PH",
@@ -175,7 +175,7 @@ def s3Test(resDir):
             resultOnPod,
             resource_raw=resource_raw,
             substitution=substitution,
-            additionalResourcePrice=additionalResourcePrice)
+            additionalResourcesPrices=additionalResourcesPrices)
 
 
 def dataRepatriationTest(resDir):
