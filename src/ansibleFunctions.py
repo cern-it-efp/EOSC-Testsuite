@@ -80,7 +80,6 @@ def ansiblePlaybook(mainTfDir,
                     kubeconfig,
                     noTerraform,
                     test,
-                    sshKeyPath,
                     configs):
     """Runs ansible-playbook with the given playbook.
 
@@ -91,7 +90,6 @@ def ansiblePlaybook(mainTfDir,
         kubeconfig (str): Path to kubeconfig file.
         noTerraform (bool): Specifies whether current run uses terraform.
         test (str): Cluster identification.
-        sshKeyPath (str): Path to SSH key file.
         configs (dict): Content of configs.yaml.
 
     Returns:
@@ -113,14 +111,16 @@ def ansiblePlaybook(mainTfDir,
 
     loader = DataLoader()
 
+    masterIP = getMasterIP(hostsFilePath)
+
     context.CLIARGS = ImmutableDict(
         tags={},
-        private_key_file=sshKeyPath,
+        private_key_file=configs["pathToKey"],
         connection='ssh',
         remote_user=tryTakeFromYaml(configs, "openUser", "root"),
         become_method='sudo',
         ssh_common_args='-o StrictHostKeyChecking=no',
-        extra_vars=[{'kubeconfig': kubeconfig}],
+        extra_vars=[{'kubeconfig': kubeconfig, 'masterIP': masterIP}], # TODO: nat or private differentiation
         forks=100,
         verbosity=False,  # True,
         listtags=False,
@@ -149,8 +149,7 @@ def ansiblePlaybook(mainTfDir,
                                        inventory=inventory,
                                        variable_manager=variable_manager,
                                        loader=loader,
-                                       passwords=None).run(), getMasterIP(
-                    hostsFilePath)
+                                       passwords=None).run(), masterIP
 
     if aggregateLogs:
         p.terminate()

@@ -1,5 +1,6 @@
 - name: initialize the cluster
-  shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=SystemVerification,NumCPU >> cluster_initialized.txt
+  #shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=SystemVerification,NumCPU >> cluster_initialized.txt # original
+  shell: kubeadm init --apiserver-cert-extra-sans={{ masterIP }} --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=SystemVerification,NumCPU >> cluster_initialized.txt # TODO: nat or private differentiation
   args:
     chdir: $HOME
     creates: cluster_initialized.txt
@@ -20,9 +21,6 @@
   fetch:
     src: $HOME/.kube/config
     dest: "{{ kubeconfig }}"
-    #dest: /tmp/foo/ # works properly, gets config inside here
-    #dest: $HOME/.kube/config # fails, creates that path inside this dir 'playbooks'
-    #dest: /home/ipelu/.kube/config # works fine
     flat: yes
 
 - name: install Pod network

@@ -370,39 +370,34 @@ def kubectl(
 
 
 def kubectlCLI(cmd, kubeconfig=None, options="", hideLogs=None):
-#def kubectlCLI(cmd, kubeconfig=None, options=None, hideLogs=None):
     """Runs kubectl CLI tool."""
-
-    #when behind NAT, add --insecure-skip-tls-verify=True to the cmd.
-    #That can also be achieved by removing certificate-authority-data and adding insecure-skip-tls-verify to .kube/config
-    # What changes when doing that? try to talk to the cluster from a VM without the config file
-
-    #if kubectlCLI('get sa default', kubeconfig=kubeconfig, options='--request-timeout=10m', hideLogs=False) == 0:
-    #return runCMD("kubectl %s %s %s" % (cmd,kubeconfig,options), hideLogs=hideLogs)
-
 
     if kubeconfig is None:
         kubeconfig = ""
     else:
         kubeconfig = '--kubeconfig=%s' % kubeconfig
-
-    #if options is None:
-    #    options = ""
-
     return runCMD("kubectl %s %s %s" % (cmd,kubeconfig,options), hideLogs=hideLogs)
+
+
+def updateKubeconfig_original(masterIP, kubeconfig):
+    """This is done after fetching a kubeconfig file and before checking the SA.
+       Updates the given kubeconfig file."""
+
+    # TODO: using at 'kubeadm init ...' --apiserver-cert-extra-sans=publicIP with the NAT IP of the master worked (no need to remove cert and ssl check) but the IP is not added to config though
+
+    kubeconfigContent = loadYAML(kubeconfig)
+    del kubeconfigContent["clusters"][0]["cluster"]["certificate-authority-data"]
+    kubeconfigContent["clusters"][0]["cluster"]["server"] = "https://%s:6443" % masterIP
+    kubeconfigContent["clusters"][0]["cluster"]["insecure-skip-tls-verify"] = True
+
+    yaml.dump(kubeconfigContent, open(kubeconfig, 'w'))
 
 
 def updateKubeconfig(masterIP, kubeconfig):
     """This is done after fetching a kubeconfig file and before checking the SA.
        Updates the given kubeconfig file."""
 
-    # TODO: fails
-    # kubectl get nodes works fine but deployment throws:
-    # kubernetes.config.config_exception.ConfigException: Invalid kube-config file. Expected key certificate-authority-data in kube-config/clusters[name=kubernetes]/cluster
-
-    kubeconfigContent = loadYAML(kubeconfig) # TODO: if the filename does not have .yaml it will load it as a plain file
-    del kubeconfigContent["clusters"][0]["cluster"]["certificate-authority-data"] # = None # TODO: this gotta be deleted otherwise the client throw an exception
+    kubeconfigContent = loadYAML(kubeconfig)
     kubeconfigContent["clusters"][0]["cluster"]["server"] = "https://%s:6443" % masterIP
-    kubeconfigContent["clusters"][0]["cluster"]["insecure-skip-tls-verify"] = True
 
     yaml.dump(kubeconfigContent, open(kubeconfig, 'w'))

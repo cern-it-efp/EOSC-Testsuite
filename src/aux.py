@@ -327,7 +327,7 @@ def getIP(resource, provider, public=False):
         str: Resource's IP address.
     """
 
-    try:
+    try: # TODO: do with public IPs for all providers
         if provider == "exoscale" or provider == "cloudstack":
             if public is True:
                 return resource["values"]["ip_address"] # TODO: it is possible other implementations of Cloudstack use private IPs/NAT, how'd that differ?
