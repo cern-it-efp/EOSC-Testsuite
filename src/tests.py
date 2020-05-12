@@ -380,7 +380,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir):
     if checkDLsupport() is False and viaBackend is False:
         writeToFile("src/logging/dlTest",
                     "Preparing cluster for DL test...", True)
-        masterIP = runCMD(
+        masterIP = runCMD( # TODO: do this with kubectlCLI
             "kubectl --kubeconfig %s get nodes -owide |\
             grep master | awk '{print $6}'" %
             kubeconfig, read=True)
@@ -425,7 +425,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir):
             toLog="src/logging/dlTest") != 0:
         writeFail(resDir, "bb_train_history.json",
                   "Error deploying train-mpi_3dGAN.", "src/logging/dlTest")
-    elif runCMD(
+    elif runCMD( # TODO: do this with kubectlCLI
             'kubectl describe pods | grep \"Insufficient nvidia.com/gpu\"',
             read=True):
         writeFail(

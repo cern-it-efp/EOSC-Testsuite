@@ -19,4 +19,4 @@ dlTest:
 hpcTest:
   run: true
   nodes: 2
-  flavor: "Small"
+  flavor: "Large"

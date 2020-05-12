@@ -92,7 +92,7 @@ def provisionAndBootstrap(test,
     if test == "shared":
         mainTfDir = testsRoot + "shared"
         os.makedirs(mainTfDir, exist_ok=True)
-        kubeconfig = "~/.kube/config"
+        kubeconfig = defaultKubeconfig
 
     result, masterIP = ansiblePlaybook(mainTfDir,
                                        baseCWD,
@@ -105,8 +105,11 @@ def provisionAndBootstrap(test,
     if result != 0:
         return False, bootstrapFailMsg % test
 
-    # -------- wait for default service account to be ready and finish
-    if waitForSA(kubeconfig) == 0:
+    # -------- Update kubeconfig files and wait for default service account to be ready and finish
+
+    updateKubeconfig(masterIP, kubeconfig) # TODO: not needed for exoscale and cloudstack
+
+    if kubectlCLI('get sa default', kubeconfig=kubeconfig, options='--request-timeout=20m', hideLogs=False) == 0:
         writeToFile(toLog, clusterCreatedMsg % (test, masterIP), True)
         return True, ""
     return False, TOserviceAccountMsg % test

@@ -58,7 +58,7 @@ def createHostsFile(mainTfDir,
         os.chdir(baseCWD)
 
         for resource in resources:
-            ip = getIP(resource, provider)
+            ip = getIP(resource, provider, public=True) # TODO: avoiding bastion usage
             if ip is not None:
                 IPs.append(ip)
     else:

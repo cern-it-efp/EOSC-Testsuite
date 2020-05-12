@@ -162,7 +162,7 @@ def terraformProvisionment(
         flavor = configs["flavor"]
         mainTfDir = testsRoot + "shared"
         os.makedirs(mainTfDir, exist_ok=True)
-        kubeconfig = "~/.kube/config"
+        kubeconfig = defaultKubeconfig
 
     if retry is None:
         randomId = getRandomID() # One randomId per cluster

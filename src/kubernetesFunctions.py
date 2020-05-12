@@ -39,14 +39,32 @@ def checkCluster(test):
         bool: True in case the cluster is reachable. False otherwise
     """
 
-    cmd = "kubectl get nodes --request-timeout=4s"
+    cmd = 'get nodes'
+    options = '--request-timeout=4s'
+    kubeconfig = None
+
     if test != "shared":
-        cmd += " --kubeconfig src/tests/%s/config" % (test)
-    if runCMD(cmd, hideLogs=True) != 0:
+        kubeconfig = "src/tests/%s/config" % (test)
+
+    #if runCMD(cmd, hideLogs=True) != 0:
+    if kubectlCLI(cmd, options=options, kubeconfig=kubeconfig, hideLogs=True) != 0:
         writeToFile(
             "src/logging/%s" % test,
             "%s cluster not reachable, was infrastructure created?" % test,
             True)
+        return False
+    return True
+
+
+def checkPodAlive(podName, resDir, toLog, resultFile, kubeconfig=None):
+    """Checks if a pod is alive"""
+
+    #if runCMD("kubectl get pod %s" % podName, hideLogs=True) != 0:
+    if kubectlCLI("get pod %s" % podName, kubeconfig=kubeconfig, hideLogs=True) != 0:
+        writeFail(resDir,
+                  resultFile,
+                  "%s pod was destroyed." % podName,
+                  toLog)
         return False
     return True
 
@@ -351,19 +369,40 @@ def kubectl(
     return 0 if res is True else 1
 
 
-def waitForSA(kubeconfig):
-    """Wait for cluster's service account to be ready.
+def kubectlCLI(cmd, kubeconfig=None, options="", hideLogs=None):
+#def kubectlCLI(cmd, kubeconfig=None, options=None, hideLogs=None):
+    """Runs kubectl CLI tool."""
 
-    Parameters:
-        kubeconfig (str): Path to a kubeconfig file.
+    #when behind NAT, add --insecure-skip-tls-verify=True to the cmd.
+    #That can also be achieved by removing certificate-authority-data and adding insecure-skip-tls-verify to .kube/config
+    # What changes when doing that? try to talk to the cluster from a VM without the config file
 
-    Returns:
-        int: 0 for success, 1 for failure
-    """
+    #if kubectlCLI('get sa default', kubeconfig=kubeconfig, options='--request-timeout=10m', hideLogs=False) == 0:
+    #return runCMD("kubectl %s %s %s" % (cmd,kubeconfig,options), hideLogs=hideLogs)
 
-    for i in range(15):
-        if runCMD('kubectl --kubeconfig %s get sa default' % kubeconfig,
-                hideLogs=True) == 0:
-            return 0
-        time.sleep(2)
-    return 1
+
+    if kubeconfig is None:
+        kubeconfig = ""
+    else:
+        kubeconfig = '--kubeconfig=%s' % kubeconfig
+
+    #if options is None:
+    #    options = ""
+
+    return runCMD("kubectl %s %s %s" % (cmd,kubeconfig,options), hideLogs=hideLogs)
+
+
+def updateKubeconfig(masterIP, kubeconfig):
+    """This is done after fetching a kubeconfig file and before checking the SA.
+       Updates the given kubeconfig file."""
+
+    # TODO: fails
+    # kubectl get nodes works fine but deployment throws:
+    # kubernetes.config.config_exception.ConfigException: Invalid kube-config file. Expected key certificate-authority-data in kube-config/clusters[name=kubernetes]/cluster
+
+    kubeconfigContent = loadYAML(kubeconfig) # TODO: if the filename does not have .yaml it will load it as a plain file
+    del kubeconfigContent["clusters"][0]["cluster"]["certificate-authority-data"] # = None # TODO: this gotta be deleted otherwise the client throw an exception
+    kubeconfigContent["clusters"][0]["cluster"]["server"] = "https://%s:6443" % masterIP
+    kubeconfigContent["clusters"][0]["cluster"]["insecure-skip-tls-verify"] = True
+
+    yaml.dump(kubeconfigContent, open(kubeconfig, 'w'))

@@ -56,6 +56,8 @@ def runCMD(cmd, hideLogs=None, read=None):
         int or str: Command's exit code. Logs of the command if read=True
     """
 
+    #print(cmd)
+
     if read is True:
         return os.popen(cmd).read().strip()
     if hideLogs is True:
@@ -110,6 +112,38 @@ def loadFile(loadThis, required=None):
                 stop(1)
         else:
             return inputfile.read().strip()
+
+
+def loadYAML(loadThis, required=None): # TODO: unify this and loadFile
+    """ Loads a file
+
+    Parameters:
+        loadThis (str): Path to the file to load
+        required (bool): Indicates whether the file is required
+
+    Returns:
+        str or yaml: The loaded file or empty string if the file was not found
+                     and required is not True. Exits with code 1 otherwise.
+    """
+
+    if os.path.exists(loadThis) is False:
+        if required is True:
+            print(loadThis + " file not found")
+            stop(1)
+        else:
+            return ""
+    with open(loadThis, 'r') as inputfile:
+        try:
+            return yaml.load(inputfile, Loader=yaml.FullLoader)
+        except AttributeError:
+            try:
+                return yaml.load(inputfile)
+            except:  # yaml.scanner.ScannerError:
+                print("Error loading yaml file " + loadThis)
+                stop(1)
+        except:  # yaml.scanner.ScannerError:
+            print("Error loading yaml file " + loadThis)
+            stop(1)
 
 
 def writeToFile(filePath, content, append):
@@ -281,7 +315,7 @@ def subprocPrint(test):
                 print("[ %s ] %s" % (test, line.replace('\n', '')))
 
 
-def getIP(resource, provider):
+def getIP(resource, provider, public=False):
     """Given a terraform resource json description, returns the resource's
        IP address if such exists
 
@@ -295,8 +329,12 @@ def getIP(resource, provider):
 
     try:
         if provider == "exoscale" or provider == "cloudstack":
+            if public is True:
+                return resource["values"]["ip_address"] # TODO: it is possible other implementations of Cloudstack use private IPs/NAT, how'd that differ?
             return resource["values"]["ip_address"]
         elif provider == "aws":
+            if public is True:
+                return resource["values"]["public_ip"]
             return resource["values"]["private_ip"]
         elif provider == "azurerm":
             return resource["values"]["private_ip_address"]

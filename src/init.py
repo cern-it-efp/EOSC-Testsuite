@@ -12,6 +12,7 @@ extraInstanceConfig = ""
 dependencies = ""
 credentials = ""
 testsRoot = "src/tests/"
+defaultKubeconfig = "%s/.kube/config" % os.environ['HOME']
 baseCWD = os.getcwd()
 obtainCost = True
 extraSupportedClouds = ["openstack",
@@ -151,7 +152,7 @@ def initAndChecks(noTerraform,
 
     """
 
-    for test in testsSharingCluster or customClustersTests:
+    for test in testsSharingCluster + customClustersTests:
 
         if testsCatalog[test]["run"] is True:
             selected.append(test)

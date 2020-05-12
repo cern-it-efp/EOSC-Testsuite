@@ -29,18 +29,6 @@ def formerProvisionExists():
     return False
 
 
-def checkPodAlive(podName, resDir, toLog, resultFile):
-    """Checks if a pod is alive"""
-
-    if runCMD("kubectl get pod %s" % podName, hideLogs=True) != 0:
-        writeFail(resDir,
-                  resultFile,
-                  "%s pod was destroyed." % podName,
-                  toLog)
-        return False
-    return True
-
-
 def checkCost(obtainCost, value):
     """ Checks the provided value is not None and is greater than 0.
 
@@ -65,7 +53,7 @@ def checkDLsupport():
         bool: True in case cluster supports DL, False otherwise.
     """
 
-    pods = runCMD(
+    pods = runCMD( # TODO: do this with kubectlCLI
         'kubectl --kubeconfig tests/dlTest/config get pods -n kubeflow',
         read=True)
     return len(pods) > 0 and "No resources found." not in pods

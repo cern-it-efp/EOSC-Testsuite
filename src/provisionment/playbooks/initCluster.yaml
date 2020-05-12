@@ -20,6 +20,9 @@
   fetch:
     src: $HOME/.kube/config
     dest: "{{ kubeconfig }}"
+    #dest: /tmp/foo/ # works properly, gets config inside here
+    #dest: $HOME/.kube/config # fails, creates that path inside this dir 'playbooks'
+    #dest: /home/ipelu/.kube/config # works fine
     flat: yes
 
 - name: install Pod network
