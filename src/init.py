@@ -12,8 +12,8 @@ extraInstanceConfig = ""
 dependencies = ""
 credentials = ""
 testsRoot = "src/tests/"
+allowAllTfClouds = False # TODO: if set to True allows useGeneralTfTemplate, otherwise only --no-terraform or extraSupportedClouds
 baseCWD = os.getcwd()
-#defaultKubeconfig = "%s/.kube/config" % os.environ['HOME'] # TODO: should be src/tests/shared/config
 defaultKubeconfig = "%s/src/tests/shared/config" % baseCWD
 obtainCost = True
 extraSupportedClouds = ["openstack",
@@ -34,7 +34,7 @@ customClustersTests = ["dlTest", "hpcTest"]
 bootstrapFailMsg = "Failed to bootstrap '%s' k8s cluster. Check 'logs' file"
 clusterCreatedMsg = "...%s CLUSTER CREATED (masterIP: %s) => STARTING TESTS\n"
 TOserviceAccountMsg = "ERROR: timed out waiting for %s cluster's service account\n"
-
+destroyWarning = "WARNING - destroy infrastructure (%s)? yes/no: "
 playbookPath = "src/provisionment/playbooks/bootstraper.yaml"
 aggregateLogs = False
 ansibleLogs = "src/logging/ansibleLogs%s"
@@ -100,8 +100,9 @@ def initAndChecks(noTerraform,
         schema = loadFile("src/schemas/authFile_sch_%s.yaml" % configs["providerName"], required=True)
         validateAuth(authFile, schema)
 
-    if noTerraform is False and supportedProvider(configs) is False:
-        writeToFile("src/logging/header", "Provider '%s' not supported" %
+    #if noTerraform is False and supportedProvider(configs) is False: # allows all terraform supporting providers to run w/o --no-terraform
+    if noTerraform is False and configs['providerName'] not in extraSupportedClouds: # allows only providers in extraSupportedClouds to run w/o --no-terraform
+        writeToFile("src/logging/header", "Provider '%s' not fully supported, run using '--no-terraform'" %
                     configs['providerName'], True)
         stop(1)
 
@@ -113,13 +114,13 @@ def initAndChecks(noTerraform,
         print("Key permissions must be set to 600")
         stop(1)
 
-    # these are for providers that support terraform but are not in extraSupportedClouds
+
+    # -----------------------------------------------------------------------------------------------------------------------
+    # TODO: these are for providers that support terraform but are not in extraSupportedClouds, deprecated as of 20.5: must use --no-terraform
     instanceDefinition = loadFile("configurations/instanceDefinition")
     extraInstanceConfig = loadFile("configurations/extraInstanceConfig")
     dependencies = loadFile("configurations/dependencies")
     credentials = loadFile("configurations/credentials")
-
-    # --------General config checks
     if configs['providerName'] not in extraSupportedClouds \
             and "NAME_PH" not in instanceDefinition \
             and noTerraform is False:
@@ -128,6 +129,8 @@ def initAndChecks(noTerraform,
             "ERROR: NAME_PH was not found in instanceDefinition file.",
             True)
         stop(1)
+    # -----------------------------------------------------------------------------------------------------------------------
+
 
     # --------Tests config checks
     selected = []

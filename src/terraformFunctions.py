@@ -83,7 +83,7 @@ def destroyTF(baseCWD, clusters=None):
         if exitCode is 0:
             cleanupTF("src/tests/%s/" % cluster)
         else:
-            print("WARNING: terraform destroy did not succeed completely, tf files not deleted.")
+            print("INFO: terraform destroy did not succeed completely, tf files not deleted.")
         res.append(exitCode)
 
     return res
@@ -110,6 +110,55 @@ def cleanupTF(mainTfDir):
             os.remove(file)
         if os.path.isdir(file):
             shutil.rmtree(file, True)
+
+
+def useGeneralTfTemplate(instanceDefinition,
+                         flavor,
+                         extraInstanceConfig,
+                         tepmplatesPath,
+                         credentials,
+                         dependencies,
+                         nodes,
+                         configs):
+    """Uses the generic tfTemplate, which is populated with the HCL code the
+       user provides as part of the configuration."""
+
+    instanceDefinition = "%s \n %s" % (flavor,instanceDefinition.replace(
+        "NAME_PH", "${var.instanceName}-${count.index}"))
+
+    if extraInstanceConfig:
+        instanceDefinition += "\n" + extraInstanceConfig
+
+    substitution = [
+        {
+            "before": "NODE_DEFINITION_PLACEHOLDER",
+            "after": instanceDefinition
+        },
+        {
+            "before": "DEPENDENCIES_PLACEHOLDER",
+            "after": dependencies
+        },
+        {
+            "before": "DEP_COUNT_PH",
+            "after": "count = %s" % nodes
+        },
+        {
+            "before": "PROVIDER_NAME",
+            "after": str(configs["providerName"])
+        },
+        {
+            "before": "PROVIDER_INSTANCE_NAME",
+            "after": str(configs["providerInstanceName"])
+        },
+        {
+            "before": "CREDENTIALS_PLACEHOLDER",
+            "after": credentials
+        }
+    ]
+
+    groupReplace("%s/rawProvision.tf" % templatesPath,
+                 substitution,
+                 "%s/main.tf" % mainTfDir)
 
 
 def terraformProvisionment(
@@ -158,12 +207,6 @@ def terraformProvisionment(
     cfgPath = "%s/%s" % (baseCWD, cfgPath)
     kubeconfig = "%s/src/tests/%s/config" % (baseCWD, test)
 
-    if test == "shared":
-        flavor = configs["flavor"]
-        mainTfDir = testsRoot + "shared"
-        os.makedirs(mainTfDir, exist_ok=True)
-        kubeconfig = defaultKubeconfig
-
     if retry is None:
         randomId = getRandomID() # One randomId per cluster
 
@@ -172,42 +215,36 @@ def terraformProvisionment(
         # ---------------- delete TF stuff from previous run if existing
         cleanupTF(mainTfDir)
 
-        # ---------------- manage general variables
-        variables = loadFile("src/provisionment/tfTemplates/general/variables.tf", required=True)
-
-        variables = variables.replace(
-            "NODES_PH", str(nodes)).replace(
-            "PATH_TO_KEY_VALUE", str(configs["pathToKey"])).replace(
-            "NAME_PH", nodeName)
+        # ---------------- manage general variables # TODO: do this with terraform_cli_vars too (yamldecode)
+        substitution = [
+            {
+                "before": "NODES_PH",
+                "after": str(nodes)
+            },
+            {
+                "before": "PATH_TO_KEY_VALUE",
+                "after": str(configs["pathToKey"])
+            },
+            {
+                "before": "NAME_PH",
+                "after": nodeName
+            }
+        ]
+        groupReplace("src/provisionment/tfTemplates/general/variables.tf", substitution, mainTfDir + "/main.tf") # TODO: the problem is here
 
         terraform_cli_vars["dockerCE"] = tryTakeFromYaml(configs, "dockerCE", None)
         terraform_cli_vars["dockerEngine"] = tryTakeFromYaml(configs, "dockerEngine", None)
         terraform_cli_vars["kubernetes"] = tryTakeFromYaml(configs, "kubernetes", None)
 
-        writeToFile(mainTfDir + "/main.tf", variables, False) # TODO: do this with terraform_cli_vars too (yamldecode)
-
         if configs["providerName"] not in extraSupportedClouds:
-            # ---------------- main.tf: add raw VMs provisioner
-            instanceDefinition = "%s \n %s" % (flavor,
-                instanceDefinition.replace(
-                    "NAME_PH", "${var.instanceName}-${count.index}"))
-
-            if extraInstanceConfig:
-                instanceDefinition += "\n" + extraInstanceConfig
-
-            rawProvisioning = loadFile("%s/rawProvision.tf" %
-                                       templatesPath).replace(
-                "CREDENTIALS_PLACEHOLDER", credentials).replace(
-                "DEPENDENCIES_PLACEHOLDER", dependencies.replace(
-                    "DEP_COUNT_PH", "count = %s" % nodes)).replace(
-                "PROVIDER_NAME", str(configs["providerName"])).replace(
-                "PROVIDER_INSTANCE_NAME", str(
-                    configs["providerInstanceName"])).replace(
-                "NODE_DEFINITION_PLACEHOLDER", instanceDefinition)
+            rawProvisioning = useGeneralTfTemplate()
 
         else:
 
             rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath, required=True)
+            #print(rawProvisioning) # OK
+            writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
+            #print("\n %s" % open(mainTfDir + "/main.tf").read()) # FU
 
             terraform_cli_vars["configsFile"] = cfgPath
             terraform_cli_vars["flavor"] = flavor
@@ -250,8 +287,6 @@ def terraformProvisionment(
 
                 terraform_cli_vars["storageCapacity"] = tryTakeFromYaml(configs, "storageCapacity", None)
 
-
-        writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
 
         # ---------------- RUN TERRAFORM: provision VMs
         beautify = "terraform fmt > /dev/null &&"

@@ -35,10 +35,16 @@ def sharedClusterTests(msgArr, onlyTest, retry, noTerraform, resDir, numberOfNod
     sharedClusterProcs = []
     testCost = 0
     logger(msgArr, "=", "src/logging/shared")
+
+    if noTerraform is True:
+        flavor = None
+    else:
+        flavor = init.configs["flavor"]
+
     if onlyTest is False:
         prov, msg = provisionAndBootstrap("shared",
                                           numberOfNodes,
-                                          None,
+                                          flavor,
                                           None,
                                           "src/logging/shared",
                                           init.configs,
@@ -75,7 +81,7 @@ def sharedClusterTests(msgArr, onlyTest, retry, noTerraform, resDir, numberOfNod
     init.queue.put((None, testCost))
 
 
-def runTest(resource,
+def runTest(resourceDefinition,
             toLog,
             testName,
             resDir,
@@ -83,7 +89,7 @@ def runTest(resource,
             podName,
             resultOnPod,
             kubeconfig,
-            resource_raw=None,
+            resourceDefinition_raw=None,
             substitution=None,
             copyToPodAndRun_flag=None,
             podPath=None,
@@ -93,19 +99,14 @@ def runTest(resource,
     """Runs tests"""
 
     testCost = 0
-    if resource_raw is not None:
-        with open(resource_raw, 'r') as infile:
-            infile = infile.read()
-            for sub in substitution:
-                infile = infile.replace(sub["before"], sub["after"])
-            with open(resource, 'w') as outfile:
-                outfile.write(infile)
+    if resourceDefinition_raw is not None:
+        groupReplace(resourceDefinition_raw, substitution, resourceDefinition)
 
     #---------------------------------------------------------------------------
     start = time.time() # For tests with additional resources (i.e S3 bucket)
     #---------------------------------------------------------------------------
 
-    if kubectl(Action.create, kubeconfig, file=resource, toLog=toLog) != 0:
+    if kubectl(Action.create, kubeconfig, file=resourceDefinition, toLog=toLog) != 0:
         init.queue.put(({"test": testName, "deployed": False}, testCost))
         writeFail(resDir, resultFile, "%s pod deploy failed." % podName, toLog)
     else:
@@ -146,8 +147,8 @@ def s3Test(resDir):
 
     testCost = 0
     podName = "s3pod"
-    resource_raw = "%ss3/raw/s3pod_raw.yaml" % testsRoot
-    resource = "%ss3/s3pod.yaml" % testsRoot
+    resourceDefinition_raw = "%ss3/raw/s3pod_raw.yaml" % testsRoot
+    resourceDefinition = "%ss3/s3pod.yaml" % testsRoot
     resultFile = "s3Test.json"
     toLog = "src/logging/shared"
     testName = "s3Test"
@@ -168,7 +169,7 @@ def s3Test(resDir):
         }
     ]
     kubeconfig = defaultKubeconfig
-    runTest(resource,
+    runTest(resourceDefinition,
             toLog,
             testName,
             resDir,
@@ -176,7 +177,7 @@ def s3Test(resDir):
             podName,
             resultOnPod,
             kubeconfig,
-            resource_raw=resource_raw,
+            resourceDefinition_raw=resourceDefinition_raw,
             substitution=substitution,
             additionalResourcesPrices=additionalResourcesPrices)
 
@@ -190,8 +191,8 @@ def dataRepatriationTest(resDir):
 
     podName = "repatriation-pod"
     toLog = "src/logging/shared"
-    resource_raw = "%sdata_repatriation/raw/repatriation_pod_raw.yaml" % testsRoot
-    resource = "%sdata_repatriation/repatriation_pod.yaml" % testsRoot
+    resourceDefinition_raw = "%sdata_repatriation/raw/repatriation_pod_raw.yaml" % testsRoot
+    resourceDefinition = "%sdata_repatriation/repatriation_pod.yaml" % testsRoot
     resultFile = "data_repatriation_test.json"
     testName = "cpuBenchmarking"
     resultOnPod = "/home/data_repatriation_test.json"
@@ -202,7 +203,7 @@ def dataRepatriationTest(resDir):
         }
     ]
     kubeconfig = defaultKubeconfig
-    runTest(resource,
+    runTest(resourceDefinition,
             toLog,
             testName,
             resDir,
@@ -210,7 +211,7 @@ def dataRepatriationTest(resDir):
             podName,
             resultOnPod,
             kubeconfig,
-            resource_raw=resource_raw,
+            resourceDefinition_raw=resourceDefinition_raw,
             substitution=substitution)
 
 
@@ -222,8 +223,8 @@ def cpuBenchmarking(resDir):
     """
 
     podName = "cpu-bmk-pod"
-    resource_raw = "%scpu_benchmarking/raw/cpu_benchmarking_pod_raw.yaml" % testsRoot
-    resource = "%scpu_benchmarking/cpu_benchmarking_pod.yaml" % testsRoot
+    resourceDefinition_raw = "%scpu_benchmarking/raw/cpu_benchmarking_pod_raw.yaml" % testsRoot
+    resourceDefinition = "%scpu_benchmarking/cpu_benchmarking_pod.yaml" % testsRoot
     resultFile = "cpu_benchmarking.json"
     toLog = "src/logging/shared"
     testName = "cpuBenchmarking"
@@ -235,7 +236,7 @@ def cpuBenchmarking(resDir):
         }
     ]
     kubeconfig = defaultKubeconfig
-    runTest(resource,
+    runTest(resourceDefinition,
             toLog,
             testName,
             resDir,
@@ -243,7 +244,7 @@ def cpuBenchmarking(resDir):
             podName,
             resultOnPod,
             kubeconfig,
-            resource_raw=resource_raw,
+            resourceDefinition_raw=resourceDefinition_raw,
             substitution=substitution)
 
 
@@ -262,13 +263,13 @@ def perfsonarTest(resDir):
     runOnPodCMD = "%s && %s" % (dependenciesCMD, runScriptCMD)
     cmd = "%s" % runOnPodCMD
     resultFile = "perfsonar_results.json"
-    resource = "%sperfsonar/ps_pod.yaml" % testsRoot
+    resourceDefinition = "%sperfsonar/ps_pod.yaml" % testsRoot
     toLog = "src/logging/shared"
     podPath="%s:/tmp" % podName
     localPath=testsRoot + "perfsonar/ps_test.py"
     resultOnPod = "/tmp/perfsonar_results.json"
     kubeconfig = defaultKubeconfig
-    runTest(resource,
+    runTest(resourceDefinition,
             toLog,
             testName,
             resDir,
@@ -293,13 +294,13 @@ def dodasTest(resDir):
     toLog = "src/logging/shared"
     resultFile = "dodas_results.json"
     resultOnPod = "/tmp/%s" % resultFile
-    resource = "%sdodas/dodas_pod.yaml" % testsRoot
+    resourceDefinition = "%sdodas/dodas_pod.yaml" % testsRoot
     testName = "dodasTest"
     podPath = "%s:/CMSSW/CMSSW_9_4_0/src" % podName
     localPath = "%sdodas/custom_entrypoint.sh" % testsRoot
     cmd = "sh /CMSSW/CMSSW_9_4_0/src/custom_entrypoint.sh"
     kubeconfig = defaultKubeconfig
-    runTest(resource,
+    runTest(resourceDefinition,
             toLog,
             testName,
             resDir,
@@ -422,7 +423,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir):
         nodesToUse = 5
     with open(testsRoot + 'dlTest/train-mpi_3dGAN_raw.yaml', 'r') as inputfile:
         with open(testsRoot + "dlTest/train-mpi_3dGAN.yaml", 'w') as outfile:
-            outfile.write(str(inputfile.read()).replace(
+            outfile.write(str(inputfile.read()).replace( # TODO: do not use replace
                 "REP_PH", str(nodesToUse)))
 
     if kubectl(

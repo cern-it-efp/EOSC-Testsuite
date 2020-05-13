@@ -38,7 +38,7 @@ totalCost = 0
 procs = []
 viaBackend = False
 resultsExist = False
-
+interactive = True
 retry = None
 destroy = None
 destroyOnCompletion = None
@@ -117,7 +117,7 @@ header()
 try:
     options, values = getopt.getopt(
         sys.argv[1:],
-        'c:t:o',
+        'c:t:oy',
         ['onlyTest',
          'viaBackend',
          'retry',
@@ -135,6 +135,8 @@ for currentOption, currentValue in options:
         cfgPathCLI = currentValue
     elif currentOption in ('-t', '--testsCatalog'):
         tcPathCLI = currentValue
+    elif currentOption == '-y':
+        interactive = False # disables prompts of overriding tf files and deleting infrastructure
     elif currentOption in ('-o', '--onlyTest'):
         writeToFile("src/logging/header", "(ONLY TEST EXECUTION)", True)
         onlyTest = True
@@ -146,23 +148,21 @@ for currentOption, currentValue in options:
         else:
             print("The value for --customNodes must be integer > 0. ")
             stop(1)
+
     elif currentOption == '--destroy':
         if checkClustersToDestroy(currentValue, clusters):
-            if input("WARNING - destroy infrastructure (%s)? yes/no: " %
-                currentValue) == "yes":
-                destroyTF(baseCWD, clusters=currentValue.split(','))
-            else:
-                print("Aborting operation")
-        elif currentValue == "all":
-            if input("WARNING - destroy infrastructure (%s)? yes/no: " %
-                currentValue) == "yes":
+            if currentValue != "all":
+                clusters = currentValue.split(',')
+            if interactive is False: # TODO: if --destroy is used, test_suite calls main.py just with --destroy and the values so interactive is never initialized
+                destroyTF(baseCWD, clusters=clusters)
+            elif input(destroyWarning % currentValue) == "yes":
                 destroyTF(baseCWD, clusters=clusters)
             else:
                 print("Aborting operation")
         else:
-            print("The provided value '%s' for the option " \
-                "--destroy is not valid." % currentValue)
+            print("'%s' is not a valid value for --destroy." % currentValue)
         stop(0)
+
     elif currentOption == '--destroyOnCompletion':
         if checkClustersToDestroy(currentValue, clusters):
             destroyOnCompletion = True

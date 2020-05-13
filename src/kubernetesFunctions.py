@@ -372,20 +372,6 @@ def kubectlCLI(cmd, kubeconfig, options="", hideLogs=None):
     return runCMD("kubectl %s %s %s" % (cmd,kubeconfig,options), hideLogs=hideLogs)
 
 
-def updateKubeconfig_original(masterIP, kubeconfig):
-    """This is done after fetching a kubeconfig file and before checking the SA.
-       Updates the given kubeconfig file."""
-
-    # TODO: using at 'kubeadm init ...' --apiserver-cert-extra-sans=publicIP with the NAT IP of the master worked (no need to remove cert and ssl check) but the IP is not added to config though
-
-    kubeconfigContent = loadYAML(kubeconfig)
-    del kubeconfigContent["clusters"][0]["cluster"]["certificate-authority-data"]
-    kubeconfigContent["clusters"][0]["cluster"]["server"] = "https://%s:6443" % masterIP
-    kubeconfigContent["clusters"][0]["cluster"]["insecure-skip-tls-verify"] = True
-
-    yaml.dump(kubeconfigContent, open(kubeconfig, 'w'))
-
-
 def updateKubeconfig(masterIP, kubeconfig):
     """This is done after fetching a kubeconfig file and before checking the SA.
        Updates the given kubeconfig file."""

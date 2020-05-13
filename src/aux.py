@@ -348,3 +348,14 @@ def getIP(resource, provider, public=False):
             return resource["values"]["private_ip"]
     except KeyError:
         return None
+
+
+def groupReplace(input,substitution,output):
+    """Given an input file, applies to it the provided substitution."""
+
+    with open(input, 'r') as infile:
+        infile = infile.read()
+        for sub in substitution:
+            infile = infile.replace(sub["before"], sub["after"])
+        with open(output, 'w') as outfile:
+            outfile.write(infile)
