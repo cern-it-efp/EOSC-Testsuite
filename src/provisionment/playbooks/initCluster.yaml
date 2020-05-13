@@ -11,7 +11,7 @@
     state: directory
     mode: 0755
 
-- name: copy admin.conf to user's kube config
+- name: copy admin.conf to user's kubeconfig
   copy:
     src: /etc/kubernetes/admin.conf
     dest: $HOME/.kube/config

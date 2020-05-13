@@ -40,13 +40,9 @@ def checkCluster(test):
     """
 
     cmd = 'get nodes'
-    options = '--request-timeout=4s'
-    kubeconfig = None
+    options = '--request-timeout=10s'
+    kubeconfig = "src/tests/%s/config" % (test)
 
-    if test != "shared":
-        kubeconfig = "src/tests/%s/config" % (test)
-
-    #if runCMD(cmd, hideLogs=True) != 0:
     if kubectlCLI(cmd, options=options, kubeconfig=kubeconfig, hideLogs=True) != 0:
         writeToFile(
             "src/logging/%s" % test,
@@ -56,10 +52,9 @@ def checkCluster(test):
     return True
 
 
-def checkPodAlive(podName, resDir, toLog, resultFile, kubeconfig=None):
+def checkPodAlive(podName, resDir, toLog, resultFile, kubeconfig):
     """Checks if a pod is alive"""
 
-    #if runCMD("kubectl get pod %s" % podName, hideLogs=True) != 0:
     if kubectlCLI("get pod %s" % podName, kubeconfig=kubeconfig, hideLogs=True) != 0:
         writeFail(resDir,
                   resultFile,
@@ -69,7 +64,7 @@ def checkPodAlive(podName, resDir, toLog, resultFile, kubeconfig=None):
     return True
 
 
-def fetchResults(resDir, podName, source, file, toLog):
+def fetchResults(resDir, kubeconfig, podName, source, file, toLog):
     """Fetch tests results file from pod.
 
     Parameters:
@@ -84,16 +79,18 @@ def fetchResults(resDir, podName, source, file, toLog):
         if checkPodAlive(podName,
                          resDir,
                          toLog,
-                         file) is False: return
+                         file,
+                         kubeconfig) is False: return
         with contextlib.redirect_stdout(io.StringIO()):  # to hide logs
             print("Fetching results...")
-            kubectl(Action.cp, podPath=source, localPath="%s/%s" %
+            kubectl(Action.cp, kubeconfig, podPath=source, localPath="%s/%s" %
                     (resDir, file), fetch=True)
     writeToFile(toLog, file + " fetched!", True)
 
 
 def copyToPodAndRun(
         podName,
+        kubeconfig,
         resDir,
         toLog,
         file,
@@ -109,19 +106,21 @@ def copyToPodAndRun(
             if checkPodAlive(podName,
                              resDir,
                              toLog,
-                             file) is False: return
+                             file,
+                             kubeconfig) is False: return
             if kubectl(Action.cp,
+                      kubeconfig,
                       podPath=podPath,
                       localPath=localPath,
                       fetch=False) == 0:
                 break
-    if kubectl(Action.exec, name=podName, cmd=cmd) != 0:
+    if kubectl(Action.exec, kubeconfig, name=podName, cmd=cmd) != 0:
         writeFail(resDir,
                   resultFile,
                   "Error running script test on pod %s" % podName,
                   toLog)
     else:
-        fetchResults(resDir, podName, resultOnPod, resultFile, toLog)
+        fetchResults(resDir, kubeconfig, podName, resultOnPod, resultFile, toLog)
 
 
 def checkDestinationIsDir(podName, pathOnPod, namespace=None):
@@ -173,11 +172,11 @@ def reset(tarinfo):
 
 def kubectl(
         action,
+        kubeconfig,
         type=None,
         name=None,
         file=None,
         cmd=None,
-        kubeconfig=None,
         namespace=None,
         podPath=None,
         localPath=None,
@@ -205,10 +204,7 @@ def kubectl(
     """
 
     res = True
-    if kubeconfig:
-        config.load_kube_config(config_file=kubeconfig)
-    else:
-        config.load_kube_config()
+    config.load_kube_config(config_file=kubeconfig)
 
     if namespace is None:
         namespace = "default"
@@ -369,13 +365,10 @@ def kubectl(
     return 0 if res is True else 1
 
 
-def kubectlCLI(cmd, kubeconfig=None, options="", hideLogs=None):
+def kubectlCLI(cmd, kubeconfig, options="", hideLogs=None):
     """Runs kubectl CLI tool."""
 
-    if kubeconfig is None:
-        kubeconfig = ""
-    else:
-        kubeconfig = '--kubeconfig=%s' % kubeconfig
+    kubeconfig = '--kubeconfig=%s' % kubeconfig
     return runCMD("kubectl %s %s %s" % (cmd,kubeconfig,options), hideLogs=hideLogs)
 
 

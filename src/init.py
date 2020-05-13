@@ -12,8 +12,9 @@ extraInstanceConfig = ""
 dependencies = ""
 credentials = ""
 testsRoot = "src/tests/"
-defaultKubeconfig = "%s/.kube/config" % os.environ['HOME'] # TODO: should be src/tests/shared/config
 baseCWD = os.getcwd()
+#defaultKubeconfig = "%s/.kube/config" % os.environ['HOME'] # TODO: should be src/tests/shared/config
+defaultKubeconfig = "%s/src/tests/shared/config" % baseCWD
 obtainCost = True
 extraSupportedClouds = ["openstack",
                         "aws",

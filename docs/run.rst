@@ -64,7 +64,7 @@ Once the bootstrapping has completed and tests are deployed, you can see the pod
 
 .. code-block:: console
 
-    $ watch kubectl get pods
+    $ watch kubectl get pods --kubeconfig /src/tests/shared/config
 
 
 If GPU and HPC tests were deployed, see their pods by doing:
@@ -77,12 +77,12 @@ If GPU and HPC tests were deployed, see their pods by doing:
 
 The following aliases are available when using the provided Docker image:
 
-+--------------+------------------------------------------------------------------------+
-|Alias         | Equivalence                                                            |
-+==============+========================================================================+
-|tfLogs        |'tail -f logs' (must be run inside /EOSC-Testsuite)                     |
-+--------------+------------------------------------------------------------------------+
-|ansibleLogs   |'tail -f src/logging/ansibleLogs*' (must be run inside /EOSC-Testsuite) |
-+--------------+------------------------------------------------------------------------+
-|watchPods     |'watch kubectl get pods -owide'                                         |
-+--------------+------------------------------------------------------------------------+
++--------------+---------------------------------------------------------------------------------------+
+|Alias         | Equivalence                                                                           |
++==============+=======================================================================================+
+|tfLogs        |'tail -f /EOSC-Testsuite/logs'                                                         |
++--------------+---------------------------------------------------------------------------------------+
+|ansibleLogs   |'tail -f /EOSC-Testsuite/src/logging/ansibleLogs*'                                     |
++--------------+---------------------------------------------------------------------------------------+
+|watchPods     |'watch kubectl get pods --kubeconfig /EOSC-Testsuite/src/tests/shared/config -owide'   |
++--------------+---------------------------------------------------------------------------------------+

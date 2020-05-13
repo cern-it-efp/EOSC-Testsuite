@@ -82,6 +82,7 @@ def runTest(resource,
             resultFile,
             podName,
             resultOnPod,
+            kubeconfig,
             resource_raw=None,
             substitution=None,
             copyToPodAndRun_flag=None,
@@ -104,13 +105,14 @@ def runTest(resource,
     start = time.time() # For tests with additional resources (i.e S3 bucket)
     #---------------------------------------------------------------------------
 
-    if kubectl(Action.create, file=resource, toLog=toLog) != 0:
+    if kubectl(Action.create, kubeconfig, file=resource, toLog=toLog) != 0:
         init.queue.put(({"test": testName, "deployed": False}, testCost))
         writeFail(resDir, resultFile, "%s pod deploy failed." % podName, toLog)
     else:
         if copyToPodAndRun_flag is True:
             copyToPodAndRun(
                 podName,
+                kubeconfig,
                 resDir,
                 toLog,
                 resultFile,
@@ -120,7 +122,7 @@ def runTest(resource,
                 resultFile,
                 resultOnPod)
         else:
-            fetchResults(resDir, podName, resultOnPod, resultFile, toLog)
+            fetchResults(resDir, kubeconfig, podName, resultOnPod, resultFile, toLog)
 
         #-----------------------------------------------------------------------
         testDuration = time.time() - start # For tests with additional resources
@@ -131,7 +133,7 @@ def runTest(resource,
 
         # cleanup
         writeToFile(toLog, "Cluster cleanup...", True)
-        kubectl(Action.delete, type=Type.pod, name=podName)
+        kubectl(Action.delete, kubeconfig, type=Type.pod, name=podName)
         init.queue.put(({"test": testName, "deployed": True}, testCost))
 
 
@@ -165,7 +167,7 @@ def s3Test(resDir):
             "after": init.testsCatalog["s3Test"]["secretKey"]
         }
     ]
-
+    kubeconfig = defaultKubeconfig
     runTest(resource,
             toLog,
             testName,
@@ -173,6 +175,7 @@ def s3Test(resDir):
             resultFile,
             podName,
             resultOnPod,
+            kubeconfig,
             resource_raw=resource_raw,
             substitution=substitution,
             additionalResourcesPrices=additionalResourcesPrices)
@@ -198,7 +201,7 @@ def dataRepatriationTest(resDir):
             "after": init.configs["providerName"]
         }
     ]
-
+    kubeconfig = defaultKubeconfig
     runTest(resource,
             toLog,
             testName,
@@ -206,6 +209,7 @@ def dataRepatriationTest(resDir):
             resultFile,
             podName,
             resultOnPod,
+            kubeconfig,
             resource_raw=resource_raw,
             substitution=substitution)
 
@@ -230,7 +234,7 @@ def cpuBenchmarking(resDir):
             "after": init.configs["providerName"]
         }
     ]
-
+    kubeconfig = defaultKubeconfig
     runTest(resource,
             toLog,
             testName,
@@ -238,6 +242,7 @@ def cpuBenchmarking(resDir):
             resultFile,
             podName,
             resultOnPod,
+            kubeconfig,
             resource_raw=resource_raw,
             substitution=substitution)
 
@@ -262,7 +267,7 @@ def perfsonarTest(resDir):
     podPath="%s:/tmp" % podName
     localPath=testsRoot + "perfsonar/ps_test.py"
     resultOnPod = "/tmp/perfsonar_results.json"
-
+    kubeconfig = defaultKubeconfig
     runTest(resource,
             toLog,
             testName,
@@ -270,6 +275,7 @@ def perfsonarTest(resDir):
             resultFile,
             podName,
             resultOnPod,
+            kubeconfig,
             copyToPodAndRun_flag=True,
             podPath=podPath,
             localPath=localPath,
@@ -292,7 +298,7 @@ def dodasTest(resDir):
     podPath = "%s:/CMSSW/CMSSW_9_4_0/src" % podName
     localPath = "%sdodas/custom_entrypoint.sh" % testsRoot
     cmd = "sh /CMSSW/CMSSW_9_4_0/src/custom_entrypoint.sh"
-
+    kubeconfig = defaultKubeconfig
     runTest(resource,
             toLog,
             testName,
@@ -300,6 +306,7 @@ def dodasTest(resDir):
             resultFile,
             podName,
             resultOnPod,
+            kubeconfig,
             copyToPodAndRun_flag=True,
             podPath=podPath,
             localPath=localPath,
@@ -396,11 +403,11 @@ def dlTest(onlyTest, retry, noTerraform, resDir):
                 "Failed to prepare GPU/DL cluster (Kubeflow/Tensorflow/MPI)",
                 "src/logging/dlTest")
             return
-    kubectl(Action.create, file=testsRoot +
+    kubectl(Action.create, kubeconfig, file=testsRoot +
             "dlTest/device_plugin.yaml", ignoreErr=True)
-    kubectl(Action.create, file=testsRoot +
+    kubectl(Action.create, kubeconfig, file=testsRoot +
             "dlTest/pv-volume.yaml", ignoreErr=True)
-    kubectl(Action.create, file=testsRoot +
+    kubectl(Action.create, kubeconfig, file=testsRoot +
             "dlTest/3dgan-datafile-lists-configmap.yaml", ignoreErr=True)
 
     # 2) Deploy the required files.
@@ -420,6 +427,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir):
 
     if kubectl(
         Action.create,
+        kubeconfig,
         file=testsRoot +
         "dlTest/train-mpi_3dGAN.yaml",
             toLog="src/logging/dlTest") != 0:
@@ -436,17 +444,18 @@ def dlTest(onlyTest, retry, noTerraform, resDir):
     else:
         fetchResults(
             resDir,
+            kubeconfig,
             "train-mpijob-worker-0:/mpi_learn/bb_train_history.json",
             "bb_train_history.json",
             "src/logging/dlTest")
         res = True
     # cleanup
     writeToFile("src/logging/dlTest", "Cluster cleanup...", True)
-    kubectl(Action.delete, type=Type.mpijob, name="train-mpijob")
-    kubectl(Action.delete, type=Type.configmap, name="3dgan-datafile-lists")
-    kubectl(Action.delete, type=Type.pv, name="pv-volume1")
-    kubectl(Action.delete, type=Type.pv, name="pv-volume2")
-    kubectl(Action.delete, type=Type.pv, name="pv-volume3")
+    kubectl(Action.delete, kubeconfig, type=Type.mpijob, name="train-mpijob")
+    kubectl(Action.delete, kubeconfig, type=Type.configmap, name="3dgan-datafile-lists")
+    kubectl(Action.delete, kubeconfig, type=Type.pv, name="pv-volume1")
+    kubectl(Action.delete, kubeconfig, type=Type.pv, name="pv-volume2")
+    kubectl(Action.delete, kubeconfig, type=Type.pv, name="pv-volume3")
 
     init.queue.put(({"test": "dlTest", "deployed": res}, testCost))
 

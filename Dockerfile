@@ -55,10 +55,10 @@ RUN mkdir /root/.ssh && \
     chmod 600 /root/.ssh/id_rsa
 
 # ------------------ Add useful aliases
-RUN echo 'alias tfLogs="tail -f logs"' >> ~/.bashrc
-RUN echo 'alias ansibleLogs="tail -f src/logging/ansibleLogs*"' >> ~/.bashrc
+RUN echo 'alias tfLogs="tail -f /EOSC-Testsuite/logs"' >> ~/.bashrc
+RUN echo 'alias ansibleLogs="tail -f /EOSC-Testsuite/src/logging/ansibleLogs*"' >> ~/.bashrc
 RUN echo 'alias gcd="git checkout development"' >> ~/.bashrc
-RUN echo 'alias watchPods="watch kubectl get pods -owide"' >> ~/.bashrc
+RUN echo 'alias watchPods="watch kubectl get pods --kubeconfig /EOSC-Testsuite/src/tests/shared/config -owide"' >> ~/.bashrc
 
 # ------------------ Clone TS repo and get bash
 RUN echo cd /EOSC-Testsuite >> ~/.bashrc
