@@ -26,7 +26,7 @@ Options
 ..     In case of errors on the first run, use this option for retrying. This will make the test-suite try and reuse already provisioned infrastructure. Not valid for the first run, use only when VMs were provisioned but kubernetes bootstrapping failed.
 
 --destroy <cluster>
-    No test suite run, only destroy provisioned infrastructure. Argument can be:
+    No test suite run, only destroy provisioned infrastructure. Argument can be: (note a space separated subset of these can also be specified, for example "dlTest shared")
 
     'shared': Destroy the shared cluster.
 

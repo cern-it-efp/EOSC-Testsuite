@@ -154,6 +154,8 @@ def checkClustersToDestroy(cliParameterValue, clusters):
         if cliParameterValue == "all":
             return True
         for value in cliParameterValue.split(','):
+            if value == "all":
+                return True
             if value not in clusters:
                 return False
     except:

@@ -5,7 +5,7 @@ try:
     import yaml
     import json
     from multiprocessing import Process, Queue
-    import argparse
+    import getopt
     import jsonschema
     import os
     import datetime
@@ -103,7 +103,8 @@ def header(noLogo=False, provider=None, results=None):
         try:
             logger(showThis, "#", "src/logging/header", override=True)
             if onlyTest is True:
-                writeToFile("src/logging/header", "(ONLY TEST EXECUTION)", True)
+                writeToFile("src/logging/header",
+                            "(ONLY TEST EXECUTION)", True)
         except BaseException as e:
             print("EOSC logo exception: " + str(e))
             header(noLogo=True, provider=provider, results=results)
@@ -113,50 +114,64 @@ def header(noLogo=False, provider=None, results=None):
 header()
 
 # -----------------CMD OPTIONS--------------------------------------------
-# TODO: test_suite's watchFunct shouldn't be called if -h or --destroy were used
-parser = argparse.ArgumentParser(description='EOSC Test-Suite.',allow_abbrev=False)
-parser.add_argument('-y',help='No interactive.',action='store_false', dest="interactive")
-parser.add_argument('-o','--onlyTest',help='Only test run.',action='store_true')
-parser.add_argument('--noTerraform',help='Skip Terraform, run only Ansible.', action='store_true')
-parser.add_argument('-c','--configs',help='Path to configs.', type=str, dest="cfgPathCLI")
-parser.add_argument('-t','--testsCatalog',help='Path to tests catalog.',metavar="CATALOG", type=str, dest="tcPathCLI")
-parser.add_argument('--destroy', nargs='+', dest="clustersToDestroy", help='Destroy infrastructure.',metavar="CLUSTERS", choices=['all']+clusters, type=str)
-parser.add_argument('--destroyOnCompletion', nargs='+', dest="clustersToDestroyOnCompletion",help='Destroy infrastructure at the end of the run.',metavar="CLUSTERS", choices=['all']+clusters)
-parser.add_argument('--customNodes',help='Use a specific amount of nodes.',metavar="NODES", type=int)
-#parser.add_argument('viaBackend', # Not available
-#parser.add_argument('retry', # Not available
-
-args = parser.parse_args()
-
-if args.cfgPathCLI:
-    cfgPathCLI = args.cfgPathCLI
-if args.tcPathCLI:
-    tcPathCLI = args.tcPathCLI
-if args.interactive:
-    interactive = args.interactive # disables prompts of overriding tf files and deleting infrastructure
-if args.onlyTest:
-    onlyTest = args.onlyTest
-if args.customNodes:
-    customNodes = args.customNodes
-if args.noTerraform:
-    noTerraform = True
-if args.clustersToDestroy: 
-    clustersToDestroy = args.clustersToDestroy
-    if "all" in clustersToDestroy:
-        clustersToDestroy = clusters
-    if interactive is False: # TODO: if --destroy is used, test_suite calls main.py with just --destroy and its values so interactive is never initialized
-        destroyTF(baseCWD, clusters=clustersToDestroy)
-    elif input(destroyWarning % clustersToDestroy) == "yes":
-        destroyTF(baseCWD, clusters=clustersToDestroy)
-    else:
-        print("Aborting operation")
-    stop(0)
-if args.clustersToDestroyOnCompletion:
-    clustersToDestroy = args.clustersToDestroyOnCompletion
-    if "all" in clustersToDestroy:
-        clustersToDestroy = clusters
-    destroyOnCompletion = True
-
+try:
+    options, values = getopt.getopt(
+        sys.argv[1:],
+        'c:t:oy',
+        ['onlyTest', # TODO - allows: noTerr, destroyOnC, customN, and such options (portions of real options). See https://stackoverflow.com/questions/33900846/disable-unique-prefix-matches-for-argparse-and-optparse
+         'viaBackend',
+         'retry',
+         'noTerraform',
+         'destroy=',
+         'destroyOnCompletion=',
+         'customNodes=',
+         'configs=',
+         'testsCatalog='])
+except getopt.GetoptError as err:
+    print(err)
+    stop(1)
+for currentOption, currentValue in options:
+    if currentOption in ('-c', '--configs'):
+        cfgPathCLI = currentValue
+    elif currentOption in ('-t', '--testsCatalog'):
+        tcPathCLI = currentValue
+    elif currentOption == '-y':
+        interactive = False # disables prompts of overriding tf files and deleting infrastructure
+    elif currentOption in ('-o', '--onlyTest'):
+        writeToFile("src/logging/header", "(ONLY TEST EXECUTION)", True)
+        onlyTest = True
+    elif currentOption == '--retry':
+        retry = True
+    elif currentOption == '--customNodes':
+        if currentValue.isdigit():
+            customNodes = currentValue
+        else:
+            print("The value for --customNodes must be integer > 0. ")
+            stop(1)
+    elif currentOption == '--destroy':
+        if checkClustersToDestroy(currentValue, clusters):
+            if currentValue != "all":
+                clusters = currentValue.split(',')
+            if interactive is False: # TODO: if --destroy is used, test_suite calls main.py just with --destroy and the values so interactive is never initialized
+                destroyTF(baseCWD, clusters=clusters)
+            elif input(destroyWarning % currentValue) == "yes":
+                destroyTF(baseCWD, clusters=clusters)
+            else:
+                print("Aborting operation")
+        else:
+            print("Bad value '%s' for --destroy." % currentValue)
+        stop(0)
+    elif currentOption == '--destroyOnCompletion': # TODO: refactor in the same way --destroy is
+        if checkClustersToDestroy(currentValue, clusters):
+            if currentValue != "all":
+                clusters = currentValue.split(',')
+            destroyOnCompletion = True
+            clustersToDestroy = clusters
+        else:
+            print("Bad value '%s' for --destroyOnCompletion." % currentValue)
+            stop(1)
+    elif currentOption == '--noTerraform':
+        noTerraform = True
 
 # -----------------CHECKS AND PREPARATION---------------------------------
 selectedTests = init.initAndChecks(noTerraform,
