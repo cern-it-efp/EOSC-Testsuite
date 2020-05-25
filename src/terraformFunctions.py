@@ -215,7 +215,7 @@ def terraformProvisionment(
         # ---------------- delete TF stuff from previous run if existing
         cleanupTF(mainTfDir)
 
-        # ---------------- manage general variables # TODO: do this with terraform_cli_vars too (yamldecode)
+        # ---------------- manage general variables 
         substitution = [
             {
                 "before": "NODES_PH",
@@ -230,7 +230,7 @@ def terraformProvisionment(
                 "after": nodeName
             }
         ]
-        groupReplace("src/provisionment/tfTemplates/general/variables.tf", substitution, mainTfDir + "/main.tf") # TODO: the problem is here
+        groupReplace("src/provisionment/tfTemplates/general/variables.tf", substitution, mainTfDir + "/main.tf")
 
         terraform_cli_vars["dockerCE"] = tryTakeFromYaml(configs, "dockerCE", None)
         terraform_cli_vars["dockerEngine"] = tryTakeFromYaml(configs, "dockerEngine", None)

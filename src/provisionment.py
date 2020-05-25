@@ -92,7 +92,7 @@ def provisionAndBootstrap(test,
     if test == "shared":
         mainTfDir = testsRoot + "shared"
         os.makedirs(mainTfDir, exist_ok=True)
-        
+
     result, masterIP = ansiblePlaybook(mainTfDir,
                                        baseCWD,
                                        configs["providerName"],

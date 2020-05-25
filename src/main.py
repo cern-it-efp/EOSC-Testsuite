@@ -113,7 +113,6 @@ def header(noLogo=False, provider=None, results=None):
 header()
 
 # -----------------CMD OPTIONS--------------------------------------------
-# TODO: test_suite's watchFunct shouldn't be called if -h or --destroy were used
 parser = argparse.ArgumentParser(description='EOSC Test-Suite.',allow_abbrev=False)
 parser.add_argument('-y',help='No interactive.',action='store_false', dest="interactive")
 parser.add_argument('-o','--onlyTest',help='Only test run.',action='store_true')
@@ -140,11 +139,11 @@ if args.customNodes:
     customNodes = args.customNodes
 if args.noTerraform:
     noTerraform = True
-if args.clustersToDestroy: 
+if args.clustersToDestroy:
     clustersToDestroy = args.clustersToDestroy
     if "all" in clustersToDestroy:
         clustersToDestroy = clusters
-    if interactive is False: # TODO: if --destroy is used, test_suite calls main.py with just --destroy and its values so interactive is never initialized
+    if interactive is False:
         destroyTF(baseCWD, clusters=clustersToDestroy)
     elif input(destroyWarning % clustersToDestroy) == "yes":
         destroyTF(baseCWD, clusters=clustersToDestroy)

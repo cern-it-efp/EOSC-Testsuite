@@ -26,7 +26,7 @@ Options
 ..     In case of errors on the first run, use this option for retrying. This will make the test-suite try and reuse already provisioned infrastructure. Not valid for the first run, use only when VMs were provisioned but kubernetes bootstrapping failed.
 
 --destroy <cluster>
-    No test suite run, only destroy provisioned infrastructure. Argument can be: (note a space separated subset of these can also be specified, for example "dlTest shared")
+    No test suite run, only destroy provisioned infrastructure. Argument can be: (note a quote wrapped and space separated subset of these can also be specified, for example "dlTest shared")
 
     'shared': Destroy the shared cluster.
 
@@ -73,6 +73,14 @@ If GPU and HPC tests were deployed, see their pods by doing:
 
     $ watch kubectl --kubeconfig src/tests/dlTest/config get pods # For GPU cluster
     $ watch kubectl --kubeconfig src/tests/hpcTest/config get pods # For HPC cluster
+
+
+Once the pods are deployed, the suite run can be stopped by destroying pods, useful for example when pods go "Evicted" or "ImagePullBackOff". Examples:
+
+.. code-block:: console
+
+    $ kubectl --kubeconfig src/tests/shared/config delete pods --all # destroy all pods on the shared cluster
+    $ kubectl --kubeconfig src/tests/shared/config delete pod dodas-pod # destroy DODAS pod
 
 
 The following aliases are available when using the provided Docker image:

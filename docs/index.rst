@@ -14,7 +14,9 @@ Please find the the repository here: https://github.com/cern-it-efp/EOSC-Testsui
    testsCatalog
    run
    existingClusters
+   noTerraform
    results
+..
    verification
    costs
 

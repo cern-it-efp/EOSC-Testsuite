@@ -1,6 +1,6 @@
 - name: initialize the cluster
   #shell: kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=SystemVerification,NumCPU >> cluster_initialized.txt # original
-  shell: kubeadm init --apiserver-cert-extra-sans={{ masterIP }} --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=SystemVerification,NumCPU >> cluster_initialized.txt # TODO: nat or private differentiation
+  shell: kubeadm init --apiserver-cert-extra-sans={{ masterIP }} --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=SystemVerification,NumCPU >> cluster_initialized.txt 
   args:
     chdir: $HOME
     creates: cluster_initialized.txt

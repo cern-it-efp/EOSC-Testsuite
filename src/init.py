@@ -12,7 +12,7 @@ extraInstanceConfig = ""
 dependencies = ""
 credentials = ""
 testsRoot = "src/tests/"
-allowAllTfClouds = False # TODO: if set to True allows useGeneralTfTemplate, otherwise only --no-terraform or extraSupportedClouds
+allowAllTfClouds = False
 baseCWD = os.getcwd()
 defaultKubeconfig = "%s/src/tests/shared/config" % baseCWD
 obtainCost = True
@@ -115,8 +115,8 @@ def initAndChecks(noTerraform,
         stop(1)
 
 
-    # -----------------------------------------------------------------------------------------------------------------------
-    # TODO: these are for providers that support terraform but are not in extraSupportedClouds, deprecated as of 20.5: must use --no-terraform
+    # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # TODO: these are for providers that support terraform but are not in extraSupportedClouds. As of 20.5, if allowAllTfClouds is set to False, must use --no-terraform
     instanceDefinition = loadFile("configurations/instanceDefinition")
     extraInstanceConfig = loadFile("configurations/extraInstanceConfig")
     dependencies = loadFile("configurations/dependencies")
@@ -129,32 +129,11 @@ def initAndChecks(noTerraform,
             "ERROR: NAME_PH was not found in instanceDefinition file.",
             True)
         stop(1)
-    # -----------------------------------------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
     # --------Tests config checks
     selected = []
-
-    """
-        for test in testsSharingCluster:
-            if testsCatalog[test]["run"] is True:
-                selected.append(test)
-                generalInstancePrice = tryTakeFromYaml(configs, "costCalculation.generalInstancePrice", None)
-                obtainCost = checkCost(obtainCost, generalInstancePrice)
-                if test == "s3Test":
-                    s3bucketPrice = tryTakeFromYaml(configs, "costCalculation.s3bucketPrice", None)
-                    obtainCost = checkCost(obtainCost, s3bucketPrice)
-
-        for test in customClustersTests:
-            if testsCatalog[test]["run"] is True:
-                selected.append(test)
-                if test == "dlTest":
-                    instancePrice = tryTakeFromYaml(configs, "costCalculation.GPUInstancePrice", None)
-                if test == "hpcTest":
-                    instancePrice = tryTakeFromYaml(configs, "costCalculation.HPCInstancePrice", None)
-                obtainCost = checkCost(obtainCost, instancePrice)
-
-    """
 
     for test in testsSharingCluster + customClustersTests:
 

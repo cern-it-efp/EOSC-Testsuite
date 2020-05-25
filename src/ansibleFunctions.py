@@ -58,7 +58,7 @@ def createHostsFile(mainTfDir,
         os.chdir(baseCWD)
 
         for resource in resources:
-            ip = getIP(resource, provider, public=True) # TODO: avoiding bastion usage
+            ip = getIP(resource, provider, public=True) 
             if ip is not None:
                 IPs.append(ip)
     else:
@@ -120,7 +120,7 @@ def ansiblePlaybook(mainTfDir,
         remote_user=tryTakeFromYaml(configs, "openUser", "root"),
         become_method='sudo',
         ssh_common_args='-o StrictHostKeyChecking=no',
-        extra_vars=[{'kubeconfig': kubeconfig, 'masterIP': masterIP}], # TODO: nat or private differentiation
+        extra_vars=[{'kubeconfig': kubeconfig, 'masterIP': masterIP}],
         forks=100,
         verbosity=False,  # True,
         listtags=False,

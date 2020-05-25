@@ -203,9 +203,10 @@ Find below these lines details on how to run the suite on these providers:
 
 ``Azure``
 
-(Find the example files at *examples/azure*. It is also possible to use AKS to provision the cluster, for this refer to section "Using existing clusters".)
+(It is also possible to use AKS to provision the cluster, for this refer to section "Using existing clusters".)
 
 Install az CLI and configure credentials with 'az login'.
+Note resource group, security group, and subnet have to be created in advance.
 
 Variables for configs.yaml:
 
@@ -254,7 +255,7 @@ Also, if image's *publisher*, *offer*, *sku* and *version* are omitted, the foll
 
 ``AWS``
 
-(Find the example files at *examples/aws*. It is also possible to use EKS to provision the cluster, for this refer to section "Using existing clusters".)
+(It is also possible to use EKS to provision the cluster, for this refer to section "Using existing clusters".)
 
 Variables for configs.yaml:
 
@@ -281,7 +282,7 @@ Variables for configs.yaml:
 
 ``GCP``
 
-(Example files at *examples/gcp*. It is also possible to use GKE to provision the cluster, for this refer to section "Using existing clusters". You will have to |use_gke| too.)
+(It is also possible to use GKE to provision the cluster, for this refer to section "Using existing clusters". You will have to |use_gke| too.)
 
 Variables for configs.yaml:
 
@@ -290,11 +291,11 @@ Variables for configs.yaml:
 +=======================+=============================================================================================================================+
 |providerName           | It's value must be "google". (required)                                                                                     |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|pathToKey              | Path to the location of your private key, to be used for ssh connections. (required)                                                                         |
+|pathToKey              | Path to the location of your private key, to be used for ssh connections. (required)                                        |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 |flavor                 | Flavor to be used for the main cluster. (required)                                                                          |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|openUser               | User to be used for ssh connections. (required)                                                                             |
+|openUser               | User to be used for ssh connections. Note VM specific keys are not supported, only project-wide SSH keys are.(required)     |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 |zone                   | The zone in which to create the compute instances. (required)                                                               |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
@@ -326,18 +327,24 @@ Variables for configs.yaml:
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 |flavor                 | Flavor to be used for the main cluster. (required)                                                                          |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|openUser               | User to be used for ssh connections. Root user will be used by default.                                                     |
+|storageCapacity        | VM's disk size. The VMs will boot from disk, this sets the size of it. (required)                                           |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 |imageID                | OS Image ID to be used for the VMs. (required)                                                                              |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 |keyPair                | Name of the key to be used. Has to be created or imported beforehand. (required)                                            |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|securityGroups         | Security groups array. Must be a String, example: "[\"default\",\"allow_ping_ssh_rdp\"]"                                    |
+|openUser               | User to be used for ssh connections. Root user will be used by default.                                                     |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|securityGroups         | Security groups array.                                                                                                      |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 |region                 | The region in which to create the compute instances. If omitted, the region specified in the credentials file is used.      |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 |availabilityZone       | The availability zone in which to create the compute instances.                                                             |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+|networkName            | Name of the newtork to be used.                                                                                             |
++-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+
+
 
 
 ``CloudStack``
@@ -357,15 +364,15 @@ Variables for configs.yaml:
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 |keyPair                | Name of the key to be used. Has to be created or imported beforehand. (required)                                            |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|securityGroups         | Security groups array. Must be a String, example: "[\"default\",\"allow_ping_ssh_rdp\"]"                                    |
+|securityGroups         | Security groups array.                                                                                                      |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 |zone                   | The zone in which to create the compute instances. (required)                                                               |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 |template               | OS Image to be used for the VMs. (required)                                                                                 |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|storageCapacity               | VM's disk size.                                                                                                             |
+|storageCapacity        | VM's disk size.                                                                                                      |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|authFile             | Path to the file containing the CloudStack credentials. See below the structure of such file. (required)                    |
+|authFile               | Path to the file containing the CloudStack credentials. See below the structure of such file. (required)                      |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 
 CloudStack credentials file's structure:
@@ -393,38 +400,38 @@ Variables for configs.yaml:
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 |keyPair                | Name of the key to be used. Has to be created or imported beforehand. (required)                                            |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|securityGroups         | Security groups array. Must be a String, example: "[\"default\",\"allow_ping_ssh_rdp\"]"                                    |
+|securityGroups         | Security groups array.                                                                                                      |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 |zone                   | The zone in which to create the compute instances. (required)                                                               |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 |template               | OS Image to be used for the VMs. (required)                                                                                 |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|storageCapacity               | VM's disk size. (required)                                                                                                  |
+|storageCapacity               | VM's disk size. (required)                                                                                           |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|authFile             | Path to the file containing the Exoscale credentials. See below the structure of such file. (required)                      |
+|authFile             | Path to the file containing the Exoscale credentials. See below the structure of such file. (required)                        |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 
 Exoscale credentials file's structure:
 
 .. code-block:: console
 
-  [exoscale]
+  [cloudstack]
   key = EXOe3ca3e7621b7cd7a20f7e0de
   secret = 2_JvzFcZQL_Rg1nZSRNVheYQh9oYlL5aX3zX-eILiL4
 
 
 ``T-Systems' Open Telekom Cloud``
 
-Note that to allow the VMs access the internet, Shared SNAT has to be enabled on the default VPC.
+Note that to allow the VMs access the internet, Shared SNAT has to be enabled on the default VPC, which will be used for the suite run.
 
 Variables for configs.yaml:
 
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 |Name                   | Explanation / Values                                                                                                        |
 +=======================+=============================================================================================================================+
-|providerName           | It's value must be "opentelekomcloud". (required)                                                                                   |
+|providerName           | It's value must be "opentelekomcloud". (required)                                                                           |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|pathToKey              | Path to the location of your private key, to be used for ssh connections. (required)                                                                         |
+|pathToKey              | Path to the location of your private key, to be used for ssh connections. (required)                                        |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 |flavor                 | Flavor to be used for the main cluster. (required)                                                                          |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
@@ -432,7 +439,7 @@ Variables for configs.yaml:
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 |securityGroups         | Security groups array.                                                                                                      |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|storageCapacity               | VM's disk size. (required)                                                                                                  |
+|storageCapacity        | VM's disk size. The VMs will boot from disk, this sets the size of it. (required)                                           |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
 |authFile               | Path to the yaml file containing the OTC credentials. See below the structure of such file. (required)                      |
 +-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
@@ -454,6 +461,8 @@ secK: 123456789abcd
 
 
 ``Oracle Cloud Infrastructure``
+
+(It is also possible to use OKE to provision the cluster, for this refer to section "Using existing clusters".)
 
 Variables for configs.yaml:
 

@@ -35,7 +35,7 @@ For this test, apart from the *run* variable, the following can be set in the *t
 S3 endpoint tests
 =====================
 A simple S3 test script to test functionality of S3-like endpoints, checking the following:
-S3 authentication (access key + secret key), PUT, GET, GET with prefix matching, GET chunk, GET multiple chunks.
+S3 authentication (access key + secret key), PUT, GET, GET with prefix matching, GET chunk and GET multiple chunks.
 
 For this test, apart from the *run* variable, the following ones must be set on the *testsCatalog.yaml* file:
 
@@ -49,6 +49,9 @@ For this test, apart from the *run* variable, the following ones must be set on 
 +----------------+----------------------------------------------------------------------------------------------------------------+
 |secretKey       | Secret key for S3 resource management.                                                                         |
 +----------------+----------------------------------------------------------------------------------------------------------------+
+
+Note that the provider has to allow using S3 clients such as s3cmd or aws-cli.
+For example, specifically for GCP, interoperability has to be enabled.
 
 - Contributors/Owners: Oliver Keeble (CERN) - oliver.keeble AT cern.ch
 - |Repository_s3|
@@ -105,7 +108,9 @@ The following tests are launched end to end:
 - trace: Trace the path between IP hosts.
 - latencybg: Continuously measure one-way latency and associated statistics between hosts and report back results periodically.
 
-The endpoint for these tests must be specified at testsCatalog.yaml's *perfsonarTest.endpoint* variable. Use endpoints from:
+The endpoint for these tests must be specified at testsCatalog.yaml's *perfsonarTest.endpoint* variable.
+Note if the server on the provided endpoint does not allow or support a subset of these tests, those will fail but the others would still be carried out.
+Use endpoints from:
 
 * |link1|
 * |link2|
@@ -167,7 +172,8 @@ and storage resources, by generating clusters on demand for the execution of HTC
 HTCondor Global Pool of CMS to enable the dynamic extension of existing computing resources. A benefit of such an architecture is that it provides high
 scaling capabilities and self-healing support that results in a drastic reduction of time and cost, through setup and operational efficiency increases.
 
-If one wants to deploy this test, the machines in the general cluster (to which such test is deployed), should have at least 50 gb disk as the image for this test is 16GB.
+If one wants to deploy this test, the machines in the general cluster (to which such test is deployed), should have rather big disks as the image for this test is 16GB.
+To set the disk size use the storageCapacity variable from configs.yaml.
 
 - Contributors/Owners: Daniele Spiga (INFN) - daniele.spiga@pg.infn.it ; Diego Ciangottini (INFN) - diego.ciangottini@cern.ch
 - |Repository_dodas|

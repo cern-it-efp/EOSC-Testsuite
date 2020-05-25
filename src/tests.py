@@ -257,7 +257,7 @@ def perfsonarTest(resDir):
 
     podName = "ps-pod"
     testName = "perfSONAR"
-    endpoint = init.testsCatalog["perfsonarTest"]["endpoint"]
+    endpoint = init.testsCatalog["perfsonarTest"]["endpoint"] 
     dependenciesCMD = "yum -y install python-dateutil python-requests"
     runScriptCMD = "python /tmp/ps_test.py --ep %s" % endpoint
     runOnPodCMD = "%s && %s" % (dependenciesCMD, runScriptCMD)
@@ -388,7 +388,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir):
     if checkDLsupport() is False and viaBackend is False:
         writeToFile("src/logging/dlTest",
                     "Preparing cluster for DL test...", True)
-        masterIP = runCMD( # TODO: do this with kubectlCLI
+        masterIP = runCMD(
             "kubectl --kubeconfig %s get nodes -owide |\
             grep master | awk '{print $6}'" %
             kubeconfig, read=True)
@@ -434,7 +434,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir):
             toLog="src/logging/dlTest") != 0:
         writeFail(resDir, "bb_train_history.json",
                   "Error deploying train-mpi_3dGAN.", "src/logging/dlTest")
-    elif runCMD( # TODO: do this with kubectlCLI
+    elif runCMD(
             'kubectl describe pods | grep \"Insufficient nvidia.com/gpu\"',
             read=True):
         writeFail(

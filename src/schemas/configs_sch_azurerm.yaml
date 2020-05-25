@@ -9,7 +9,6 @@ required:
     - resourceGroupName
     - pubSSH
     - subnetId
-    #- securityGroupID # TODO
 properties:
     subscriptionId:
         type: string

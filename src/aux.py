@@ -114,7 +114,7 @@ def loadFile(loadThis, required=None):
             return inputfile.read().strip()
 
 
-def loadYAML(loadThis, required=None): # TODO: unify this and loadFile
+def loadYAML(loadThis, required=None):
     """ Loads a file
 
     Parameters:
@@ -327,10 +327,10 @@ def getIP(resource, provider, public=False):
         str: Resource's IP address.
     """
 
-    try: # TODO: do with public IPs for all providers
+    try: 
         if provider == "exoscale" or provider == "cloudstack":
             if public is True:
-                return resource["values"]["ip_address"] # TODO: it is possible other implementations of Cloudstack use private IPs/NAT, how'd that differ?
+                return resource["values"]["ip_address"]
             return resource["values"]["ip_address"]
         elif provider == "aws":
             if public is True:

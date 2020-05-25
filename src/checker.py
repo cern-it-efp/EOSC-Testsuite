@@ -53,7 +53,7 @@ def checkDLsupport():
         bool: True in case cluster supports DL, False otherwise.
     """
 
-    pods = runCMD( # TODO: do this with kubectlCLI
+    pods = runCMD( 
         'kubectl --kubeconfig tests/dlTest/config get pods -n kubeflow',
         read=True)
     return len(pods) > 0 and "No resources found." not in pods

@@ -1,4 +1,4 @@
-7. Cost of run calculation
+8. Cost of run calculation
 ---------------------------------------------
 
 An approximative cost of running the test-suite will be calculated in case the prices are specified at configs.yaml under the *costCalculation* section.
