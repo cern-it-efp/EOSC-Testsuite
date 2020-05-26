@@ -26,7 +26,4 @@ spec:
     command: ["/bin/sh","-c"]
     args:
       - cern-benchmark --benchmarks="kv;whetstone;DB12;hyper-benchmark" --freetext="Run as part of the Cloud Provider Validation Test-Suite CERN" --cloud="PROVIDER_PH" -o &&
-        while true;
-        do echo "keeping this alive...";
-        sleep 5;
-        done;
+        tail -f /dev/null

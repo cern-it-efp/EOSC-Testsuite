@@ -11,7 +11,8 @@ log="s3_test.json"
 
 keepAlive () {
 	#WORKAROUND: Needed this to keep pod alive to fetch logs file
-	while true; do echo "keeping this alive..."; done
+	#while true; do echo "keeping this alive..."; done
+	tail -f /dev/null
 }
 
 writeResult () {

@@ -28,4 +28,5 @@ cat > "/home/data_repatriation_test.json" <<EOF
 EOF
 
 #WORKAROUND: Needed this to keep pod alive to fetch logs file
-while true; do echo "keeping this alive..."; done
+#while true; do echo "keeping this alive..."; done
+tail -f /dev/null
