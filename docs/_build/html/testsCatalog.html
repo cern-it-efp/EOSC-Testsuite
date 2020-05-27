@@ -99,9 +99,8 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="run.html">3. Run the test-suite</a></li>
 <li class="toctree-l1"><a class="reference internal" href="existingClusters.html">4. Using existing clusters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="results.html">5. Results</a></li>
-<li class="toctree-l1"><a class="reference internal" href="verification.html">6. Verification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="costs.html">7. Cost of run calculation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="noTerraform.html">5. No Terraform runs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="results.html">6. Results</a></li>
 </ul>
 
             
@@ -172,16 +171,16 @@
 On the other hand, if you don’t want it to be run set this value to False. Please find below, a description of each test that has already been integrated in the Test-Suite:</p>
 <div class="section" id="deep-learning-using-gpus">
 <h2>Deep Learning using GPUs<a class="headerlink" href="#deep-learning-using-gpus" title="Permalink to this headline">¶</a></h2>
-<p>(This test is currently under development and will be available if following versions)</p>
+<p>(This test is currently under development and will be available in future releases)</p>
 <p>The 3DGAN application is a prototype developed to investigate the possibility to use a Deep Learning approach to speed-up the simulation of particle physics detectors. The benchmark measures the total time needed to train a
 3D convolutional Generative Adversarial Network (GAN) using a data-parallel approach on distributed systems.
 It is based on MPI for communication. As such, it tests the performance of single nodes (GPUs cards) but also latency and bandwidth of nodes interconnects and data access. The training uses a Kubernetes cluster (GPU flavored) with Kubeflow and MPI.</p>
 <p>If selected, the suite will provision a Kubernetes cluster -GPU flavored- specifically for this test.
 For this test, apart from the <em>run</em> variable, the following can be set in the <em>testsCatalog.yaml</em> file:</p>
-<table border="1" class="docutils">
+<table border="1" class="colwidths-given docutils">
 <colgroup>
-<col width="13%" />
-<col width="87%" />
+<col width="33%" />
+<col width="67%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Name</th>
@@ -205,12 +204,12 @@ For this test, apart from the <em>run</em> variable, the following can be set in
 <div class="section" id="s3-endpoint-tests">
 <h2>S3 endpoint tests<a class="headerlink" href="#s3-endpoint-tests" title="Permalink to this headline">¶</a></h2>
 <p>A simple S3 test script to test functionality of S3-like endpoints, checking the following:
-S3 authentication (access key + secret key), PUT, GET, GET with prefix matching, GET chunk, GET multiple chunks.</p>
+S3 authentication (access key + secret key), PUT, GET, GET with prefix matching, GET chunk and GET multiple chunks.</p>
 <p>For this test, apart from the <em>run</em> variable, the following ones must be set on the <em>testsCatalog.yaml</em> file:</p>
-<table border="1" class="docutils">
+<table border="1" class="colwidths-given docutils">
 <colgroup>
-<col width="13%" />
-<col width="88%" />
+<col width="33%" />
+<col width="67%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Name</th>
@@ -219,11 +218,7 @@ S3 authentication (access key + secret key), PUT, GET, GET with prefix matching,
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>endpoint</td>
-<td><div class="first last line-block">
-<div class="line">Endpoint under which your S3 bucket is reachable.</div>
-<div class="line">This URL must not include the bucket name but only the host.</div>
-</div>
-</td>
+<td>Endpoint under which your S3 bucket is reachable. This URL must not include the bucket name but only the host.</td>
 </tr>
 <tr class="row-odd"><td>accessKey</td>
 <td>Access key for S3 resource management.</td>
@@ -233,6 +228,8 @@ S3 authentication (access key + secret key), PUT, GET, GET with prefix matching,
 </tr>
 </tbody>
 </table>
+<p>Note that the provider has to allow using S3 clients such as s3cmd or aws-cli.
+For example, specifically for GCP, interoperability has to be enabled.</p>
 <ul class="simple">
 <li>Contributors/Owners: Oliver Keeble (CERN) - oliver.keeble AT cern.ch</li>
 <li><a href="https://gitlab.cern.ch/okeeble/s3test" target="_blank">Repository</a></li>
@@ -273,7 +270,9 @@ The following tests are launched end to end:</p>
 <li>trace: Trace the path between IP hosts.</li>
 <li>latencybg: Continuously measure one-way latency and associated statistics between hosts and report back results periodically.</li>
 </ul>
-<p>The endpoint for these tests must be specified at testsCatalog.yaml’s <em>perfsonarTest.endpoint</em> variable. Use endpoints from:</p>
+<p>The endpoint for these tests must be specified at testsCatalog.yaml’s <em>perfsonarTest.endpoint</em> variable.
+Note if the server on the provided endpoint does not allow or support a subset of these tests, those will fail but the others would still be carried out.
+Use endpoints from:</p>
 <ul class="simple">
 <li><a href="https://fasterdata.es.net/performance-testing/perfsonar/esnet-perfsonar-services/esnet-iperf-hosts/" target="_blank">List of throughput hosts</a></li>
 <li><a href="http://perfsonar-otc.hnsc.otc-service.com/toolkit/" target="_blank">perfSONAR Toolkit</a></li>
@@ -286,16 +285,16 @@ The following tests are launched end to end:</p>
 </div>
 <div class="section" id="fdmnes-simulation-of-x-ray-spectroscopies">
 <h2>FDMNES: Simulation of X-ray spectroscopies<a class="headerlink" href="#fdmnes-simulation-of-x-ray-spectroscopies" title="Permalink to this headline">¶</a></h2>
-<p>(This test is currently under development and will be available if following versions)</p>
+<p>(This test is currently under development and will be available in future releases)</p>
 <p>The FDMNES project provides the research the community a user friendly code to simulate x-ray spectroscopies, linked to the real absorption (XANES, XMCD) or resonant scattering (RXD in bulk or SRXRD for surfaces) of synchrotron radiation.
 It uses parallel calculations using OpenMPI. As an HPC test FDMNES is rather heavy on CPU and Memory and light on I/O.
 The objective of this test is to understand which configuration of FDMNES is the most efficient and which type of tasks and calculations can be done in a give cloud provider.</p>
 <p>If selected, the suite will provision a Kubernetes cluster -HPC flavored- specifically for this test.
 For this test, apart from the <em>run</em> variable, the following can be set in the <em>testsCatalog.yaml</em> file:</p>
-<table border="1" class="docutils">
+<table border="1" class="colwidths-given docutils">
 <colgroup>
-<col width="13%" />
-<col width="87%" />
+<col width="33%" />
+<col width="67%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Name</th>
@@ -322,7 +321,8 @@ For this test, apart from the <em>run</em> variable, the following can be set in
 and storage resources, by generating clusters on demand for the execution of HTCondor workload management system. DODAS allows to seamlessly join the
 HTCondor Global Pool of CMS to enable the dynamic extension of existing computing resources. A benefit of such an architecture is that it provides high
 scaling capabilities and self-healing support that results in a drastic reduction of time and cost, through setup and operational efficiency increases.</p>
-<p>If one wants to deploy this test, the machines in the general cluster (to which such test is deployed), should have at least 50 gb disk as the image for this test is 16GB.</p>
+<p>If one wants to deploy this test, the machines in the general cluster (to which such test is deployed), should have rather big disks as the image for this test is 16GB.
+To set the disk size use the storageCapacity variable from configs.yaml.</p>
 <ul class="simple">
 <li>Contributors/Owners: Daniele Spiga (INFN) - <a class="reference external" href="mailto:daniele&#46;spiga&#37;&#52;&#48;pg&#46;infn&#46;it">daniele<span>&#46;</span>spiga<span>&#64;</span>pg<span>&#46;</span>infn<span>&#46;</span>it</a> ; Diego Ciangottini (INFN) - <a class="reference external" href="mailto:diego&#46;ciangottini&#37;&#52;&#48;cern&#46;ch">diego<span>&#46;</span>ciangottini<span>&#64;</span>cern<span>&#46;</span>ch</a></li>
 <li><a href="https://dodas-ts.github.io/dodas-doc/" target="_blank">Repository</a></li>

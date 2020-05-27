@@ -85,12 +85,15 @@ Once the pods are deployed, the suite run can be stopped by destroying pods, use
 
 The following aliases are available when using the provided Docker image:
 
-+--------------+---------------------------------------------------------------------------------------+
-|Alias         | Equivalence                                                                           |
-+==============+=======================================================================================+
-|tfLogs        |'tail -f /EOSC-Testsuite/logs'                                                         |
-+--------------+---------------------------------------------------------------------------------------+
-|ansibleLogs   |'tail -f /EOSC-Testsuite/src/logging/ansibleLogs*'                                     |
-+--------------+---------------------------------------------------------------------------------------+
-|watchPods     |'watch kubectl get pods --kubeconfig /EOSC-Testsuite/src/tests/shared/config -owide'   |
-+--------------+---------------------------------------------------------------------------------------+
+.. list-table::
+   :widths: 25 50
+   :header-rows: 1
+
+   * - Alias
+     - Equivalence
+   * - tfLogs
+     - 'tail -f /EOSC-Testsuite/logs'
+   * - ansibleLogs
+     - 'tail -f /EOSC-Testsuite/src/logging/ansibleLogs*'
+   * - watchPods
+     - 'watch kubectl get pods --kubeconfig /EOSC-Testsuite/src/tests/shared/config -owide'

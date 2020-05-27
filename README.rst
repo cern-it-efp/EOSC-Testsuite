@@ -44,7 +44,6 @@ The developers would like to thank all test owners and contributors to this proj
 |                              | | T-Systems' Open Telekom Cloud (OpenStack)                                     |
 |                              | | CERN Private Cloud (OpenStack)                                                |
 |                              | | CloudFerro (OpenStack)                                                        |
-|                              | | Cloudscale (OpenStack)                                                        |
 |                              | | CloudStack                                                                    |
 |                              | | OpenStack                                                                     |
 |                              | | CloudSigma                                                                    |
@@ -56,7 +55,7 @@ Release notes
 ---------------------------------------------
 (Note the versions are numbered with the date of the release: YEAR.MONTH)
 
-``20.5``
+``20.6``
 
 -Improved support for running on Oracle Cloud Infrastructure and T-Systems' OTC.
 

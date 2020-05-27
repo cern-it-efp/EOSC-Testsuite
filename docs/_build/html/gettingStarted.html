@@ -109,9 +109,8 @@
 <li class="toctree-l1"><a class="reference internal" href="testsCatalog.html">2. Tests Catalog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run.html">3. Run the test-suite</a></li>
 <li class="toctree-l1"><a class="reference internal" href="existingClusters.html">4. Using existing clusters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="results.html">5. Results</a></li>
-<li class="toctree-l1"><a class="reference internal" href="verification.html">6. Verification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="costs.html">7. Cost of run calculation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="noTerraform.html">5. No Terraform runs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="results.html">6. Results</a></li>
 </ul>
 
             
@@ -223,11 +222,11 @@ Note errors may occur if your key doesn’t have the right permissions. Set thes
 <div class="section" id="security-groups">
 <h2>1.3 Security groups<a class="headerlink" href="#security-groups" title="Permalink to this headline">¶</a></h2>
 <p>The following ports have to be opened:</p>
-<table border="1" class="docutils">
+<table border="1" class="colwidths-given docutils">
 <colgroup>
-<col width="9%" />
-<col width="15%" />
-<col width="76%" />
+<col width="25%" />
+<col width="25%" />
+<col width="50%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Port</th>
@@ -236,19 +235,23 @@ Note errors may occur if your key doesn’t have the right permissions. Set thes
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>22</td>
+<tr class="row-even"><td>&#160;</td>
+<td>ICMP</td>
+<td>Connectivity test</td>
+</tr>
+<tr class="row-odd"><td>22</td>
 <td>TCP</td>
 <td>SSH</td>
 </tr>
-<tr class="row-odd"><td>6443</td>
+<tr class="row-even"><td>6443</td>
 <td>TCP</td>
 <td>Kubernetes API</td>
 </tr>
-<tr class="row-even"><td>10250</td>
+<tr class="row-odd"><td>10250</td>
 <td>TCP</td>
 <td>API which allows node access</td>
 </tr>
-<tr class="row-odd"><td>8472</td>
+<tr class="row-even"><td>8472</td>
 <td>UDP</td>
 <td>Flannel overlay network, k8s pods communication</td>
 </tr>
@@ -285,10 +288,10 @@ provider specific and differ from one provider to another.</p>
 <div class="line">[<strong>NOTE</strong>: For running on Azure, AWS, GCP, OpenStack, CloudStack and Exoscale refer to the section “Main clouds” below. In those cases, only configs.yaml and testsCatalog.yaml are needed.]</div>
 </div>
 <p>Its variables:</p>
-<table border="1" class="docutils">
+<table border="1" class="colwidths-given docutils">
 <colgroup>
-<col width="16%" />
-<col width="84%" />
+<col width="33%" />
+<col width="67%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Name</th>
@@ -303,35 +306,16 @@ provider specific and differ from one provider to another.</p>
 <td>Compute instance name for Terraform. This is provider specific. (required)</td>
 </tr>
 <tr class="row-even"><td>pathToKey</td>
-<td>Path to the location of your private key (required)</td>
+<td>Path to the location of your private key, to be used for ssh connections. (required)</td>
 </tr>
 <tr class="row-odd"><td>flavor</td>
-<td><div class="first last line-block">
-<div class="line">Flavor to be used for the main cluster. This has to be specified as a key-value</div>
-<div class="line">pair according to the provider. (required)</div>
-</div>
-</td>
+<td>Flavor to be used for the main cluster. This has to be specified as a key-value pair according to the provider. (required)</td>
 </tr>
 <tr class="row-even"><td>openUser</td>
-<td><div class="first last line-block">
-<div class="line">User to be used in case the provider doesn’t allow root ssh. If not specified,</div>
-<div class="line">root will be used for ssh connections.</div>
-</div>
-</td>
-</tr>
-<tr class="row-odd"><td>dockerCE</td>
-<td>Version of docker-ce to be installed. Leave empty for latest.</td>
-</tr>
-<tr class="row-even"><td>dockerEngine</td>
-<td>Version of docker-engine to be installed. Leave empty for latest.</td>
-</tr>
-<tr class="row-odd"><td>kubernetes</td>
-<td>Version of Kubernetes to be installed. Leave empty for latest.</td>
+<td>User to be used for ssh connections. Root user will be used by default.</td>
 </tr>
 </tbody>
 </table>
-<p>Note that it’s possible to choose between “Docker Community Edition” and “Docker Engine” (older Docker packages). However it’s <strong>highly recommended</strong> to leave these
-variables empty to create a cluster with the latest stack.</p>
 <p>The file also contains a section named <em>costCalculation</em>. Refer to the section “Cost of run calculation” to understand how to fill that part.</p>
 <p><code class="docutils literal notranslate"><span class="pre">credentials</span></code></p>
 <p>This file must contains .tf (HCL) code for authentication that goes on the provider definition section of a Terraform configuration file (i.e AWS)
@@ -387,13 +371,14 @@ Then this is the file to define those dependencies needed by the VMs.</p>
 In those cases the suite will create itself the Terraform files on the fly according to the configuration provided.
 Find below these lines details on how to run the suite on these providers:</p>
 <p><code class="docutils literal notranslate"><span class="pre">Azure</span></code></p>
-<p>(Find the example files at <em>examples/azure</em>. It is also possible to use AKS to provision the cluster, for this refer to section “Using existing clusters”.)</p>
-<p>Install az CLI and configure credentials with ‘az login’.</p>
+<p>(It is also possible to use AKS to provision the cluster, for this refer to section “Using existing clusters”.)</p>
+<p>Install az CLI and configure credentials with ‘az login’.
+Note resource group, security group, and subnet have to be created in advance.</p>
 <p>Variables for configs.yaml:</p>
-<table border="1" class="docutils">
+<table border="1" class="colwidths-given docutils">
 <colgroup>
-<col width="16%" />
-<col width="84%" />
+<col width="33%" />
+<col width="67%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Name</th>
@@ -405,7 +390,7 @@ Find below these lines details on how to run the suite on these providers:</p>
 <td>It’s value must be “azurerm”. (required)</td>
 </tr>
 <tr class="row-odd"><td>pathToKey</td>
-<td>Path to the location of your private key (required)</td>
+<td>Path to the location of your private key, to be used for ssh connections. (required)</td>
 </tr>
 <tr class="row-even"><td>flavor</td>
 <td>Flavor to be used for the main cluster.</td>
@@ -413,43 +398,34 @@ Find below these lines details on how to run the suite on these providers:</p>
 <tr class="row-odd"><td>openUser</td>
 <td>User to be used for ssh connections.</td>
 </tr>
-<tr class="row-even"><td>dockerCE</td>
-<td>Version of docker-ce to be installed. Leave empty for latest.</td>
-</tr>
-<tr class="row-odd"><td>dockerEngine</td>
-<td>Version of docker-engine to be installed. Leave empty for latest.</td>
-</tr>
-<tr class="row-even"><td>kubernetes</td>
-<td>Version of Kubernetes to be installed. Leave empty for latest.</td>
-</tr>
-<tr class="row-odd"><td>location</td>
+<tr class="row-even"><td>location</td>
 <td>The region in which to create the compute instances. (required)</td>
 </tr>
-<tr class="row-even"><td>subscriptionId</td>
+<tr class="row-odd"><td>subscriptionId</td>
 <td>ID of the subscription. (required)</td>
 </tr>
-<tr class="row-odd"><td>resourceGroupName</td>
+<tr class="row-even"><td>resourceGroupName</td>
 <td>Specifies the name of the Resource Group in which the Virtual Machine should exist. (required)</td>
 </tr>
-<tr class="row-even"><td>pubSSH</td>
+<tr class="row-odd"><td>pubSSH</td>
 <td>Public SSH key of the key specified at configs.yaml’s pathToKey. (required)</td>
 </tr>
-<tr class="row-odd"><td>securityGroupID</td>
+<tr class="row-even"><td>securityGroupID</td>
 <td>The ID of the Network Security Group to associate with the VMs’s network interfaces (required)</td>
 </tr>
-<tr class="row-even"><td>subnetId</td>
+<tr class="row-odd"><td>subnetId</td>
 <td>Reference to a subnet in which the NIC for the VM has been created. (required)</td>
 </tr>
-<tr class="row-odd"><td>image.publisher</td>
+<tr class="row-even"><td>image.publisher</td>
 <td>Specifies the publisher of the image used to create the virtual machines. (required)</td>
 </tr>
-<tr class="row-even"><td>image.offer</td>
+<tr class="row-odd"><td>image.offer</td>
 <td>Specifies the offer of the image used to create the virtual machines. (required)</td>
 </tr>
-<tr class="row-odd"><td>image.sku</td>
+<tr class="row-even"><td>image.sku</td>
 <td>Specifies the SKU of the image used to create the virtual machines. (required)</td>
 </tr>
-<tr class="row-even"><td>image.version</td>
+<tr class="row-odd"><td>image.version</td>
 <td>Specifies the version of the image used to create the virtual machines. (required)</td>
 </tr>
 </tbody>
@@ -463,12 +439,12 @@ Also, if image’s <em>publisher</em>, <em>offer</em>, <em>sku</em> and <em>vers
 <li>version = latest</li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">AWS</span></code></p>
-<p>(Find the example files at <em>examples/aws</em>. It is also possible to use EKS to provision the cluster, for this refer to section “Using existing clusters”.)</p>
+<p>(It is also possible to use EKS to provision the cluster, for this refer to section “Using existing clusters”.)</p>
 <p>Variables for configs.yaml:</p>
-<table border="1" class="docutils">
+<table border="1" class="colwidths-given docutils">
 <colgroup>
-<col width="16%" />
-<col width="84%" />
+<col width="33%" />
+<col width="67%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Name</th>
@@ -480,7 +456,7 @@ Also, if image’s <em>publisher</em>, <em>offer</em>, <em>sku</em> and <em>vers
 <td>It’s value must be “aws”. (required)</td>
 </tr>
 <tr class="row-odd"><td>pathToKey</td>
-<td>Path to the location of your private key (required)</td>
+<td>Path to the location of your private key, to be used for ssh connections. (required)</td>
 </tr>
 <tr class="row-even"><td>flavor</td>
 <td>Flavor to be used for the main cluster. (required)</td>
@@ -488,36 +464,27 @@ Also, if image’s <em>publisher</em>, <em>offer</em>, <em>sku</em> and <em>vers
 <tr class="row-odd"><td>openUser</td>
 <td>User to be used for ssh connections. (required)</td>
 </tr>
-<tr class="row-even"><td>dockerCE</td>
-<td>Version of docker-ce to be installed. Leave empty for latest.</td>
-</tr>
-<tr class="row-odd"><td>dockerEngine</td>
-<td>Version of docker-engine to be installed. Leave empty for latest.</td>
-</tr>
-<tr class="row-even"><td>kubernetes</td>
-<td>Version of Kubernetes to be installed. Leave empty for latest.</td>
-</tr>
-<tr class="row-odd"><td>region</td>
+<tr class="row-even"><td>region</td>
 <td>The region in which to create the compute instances. (required)</td>
 </tr>
-<tr class="row-even"><td>sharedCredentialsFile</td>
+<tr class="row-odd"><td>sharedCredentialsFile</td>
 <td>The authentication method supported is AWS shared credential file. Specify here the absolute path to such file. (required)</td>
 </tr>
-<tr class="row-odd"><td>ami</td>
+<tr class="row-even"><td>ami</td>
 <td>AMI for the instances. (required)</td>
 </tr>
-<tr class="row-even"><td>keyName</td>
+<tr class="row-odd"><td>keyName</td>
 <td>Name of the key for the instances. (required)</td>
 </tr>
 </tbody>
 </table>
 <p><code class="docutils literal notranslate"><span class="pre">GCP</span></code></p>
-<p>(Example files at <em>examples/gcp</em>. It is also possible to use GKE to provision the cluster, for this refer to section “Using existing clusters”. You will have to <a href="https://cloud.google.com/sdk/gcloud/reference/container/clusters/get-credentials?hl=en_US&_ga=2.141757301.-616534808.1554462142" target="_blank">fetch the kubectl kubeconfig file</a> too.)</p>
+<p>(It is also possible to use GKE to provision the cluster, for this refer to section “Using existing clusters”. You will have to <a href="https://cloud.google.com/sdk/gcloud/reference/container/clusters/get-credentials?hl=en_US&_ga=2.141757301.-616534808.1554462142" target="_blank">fetch the kubectl kubeconfig file</a> too.)</p>
 <p>Variables for configs.yaml:</p>
-<table border="1" class="docutils">
+<table border="1" class="colwidths-given docutils">
 <colgroup>
-<col width="16%" />
-<col width="84%" />
+<col width="33%" />
+<col width="67%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Name</th>
@@ -529,36 +496,27 @@ Also, if image’s <em>publisher</em>, <em>offer</em>, <em>sku</em> and <em>vers
 <td>It’s value must be “google”. (required)</td>
 </tr>
 <tr class="row-odd"><td>pathToKey</td>
-<td>Path to the location of your private key (required)</td>
+<td>Path to the location of your private key, to be used for ssh connections. (required)</td>
 </tr>
 <tr class="row-even"><td>flavor</td>
 <td>Flavor to be used for the main cluster. (required)</td>
 </tr>
 <tr class="row-odd"><td>openUser</td>
-<td>User to be used for ssh connections. (required)</td>
+<td>User to be used for ssh connections. Note VM specific keys are not supported, only project-wide SSH keys are.(required)</td>
 </tr>
-<tr class="row-even"><td>dockerCE</td>
-<td>Version of docker-ce to be installed. Leave empty for latest.</td>
-</tr>
-<tr class="row-odd"><td>dockerEngine</td>
-<td>Version of docker-engine to be installed. Leave empty for latest.</td>
-</tr>
-<tr class="row-even"><td>kubernetes</td>
-<td>Version of Kubernetes to be installed. Leave empty for latest.</td>
-</tr>
-<tr class="row-odd"><td>zone</td>
+<tr class="row-even"><td>zone</td>
 <td>The zone in which to create the compute instances. (required)</td>
 </tr>
-<tr class="row-even"><td>pathToCredentials</td>
+<tr class="row-odd"><td>pathToCredentials</td>
 <td>Path to the GCP JSON credentials file (note this file has to be downloaded in advance from the GCP console). (required)</td>
 </tr>
-<tr class="row-odd"><td>image</td>
+<tr class="row-even"><td>image</td>
 <td>Image for the instances. (required)</td>
 </tr>
-<tr class="row-even"><td>project</td>
+<tr class="row-odd"><td>project</td>
 <td>Google project under which the infrastructure has to be provisioned. (required)</td>
 </tr>
-<tr class="row-odd"><td>gpuType</td>
+<tr class="row-even"><td>gpuType</td>
 <td>Type of GPU to be used. Needed if the Deep Learning test was selected at testsCatalog.yaml.</td>
 </tr>
 </tbody>
@@ -566,10 +524,10 @@ Also, if image’s <em>publisher</em>, <em>offer</em>, <em>sku</em> and <em>vers
 <p><code class="docutils literal notranslate"><span class="pre">OpenStack</span></code></p>
 <p>Regarding authentication, download the OpenStack RC File containing the credentials from the Horizon dashboard and source it.</p>
 <p>Variables for configs.yaml:</p>
-<table border="1" class="docutils">
+<table border="1" class="colwidths-given docutils">
 <colgroup>
-<col width="16%" />
-<col width="84%" />
+<col width="33%" />
+<col width="67%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Name</th>
@@ -581,31 +539,25 @@ Also, if image’s <em>publisher</em>, <em>offer</em>, <em>sku</em> and <em>vers
 <td>It’s value must be “openstack”. (required)</td>
 </tr>
 <tr class="row-odd"><td>pathToKey</td>
-<td>Path to the location of your private key (required)</td>
+<td>Path to the location of your private key, to be used for ssh connections. (required)</td>
 </tr>
 <tr class="row-even"><td>flavor</td>
 <td>Flavor to be used for the main cluster. (required)</td>
 </tr>
-<tr class="row-odd"><td>openUser</td>
-<td>User to be used for ssh connections. Root user will be used by default.</td>
+<tr class="row-odd"><td>storageCapacity</td>
+<td>VM’s disk size. The VMs will boot from disk, this sets the size of it. (required)</td>
 </tr>
-<tr class="row-even"><td>dockerCE</td>
-<td>Version of docker-ce to be installed. Leave empty for latest.</td>
+<tr class="row-even"><td>imageID</td>
+<td>OS Image ID to be used for the VMs. (required)</td>
 </tr>
-<tr class="row-odd"><td>dockerEngine</td>
-<td>Version of docker-engine to be installed. Leave empty for latest.</td>
-</tr>
-<tr class="row-even"><td>kubernetes</td>
-<td>Version of Kubernetes to be installed. Leave empty for latest.</td>
-</tr>
-<tr class="row-odd"><td>imageName</td>
-<td>OS Image to be used for the VMs. (required)</td>
-</tr>
-<tr class="row-even"><td>keyPair</td>
+<tr class="row-odd"><td>keyPair</td>
 <td>Name of the key to be used. Has to be created or imported beforehand. (required)</td>
 </tr>
+<tr class="row-even"><td>openUser</td>
+<td>User to be used for ssh connections. Root user will be used by default.</td>
+</tr>
 <tr class="row-odd"><td>securityGroups</td>
-<td>Security groups array. Must be a String, example: “[“default”,”allow_ping_ssh_rdp”]”</td>
+<td>Security groups array.</td>
 </tr>
 <tr class="row-even"><td>region</td>
 <td>The region in which to create the compute instances. If omitted, the region specified in the credentials file is used.</td>
@@ -613,10 +565,56 @@ Also, if image’s <em>publisher</em>, <em>offer</em>, <em>sku</em> and <em>vers
 <tr class="row-odd"><td>availabilityZone</td>
 <td>The availability zone in which to create the compute instances.</td>
 </tr>
+<tr class="row-even"><td>networkName</td>
+<td>Name of the newtork to be used.</td>
+</tr>
 </tbody>
 </table>
 <p><code class="docutils literal notranslate"><span class="pre">CloudStack</span></code></p>
 <p>Variables for configs.yaml:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="33%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Explanation / Values</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>providerName</td>
+<td>It’s value must be “cloudstack”. (required)</td>
+</tr>
+<tr class="row-odd"><td>pathToKey</td>
+<td>Path to the location of your private key, to be used for ssh connections. (required)</td>
+</tr>
+<tr class="row-even"><td>flavor</td>
+<td>Flavor to be used for the main cluster. (required)</td>
+</tr>
+<tr class="row-odd"><td>openUser</td>
+<td>User to be used for ssh connections. Root user will be used by default.</td>
+</tr>
+<tr class="row-even"><td>keyPair</td>
+<td>Name of the key to be used. Has to be created or imported beforehand. (required)</td>
+</tr>
+<tr class="row-odd"><td>securityGroups</td>
+<td>Security groups array.</td>
+</tr>
+<tr class="row-even"><td>zone</td>
+<td>The zone in which to create the compute instances. (required)</td>
+</tr>
+<tr class="row-odd"><td>template</td>
+<td>OS Image to be used for the VMs. (required)</td>
+</tr>
+<tr class="row-even"><td>storageCapacity</td>
+<td>VM’s disk size.</td>
+</tr>
+<tr class="row-odd"><td>authFile</td>
+<td>Path to the file containing the CloudStack credentials. See below the structure of such file. (required)</td>
+</tr>
+</tbody>
+</table>
 <p>CloudStack credentials file’s structure:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">[cloudstack]</span>
 <span class="go">url = your_api_url</span>
@@ -626,21 +624,184 @@ Also, if image’s <em>publisher</em>, <em>offer</em>, <em>sku</em> and <em>vers
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">Exoscale</span></code></p>
 <p>Variables for configs.yaml:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="33%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Explanation / Values</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>providerName</td>
+<td>It’s value must be “exoscale”. (required)</td>
+</tr>
+<tr class="row-odd"><td>pathToKey</td>
+<td>Path to the location of your private key, to be used for ssh connections. (required)</td>
+</tr>
+<tr class="row-even"><td>flavor</td>
+<td>Flavor to be used for the main cluster. (required)</td>
+</tr>
+<tr class="row-odd"><td>keyPair</td>
+<td>Name of the key to be used. Has to be created or imported beforehand. (required)</td>
+</tr>
+<tr class="row-even"><td>securityGroups</td>
+<td>Security groups array.</td>
+</tr>
+<tr class="row-odd"><td>zone</td>
+<td>The zone in which to create the compute instances. (required)</td>
+</tr>
+<tr class="row-even"><td>template</td>
+<td>OS Image to be used for the VMs. (required)</td>
+</tr>
+<tr class="row-odd"><td>storageCapacity</td>
+<td>VM’s disk size. (required)</td>
+</tr>
+<tr class="row-even"><td>authFile</td>
+<td>Path to the file containing the Exoscale credentials. See below the structure of such file. (required)</td>
+</tr>
+</tbody>
+</table>
 <p>Exoscale credentials file’s structure:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">[exoscale]</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">[cloudstack]</span>
 <span class="go">key = EXOe3ca3e7621b7cd7a20f7e0de</span>
 <span class="go">secret = 2_JvzFcZQL_Rg1nZSRNVheYQh9oYlL5aX3zX-eILiL4</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">T-Systems'</span> <span class="pre">Open</span> <span class="pre">Telekom</span> <span class="pre">Cloud</span></code></p>
-<p>Note that to allow the VMs access the internet, Shared SNAT has to be enabled on the default VPC.</p>
+<p>Note that to allow the VMs access the internet, Shared SNAT has to be enabled on the default VPC, which will be used for the suite run.</p>
 <p>Variables for configs.yaml:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="33%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Explanation / Values</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>providerName</td>
+<td>It’s value must be “opentelekomcloud”. (required)</td>
+</tr>
+<tr class="row-odd"><td>pathToKey</td>
+<td>Path to the location of your private key, to be used for ssh connections. (required)</td>
+</tr>
+<tr class="row-even"><td>flavor</td>
+<td>Flavor to be used for the main cluster. (required)</td>
+</tr>
+<tr class="row-odd"><td>keyPair</td>
+<td>Name of the key to be used. Has to be created or imported beforehand. (required)</td>
+</tr>
+<tr class="row-even"><td>securityGroups</td>
+<td>Security groups array.</td>
+</tr>
+<tr class="row-odd"><td>storageCapacity</td>
+<td>VM’s disk size. The VMs will boot from disk, this sets the size of it. (required)</td>
+</tr>
+<tr class="row-even"><td>authFile</td>
+<td>Path to the yaml file containing the OTC credentials. See below the structure of such file. (required)</td>
+</tr>
+<tr class="row-odd"><td>imageID</td>
+<td>ID of the image to be used on the VMs. (required)</td>
+</tr>
+<tr class="row-even"><td>openUser</td>
+<td>User to be used for ssh connections. (required)</td>
+</tr>
+<tr class="row-odd"><td>domainName</td>
+<td>OTC Domain Name. (required)</td>
+</tr>
+<tr class="row-even"><td>tenantName</td>
+<td>OTC Tenant Name. (required)</td>
+</tr>
+</tbody>
+</table>
 <p>Open Telekom Cloud credentials file’s structure:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">accK: 123456789abcd</span>
+<span class="go">secK: 123456789abcd</span>
 </pre></div>
 </div>
-<p>accK: 123456789abcd
-secK: 123456789abcd</p>
+<p><code class="docutils literal notranslate"><span class="pre">Oracle</span> <span class="pre">Cloud</span> <span class="pre">Infrastructure</span></code></p>
+<p>(It is also possible to use OKE to provision the cluster, for this refer to section “Using existing clusters”.)</p>
+<p>Variables for configs.yaml:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="33%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Explanation / Values</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>providerName</td>
+<td>It’s value must be “oci”. (required)</td>
+</tr>
+<tr class="row-odd"><td>pathToKey</td>
+<td>Path to your private key, to be used for ssh connections. (required)</td>
+</tr>
+<tr class="row-even"><td>ssh_public_key_path</td>
+<td>Path to the public key belonging to your private key at pathToKey. This will be injected to the VMs (required)</td>
+</tr>
+<tr class="row-odd"><td>flavor</td>
+<td>Flavor to be used for the main cluster. (required)</td>
+</tr>
+<tr class="row-even"><td>storageCapacity</td>
+<td>VM’s disk size.</td>
+</tr>
+<tr class="row-odd"><td>authFile</td>
+<td>Path to the yaml file containing the OTC credentials. See below the structure of such file. (required)</td>
+</tr>
+<tr class="row-even"><td>image_ocid</td>
+<td>The OCID of the image to be used on the VMs. (required)</td>
+</tr>
+<tr class="row-odd"><td>openUser</td>
+<td>User to be used for ssh connections. (required)</td>
+</tr>
+<tr class="row-even"><td>compartment_ocid</td>
+<td>Compartment’s OCID. (required)</td>
+</tr>
+<tr class="row-odd"><td>availability_domain</td>
+<td>Availability domain to be used. (required)</td>
+</tr>
+<tr class="row-even"><td>subnet_ocid</td>
+<td>The OCID of the subnet to be used. (required)</td>
+</tr>
+</tbody>
+</table>
+<p>Oracle Cloud Infrastructure credentials file’s must be a YAML file containing only the following variables:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="33%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Explanation / Values</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>auth_private_key_path</td>
+<td>Path to the private key to be used to authenticate to OCI. This is not the key to be used to ssh into the machines.</td>
+</tr>
+<tr class="row-odd"><td>user_ocid</td>
+<td>User’s OCID.</td>
+</tr>
+<tr class="row-even"><td>tenancy_ocid</td>
+<td>Tenancy’s OCID.</td>
+</tr>
+<tr class="row-odd"><td>fingerprint</td>
+<td>Authentication key’s fingerprint.</td>
+</tr>
+<tr class="row-even"><td>region</td>
+<td>Region to be used.</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="section" id="using-docker">

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>7. Cost of run calculation &mdash; Cloud Test Suite - CERN IT  documentation</title>
+  <title>5. No Terraform runs &mdash; Cloud Test Suite - CERN IT  documentation</title>
   
 
   
@@ -37,7 +37,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="6. Results" href="results.html" />
+    <link rel="next" title="6. Results" href="results.html" />
+    <link rel="prev" title="4. Using existing clusters" href="existingClusters.html" />
     <link href="_static/style.css" rel="stylesheet" type="text/css">
 
 </head>
@@ -89,9 +90,8 @@
 <li class="toctree-l1"><a class="reference internal" href="testsCatalog.html">2. Tests Catalog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run.html">3. Run the test-suite</a></li>
 <li class="toctree-l1"><a class="reference internal" href="existingClusters.html">4. Using existing clusters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="noTerraform.html">5. No Terraform runs</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">5. No Terraform runs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="results.html">6. Results</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">7. Cost of run calculation</a></li>
 </ul>
 
             
@@ -137,13 +137,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>7. Cost of run calculation</li>
+      <li>5. No Terraform runs</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/costs.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/noTerraform.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -156,10 +156,12 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="cost-of-run-calculation">
-<h1>7. Cost of run calculation<a class="headerlink" href="#cost-of-run-calculation" title="Permalink to this headline">¶</a></h1>
-<p>An approximative cost of running the test-suite will be calculated in case the prices are specified at configs.yaml under the <em>costCalculation</em> section.
-In this configuration file, one must specify the price per hour for the different resources:</p>
+  <div class="section" id="no-terraform-runs">
+<h1>5. No Terraform runs<a class="headerlink" href="#no-terraform-runs" title="Permalink to this headline">¶</a></h1>
+<p>It’s possible to use this tool for testing providers that do not support Terraform.
+In these cases, the suite will skip the Terraform provision phase and would just bootstrap the cluster and deploy the tests.
+Therefore the VMs have to be provisioned beforehand and their IPs written down at configs.yaml.</p>
+<p>The configs.yaml file for these type of run takes the following variables:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
 <col width="33%" />
@@ -171,31 +173,27 @@ In this configuration file, one must specify the price per hour for the differen
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>generalInstancePrice</td>
-<td>Price per hour of VM with the flavor chosen for the general cluster.</td>
+<tr class="row-even"><td>providerName</td>
+<td>Name of the provider being tested. (required)</td>
 </tr>
-<tr class="row-odd"><td>GPUInstancePrice</td>
-<td>Price per hour of VM with the flavor chosen for the GPU cluster.</td>
+<tr class="row-odd"><td>pathToKey</td>
+<td>Path to the location of your private key, to be used for ssh connections. (required)</td>
 </tr>
-<tr class="row-even"><td>HPCInstancePrice</td>
-<td>Price per hour of VM with the flavor chosen for the HPC cluster.</td>
+<tr class="row-even"><td>openUser</td>
+<td>User to be used for ssh connections. (required)</td>
 </tr>
-<tr class="row-odd"><td>s3bucketPrice</td>
-<td>S3 bucket price.</td>
+<tr class="row-odd"><td>clusters.shared</td>
+<td>IPs of the shared cluster’s VMs. (Required if at least one of the general tests was selected)</td>
+</tr>
+<tr class="row-even"><td>clusters.hpcTest</td>
+<td>IPs of the HPC cluster’s VMs. (Required if the HPC test was selected)</td>
+</tr>
+<tr class="row-odd"><td>clusters.dlTest</td>
+<td>IPs of the GPU cluster’s VMs. (Required if the GPU test was selected)</td>
 </tr>
 </tbody>
 </table>
-<p>If a price value is required for the cost calculation but the <em>costCalculation</em> section is not properly filled (For example, S3 Endpoint test was set to True
-but <em>s3bucketPrice</em> was not set), no approximation will be given at all.</p>
-<p>At the end of the run, the resulting approximated cost will be added to the file containing general test suit run results.
-In case this information isn’t needed, simply leave the values on the section <em>costCalculation</em> empty.
-Note that this is a cost estimate and not an exact price.</p>
-<p>The formula used is as follows:</p>
-<p><em>(Number of VMs created) x (Price of a VM per hour) x (Time in hours the VMs were used for the test-suite run) + (Cost of other resources)</em></p>
-<p>Where “Cost of other resources” are the cost of resources which are not simple compute, like storage. For example in the case of the S3 Endpoint test:</p>
-<p><em>(Price of a S3 bucket per hour) x (Time in hours the bucket was used for the test)</em></p>
-<p>Note that the price per request or data amount (GB) are not considered here as these are not significant since less than 10 requests are done for this test and for very small data sets.
-Note also that only the cost of the running time of the VM is considered, so if your provider charges for VM creation and not only for the time it is running, the cost obtained will vary to the real one.</p>
+<p>For making use of this feature use the option ‘–no-terraform’ when running the suite.</p>
 </div>
 
 
@@ -206,8 +204,10 @@ Note also that only the cost of the running time of the VM is considered, so if 
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="results.html" class="btn btn-neutral float-right" title="6. Results" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-        <a href="results.html" class="btn btn-neutral float-left" title="6. Results" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+        <a href="existingClusters.html" class="btn btn-neutral float-left" title="4. Using existing clusters" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

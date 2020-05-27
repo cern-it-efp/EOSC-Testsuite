@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>6. Verification &mdash; Cloud Test Suite - CERN IT  documentation</title>
+  <title>7. Verification &mdash; Cloud Test Suite - CERN IT  documentation</title>
   
 
   
@@ -37,8 +37,6 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="7. Cost of run calculation" href="costs.html" />
-    <link rel="prev" title="5. Results" href="results.html" />
     <link href="_static/style.css" rel="stylesheet" type="text/css">
 
 </head>
@@ -85,14 +83,13 @@
             
             
               <p class="caption"><span class="caption-text">Cloud Test Suite Documentation</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="gettingStarted.html">1. Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testsCatalog.html">2. Tests Catalog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="run.html">3. Run the test-suite</a></li>
 <li class="toctree-l1"><a class="reference internal" href="existingClusters.html">4. Using existing clusters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="results.html">5. Results</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">6. Verification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="costs.html">7. Cost of run calculation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="noTerraform.html">5. No Terraform runs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="results.html">6. Results</a></li>
 </ul>
 
             
@@ -138,7 +135,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>6. Verification</li>
+      <li>7. Verification</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -158,7 +155,7 @@
            <div itemprop="articleBody">
             
   <div class="section" id="verification">
-<h1>6. Verification<a class="headerlink" href="#verification" title="Permalink to this headline">¶</a></h1>
+<h1>7. Verification<a class="headerlink" href="#verification" title="Permalink to this headline">¶</a></h1>
 <p>In order to verify results, please run using <em>–via-backend</em> so that the proxy at CERN runs the Test-Suite (only deploys tests, no provisioning), harvests results and push them to CERN’s S3 bucket.
 Before starting the run, a message will be shown asking for yes/no answer. It warns the user that backend runs publish results to the CERN bucket.</p>
 <p><strong>Note that this feature is still under development and testing and will be available on next releases.</strong></p>
@@ -169,15 +166,6 @@ Before starting the run, a message will be shown asking for yes/no answer. It wa
            
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="costs.html" class="btn btn-neutral float-right" title="7. Cost of run calculation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="results.html" class="btn btn-neutral float-left" title="5. Results" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>

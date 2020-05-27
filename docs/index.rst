@@ -16,9 +16,9 @@ Please find the the repository here: https://github.com/cern-it-efp/EOSC-Testsui
    existingClusters
    noTerraform
    results
+   costs
 ..
    verification
-   costs
 
 .. include:: ../README.rst
    :start-after: body

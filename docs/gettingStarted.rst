@@ -64,19 +64,29 @@ Note errors may occur if your key doesn't have the right permissions. Set these 
 ==========================================
 The following ports have to be opened:
 
-+------+----------+----------------------------------------------------+
-|Port  | Protocol |Functionality                                       |
-+======+==========+====================================================+
-| -    | ICMP     |Connectivity test                                   |
-+------+----------+----------------------------------------------------+
-|22    | TCP      |SSH                                                 |
-+------+----------+----------------------------------------------------+
-|6443  | TCP      |Kubernetes API                                      |
-+------+----------+----------------------------------------------------+
-|10250 | TCP      |API which allows node access                        |
-+------+----------+----------------------------------------------------+
-|8472  | UDP      |Flannel overlay network, k8s pods communication     |
-+------+----------+----------------------------------------------------+
+.. list-table::
+   :widths: 25 25 50
+   :header-rows: 1
+
+   * - Port
+     - Protocol
+     - Functionality
+   * -
+     - ICMP
+     - Connectivity test
+   * - 22
+     - TCP
+     - SSH
+   * - 6443
+     - TCP
+     - Kubernetes API
+   * - 10250
+     - TCP
+     - API which allows node access
+   * - 8472
+     - UDP
+     - Flannel overlay network, k8s pods communication
+
 
 1.4 Networking and IPs
 ==========================================
@@ -121,21 +131,23 @@ You will find in the root of the cloned repository a folder named *configuration
 
 Its variables:
 
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|Name                   | Explanation / Values                                                                                                        |
-+=======================+=============================================================================================================================+
-|providerName           | Name of the provider for Terraform. (required)                                                                              |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|providerInstanceName   | Compute instance name for Terraform. This is provider specific. (required)                                                  |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|pathToKey              | Path to the location of your private key, to be used for ssh connections. (required)                                                                         |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|flavor                 | | Flavor to be used for the main cluster. This has to be specified as a key-value                                           |
-|                       | | pair according to the provider. (required)                                                                                |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|openUser               | | User to be used in case the provider doesn't allow root ssh. If not specified,                                            |
-|                       | | root will be used for ssh connections.                                                                                    |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+
+.. list-table::
+   :widths: 25 50
+   :header-rows: 1
+
+   * - Name
+     - Explanation / Values
+   * - providerName
+     - Name of the provider for Terraform. (required)
+   * - providerInstanceName
+     - Compute instance name for Terraform. This is provider specific. (required)
+   * - pathToKey
+     - Path to the location of your private key, to be used for ssh connections. (required)
+   * - flavor
+     - Flavor to be used for the main cluster. This has to be specified as a key-value pair according to the provider. (required)
+   * - openUser
+     - User to be used for ssh connections. Root user will be used by default.
 
 The file also contains a section named *costCalculation*. Refer to the section "Cost of run calculation" to understand how to fill that part.
 
@@ -210,37 +222,41 @@ Note resource group, security group, and subnet have to be created in advance.
 
 Variables for configs.yaml:
 
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|Name                   | Explanation / Values                                                                                                        |
-+=======================+=============================================================================================================================+
-|providerName           | It's value must be "azurerm". (required)                                                                                    |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|pathToKey              | Path to the location of your private key, to be used for ssh connections. (required)                                                                         |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|flavor                 | Flavor to be used for the main cluster.                                                                                     |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|openUser               | User to be used for ssh connections.                                                                                        |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|location               | The region in which to create the compute instances. (required)                                                             |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|subscriptionId         | ID of the subscription. (required)                                                                                          |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|resourceGroupName      | Specifies the name of the Resource Group in which the Virtual Machine should exist. (required)                              |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|pubSSH                 | Public SSH key of the key specified at configs.yaml's pathToKey. (required)                                                 |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|securityGroupID        | The ID of the Network Security Group to associate with the VMs's network interfaces (required)                              |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|subnetId               | Reference to a subnet in which the NIC for the VM has been created. (required)                                              |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|image.publisher        | Specifies the publisher of the image used to create the virtual machines. (required)                                        |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|image.offer            | Specifies the offer of the image used to create the virtual machines. (required)                                            |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|image.sku              | Specifies the SKU of the image used to create the virtual machines. (required)                                              |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|image.version          | Specifies the version of the image used to create the virtual machines. (required)                                          |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+.. list-table::
+   :widths: 25 50
+   :header-rows: 1
+
+   * - Name
+     - Explanation / Values
+   * - providerName
+     - It's value must be "azurerm". (required)
+   * - pathToKey
+     - Path to the location of your private key, to be used for ssh connections. (required)
+   * - flavor
+     - Flavor to be used for the main cluster.
+   * - openUser
+     - User to be used for ssh connections.
+   * - location
+     - The region in which to create the compute instances. (required)
+   * - subscriptionId
+     - ID of the subscription. (required)
+   * - resourceGroupName
+     - Specifies the name of the Resource Group in which the Virtual Machine should exist. (required)
+   * - pubSSH
+     - Public SSH key of the key specified at configs.yaml's pathToKey. (required)
+   * - securityGroupID
+     - The ID of the Network Security Group to associate with the VMs's network interfaces (required)
+   * - subnetId
+     - Reference to a subnet in which the NIC for the VM has been created. (required)
+   * - image.publisher
+     - Specifies the publisher of the image used to create the virtual machines. (required)
+   * - image.offer
+     - Specifies the offer of the image used to create the virtual machines. (required)
+   * - image.sku
+     - Specifies the SKU of the image used to create the virtual machines. (required)
+   * - image.version
+     - Specifies the version of the image used to create the virtual machines. (required)
+
 
 Note: the security group and subnet -virtual network too- have to be created beforehand and their ID's used at configs.yaml.
 Also, if image's *publisher*, *offer*, *sku* and *version* are omitted, the following defaults will be used:
@@ -259,25 +275,28 @@ Also, if image's *publisher*, *offer*, *sku* and *version* are omitted, the foll
 
 Variables for configs.yaml:
 
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|Name                   | Explanation / Values                                                                                                        |
-+=======================+=============================================================================================================================+
-|providerName           | It's value must be "aws". (required)                                                                                        |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|pathToKey              | Path to the location of your private key, to be used for ssh connections. (required)                                                                         |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|flavor                 | Flavor to be used for the main cluster. (required)                                                                          |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|openUser               | User to be used for ssh connections. (required)                                                                             |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|region                 | The region in which to create the compute instances. (required)                                                             |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|sharedCredentialsFile  | The authentication method supported is AWS shared credential file. Specify here the absolute path to such file. (required)  |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|ami                    | AMI for the instances. (required)                                                                                           |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|keyName                | Name of the key for the instances. (required)                                                                               |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+.. list-table::
+   :widths: 25 50
+   :header-rows: 1
+
+   * - Name
+     - Explanation / Values
+   * - providerName
+     - It's value must be "aws". (required)
+   * - pathToKey
+     - Path to the location of your private key, to be used for ssh connections. (required)
+   * - flavor
+     - Flavor to be used for the main cluster. (required)
+   * - openUser
+     - User to be used for ssh connections. (required)
+   * - region
+     - The region in which to create the compute instances. (required)
+   * - sharedCredentialsFile
+     - The authentication method supported is AWS shared credential file. Specify here the absolute path to such file. (required)
+   * - ami
+     - AMI for the instances. (required)
+   * - keyName
+     - Name of the key for the instances. (required)
 
 
 ``GCP``
@@ -286,27 +305,31 @@ Variables for configs.yaml:
 
 Variables for configs.yaml:
 
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|Name                   | Explanation / Values                                                                                                        |
-+=======================+=============================================================================================================================+
-|providerName           | It's value must be "google". (required)                                                                                     |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|pathToKey              | Path to the location of your private key, to be used for ssh connections. (required)                                        |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|flavor                 | Flavor to be used for the main cluster. (required)                                                                          |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|openUser               | User to be used for ssh connections. Note VM specific keys are not supported, only project-wide SSH keys are.(required)     |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|zone                   | The zone in which to create the compute instances. (required)                                                               |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|pathToCredentials      | Path to the GCP JSON credentials file (note this file has to be downloaded in advance from the GCP console). (required)     |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|image                  | Image for the instances. (required)                                                                                         |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|project                | Google project under which the infrastructure has to be provisioned. (required)                                             |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|gpuType                | Type of GPU to be used. Needed if the Deep Learning test was selected at testsCatalog.yaml.                                 |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+.. list-table::
+   :widths: 25 50
+   :header-rows: 1
+
+   * - Name
+     - Explanation / Values
+   * - providerName
+     - It's value must be "google". (required)
+   * - pathToKey
+     - Path to the location of your private key, to be used for ssh connections. (required)
+   * - flavor
+     - Flavor to be used for the main cluster. (required)
+   * - openUser
+     - User to be used for ssh connections. Note VM specific keys are not supported, only project-wide SSH keys are.(required)
+   * - zone
+     - The zone in which to create the compute instances. (required)
+   * - pathToCredentials
+     - Path to the GCP JSON credentials file (note this file has to be downloaded in advance from the GCP console). (required)
+   * - image
+     - Image for the instances. (required)
+   * - project
+     - Google project under which the infrastructure has to be provisioned. (required)
+   * - gpuType
+     - Type of GPU to be used. Needed if the Deep Learning test was selected at testsCatalog.yaml.
+
 
 .. |use_gke| raw:: html
 
@@ -318,62 +341,66 @@ Regarding authentication, download the OpenStack RC File containing the credenti
 
 Variables for configs.yaml:
 
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|Name                   | Explanation / Values                                                                                                        |
-+=======================+=============================================================================================================================+
-|providerName           | It's value must be "openstack". (required)                                                                                  |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|pathToKey              | Path to the location of your private key, to be used for ssh connections. (required)                                                                         |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|flavor                 | Flavor to be used for the main cluster. (required)                                                                          |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|storageCapacity        | VM's disk size. The VMs will boot from disk, this sets the size of it. (required)                                           |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|imageID                | OS Image ID to be used for the VMs. (required)                                                                              |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|keyPair                | Name of the key to be used. Has to be created or imported beforehand. (required)                                            |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|openUser               | User to be used for ssh connections. Root user will be used by default.                                                     |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|securityGroups         | Security groups array.                                                                                                      |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|region                 | The region in which to create the compute instances. If omitted, the region specified in the credentials file is used.      |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|availabilityZone       | The availability zone in which to create the compute instances.                                                             |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|networkName            | Name of the newtork to be used.                                                                                             |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+.. list-table::
+   :widths: 25 50
+   :header-rows: 1
 
-
+   * - Name
+     - Explanation / Values
+   * - providerName
+     - It's value must be "openstack". (required)
+   * - pathToKey
+     - Path to the location of your private key, to be used for ssh connections. (required)
+   * - flavor
+     - Flavor to be used for the main cluster. (required)
+   * - storageCapacity
+     - VM's disk size. The VMs will boot from disk, this sets the size of it. (required)
+   * - imageID
+     - OS Image ID to be used for the VMs. (required)
+   * - keyPair
+     - Name of the key to be used. Has to be created or imported beforehand. (required)
+   * - openUser
+     - User to be used for ssh connections. Root user will be used by default.
+   * - securityGroups
+     - Security groups array.
+   * - region
+     - The region in which to create the compute instances. If omitted, the region specified in the credentials file is used.
+   * - availabilityZone
+     - The availability zone in which to create the compute instances.
+   * - networkName
+     - Name of the newtork to be used.
 
 
 ``CloudStack``
 
 Variables for configs.yaml:
 
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|Name                   | Explanation / Values                                                                                                        |
-+=======================+=============================================================================================================================+
-|providerName           | It's value must be "cloudstack". (required)                                                                                 |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|pathToKey              | Path to the location of your private key, to be used for ssh connections. (required)                                                                         |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|flavor                 | Flavor to be used for the main cluster. (required)                                                                          |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|openUser               | User to be used for ssh connections. Root user will be used by default.                                                     |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|keyPair                | Name of the key to be used. Has to be created or imported beforehand. (required)                                            |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|securityGroups         | Security groups array.                                                                                                      |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|zone                   | The zone in which to create the compute instances. (required)                                                               |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|template               | OS Image to be used for the VMs. (required)                                                                                 |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|storageCapacity        | VM's disk size.                                                                                                      |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|authFile               | Path to the file containing the CloudStack credentials. See below the structure of such file. (required)                      |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+.. list-table::
+   :widths: 25 50
+   :header-rows: 1
+
+   * - Name
+     - Explanation / Values
+   * - providerName
+     - It's value must be "cloudstack". (required)
+   * - pathToKey
+     - Path to the location of your private key, to be used for ssh connections. (required)
+   * - flavor
+     - Flavor to be used for the main cluster. (required)
+   * - openUser
+     - User to be used for ssh connections. Root user will be used by default.
+   * - keyPair
+     - Name of the key to be used. Has to be created or imported beforehand. (required)
+   * - securityGroups
+     - Security groups array.
+   * - zone
+     - The zone in which to create the compute instances. (required)
+   * - template
+     - OS Image to be used for the VMs. (required)
+   * - storageCapacity
+     - VM's disk size.
+   * - authFile
+     - Path to the file containing the CloudStack credentials. See below the structure of such file. (required)
 
 CloudStack credentials file's structure:
 
@@ -389,27 +416,31 @@ CloudStack credentials file's structure:
 
 Variables for configs.yaml:
 
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|Name                   | Explanation / Values                                                                                                        |
-+=======================+=============================================================================================================================+
-|providerName           | It's value must be "exoscale". (required)                                                                                   |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|pathToKey              | Path to the location of your private key, to be used for ssh connections. (required)                                                                         |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|flavor                 | Flavor to be used for the main cluster. (required)                                                                          |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|keyPair                | Name of the key to be used. Has to be created or imported beforehand. (required)                                            |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|securityGroups         | Security groups array.                                                                                                      |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|zone                   | The zone in which to create the compute instances. (required)                                                               |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|template               | OS Image to be used for the VMs. (required)                                                                                 |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|storageCapacity               | VM's disk size. (required)                                                                                           |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|authFile             | Path to the file containing the Exoscale credentials. See below the structure of such file. (required)                        |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+.. list-table::
+   :widths: 25 50
+   :header-rows: 1
+
+   * - Name
+     - Explanation / Values
+   * - providerName
+     - It's value must be "exoscale". (required)
+   * - pathToKey
+     - Path to the location of your private key, to be used for ssh connections. (required)
+   * - flavor
+     - Flavor to be used for the main cluster. (required)
+   * - keyPair
+     - Name of the key to be used. Has to be created or imported beforehand. (required)
+   * - securityGroups
+     - Security groups array.
+   * - zone
+     - The zone in which to create the compute instances. (required)
+   * - template
+     - OS Image to be used for the VMs. (required)
+   * - storageCapacity
+     - VM's disk size. (required)
+   * - authFile
+     - Path to the file containing the Exoscale credentials. See below the structure of such file. (required)
+
 
 Exoscale credentials file's structure:
 
@@ -426,38 +457,41 @@ Note that to allow the VMs access the internet, Shared SNAT has to be enabled on
 
 Variables for configs.yaml:
 
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|Name                   | Explanation / Values                                                                                                        |
-+=======================+=============================================================================================================================+
-|providerName           | It's value must be "opentelekomcloud". (required)                                                                           |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|pathToKey              | Path to the location of your private key, to be used for ssh connections. (required)                                        |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|flavor                 | Flavor to be used for the main cluster. (required)                                                                          |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|keyPair                | Name of the key to be used. Has to be created or imported beforehand. (required)                                            |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|securityGroups         | Security groups array.                                                                                                      |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|storageCapacity        | VM's disk size. The VMs will boot from disk, this sets the size of it. (required)                                           |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|authFile               | Path to the yaml file containing the OTC credentials. See below the structure of such file. (required)                      |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|imageID                | ID of the image to be used on the VMs. (required)                                                                           |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|openUser               | User to be used for ssh connections. (required)                                                                             |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|domainName             | OTC Domain Name. (required)                                                                                                 |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|tenantName             | OTC Tenant Name. (required)                                                                                                 |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+.. list-table::
+   :widths: 25 50
+   :header-rows: 1
+
+   * - Name
+     - Explanation / Values
+   * - providerName
+     - It's value must be "opentelekomcloud". (required)
+   * - pathToKey
+     - Path to the location of your private key, to be used for ssh connections. (required)
+   * - flavor
+     - Flavor to be used for the main cluster. (required)
+   * - keyPair
+     - Name of the key to be used. Has to be created or imported beforehand. (required)
+   * - securityGroups
+     - Security groups array.
+   * - storageCapacity
+     - VM's disk size. The VMs will boot from disk, this sets the size of it. (required)
+   * - authFile
+     - Path to the yaml file containing the OTC credentials. See below the structure of such file. (required)
+   * - imageID
+     - ID of the image to be used on the VMs. (required)
+   * - openUser
+     - User to be used for ssh connections. (required)
+   * - domainName
+     - OTC Domain Name. (required)
+   * - tenantName
+     - OTC Tenant Name. (required)
 
 Open Telekom Cloud credentials file's structure:
 
 .. code-block:: console
 
-accK: 123456789abcd
-secK: 123456789abcd
+  accK: 123456789abcd
+  secK: 123456789abcd
 
 
 ``Oracle Cloud Infrastructure``
@@ -466,47 +500,53 @@ secK: 123456789abcd
 
 Variables for configs.yaml:
 
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|Name                   | Explanation / Values                                                                                                        |
-+=======================+=============================================================================================================================+
-|providerName           | It's value must be "oci". (required)                                                                                        |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|pathToKey              | Path to your private key, to be used for ssh connections. (required)                                                        |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|ssh_public_key_path    | Path to the public key belonging to your private key at pathToKey. This will be injected to the VMs (required)              |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|flavor                 | Flavor to be used for the main cluster. (required)                                                                          |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|storageCapacity        | VM's disk size.                                                                                                             |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|authFile               | Path to the yaml file containing the OTC credentials. See below the structure of such file. (required)                      |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|image_ocid             | The OCID of the image to be used on the VMs. (required)                                                                     |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|openUser               | User to be used for ssh connections. (required)                                                                             |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|compartment_ocid       | Compartment's OCID. (required)                                                                                              |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|availability_domain    | Availability domain to be used. (required)                                                                                  |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|subnet_ocid            | The OCID of the subnet to be used. (required)                                                                               |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+.. list-table::
+   :widths: 25 50
+   :header-rows: 1
+
+   * - Name
+     - Explanation / Values
+   * - providerName
+     - It's value must be "oci". (required)
+   * - pathToKey
+     - Path to your private key, to be used for ssh connections. (required)
+   * - ssh_public_key_path
+     - Path to the public key belonging to your private key at pathToKey. This will be injected to the VMs (required)
+   * - flavor
+     - Flavor to be used for the main cluster. (required)
+   * - storageCapacity
+     - VM's disk size.
+   * - authFile
+     - Path to the yaml file containing the OTC credentials. See below the structure of such file. (required)
+   * - image_ocid
+     - The OCID of the image to be used on the VMs. (required)
+   * - openUser
+     - User to be used for ssh connections. (required)
+   * - compartment_ocid
+     - Compartment's OCID. (required)
+   * - availability_domain
+     - Availability domain to be used. (required)
+   * - subnet_ocid
+     - The OCID of the subnet to be used. (required)
 
 Oracle Cloud Infrastructure credentials file's must be a YAML file containing only the following variables:
 
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|Name                   | Explanation / Values                                                                                                        |
-+=======================+=============================================================================================================================+
-|auth_private_key_path  | Path to the private key to be used to authenticate to OCI. This is not the key to be used to ssh into the machines.         |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|user_ocid              | User's OCID.                                                                                                                |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|tenancy_ocid           | Tenancy's OCID.                                                                                                             |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|fingerprint            | Authentication key's fingerprint.                                                                                           |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
-|region                 | Region to be used.                                                                                                          |
-+-----------------------+-----------------------------------------------------------------------------------------------------------------------------+
+.. list-table::
+   :widths: 25 50
+   :header-rows: 1
+
+   * - Name
+     - Explanation / Values
+   * - auth_private_key_path
+     - Path to the private key to be used to authenticate to OCI. This is not the key to be used to ssh into the machines.
+   * - user_ocid
+     - User's OCID.
+   * - tenancy_ocid
+     - Tenancy's OCID.
+   * - fingerprint
+     - Authentication key's fingerprint.
+   * - region
+     - Region to be used.
 
 
 1.6 Using Docker
