@@ -59,11 +59,11 @@ Release notes
 
 -Improved support for running on Oracle Cloud Infrastructure and T-Systems' OTC.
 
--In case of existing terraform files from a previous run a prompt is shown to ask for confirmation.
-
 -Added option --custom-nodes to set the number of instances that should be deployed for the shared cluster.
 
 -Using Terraform's yamldecode with configs.yaml for variables instead of Python's replace function with placeholders.
+
+-Disabled general Terraform support: only the providers and clouds on the table above are fully supported. To run on another provider (supporting Terraform or not), the option '--no-terraform' has to be used.
 
 ``20.2``
 

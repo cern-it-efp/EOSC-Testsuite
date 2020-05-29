@@ -215,15 +215,12 @@ def terraformProvisionment(
         # ---------------- delete TF stuff from previous run if existing
         cleanupTF(mainTfDir)
 
-        # ---------------- manage general variables 
-        substitution = [
+        # ---------------- manage general variables
+        terraform_cli_vars["customCount"] = nodes
+        substitution = [ # TODO: do with yamldecode
             {
                 "before": "NODES_PH",
                 "after": str(nodes)
-            },
-            {
-                "before": "PATH_TO_KEY_VALUE",
-                "after": str(configs["pathToKey"])
             },
             {
                 "before": "NAME_PH",

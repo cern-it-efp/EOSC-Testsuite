@@ -197,7 +197,6 @@ As an example let's assume the suite comes up with the name "kubenode-hpcTest-aw
   display_name = "kubenode-hpcTest-aws-0"
 
 | [**NOTE 1**: This will be taken as a whole block and placed directly on a .tf file]
-| [**NOTE 2**: Clouds that don't support resource creation with Terraform or k8saaS can't currently be tested with this Test-Suite]
 
 
 ``Dependencies``

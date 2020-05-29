@@ -5,6 +5,6 @@ provider "PROVIDER_NAME" {
 DEPENDENCIES_PLACEHOLDER
 
 resource "PROVIDER_INSTANCE_NAME" "kubenode" {
-  count      = var.customCount # "NODES_PH"
+  count      = var.customCount
   NODE_DEFINITION_PLACEHOLDER
 }
