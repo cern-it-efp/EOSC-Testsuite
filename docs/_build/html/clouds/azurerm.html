@@ -1,0 +1,269 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Azure &mdash; Cloud Test Suite - CERN IT  documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link href="../_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Cloud Test Suite Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../gettingStarted.html">1. Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testsCatalog.html">2. Tests Catalog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run.html">3. Run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../existingClusters.html">4. Using existing clusters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../noTerraform.html">5. No Terraform runs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../results.html">6. Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../costs.html">7. Cost of run calculation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Cloud Test Suite - CERN IT</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Azure</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/clouds/azurerm.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="azure">
+<h1>Azure<a class="headerlink" href="#azure" title="Permalink to this headline">¶</a></h1>
+<p>It is also possible to use AKS to provision the cluster, for this refer to section “Using existing clusters”.</p>
+<p>Install az CLI and configure credentials with ‘az login’.
+Note resource group, security group, and subnet have to be created in advance.</p>
+<p>Variables for configs.yaml:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="33%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Explanation / Values</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>providerName</td>
+<td>It’s value must be “azurerm”. (required)</td>
+</tr>
+<tr class="row-odd"><td>pathToKey</td>
+<td>Path to the location of your private key, to be used for ssh connections. (required)</td>
+</tr>
+<tr class="row-even"><td>flavor</td>
+<td>Flavor to be used for the main cluster.</td>
+</tr>
+<tr class="row-odd"><td>openUser</td>
+<td>User to be used for ssh connections.</td>
+</tr>
+<tr class="row-even"><td>location</td>
+<td>The region in which to create the compute instances. (required)</td>
+</tr>
+<tr class="row-odd"><td>subscriptionId</td>
+<td>ID of the subscription. (required)</td>
+</tr>
+<tr class="row-even"><td>resourceGroupName</td>
+<td>Specifies the name of the Resource Group in which the Virtual Machine should exist. (required)</td>
+</tr>
+<tr class="row-odd"><td>pubSSH</td>
+<td>Public SSH key of the key specified at configs.yaml’s pathToKey. (required)</td>
+</tr>
+<tr class="row-even"><td>securityGroupID</td>
+<td>The ID of the Network Security Group to associate with the VMs’s network interfaces (required)</td>
+</tr>
+<tr class="row-odd"><td>subnetId</td>
+<td>Reference to a subnet in which the NIC for the VM has been created. (required)</td>
+</tr>
+<tr class="row-even"><td>image.publisher</td>
+<td>Specifies the publisher of the image used to create the virtual machines. (required)</td>
+</tr>
+<tr class="row-odd"><td>image.offer</td>
+<td>Specifies the offer of the image used to create the virtual machines. (required)</td>
+</tr>
+<tr class="row-even"><td>image.sku</td>
+<td>Specifies the SKU of the image used to create the virtual machines. (required)</td>
+</tr>
+<tr class="row-odd"><td>image.version</td>
+<td>Specifies the version of the image used to create the virtual machines. (required)</td>
+</tr>
+</tbody>
+</table>
+<p>Note: the security group and subnet -virtual network too- have to be created beforehand and their ID’s used at configs.yaml.
+Also, if image’s <em>publisher</em>, <em>offer</em>, <em>sku</em> and <em>version</em> are omitted, the following defaults will be used:</p>
+<ul class="simple">
+<li>publisher = OpenLogic</li>
+<li>offer = CentOS</li>
+<li>sku = 7.5</li>
+<li>version = latest</li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, CERN IT-DI-EFP
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -87,7 +87,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="gettingStarted.html">1. Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testsCatalog.html">2. Tests Catalog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run.html">3. Run the test-suite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run.html">3. Run</a></li>
 <li class="toctree-l1"><a class="reference internal" href="existingClusters.html">4. Using existing clusters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="noTerraform.html">5. No Terraform runs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="results.html">6. Results</a></li>
@@ -211,9 +211,9 @@ This Test-Suite is being used as a validation tool for commercial cloud services
 <p>(Note the versions are numbered with the date of the release: YEAR.MONTH)</p>
 <p><code class="docutils literal notranslate"><span class="pre">20.6</span></code></p>
 <p>-Improved support for running on Oracle Cloud Infrastructure and T-Systems’ OTC.</p>
-<p>-In case of existing terraform files from a previous run a prompt is shown to ask for confirmation.</p>
 <p>-Added option –custom-nodes to set the number of instances that should be deployed for the shared cluster.</p>
 <p>-Using Terraform’s yamldecode with configs.yaml for variables instead of Python’s replace function with placeholders.</p>
+<p>-Disabled general Terraform support: only the providers and clouds on the table above are fully supported. To run on another provider (supporting Terraform or not), the option ‘–no-terraform’ has to be used.</p>
 <p><code class="docutils literal notranslate"><span class="pre">20.2</span></code></p>
 <p>-Using Ansible for VM configuration instead of Terraform’s provisioners.</p>
 <p>-Added support for non-Terraform providers (only bootstrap phase).</p>

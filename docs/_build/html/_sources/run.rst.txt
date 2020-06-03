@@ -1,4 +1,4 @@
-3. Run the test-suite
+3. Run
 ------------------------------
 
 Once the configuration steps are completed, the Test-Suite is ready to be run:

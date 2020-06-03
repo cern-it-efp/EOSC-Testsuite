@@ -215,20 +215,11 @@ def terraformProvisionment(
         # ---------------- delete TF stuff from previous run if existing
         cleanupTF(mainTfDir)
 
-        # ---------------- manage general variables
-        terraform_cli_vars["customCount"] = nodes
-        substitution = [ # TODO: do with yamldecode
-            {
-                "before": "NODES_PH",
-                "after": str(nodes)
-            },
-            {
-                "before": "NAME_PH",
-                "after": nodeName
-            }
-        ]
-        groupReplace("src/provisionment/tfTemplates/general/variables.tf", substitution, mainTfDir + "/main.tf")
+        # ---------------- variables
+        variables = loadFile("src/provisionment/tfTemplates/general/variables.tf", required=True)
+        writeToFile(mainTfDir + "/main.tf", variables, False)
 
+        terraform_cli_vars["customCount"] = nodes
         terraform_cli_vars["dockerCE"] = tryTakeFromYaml(configs, "dockerCE", None)
         terraform_cli_vars["dockerEngine"] = tryTakeFromYaml(configs, "dockerEngine", None)
         terraform_cli_vars["kubernetes"] = tryTakeFromYaml(configs, "kubernetes", None)
@@ -245,7 +236,6 @@ def terraformProvisionment(
 
             terraform_cli_vars["configsFile"] = cfgPath
             terraform_cli_vars["flavor"] = flavor
-            terraform_cli_vars["customCount"] = nodes
             terraform_cli_vars["instanceName"] = nodeName
 
             if configs["providerName"] == "azurerm":

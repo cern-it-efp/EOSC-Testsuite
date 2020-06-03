@@ -37,7 +37,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="2. Tests Catalog" href="testsCatalog.html" />
+    <link rel="next" title="AWS" href="clouds/aws.html" />
     <link rel="prev" title="EOSC Cloud Validation Test Suite" href="index.html" />
     <link href="_static/style.css" rel="stylesheet" type="text/css">
 
@@ -97,20 +97,30 @@
 <li class="toctree-l2"><a class="reference internal" href="#ssh-key">1.2 SSH key</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#security-groups">1.3 Security groups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#networking-and-ips">1.4 Networking and IPs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#download-and-preparation">1.5 Download and preparation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#clone-and-prepare">1.5 Clone and prepare</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#cloning-repository">Cloning repository</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#main-clouds-additional-support">Main clouds: additional support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="clouds/aws.html">AWS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="clouds/azurerm.html">Azure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="clouds/cloudstack.html">CloudStack</a></li>
+<li class="toctree-l4"><a class="reference internal" href="clouds/exoscale.html">Exoscale</a></li>
+<li class="toctree-l4"><a class="reference internal" href="clouds/google.html">GCP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="clouds/oci.html">Oracle Cloud Infrastructure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="clouds/openstack.html">OpenStack</a></li>
+<li class="toctree-l4"><a class="reference internal" href="clouds/opentelekomcloud.html">T-Systems’ Open Telekom Cloud</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#using-docker">1.6 Using Docker</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="testsCatalog.html">2. Tests Catalog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run.html">3. Run the test-suite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run.html">3. Run</a></li>
 <li class="toctree-l1"><a class="reference internal" href="existingClusters.html">4. Using existing clusters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="noTerraform.html">5. No Terraform runs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="results.html">6. Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="costs.html">7. Cost of run calculation</a></li>
 </ul>
 
             
@@ -265,11 +275,11 @@ conflicts when creating the Kubernetes cluster. If one wants to run the Test-Sui
 network the nodes will be connected to, this is a private network. In other words, <strong>a VM will have to be created first manually</strong> and the Test Suite will have to be
 triggered from there.</p>
 </div>
-<div class="section" id="download-and-preparation">
-<h2>1.5 Download and preparation<a class="headerlink" href="#download-and-preparation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="clone-and-prepare">
+<h2>1.5 Clone and prepare<a class="headerlink" href="#clone-and-prepare" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="cloning-repository">
 <h3>Cloning repository<a class="headerlink" href="#cloning-repository" title="Permalink to this headline">¶</a></h3>
-<p>Please clone the repository as follows and cd into it:</p>
+<p>Please clone the repository as follows and cd into it. This step is not needed when using the provided Docker image, the repository is already cloned there.</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> git clone https://github.com/cern-it-efp/EOSC-Testsuite.git
 <span class="gp">$</span> <span class="nb">cd</span> EOSC-Testsuite
 </pre></div>
@@ -277,17 +287,15 @@ triggered from there.</p>
 </div>
 <div class="section" id="configuration">
 <h3>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h3>
-<p>While completing this task, please refer to <a href="https://www.terraform.io/docs/providers/" target="_blank">Terraform's documentation</a> in order to complete it successfully as some parts are
-provider specific and differ from one provider to another.</p>
-<p>You will find in the root of the cloned repository a folder named <em>configurations</em>. That folder must containing the following files:</p>
-<p><code class="docutils literal notranslate"><span class="pre">testsCatalog.yaml</span> <span class="pre">(required)</span></code></p>
-<blockquote>
-<div>Refer to the section “Test Catalog” to learn how to fill this file.</div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">configs.yaml</span> <span class="pre">(required)</span></code></p>
-<div class="line-block">
-<div class="line">[<strong>NOTE</strong>: For running on Azure, AWS, GCP, OpenStack, CloudStack and Exoscale refer to the section “Main clouds” below. In those cases, only configs.yaml and testsCatalog.yaml are needed.]</div>
-</div>
-<p>Its variables:</p>
+<p>Two YAML files have to be filled to configure the run. Examples of these two files can be found inside the examples folder of the repository.</p>
+<p><code class="docutils literal notranslate"><span class="pre">testsCatalog.yaml</span></code></p>
+<p>This file gathers details related to the tests that should be deployed.
+Refer to the section “Test Catalog” to learn how to fill this file.</p>
+<p><code class="docutils literal notranslate"><span class="pre">configs.yaml</span></code></p>
+<p>This file gathers general details required to provision the infrastructure.
+The file also contains a section named <em>costCalculation</em>. Refer to the section “Cost of run calculation” to understand how to fill that part.
+The suite will create itself the Terraform files on the fly according to the configuration provided.</p>
+<p><strong>General variables:</strong></p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
 <col width="33%" />
@@ -300,94 +308,7 @@ provider specific and differ from one provider to another.</p>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>providerName</td>
-<td>Name of the provider for Terraform. (required)</td>
-</tr>
-<tr class="row-odd"><td>providerInstanceName</td>
-<td>Compute instance name for Terraform. This is provider specific. (required)</td>
-</tr>
-<tr class="row-even"><td>pathToKey</td>
-<td>Path to the location of your private key, to be used for ssh connections. (required)</td>
-</tr>
-<tr class="row-odd"><td>flavor</td>
-<td>Flavor to be used for the main cluster. This has to be specified as a key-value pair according to the provider. (required)</td>
-</tr>
-<tr class="row-even"><td>openUser</td>
-<td>User to be used for ssh connections. Root user will be used by default.</td>
-</tr>
-</tbody>
-</table>
-<p>The file also contains a section named <em>costCalculation</em>. Refer to the section “Cost of run calculation” to understand how to fill that part.</p>
-<p><code class="docutils literal notranslate"><span class="pre">credentials</span></code></p>
-<p>This file must contains .tf (HCL) code for authentication that goes on the provider definition section of a Terraform configuration file (i.e AWS)
-In case this file is empty, the TS assumes an external authentication method: like env variables (i.e OpenStack) or CLI (i.e Azure).
-Note that if you aim to use external authentication but you need something inside the provider section of the Terraform configuration file (i.e AWS region), this file is the place to define that.</p>
-<p><code class="docutils literal notranslate"><span class="pre">instanceDefinition</span> <span class="pre">(required)</span></code></p>
-<p>In this file one should write all the key-pair values that would be written on the body of an instance definition resource on Terraform, according to the cloud one wants to test.
-Please refer to the documentation of the cloud provider to check which pairs you need to specify. In any case, you can run the Test-Suite (next steps) and if there is any missing
-pair a message will be shown in the terminal telling you which ones these are. This is how you must specify each pair:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">YOUR_PROVIDER</span><span class="s1">&#39;S_STRING_FOR_A_KEY&gt; = &quot;&lt;VALUE_GIVEN_FOR_THAT_KEY&gt;&quot;</span>
-</pre></div>
-</div>
-<p>An example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;NAME_PH&quot;</span>
-<span class="n">template</span> <span class="o">=</span> <span class="s2">&quot;Linux CentOS 7.5 64-bit&quot;</span>
-<span class="n">key_pair</span> <span class="o">=</span> <span class="s2">&quot;k_cl&quot;</span>
-<span class="n">security_groups</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;kgroup&quot;</span><span class="p">]</span>
-<span class="n">disk_size</span> <span class="o">=</span> <span class="mi">50</span>
-<span class="n">zone</span> <span class="o">=</span> <span class="s2">&quot;ch-gva-2&quot;</span>
-</pre></div>
-</div>
-<p>One of the properties specified on the block that defines a compute node (VM) is the flavor or machine type. This property must not be specified on instanceDefinition but on configs.yaml’s flavor.</p>
-<p>Please pay attention in this section to the name for the instance, which will be set by the Test-Suite containing:</p>
-<ul class="simple">
-<li>The string “kubenode”</li>
-<li>A string indicating the purpose of the cluster to which the VM belongs</li>
-<li>A random, 4 character string to avoid DNS issues</li>
-<li>An integer. 0 would be the master node, 1+ would be the slaves</li>
-</ul>
-<p>To achieve this, your instance definition must contain the ‘NAME_PH’ placeholder. When specifying the name for the instance, please follow this structure:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">YOUR_PROVIDER</span><span class="s1">&#39;S_STRING_FOR_NAME&gt; = &quot;NAME_PH&quot;</span>
-</pre></div>
-</div>
-<p>Now, let’s assume your provider’s string for the instance name is “display_name”, then you should write:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;NAME_PH&quot;</span>
-</pre></div>
-</div>
-<p>As an example let’s assume the suite comes up with the name “kubenode-hpcTest-aws-0”, Then it would switch that name with the NAME_PH placeholder:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">display_name</span> <span class="o">=</span> <span class="s2">&quot;kubenode-hpcTest-aws-0&quot;</span>
-</pre></div>
-</div>
-<div class="line-block">
-<div class="line">[<strong>NOTE 1</strong>: This will be taken as a whole block and placed directly on a .tf file]</div>
-<div class="line">[<strong>NOTE 2</strong>: Clouds that don’t support resource creation with Terraform or k8saaS can’t currently be tested with this Test-Suite]</div>
-</div>
-<p><code class="docutils literal notranslate"><span class="pre">Dependencies</span></code></p>
-<p>This file takes also HCL code. There are providers for which dependencies are required, for example Azure: Terraform can’t create a VM if there is no NIC for it.
-Then this is the file to define those dependencies needed by the VMs.</p>
-</div>
-<div class="section" id="main-clouds-additional-support">
-<h3>Main clouds: additional support<a class="headerlink" href="#main-clouds-additional-support" title="Permalink to this headline">¶</a></h3>
-<p>Writing Terraform files is not needed when running the suite on Azure, AWS, GCP, OpenStack, CloudStack and Exoscale.
-In those cases the suite will create itself the Terraform files on the fly according to the configuration provided.
-Find below these lines details on how to run the suite on these providers:</p>
-<p><code class="docutils literal notranslate"><span class="pre">Azure</span></code></p>
-<p>(It is also possible to use AKS to provision the cluster, for this refer to section “Using existing clusters”.)</p>
-<p>Install az CLI and configure credentials with ‘az login’.
-Note resource group, security group, and subnet have to be created in advance.</p>
-<p>Variables for configs.yaml:</p>
-<table border="1" class="colwidths-given docutils">
-<colgroup>
-<col width="33%" />
-<col width="67%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Name</th>
-<th class="head">Explanation / Values</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>providerName</td>
-<td>It’s value must be “azurerm”. (required)</td>
+<td>Terraform name of the provider. (required)</td>
 </tr>
 <tr class="row-odd"><td>pathToKey</td>
 <td>Path to the location of your private key, to be used for ssh connections. (required)</td>
@@ -410,403 +331,26 @@ Note resource group, security group, and subnet have to be created in advance.</
 <tr class="row-odd"><td>pubSSH</td>
 <td>Public SSH key of the key specified at configs.yaml’s pathToKey. (required)</td>
 </tr>
-<tr class="row-even"><td>securityGroupID</td>
-<td>The ID of the Network Security Group to associate with the VMs’s network interfaces (required)</td>
-</tr>
-<tr class="row-odd"><td>subnetId</td>
-<td>Reference to a subnet in which the NIC for the VM has been created. (required)</td>
-</tr>
-<tr class="row-even"><td>image.publisher</td>
-<td>Specifies the publisher of the image used to create the virtual machines. (required)</td>
-</tr>
-<tr class="row-odd"><td>image.offer</td>
-<td>Specifies the offer of the image used to create the virtual machines. (required)</td>
-</tr>
-<tr class="row-even"><td>image.sku</td>
-<td>Specifies the SKU of the image used to create the virtual machines. (required)</td>
-</tr>
-<tr class="row-odd"><td>image.version</td>
-<td>Specifies the version of the image used to create the virtual machines. (required)</td>
-</tr>
 </tbody>
 </table>
-<p>Note: the security group and subnet -virtual network too- have to be created beforehand and their ID’s used at configs.yaml.
-Also, if image’s <em>publisher</em>, <em>offer</em>, <em>sku</em> and <em>version</em> are omitted, the following defaults will be used:</p>
-<ul class="simple">
-<li>publisher = OpenLogic</li>
-<li>offer = CentOS</li>
-<li>sku = 7.5</li>
-<li>version = latest</li>
+<p><strong>Provider specific variables:</strong></p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="clouds/aws.html">AWS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clouds/azurerm.html">Azure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clouds/cloudstack.html">CloudStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clouds/exoscale.html">Exoscale</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clouds/google.html">GCP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clouds/oci.html">Oracle Cloud Infrastructure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clouds/openstack.html">OpenStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clouds/opentelekomcloud.html">T-Systems’ Open Telekom Cloud</a></li>
 </ul>
-<p><code class="docutils literal notranslate"><span class="pre">AWS</span></code></p>
-<p>(It is also possible to use EKS to provision the cluster, for this refer to section “Using existing clusters”.)</p>
-<p>Variables for configs.yaml:</p>
-<table border="1" class="colwidths-given docutils">
-<colgroup>
-<col width="33%" />
-<col width="67%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Name</th>
-<th class="head">Explanation / Values</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>providerName</td>
-<td>It’s value must be “aws”. (required)</td>
-</tr>
-<tr class="row-odd"><td>pathToKey</td>
-<td>Path to the location of your private key, to be used for ssh connections. (required)</td>
-</tr>
-<tr class="row-even"><td>flavor</td>
-<td>Flavor to be used for the main cluster. (required)</td>
-</tr>
-<tr class="row-odd"><td>openUser</td>
-<td>User to be used for ssh connections. (required)</td>
-</tr>
-<tr class="row-even"><td>region</td>
-<td>The region in which to create the compute instances. (required)</td>
-</tr>
-<tr class="row-odd"><td>sharedCredentialsFile</td>
-<td>The authentication method supported is AWS shared credential file. Specify here the absolute path to such file. (required)</td>
-</tr>
-<tr class="row-even"><td>ami</td>
-<td>AMI for the instances. (required)</td>
-</tr>
-<tr class="row-odd"><td>keyName</td>
-<td>Name of the key for the instances. (required)</td>
-</tr>
-</tbody>
-</table>
-<p><code class="docutils literal notranslate"><span class="pre">GCP</span></code></p>
-<p>(It is also possible to use GKE to provision the cluster, for this refer to section “Using existing clusters”. You will have to <a href="https://cloud.google.com/sdk/gcloud/reference/container/clusters/get-credentials?hl=en_US&_ga=2.141757301.-616534808.1554462142" target="_blank">fetch the kubectl kubeconfig file</a> too.)</p>
-<p>Variables for configs.yaml:</p>
-<table border="1" class="colwidths-given docutils">
-<colgroup>
-<col width="33%" />
-<col width="67%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Name</th>
-<th class="head">Explanation / Values</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>providerName</td>
-<td>It’s value must be “google”. (required)</td>
-</tr>
-<tr class="row-odd"><td>pathToKey</td>
-<td>Path to the location of your private key, to be used for ssh connections. (required)</td>
-</tr>
-<tr class="row-even"><td>flavor</td>
-<td>Flavor to be used for the main cluster. (required)</td>
-</tr>
-<tr class="row-odd"><td>openUser</td>
-<td>User to be used for ssh connections. Note VM specific keys are not supported, only project-wide SSH keys are.(required)</td>
-</tr>
-<tr class="row-even"><td>zone</td>
-<td>The zone in which to create the compute instances. (required)</td>
-</tr>
-<tr class="row-odd"><td>pathToCredentials</td>
-<td>Path to the GCP JSON credentials file (note this file has to be downloaded in advance from the GCP console). (required)</td>
-</tr>
-<tr class="row-even"><td>image</td>
-<td>Image for the instances. (required)</td>
-</tr>
-<tr class="row-odd"><td>project</td>
-<td>Google project under which the infrastructure has to be provisioned. (required)</td>
-</tr>
-<tr class="row-even"><td>gpuType</td>
-<td>Type of GPU to be used. Needed if the Deep Learning test was selected at testsCatalog.yaml.</td>
-</tr>
-</tbody>
-</table>
-<p><code class="docutils literal notranslate"><span class="pre">OpenStack</span></code></p>
-<p>Regarding authentication, download the OpenStack RC File containing the credentials from the Horizon dashboard and source it.</p>
-<p>Variables for configs.yaml:</p>
-<table border="1" class="colwidths-given docutils">
-<colgroup>
-<col width="33%" />
-<col width="67%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Name</th>
-<th class="head">Explanation / Values</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>providerName</td>
-<td>It’s value must be “openstack”. (required)</td>
-</tr>
-<tr class="row-odd"><td>pathToKey</td>
-<td>Path to the location of your private key, to be used for ssh connections. (required)</td>
-</tr>
-<tr class="row-even"><td>flavor</td>
-<td>Flavor to be used for the main cluster. (required)</td>
-</tr>
-<tr class="row-odd"><td>storageCapacity</td>
-<td>VM’s disk size. The VMs will boot from disk, this sets the size of it. (required)</td>
-</tr>
-<tr class="row-even"><td>imageID</td>
-<td>OS Image ID to be used for the VMs. (required)</td>
-</tr>
-<tr class="row-odd"><td>keyPair</td>
-<td>Name of the key to be used. Has to be created or imported beforehand. (required)</td>
-</tr>
-<tr class="row-even"><td>openUser</td>
-<td>User to be used for ssh connections. Root user will be used by default.</td>
-</tr>
-<tr class="row-odd"><td>securityGroups</td>
-<td>Security groups array.</td>
-</tr>
-<tr class="row-even"><td>region</td>
-<td>The region in which to create the compute instances. If omitted, the region specified in the credentials file is used.</td>
-</tr>
-<tr class="row-odd"><td>availabilityZone</td>
-<td>The availability zone in which to create the compute instances.</td>
-</tr>
-<tr class="row-even"><td>networkName</td>
-<td>Name of the newtork to be used.</td>
-</tr>
-</tbody>
-</table>
-<p><code class="docutils literal notranslate"><span class="pre">CloudStack</span></code></p>
-<p>Variables for configs.yaml:</p>
-<table border="1" class="colwidths-given docutils">
-<colgroup>
-<col width="33%" />
-<col width="67%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Name</th>
-<th class="head">Explanation / Values</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>providerName</td>
-<td>It’s value must be “cloudstack”. (required)</td>
-</tr>
-<tr class="row-odd"><td>pathToKey</td>
-<td>Path to the location of your private key, to be used for ssh connections. (required)</td>
-</tr>
-<tr class="row-even"><td>flavor</td>
-<td>Flavor to be used for the main cluster. (required)</td>
-</tr>
-<tr class="row-odd"><td>openUser</td>
-<td>User to be used for ssh connections. Root user will be used by default.</td>
-</tr>
-<tr class="row-even"><td>keyPair</td>
-<td>Name of the key to be used. Has to be created or imported beforehand. (required)</td>
-</tr>
-<tr class="row-odd"><td>securityGroups</td>
-<td>Security groups array.</td>
-</tr>
-<tr class="row-even"><td>zone</td>
-<td>The zone in which to create the compute instances. (required)</td>
-</tr>
-<tr class="row-odd"><td>template</td>
-<td>OS Image to be used for the VMs. (required)</td>
-</tr>
-<tr class="row-even"><td>storageCapacity</td>
-<td>VM’s disk size.</td>
-</tr>
-<tr class="row-odd"><td>authFile</td>
-<td>Path to the file containing the CloudStack credentials. See below the structure of such file. (required)</td>
-</tr>
-</tbody>
-</table>
-<p>CloudStack credentials file’s structure:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">[cloudstack]</span>
-<span class="go">url = your_api_url</span>
-<span class="go">apikey = your_api_key</span>
-<span class="go">secretkey = your_secret_key</span>
-</pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">Exoscale</span></code></p>
-<p>Variables for configs.yaml:</p>
-<table border="1" class="colwidths-given docutils">
-<colgroup>
-<col width="33%" />
-<col width="67%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Name</th>
-<th class="head">Explanation / Values</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>providerName</td>
-<td>It’s value must be “exoscale”. (required)</td>
-</tr>
-<tr class="row-odd"><td>pathToKey</td>
-<td>Path to the location of your private key, to be used for ssh connections. (required)</td>
-</tr>
-<tr class="row-even"><td>flavor</td>
-<td>Flavor to be used for the main cluster. (required)</td>
-</tr>
-<tr class="row-odd"><td>keyPair</td>
-<td>Name of the key to be used. Has to be created or imported beforehand. (required)</td>
-</tr>
-<tr class="row-even"><td>securityGroups</td>
-<td>Security groups array.</td>
-</tr>
-<tr class="row-odd"><td>zone</td>
-<td>The zone in which to create the compute instances. (required)</td>
-</tr>
-<tr class="row-even"><td>template</td>
-<td>OS Image to be used for the VMs. (required)</td>
-</tr>
-<tr class="row-odd"><td>storageCapacity</td>
-<td>VM’s disk size. (required)</td>
-</tr>
-<tr class="row-even"><td>authFile</td>
-<td>Path to the file containing the Exoscale credentials. See below the structure of such file. (required)</td>
-</tr>
-</tbody>
-</table>
-<p>Exoscale credentials file’s structure:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">[cloudstack]</span>
-<span class="go">key = EXOe3ca3e7621b7cd7a20f7e0de</span>
-<span class="go">secret = 2_JvzFcZQL_Rg1nZSRNVheYQh9oYlL5aX3zX-eILiL4</span>
-</pre></div>
-</div>
-<p><code class="docutils literal notranslate"><span class="pre">T-Systems'</span> <span class="pre">Open</span> <span class="pre">Telekom</span> <span class="pre">Cloud</span></code></p>
-<p>Note that to allow the VMs access the internet, Shared SNAT has to be enabled on the default VPC, which will be used for the suite run.</p>
-<p>Variables for configs.yaml:</p>
-<table border="1" class="colwidths-given docutils">
-<colgroup>
-<col width="33%" />
-<col width="67%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Name</th>
-<th class="head">Explanation / Values</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>providerName</td>
-<td>It’s value must be “opentelekomcloud”. (required)</td>
-</tr>
-<tr class="row-odd"><td>pathToKey</td>
-<td>Path to the location of your private key, to be used for ssh connections. (required)</td>
-</tr>
-<tr class="row-even"><td>flavor</td>
-<td>Flavor to be used for the main cluster. (required)</td>
-</tr>
-<tr class="row-odd"><td>keyPair</td>
-<td>Name of the key to be used. Has to be created or imported beforehand. (required)</td>
-</tr>
-<tr class="row-even"><td>securityGroups</td>
-<td>Security groups array.</td>
-</tr>
-<tr class="row-odd"><td>storageCapacity</td>
-<td>VM’s disk size. The VMs will boot from disk, this sets the size of it. (required)</td>
-</tr>
-<tr class="row-even"><td>authFile</td>
-<td>Path to the yaml file containing the OTC credentials. See below the structure of such file. (required)</td>
-</tr>
-<tr class="row-odd"><td>imageID</td>
-<td>ID of the image to be used on the VMs. (required)</td>
-</tr>
-<tr class="row-even"><td>openUser</td>
-<td>User to be used for ssh connections. (required)</td>
-</tr>
-<tr class="row-odd"><td>domainName</td>
-<td>OTC Domain Name. (required)</td>
-</tr>
-<tr class="row-even"><td>tenantName</td>
-<td>OTC Tenant Name. (required)</td>
-</tr>
-</tbody>
-</table>
-<p>Open Telekom Cloud credentials file’s structure:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">accK: 123456789abcd</span>
-<span class="go">secK: 123456789abcd</span>
-</pre></div>
-</div>
-<p><code class="docutils literal notranslate"><span class="pre">Oracle</span> <span class="pre">Cloud</span> <span class="pre">Infrastructure</span></code></p>
-<p>(It is also possible to use OKE to provision the cluster, for this refer to section “Using existing clusters”.)</p>
-<p>Variables for configs.yaml:</p>
-<table border="1" class="colwidths-given docutils">
-<colgroup>
-<col width="33%" />
-<col width="67%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Name</th>
-<th class="head">Explanation / Values</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>providerName</td>
-<td>It’s value must be “oci”. (required)</td>
-</tr>
-<tr class="row-odd"><td>pathToKey</td>
-<td>Path to your private key, to be used for ssh connections. (required)</td>
-</tr>
-<tr class="row-even"><td>ssh_public_key_path</td>
-<td>Path to the public key belonging to your private key at pathToKey. This will be injected to the VMs (required)</td>
-</tr>
-<tr class="row-odd"><td>flavor</td>
-<td>Flavor to be used for the main cluster. (required)</td>
-</tr>
-<tr class="row-even"><td>storageCapacity</td>
-<td>VM’s disk size.</td>
-</tr>
-<tr class="row-odd"><td>authFile</td>
-<td>Path to the yaml file containing the OTC credentials. See below the structure of such file. (required)</td>
-</tr>
-<tr class="row-even"><td>image_ocid</td>
-<td>The OCID of the image to be used on the VMs. (required)</td>
-</tr>
-<tr class="row-odd"><td>openUser</td>
-<td>User to be used for ssh connections. (required)</td>
-</tr>
-<tr class="row-even"><td>compartment_ocid</td>
-<td>Compartment’s OCID. (required)</td>
-</tr>
-<tr class="row-odd"><td>availability_domain</td>
-<td>Availability domain to be used. (required)</td>
-</tr>
-<tr class="row-even"><td>subnet_ocid</td>
-<td>The OCID of the subnet to be used. (required)</td>
-</tr>
-</tbody>
-</table>
-<p>Oracle Cloud Infrastructure credentials file’s must be a YAML file containing only the following variables:</p>
-<table border="1" class="colwidths-given docutils">
-<colgroup>
-<col width="33%" />
-<col width="67%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Name</th>
-<th class="head">Explanation / Values</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>auth_private_key_path</td>
-<td>Path to the private key to be used to authenticate to OCI. This is not the key to be used to ssh into the machines.</td>
-</tr>
-<tr class="row-odd"><td>user_ocid</td>
-<td>User’s OCID.</td>
-</tr>
-<tr class="row-even"><td>tenancy_ocid</td>
-<td>Tenancy’s OCID.</td>
-</tr>
-<tr class="row-odd"><td>fingerprint</td>
-<td>Authentication key’s fingerprint.</td>
-</tr>
-<tr class="row-even"><td>region</td>
-<td>Region to be used.</td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
 <div class="section" id="using-docker">
 <h2>1.6 Using Docker<a class="headerlink" href="#using-docker" title="Permalink to this headline">¶</a></h2>
-<p>A Docker image has been built and pushed to Docker hub. This image allows you to skip section “1.1 Dependencies” and jump to “1.2 SSH key”.</p>
+<p>A Docker image has been built and pushed to Docker hub. This image allows you to skip section “Dependencies” and jump to “SSH key”.</p>
 <p>Run the container (pulls the image first):</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> docker run --net<span class="o">=</span>host -it cernefp/tslauncher
 </pre></div>
@@ -824,7 +368,7 @@ Also, if image’s <em>publisher</em>, <em>offer</em>, <em>sku</em> and <em>vers
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="testsCatalog.html" class="btn btn-neutral float-right" title="2. Tests Catalog" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="clouds/aws.html" class="btn btn-neutral float-right" title="AWS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral float-left" title="EOSC Cloud Validation Test Suite" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

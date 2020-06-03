@@ -21,9 +21,9 @@ variable "region" { default = "" }
 variable "keyPair" { default = "" }
 
 # -------------------------- Stack versioning ----------------------------------
-variable "dockerCE" { default = "DOCKER_CE_PH" }
-variable "dockerEngine" { default = "DOCKER_EN_PH" }
-variable "kubernetes" { default = "K8S_PH" }
+variable "dockerCE" { default = "" }
+variable "dockerEngine" { default = "" }
+variable "kubernetes" { default = "" }
 
 ############################ OPENSTACK #########################################
 variable "availabilityZone" { default = "" } # region is above
@@ -31,7 +31,7 @@ variable "useDefaultNetwork" { default = true } # default uses existing network 
 
 ############################ AZURE #############################################
 variable "clusterRandomID" { default = "" }
-variable "vmSize" { default = "" } 
+variable "vmSize" { default = "" }
 #variable "secGroupId" {
 #  default = "SECGROUPID_PH"
 #}
