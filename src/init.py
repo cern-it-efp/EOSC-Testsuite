@@ -116,19 +116,19 @@ def initAndChecks(noTerraform,
 
 
     # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    # TODO: these are for providers that support terraform but are not in extraSupportedClouds. As of 20.5, if allowAllTfClouds is set to False, must use --no-terraform
-    instanceDefinition = loadFile("configurations/instanceDefinition")
-    extraInstanceConfig = loadFile("configurations/extraInstanceConfig")
-    dependencies = loadFile("configurations/dependencies")
-    credentials = loadFile("configurations/credentials")
-    if configs['providerName'] not in extraSupportedClouds \
-            and "NAME_PH" not in instanceDefinition \
-            and noTerraform is False:
-        writeToFile(
-            "src/logging/header",
-            "ERROR: NAME_PH was not found in instanceDefinition file.",
-            True)
-        stop(1)
+    if allowAllTfClouds is True:
+        instanceDefinition = loadFile("configurations/instanceDefinition")
+        extraInstanceConfig = loadFile("configurations/extraInstanceConfig")
+        dependencies = loadFile("configurations/dependencies")
+        credentials = loadFile("configurations/credentials")
+        if configs['providerName'] not in extraSupportedClouds \
+                and "NAME_PH" not in instanceDefinition \
+                and noTerraform is False:
+            writeToFile(
+                "src/logging/header",
+                "ERROR: NAME_PH was not found in instanceDefinition file.",
+                True)
+            stop(1)
     # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 

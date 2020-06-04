@@ -5,7 +5,11 @@ Once the configuration steps are completed, the Test-Suite is ready to be run:
 
 .. code-block:: console
 
-    $ ./test_suite <options>
+    EOSC-Testsuite$ chmod +x test_suite
+    EOSC-Testsuite$ ./test_suite <options>
+
+Once the provisionment steps are completed (Kubernetes cluster up and running) and pods are deployed, the run can be stopped by deleting all the pods.
+
 
 Options
 ===============
@@ -50,37 +54,37 @@ Once the test suite is running, you can view the Terraform provisionment logs by
 
 .. code-block:: console
 
-    $ tail -f logs
+    $ tail -f EOSC-Testsuite/logs
 
 
 You can see the Ansible bootstrapping logs by doing:
 
 .. code-block:: console
 
-    $ tail -f src/logging/ansibleLogs*
+    $ tail -f EOSC-Testsuite/src/logging/ansibleLogs*
 
 
 Once the bootstrapping has completed and tests are deployed, you can see the pods statuses by doing:
 
 .. code-block:: console
 
-    $ watch kubectl get pods --kubeconfig /src/tests/shared/config
+    $ watch kubectl get pods --kubeconfig EOSC-Testsuite/src/tests/shared/config
 
 
 If GPU and HPC tests were deployed, see their pods by doing:
 
 .. code-block:: console
 
-    $ watch kubectl --kubeconfig src/tests/dlTest/config get pods # For GPU cluster
-    $ watch kubectl --kubeconfig src/tests/hpcTest/config get pods # For HPC cluster
+    $ watch kubectl --kubeconfig EOSC-Testsuite/src/tests/dlTest/config get pods # For GPU cluster
+    $ watch kubectl --kubeconfig EOSC-Testsuite/src/tests/hpcTest/config get pods # For HPC cluster
 
 
 Once the pods are deployed, the suite run can be stopped by destroying pods, useful for example when pods go "Evicted" or "ImagePullBackOff". Examples:
 
 .. code-block:: console
 
-    $ kubectl --kubeconfig src/tests/shared/config delete pods --all # destroy all pods on the shared cluster
-    $ kubectl --kubeconfig src/tests/shared/config delete pod dodas-pod # destroy DODAS pod
+    $ kubectl --kubeconfig EOSC-Testsuite/src/tests/shared/config delete pods --all # destroy all pods on the shared cluster
+    $ kubectl --kubeconfig EOSC-Testsuite/src/tests/shared/config delete pod dodas-pod # destroy DODAS pod
 
 
 The following aliases are available when using the provided Docker image:

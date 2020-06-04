@@ -37,8 +37,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="5. Results" href="results.html" />
-    <link rel="prev" title="3. Run the test-suite" href="run.html" />
+    <link rel="next" title="5. No Terraform runs" href="noTerraform.html" />
+    <link rel="prev" title="3. Run" href="run.html" />
     <link href="_static/style.css" rel="stylesheet" type="text/css">
 
 </head>
@@ -88,10 +88,10 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="gettingStarted.html">1. Getting started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testsCatalog.html">2. Tests Catalog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="run.html">3. Run the test-suite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run.html">3. Run</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">4. Using existing clusters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="results.html">5. Results</a></li>
-<li class="toctree-l1"><a class="reference internal" href="verification.html">6. Verification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="noTerraform.html">5. No Terraform runs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="results.html">6. Results</a></li>
 <li class="toctree-l1"><a class="reference internal" href="costs.html">7. Cost of run calculation</a></li>
 </ul>
 
@@ -161,7 +161,29 @@
 <h1>4. Using existing clusters<a class="headerlink" href="#using-existing-clusters" title="Permalink to this headline">¶</a></h1>
 <p>It’s possible to use this tool for testing providers that support Kubernetes as a Service. This means the provider offers the user a way for simply creating a cluster.
 In case one wants to validate a provider that offers this and want to take advantage of it, simply skip steps 1.1 and 1.2 (install Terraform and manage ssh keys) and when running the test-suite, use option <em>–only-test</em>.</p>
-<p><strong>Note that you must have the file *~/.kube/config* for the previously provisioned cluster on your local machine so that it can be managed from there.</strong></p>
+<p>Note that the kubeconfig files have to be placed in the following locations, in case that test was selected:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="33%" />
+<col width="67%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Test / Cluster</th>
+<th class="head">Path to kubeconfig</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Shared cluster</td>
+<td>EOSC-Testsuite/src/tests/shared/config</td>
+</tr>
+<tr class="row-odd"><td>GPU cluster</td>
+<td>EOSC-Testsuite/src/tests/dlTest/config</td>
+</tr>
+<tr class="row-even"><td>HPC cluster</td>
+<td>EOSC-Testsuite/src/tests/hpcTest/config</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 
@@ -172,10 +194,10 @@ In case one wants to validate a provider that offers this and want to take advan
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="results.html" class="btn btn-neutral float-right" title="5. Results" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="noTerraform.html" class="btn btn-neutral float-right" title="5. No Terraform runs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="run.html" class="btn btn-neutral float-left" title="3. Run the test-suite" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="run.html" class="btn btn-neutral float-left" title="3. Run" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

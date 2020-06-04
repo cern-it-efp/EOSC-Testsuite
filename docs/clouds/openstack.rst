@@ -3,7 +3,7 @@ OpenStack
 
 Regarding authentication, download the OpenStack RC File containing the credentials from the Horizon dashboard and source it.
 
-Variables for configs.yaml:
+OpenStack specific variables for configs.yaml:
 
 .. list-table::
    :widths: 25 50

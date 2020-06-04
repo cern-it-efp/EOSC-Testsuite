@@ -327,23 +327,23 @@ def getIP(resource, provider, public=False):
         str: Resource's IP address.
     """
 
-    try: 
-        if provider == "exoscale" or provider == "cloudstack":
-            if public is True:
-                return resource["values"]["ip_address"]
-            return resource["values"]["ip_address"]
-        elif provider == "aws":
+    try:
+        if provider == "aws":
             if public is True:
                 return resource["values"]["public_ip"]
             return resource["values"]["private_ip"]
-        elif provider == "azurerm":
-            return resource["values"]["private_ip_address"]
         elif provider == "openstack":
             return resource["values"]["network"][0]["fixed_ip_v4"]
         elif provider == "google":
             return resource["values"]["network_interface"][0]["network_ip"]
         elif provider == "opentelekomcloud":
             return resource["values"]["access_ip_v4"]
+        elif provider == "exoscale" or provider == "cloudstack":
+            if public is True:
+                return resource["values"]["ip_address"]
+            return resource["values"]["ip_address"]
+        elif provider == "azurerm":
+            return resource["values"]["private_ip_address"]
         elif provider == "oci":
             return resource["values"]["private_ip"]
     except KeyError:

@@ -3,7 +3,7 @@ Oracle Cloud Infrastructure
 
 It is also possible to use OKE to provision the cluster, for this refer to section "Using existing clusters".
 
-Variables for configs.yaml:
+OCI specific variables for configs.yaml:
 
 .. list-table::
    :widths: 25 50

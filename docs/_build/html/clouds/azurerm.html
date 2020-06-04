@@ -37,6 +37,8 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="CloudStack" href="cloudstack.html" />
+    <link rel="prev" title="AWS" href="aws.html" />
     <link href="../_static/style.css" rel="stylesheet" type="text/css">
 
 </head>
@@ -83,8 +85,30 @@
             
             
               <p class="caption"><span class="caption-text">Cloud Test Suite Documentation</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../gettingStarted.html">1. Getting started</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../gettingStarted.html">1. Getting started</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../gettingStarted.html#dependencies">1.1 Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gettingStarted.html#ssh-key">1.2 SSH key</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gettingStarted.html#security-groups">1.3 Security groups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gettingStarted.html#networking-and-ips">1.4 Networking and IPs</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../gettingStarted.html#clone-and-prepare">1.5 Clone and prepare</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../gettingStarted.html#cloning-repository">Cloning repository</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../gettingStarted.html#configuration">Configuration</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="aws.html">AWS</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Azure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cloudstack.html">CloudStack</a></li>
+<li class="toctree-l4"><a class="reference internal" href="exoscale.html">Exoscale</a></li>
+<li class="toctree-l4"><a class="reference internal" href="google.html">GCP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="oci.html">Oracle Cloud Infrastructure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="openstack.html">OpenStack</a></li>
+<li class="toctree-l4"><a class="reference internal" href="opentelekomcloud.html">T-Systems’ Open Telekom Cloud</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../gettingStarted.html#using-docker">1.6 Using Docker</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../testsCatalog.html">2. Tests Catalog</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../run.html">3. Run</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../existingClusters.html">4. Using existing clusters</a></li>
@@ -136,6 +160,8 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
+          <li><a href="../gettingStarted.html">1. Getting started</a> &raquo;</li>
+        
       <li>Azure</li>
     
     
@@ -160,7 +186,7 @@
 <p>It is also possible to use AKS to provision the cluster, for this refer to section “Using existing clusters”.</p>
 <p>Install az CLI and configure credentials with ‘az login’.
 Note resource group, security group, and subnet have to be created in advance.</p>
-<p>Variables for configs.yaml:</p>
+<p>Azure specific variables for configs.yaml:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
 <col width="33%" />
@@ -203,21 +229,21 @@ Note resource group, security group, and subnet have to be created in advance.</
 <td>Reference to a subnet in which the NIC for the VM has been created. (required)</td>
 </tr>
 <tr class="row-even"><td>image.publisher</td>
-<td>Specifies the publisher of the image used to create the virtual machines. (required)</td>
+<td>Specifies the publisher of the image used to create the virtual machines.</td>
 </tr>
 <tr class="row-odd"><td>image.offer</td>
-<td>Specifies the offer of the image used to create the virtual machines. (required)</td>
+<td>Specifies the offer of the image used to create the virtual machines.</td>
 </tr>
 <tr class="row-even"><td>image.sku</td>
-<td>Specifies the SKU of the image used to create the virtual machines. (required)</td>
+<td>Specifies the SKU of the image used to create the virtual machines.</td>
 </tr>
 <tr class="row-odd"><td>image.version</td>
-<td>Specifies the version of the image used to create the virtual machines. (required)</td>
+<td>Specifies the version of the image used to create the virtual machines.</td>
 </tr>
 </tbody>
 </table>
-<p>Note: the security group and subnet -virtual network too- have to be created beforehand and their ID’s used at configs.yaml.
-Also, if image’s <em>publisher</em>, <em>offer</em>, <em>sku</em> and <em>version</em> are omitted, the following defaults will be used:</p>
+<p>The image section is optional but in case it is provided, all its 4 variables must be set.
+Omitting the image section defaults to:</p>
 <ul class="simple">
 <li>publisher = OpenLogic</li>
 <li>offer = CentOS</li>
@@ -231,6 +257,15 @@ Also, if image’s <em>publisher</em>, <em>offer</em>, <em>sku</em> and <em>vers
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="cloudstack.html" class="btn btn-neutral float-right" title="CloudStack" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="aws.html" class="btn btn-neutral float-left" title="AWS" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

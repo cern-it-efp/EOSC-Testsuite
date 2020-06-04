@@ -1,7 +1,7 @@
 Exoscale
 ---------------------------------------------
 
-Variables for configs.yaml:
+Exoscale specific variables for configs.yaml:
 
 .. list-table::
    :widths: 25 50

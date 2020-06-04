@@ -1,9 +1,9 @@
 T-Systems' Open Telekom Cloud
 ---------------------------------------------
 
-Note that to allow the VMs access the internet, Shared SNAT has to be enabled on the default VPC, which will be used for the suite run.
+To allow the VMs access the internet, Shared SNAT has to be enabled on the default VPC, which will be used for the suite run.
 
-Variables for configs.yaml:
+OTC specific variables for configs.yaml:
 
 .. list-table::
    :widths: 25 50

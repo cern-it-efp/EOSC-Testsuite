@@ -164,9 +164,11 @@
   <div class="section" id="run">
 <h1>3. Run<a class="headerlink" href="#run" title="Permalink to this headline">¶</a></h1>
 <p>Once the configuration steps are completed, the Test-Suite is ready to be run:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> ./test_suite &lt;options&gt;
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">EOSC-Testsuite$ chmod +x test_suite</span>
+<span class="go">EOSC-Testsuite$ ./test_suite &lt;options&gt;</span>
 </pre></div>
 </div>
+<p>Once the provisionment steps are completed (Kubernetes cluster up and running) and pods are deployed, the run can be stopped by deleting all the pods.</p>
 <div class="section" id="options">
 <h2>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h2>
 <table class="docutils option-list" frame="void" rules="none">
@@ -215,25 +217,25 @@
 <div class="section" id="other-commands">
 <h2>Other commands<a class="headerlink" href="#other-commands" title="Permalink to this headline">¶</a></h2>
 <p>Once the test suite is running, you can view the Terraform provisionment logs by doing:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> tail -f logs
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> tail -f EOSC-Testsuite/logs
 </pre></div>
 </div>
 <p>You can see the Ansible bootstrapping logs by doing:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> tail -f src/logging/ansibleLogs*
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> tail -f EOSC-Testsuite/src/logging/ansibleLogs*
 </pre></div>
 </div>
 <p>Once the bootstrapping has completed and tests are deployed, you can see the pods statuses by doing:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> watch kubectl get pods --kubeconfig /src/tests/shared/config
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> watch kubectl get pods --kubeconfig EOSC-Testsuite/src/tests/shared/config
 </pre></div>
 </div>
 <p>If GPU and HPC tests were deployed, see their pods by doing:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> watch kubectl --kubeconfig src/tests/dlTest/config get pods <span class="c1"># For GPU cluster</span>
-<span class="gp">$</span> watch kubectl --kubeconfig src/tests/hpcTest/config get pods <span class="c1"># For HPC cluster</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> watch kubectl --kubeconfig EOSC-Testsuite/src/tests/dlTest/config get pods <span class="c1"># For GPU cluster</span>
+<span class="gp">$</span> watch kubectl --kubeconfig EOSC-Testsuite/src/tests/hpcTest/config get pods <span class="c1"># For HPC cluster</span>
 </pre></div>
 </div>
 <p>Once the pods are deployed, the suite run can be stopped by destroying pods, useful for example when pods go “Evicted” or “ImagePullBackOff”. Examples:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> kubectl --kubeconfig src/tests/shared/config delete pods --all <span class="c1"># destroy all pods on the shared cluster</span>
-<span class="gp">$</span> kubectl --kubeconfig src/tests/shared/config delete pod dodas-pod <span class="c1"># destroy DODAS pod</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> kubectl --kubeconfig EOSC-Testsuite/src/tests/shared/config delete pods --all <span class="c1"># destroy all pods on the shared cluster</span>
+<span class="gp">$</span> kubectl --kubeconfig EOSC-Testsuite/src/tests/shared/config delete pod dodas-pod <span class="c1"># destroy DODAS pod</span>
 </pre></div>
 </div>
 <p>The following aliases are available when using the provided Docker image:</p>

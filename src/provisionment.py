@@ -105,7 +105,7 @@ def provisionAndBootstrap(test,
 
     # -------- Update kubeconfig files and wait for default service account to be ready and finish
 
-    updateKubeconfig(masterIP, kubeconfig) # TODO: needed if behind NAT (all except exoscale, cloudstack and CERN openstack)
+    #updateKubeconfig(masterIP, kubeconfig) 
 
     if kubectlCLI('get sa default', kubeconfig=kubeconfig, options='--request-timeout=20m', hideLogs=False) == 0:
         writeToFile(toLog, clusterCreatedMsg % (test, masterIP), True)

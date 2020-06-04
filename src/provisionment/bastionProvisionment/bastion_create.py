@@ -22,8 +22,6 @@ user = None
 ip = None
 onlySsh = False
 
-# TODO: take here the openUser, the key and other vars needed at the .tf script
-# use a file bastionConfigs.yaml (path given with option -c,--config)
 
 try:
     options, values = getopt.getopt(

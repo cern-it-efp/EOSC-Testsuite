@@ -2,7 +2,7 @@ AWS
 ---------------------------------------------
 It is also possible to use EKS to provision the cluster, for this refer to section "Using existing clusters".
 
-**AWS' specific variables for configs.yaml:**
+AWS specific variables for configs.yaml:
 
 .. list-table::
    :widths: 25 50

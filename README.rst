@@ -17,15 +17,15 @@ Full documentation can be found at: `http://eosc-testsuite.rtfd.io <https://eosc
 
 The test-suite executes four main steps:
 
-1) Infrastructure provisioning: VMs are created using Terraform and then Kubernetes and Docker are installed on them to create several k8s cluster according to the selected tests.
+1) Infrastructure provisioning: VMs are created using Terraform and then with these several Kubernetes clusters are bootstrapped by Ansible according to the selected tests.
 
-2) Deploy the tests: Kubernetes resource definition files (YAML) are used to deploy the tests, either as single pods, jobs or deployments.
+2) Deploy the tests: Kubernetes resource definition files (YAML) are used to deploy the tests.
 
-3) Harvest results: at the end of each test run a result file -written in JSON- is created. This file is harvested from the cluster and stored locally.
+3) Harvest results: at the end of each test run a result file -written in JSON- is created. This file is collected from the pod running on the cluster.
 
 4) Through a verification system, the Test-Suite can also be triggered from a service running at CERN. In this case, results are then pushed to a S3 Bucket at CERN. (Under development)
 
-The test set described below is based on the tests used in `Helix Nebula The Science Cloud <https://www.hnscicloud.eu/>`_ PCP project funded by the European Commission.
+The test set described in the Tests Catalog section of the documentation is based on the tests used in `Helix Nebula The Science Cloud <https://www.hnscicloud.eu/>`_ PCP project funded by the European Commission.
 
 The developers would like to thank all test owners and contributors to this project.
 
@@ -111,6 +111,7 @@ Release notes
 
 -First release.
 
+
 Contact
 ---------------------------------------------
 For more information contact ignacio.peluaga.lozada AT cern.ch
@@ -120,7 +121,7 @@ License
 Copyright (C) CERN.
 
 You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see `gnu.org/licenses <https://www.gnu.org/licenses/>`_.
+along with this program. If not, see `gnu.org/licenses <https://www.gnu.org/licenses/>`_.
 
 .. body-end
 

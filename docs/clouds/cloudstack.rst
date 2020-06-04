@@ -1,7 +1,7 @@
 CloudStack
 ---------------------------------------------
 
-Variables for configs.yaml:
+CloudStack specific variables for configs.yaml:
 
 .. list-table::
    :widths: 25 50
