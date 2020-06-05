@@ -22,15 +22,16 @@ yaml.warnings({'YAMLLoadWarning': False}) # https://github.com/yaml/pyyaml/wiki/
 
 
 def getRandomID():
-    """Returns a random ID"""
+    """ Returns a random ID """
 
-    randomId = ''.join(random.SystemRandom().choice(string.ascii_lowercase + string.digits) for _ in range(4))
+    choices = string.ascii_lowercase + string.digits
+    randomId = ''.join(random.SystemRandom().choice(choices) for _ in range(4))
     return str(randomId)
 
 
 def getMasterIP(hosts):
-    """Given the path to an ansible hosts file, returns the IP specified
-       under the master section of the file.
+    """ Given the path to an ansible hosts file, returns the IP specified
+        under the master section of the file.
 
     Parameters:
         hosts (str): Path to an ansible hosts file.
@@ -48,9 +49,9 @@ def runCMD(cmd, hideLogs=None, read=None):
     """ Run the command.
 
     Parameters:
-        cmd (str): Command to be run
-        hideLogs (bool): Indicates whether cmd logs should be hidden
-        read (bool): Indicates whether logs of the command should be returned
+        cmd (str): Command to be run.
+        hideLogs (bool): Indicates whether cmd logs should be hidden.
+        read (bool): Indicates whether logs of the command should be returned.
 
     Returns:
         int or str: Command's exit code. Logs of the command if read=True
@@ -164,7 +165,7 @@ def writeToFile(filePath, content, append):
 
 
 def writeFail(resDir, file, msg, toLog):
-    """Writes results file in case of errors.
+    """ Writes results file in case of errors.
 
     Parameters:
         resDir (str): Path to the results folder.
@@ -180,12 +181,13 @@ def writeFail(resDir, file, msg, toLog):
 
 
 def logger(text, sym, file, override=None):
-    """Logs in a fancy way.
+    """ Logs in a fancy way.
 
     Parameters:
         text (str): Text to log
-        sym (bool): Symbol to use to create boxes and separation lines
-        file (bool): File the logs should be sent to
+        sym (str): Symbol to use to create boxes and separation lines
+        file (str): File the logs should be sent to
+        override (bool): Override the file or not.
     """
 
     size = 74  # longest msg on code (was 61)
@@ -211,8 +213,8 @@ def logger(text, sym, file, override=None):
 
 
 def tryTakeFromYaml(dict, key, defaultValue, msgExcept=None):
-    """Tries to return the dict's value for key 'key'. If KeyError
-       exception is thrown, returns the specified default value.
+    """ Tries to return the dict's value for key 'key'. If KeyError
+        exception is thrown, returns the specified default value.
 
     Parameters:
         dict (dict): Dict object loaded from a yaml file.
@@ -244,7 +246,6 @@ def validateConfigs(configs, testsCatalog, noTerraform, extraSupportedClouds):
         testsCatalog (dict): Object containing testsCatalog.yaml's content.
         noTerraform (bool): Specifies whether current run uses terraform.
         extraSupportedClouds (dict): Extra supported clouds.
-
     """
 
     if noTerraform is False:
@@ -277,9 +278,8 @@ def validateAuth(authFile, schema):
     """ Validates authFile schemas.
 
     Parameters:
-        configs (dict): Object containing configs.yaml's configurations.
-        testsCatalog (dict): Object containing testsCatalog.yaml's content.
-
+        authFile (dict): Content of the authentication file.
+        schema (dict): Validation schema.
     """
 
     # ------ configs.yaml
@@ -292,16 +292,25 @@ def validateAuth(authFile, schema):
 
 
 def getNodeName(configs, test, randomId):
-    """Generates a node name containing the provider name, test and a unique
-       identifier. """
+    """ Generates a node name containing the provider name, test and a unique
+        identifier.
+
+    Parameters:
+        dict (dict): Dict object loaded from a yaml file.
+        key (object): Key whose value should be returned if existing.
+        defaultValue (object): value to return in case of KeyError exception.
+
+    Returns
+        Object taken from the yaml file (dict) or default one.
+    """
 
     nodeName = "kubenode-%s-%s-%s" % (configs["providerName"],test,randomId)
     return nodeName.lower()
 
 
 def subprocPrint(test):
-    """This runs on a child process. Reads the ansible log file, adds clusterID
-       to each line and prints it.
+    """ This runs on a child process. Reads the ansible log file, adds clusterID
+        to each line and prints it.
 
     Parameters:
         test (str): Cluster identification.
@@ -316,12 +325,13 @@ def subprocPrint(test):
 
 
 def getIP(resource, provider, public=False):
-    """Given a terraform resource json description, returns the resource's
-       IP address if such exists
+    """ Given a terraform resource json description, returns the resource's
+        IP address if such exists
 
     Parameters:
         resource (object): Terraform resource definition.
         provider (str): Provider name.
+        public (bool): If True, get the public IP.
 
     Returns:
         str: Resource's IP address.
@@ -351,7 +361,13 @@ def getIP(resource, provider, public=False):
 
 
 def groupReplace(input,substitution,output):
-    """Given an input file, applies to it the provided substitution."""
+    """ Given an input file, applies to it the provided substitution.
+
+    Parameters:
+        input (str): Input text.
+        substitution (dict): Substitution to be done.
+        output (str): Output text.
+    """
 
     with open(input, 'r') as infile:
         infile = infile.read()

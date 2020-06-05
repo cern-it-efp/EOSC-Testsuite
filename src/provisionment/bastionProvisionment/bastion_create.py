@@ -61,6 +61,17 @@ if tfFilesExist is False:
 
 
 def runCMD(cmd, hideLogs=None, read=None):
+    """ Run the command.
+
+    Parameters:
+        cmd (str): Command to be run
+        hideLogs (bool): Indicates whether cmd logs should be hidden
+        read (bool): Indicates whether logs of the command should be returned
+
+    Returns:
+        int or str: Command's exit code. Logs of the command if read=True
+    """
+
     if read is True:
         return os.popen(cmd).read().strip()
     if hideLogs is True:
@@ -71,6 +82,11 @@ def runCMD(cmd, hideLogs=None, read=None):
         return os.system(cmd)
 
 def getIP():
+    """ Returns the resource's IP address if such exists
+
+    Returns:
+        str: Resource's IP address.
+    """
 
     try:
         #resources = json.loads(runCMD("terraform show -json | jq .values.root_module.resources",read=True)

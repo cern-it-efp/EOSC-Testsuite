@@ -40,10 +40,10 @@ def checkCluster(test):
     """
 
     cmd = 'get nodes'
-    options = '--request-timeout=10s'
+    opts = '--request-timeout=10s'
     kubeconfig = "src/tests/%s/config" % (test)
 
-    if kubectlCLI(cmd, options=options, kubeconfig=kubeconfig, hideLogs=True) != 0:
+    if kubectlCLI(cmd, options=opts, kubeconfig=kubeconfig, hideLogs=True) != 0:
         writeToFile(
             "src/logging/%s" % test,
             "%s cluster not reachable, was infrastructure created?" % test,
@@ -53,9 +53,21 @@ def checkCluster(test):
 
 
 def checkPodAlive(podName, resDir, toLog, resultFile, kubeconfig):
-    """Checks if a pod is alive"""
+    """ Checks if a pod is alive
 
-    if kubectlCLI("get pod %s" % podName, kubeconfig=kubeconfig, hideLogs=True) != 0:
+    Parameters:
+        podName (str): Pod name.
+        resDir (str): Path to the results folder for the current run.
+        toLog (str): Path to the log file to which logs have to be sent
+        resultFile (str): Name of the results file for the current test.
+        kubeconfig (str): Path to kubeconfig file of the being managed cluster.
+
+    Returns:
+        bool: True in case the pod is alive, False otherwise
+    """
+
+    cmd = "get pod %s" % podName
+    if kubectlCLI(cmd, kubeconfig=kubeconfig, hideLogs=True) != 0:
         writeFail(resDir,
                   resultFile,
                   "%s pod was destroyed." % podName,
@@ -65,13 +77,15 @@ def checkPodAlive(podName, resDir, toLog, resultFile, kubeconfig):
 
 
 def fetchResults(resDir, kubeconfig, podName, source, file, toLog):
-    """Fetch tests results file from pod.
+    """ Fetch tests results file from pod.
 
     Parameters:
         resDir (str): Path to the results dir for the current run.
-        pod (str): Pod from which the result file has to be collected.
+        kubeconfig (str): Path to kubeconfig file of the being managed cluster.
+        podName (str): Pod name.
         source (str): Location of the results file on the pod.
         file (str): Name to be given to the file.
+        toLog (str): Path to the log file to which logs have to be sent
     """
 
     source = "%s:%s" % (podName,source)
@@ -93,13 +107,24 @@ def copyToPodAndRun(
         kubeconfig,
         resDir,
         toLog,
-        file,
         podPath,
         localPath,
         cmd,
         resultFile,
         resultOnPod):
-    """Copy from local to pod and run"""
+    """ Copy from local FS to pod, run and fetch results.
+
+    Parameters:
+        podName (str): Pod name.
+        kubeconfig (str): Path to kubeconfig file of the being managed cluster.
+        resDir (str): Path to the results folder for the current run.
+        toLog (str): Path to the log file to which logs have to be sent
+        podPath (str): Pod path in case of 'cp'
+        localPath (str): Local path in case of 'cp'
+        cmd (str): Command to be run.
+        resultFile (str): Name of the results file for the current test.
+        resultOnPod (str): Path to the result file on the pod.
+    """
 
     with contextlib.redirect_stdout(io.StringIO()):  # to hide logs
         while True:
@@ -120,11 +145,11 @@ def copyToPodAndRun(
                   "Error running script test on pod %s" % podName,
                   toLog)
     else:
-        fetchResults(resDir, kubeconfig, podName, resultOnPod, resultFile, toLog)
+        fetchResults(resDir,kubeconfig,podName,resultOnPod,resultFile,toLog)
 
 
 def checkDestinationIsDir(podName, pathOnPod, namespace=None):
-    """Checks -in the case of copy to pod- if the destination is a directory.
+    """ Checks -in the case of copy to pod- if the destination is a directory.
 
     Parameters:
         podName (str): Name of the pod to which the file has to be sent
@@ -156,7 +181,7 @@ def checkDestinationIsDir(podName, pathOnPod, namespace=None):
 
 
 def reset(tarinfo):
-    """Resets tar file's user related metadata (uid and name).
+    """ Resets tar file's user related metadata (uid and name).
 
     Parameters:
         tarinfo (TarInfo): TarInfo object.
@@ -183,7 +208,7 @@ def kubectl(
         fetch=None,
         toLog=None,
         ignoreErr=None):
-    """Manage stuff on a Kubernetes cluster.
+    """ Manage stuff on a Kubernetes cluster.
 
     Parameters:
         action (str): Action to be carried out. One of: create, delete or cp.
@@ -366,17 +391,35 @@ def kubectl(
 
 
 def kubectlCLI(cmd, kubeconfig, options="", hideLogs=None):
-    """Runs kubectl CLI tool."""
+    """ Runs kubectl CLI tool.
+
+    Parameters:
+        cmd (str): Command to be run, without the "kubectl" part.
+        kubeconfig (str): Path to kubeconfig file.
+        options (str): Options to be added to the command.
+        noTerraform (bool): Specifies whether the output of the
+                            command should be displayed.
+
+    Returns:
+        int: Exit code of the kubectl command.
+    """
 
     kubeconfig = '--kubeconfig=%s' % kubeconfig
-    return runCMD("kubectl %s %s %s" % (cmd,kubeconfig,options), hideLogs=hideLogs)
+    kubeCMD = "kubectl %s %s %s" % (cmd,kubeconfig,options)
+    return runCMD(kubeCMD, hideLogs=hideLogs)
 
 
 def updateKubeconfig(masterIP, kubeconfig):
-    """This is done after fetching a kubeconfig file and before checking the SA.
-       Updates the given kubeconfig file."""
+    """ Updates the given kubeconfig file.
+        Done after fetching a kubeconfig file and before checking the SA.
+
+    Parameters:
+        masterIP (str): IP address of the master node.
+        kubeconfig (str): Path to a kubeconfig file.
+    """
 
     kubeconfigContent = loadYAML(kubeconfig)
-    kubeconfigContent["clusters"][0]["cluster"]["server"] = "https://%s:6443" % masterIP
+    address = "https://%s:6443"
+    kubeconfigContent["clusters"][0]["cluster"]["server"] = address % masterIP
 
     yaml.dump(kubeconfigContent, open(kubeconfig, 'w'))

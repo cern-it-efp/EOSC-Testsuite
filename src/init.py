@@ -49,15 +49,13 @@ def initAndChecks(noTerraform,
                   extraSupportedClouds,
                   cfgPathCLI=None,
                   tcPathCLI=None):
-    """Initial checks and initialization of variables.
+    """ Initial checks and initialization of variables.
 
     Parameters:
         noTerraform (bool): Specifies whether current run uses terraform.
         extraSupportedClouds (dict): Extra supported clouds.
-        testsSharingCluster (Array<str>): Tests sharing general purpose cluster.
-        customClustersTests (Array<str>): Tests using custom dedicated clusters.
-        cfgPath (str): path to configs.yaml file.
-        tcPath (str): path to testsCatalog.yaml file.
+        cfgPath (str): Path to configs.yaml file.
+        tcPath (str): Path to testsCatalog.yaml file.
 
     Returns:
         Arrayay(str): Array containing the selected tests.

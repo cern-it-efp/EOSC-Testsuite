@@ -15,8 +15,13 @@ from aux import *
 import init
 
 
-def sharedClusterTests(msgArr, onlyTest, retry, noTerraform, resDir, numberOfNodes):
-    """Runs the test that share the general purpose cluster.
+def sharedClusterTests(msgArr,
+                       onlyTest,
+                       retry,
+                       noTerraform,
+                       resDir,
+                       numberOfNodes):
+    """ Runs the test that share the general purpose cluster.
 
     Parameters:
         msgArray (Array<str>): Stuff to show on the banner. Contains the
@@ -81,7 +86,7 @@ def sharedClusterTests(msgArr, onlyTest, retry, noTerraform, resDir, numberOfNod
     init.queue.put((None, testCost))
 
 
-def runTest(resourceDefinition,
+def runTest(definition,
             toLog,
             testName,
             resDir,
@@ -89,24 +94,37 @@ def runTest(resourceDefinition,
             podName,
             resultOnPod,
             kubeconfig,
-            resourceDefinition_raw=None,
+            definition_raw=None,
             substitution=None,
             copyToPodAndRun_flag=None,
             podPath=None,
             localPath=None,
             cmd=None,
             additionalResourcesPrices=None): # additionalResourcePrice is an array
-    """Runs tests"""
+    """ Runs tests.
+
+    Parameters:
+        msgArray (Array<str>): Stuff to show on the banner. Contains the
+                               tests to be deployed on the shared cluster.
+        onlyTest (bool): If true, skip provisioning phase.
+        retry (bool): If true, try to reuse existing infrastructure.
+        noTerraform (bool): Specifies whether current run uses terraform.
+        resDir (str): Path to the results folder for the current run.
+        numberOfNodes (int): Number of nodes to provision.
+    """
 
     testCost = 0
-    if resourceDefinition_raw is not None:
-        groupReplace(resourceDefinition_raw, substitution, resourceDefinition)
+    if definition_raw is not None:
+        groupReplace(definition_raw, substitution, definition)
 
     #---------------------------------------------------------------------------
     start = time.time() # For tests with additional resources (i.e S3 bucket)
     #---------------------------------------------------------------------------
 
-    if kubectl(Action.create, kubeconfig, file=resourceDefinition, toLog=toLog) != 0:
+    if kubectl(Action.create,
+               kubeconfig,
+               file=definition,
+               toLog=toLog) != 0:
         init.queue.put(({"test": testName, "deployed": False}, testCost))
         writeFail(resDir, resultFile, "%s pod deploy failed." % podName, toLog)
     else:
@@ -116,14 +134,13 @@ def runTest(resourceDefinition,
                 kubeconfig,
                 resDir,
                 toLog,
-                resultFile,
                 podPath,
                 localPath,
                 cmd,
                 resultFile,
                 resultOnPod)
         else:
-            fetchResults(resDir, kubeconfig, podName, resultOnPod, resultFile, toLog)
+            fetchResults(resDir,kubeconfig,podName,resultOnPod,resultFile,toLog)
 
         #-----------------------------------------------------------------------
         testDuration = time.time() - start # For tests with additional resources
@@ -139,7 +156,7 @@ def runTest(resourceDefinition,
 
 
 def s3Test(resDir):
-    """Run S3 endpoints test.
+    """ Run S3 endpoints test.
 
     Parameters:
         resDir (str): Path to the results folder for the current run.
@@ -147,13 +164,16 @@ def s3Test(resDir):
 
     testCost = 0
     podName = "s3pod"
-    resourceDefinition_raw = "%ss3/raw/s3pod_raw.yaml" % testsRoot
-    resourceDefinition = "%ss3/s3pod.yaml" % testsRoot
+    definition_raw = "%ss3/raw/s3pod_raw.yaml" % testsRoot
+    definition = "%ss3/s3pod.yaml" % testsRoot
     resultFile = "s3Test.json"
     toLog = "src/logging/shared"
     testName = "s3Test"
     resultOnPod = "/home/s3_test.json"
-    additionalResourcesPrices = [tryTakeFromYaml(init.configs, "costCalculation.s3bucketPrice", None)]
+    additionalResourcesPrices = [tryTakeFromYaml(
+                                init.configs,
+                                "costCalculation.s3bucketPrice",
+                                None)]
     substitution = [
         {
             "before": "ENDPOINT_PH",
@@ -169,7 +189,7 @@ def s3Test(resDir):
         }
     ]
     kubeconfig = defaultKubeconfig
-    runTest(resourceDefinition,
+    runTest(definition,
             toLog,
             testName,
             resDir,
@@ -177,13 +197,13 @@ def s3Test(resDir):
             podName,
             resultOnPod,
             kubeconfig,
-            resourceDefinition_raw=resourceDefinition_raw,
+            definition_raw=definition_raw,
             substitution=substitution,
             additionalResourcesPrices=additionalResourcesPrices)
 
 
 def dataRepatriationTest(resDir):
-    """Run Data Repatriation Test -Exporting from cloud to Zenodo-.
+    """ Run Data Repatriation Test -Exporting from cloud to Zenodo-.
 
     Parameters:
         resDir (str): Path to the results folder for the current run.
@@ -191,8 +211,8 @@ def dataRepatriationTest(resDir):
 
     podName = "repatriation-pod"
     toLog = "src/logging/shared"
-    resourceDefinition_raw = "%sdata_repatriation/raw/repatriation_pod_raw.yaml" % testsRoot
-    resourceDefinition = "%sdata_repatriation/repatriation_pod.yaml" % testsRoot
+    definition_raw = "%sdata_repatriation/raw/repatriation_pod_raw.yaml" % testsRoot
+    definition = "%sdata_repatriation/repatriation_pod.yaml" % testsRoot
     resultFile = "data_repatriation_test.json"
     testName = "cpuBenchmarking"
     resultOnPod = "/home/data_repatriation_test.json"
@@ -203,7 +223,7 @@ def dataRepatriationTest(resDir):
         }
     ]
     kubeconfig = defaultKubeconfig
-    runTest(resourceDefinition,
+    runTest(definition,
             toLog,
             testName,
             resDir,
@@ -211,20 +231,20 @@ def dataRepatriationTest(resDir):
             podName,
             resultOnPod,
             kubeconfig,
-            resourceDefinition_raw=resourceDefinition_raw,
+            definition_raw=definition_raw,
             substitution=substitution)
 
 
 def cpuBenchmarking(resDir):
-    """Run containerised CPU Benchmarking test.
+    """ Run containerised CPU Benchmarking test.
 
     Parameters:
         resDir (str): Path to the results folder for the current run.
     """
 
     podName = "cpu-bmk-pod"
-    resourceDefinition_raw = "%scpu_benchmarking/raw/cpu_benchmarking_pod_raw.yaml" % testsRoot
-    resourceDefinition = "%scpu_benchmarking/cpu_benchmarking_pod.yaml" % testsRoot
+    definition_raw = "%scpu_benchmarking/raw/cpu_benchmarking_pod_raw.yaml" % testsRoot
+    definition = "%scpu_benchmarking/cpu_benchmarking_pod.yaml" % testsRoot
     resultFile = "cpu_benchmarking.json"
     toLog = "src/logging/shared"
     testName = "cpuBenchmarking"
@@ -236,7 +256,7 @@ def cpuBenchmarking(resDir):
         }
     ]
     kubeconfig = defaultKubeconfig
-    runTest(resourceDefinition,
+    runTest(definition,
             toLog,
             testName,
             resDir,
@@ -244,12 +264,12 @@ def cpuBenchmarking(resDir):
             podName,
             resultOnPod,
             kubeconfig,
-            resourceDefinition_raw=resourceDefinition_raw,
+            definition_raw=definition_raw,
             substitution=substitution)
 
 
 def perfsonarTest(resDir):
-    """Run Networking Performance test -perfSONAR toolkit-.
+    """ Run Networking Performance test -perfSONAR toolkit-.
 
     Parameters:
         resDir (str): Path to the results folder for the current run.
@@ -257,19 +277,19 @@ def perfsonarTest(resDir):
 
     podName = "ps-pod"
     testName = "perfSONAR"
-    endpoint = init.testsCatalog["perfsonarTest"]["endpoint"] 
+    endpoint = init.testsCatalog["perfsonarTest"]["endpoint"]
     dependenciesCMD = "yum -y install python-dateutil python-requests"
     runScriptCMD = "python /tmp/ps_test.py --ep %s" % endpoint
     runOnPodCMD = "%s && %s" % (dependenciesCMD, runScriptCMD)
     cmd = "%s" % runOnPodCMD
     resultFile = "perfsonar_results.json"
-    resourceDefinition = "%sperfsonar/ps_pod.yaml" % testsRoot
+    definition = "%sperfsonar/ps_pod.yaml" % testsRoot
     toLog = "src/logging/shared"
     podPath="%s:/tmp" % podName
     localPath=testsRoot + "perfsonar/ps_test.py"
     resultOnPod = "/tmp/perfsonar_results.json"
     kubeconfig = defaultKubeconfig
-    runTest(resourceDefinition,
+    runTest(definition,
             toLog,
             testName,
             resDir,
@@ -284,7 +304,7 @@ def perfsonarTest(resDir):
 
 
 def dodasTest(resDir):
-    """Run DODAS test.
+    """ Run DODAS test.
 
     Parameters:
         resDir (str): Path to the results folder for the current run.
@@ -294,13 +314,13 @@ def dodasTest(resDir):
     toLog = "src/logging/shared"
     resultFile = "dodas_results.json"
     resultOnPod = "/tmp/%s" % resultFile
-    resourceDefinition = "%sdodas/dodas_pod.yaml" % testsRoot
+    definition = "%sdodas/dodas_pod.yaml" % testsRoot
     testName = "dodasTest"
     podPath = "%s:/CMSSW/CMSSW_9_4_0/src" % podName
     localPath = "%sdodas/custom_entrypoint.sh" % testsRoot
     cmd = "sh /CMSSW/CMSSW_9_4_0/src/custom_entrypoint.sh"
     kubeconfig = defaultKubeconfig
-    runTest(resourceDefinition,
+    runTest(definition,
             toLog,
             testName,
             resDir,
@@ -315,7 +335,7 @@ def dodasTest(resDir):
 
 
 def dlTest(onlyTest, retry, noTerraform, resDir):
-    """Run Deep Learning test -GAN training- on GPU nodes.
+    """ Run Deep Learning test -GAN training- on GPU nodes.
 
     Parameters:
         onlyTest (bool): If true, skip provisioning phase.
@@ -453,7 +473,10 @@ def dlTest(onlyTest, retry, noTerraform, resDir):
     # cleanup
     writeToFile("src/logging/dlTest", "Cluster cleanup...", True)
     kubectl(Action.delete, kubeconfig, type=Type.mpijob, name="train-mpijob")
-    kubectl(Action.delete, kubeconfig, type=Type.configmap, name="3dgan-datafile-lists")
+    kubectl(Action.delete,
+            kubeconfig,
+            type=Type.configmap,
+            name="3dgan-datafile-lists")
     kubectl(Action.delete, kubeconfig, type=Type.pv, name="pv-volume1")
     kubectl(Action.delete, kubeconfig, type=Type.pv, name="pv-volume2")
     kubectl(Action.delete, kubeconfig, type=Type.pv, name="pv-volume3")
@@ -462,7 +485,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir):
 
 
 def hpcTest(onlyTest, retry, noTerraform, resDir):
-    """HPC test.
+    """ HPC test.
 
     Parameters:
         onlyTest (bool): If true, skip provisioning phase.

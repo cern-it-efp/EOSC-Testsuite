@@ -35,16 +35,13 @@ def createHostsFile(mainTfDir,
        the string 'hosts' too.
 
     Parameters:
-        mainTfDir (str): Path where the .tf file is.
-        baseCWD (str): Path to go back.
+        mainTfDir (str): Location of the .tf file.
+        baseCWD (str): Original location, used to go back.
         provider (str): Provider name.
         destination (str): Destination of hosts file.
         configs (dict): Content of configs.yaml.
         noTerraform (bool): Specifies whether current run uses terraform.
         test (str): Cluster identification.
-
-    Returns:
-        int: 0 for success, 1 for failure
     """
 
     IPs = []

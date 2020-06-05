@@ -47,7 +47,7 @@ customNodes = None
 
 
 def header(noLogo=False, provider=None, results=None):
-    """Prints the header according to parameters.
+    """ Prints the header according to parameters.
 
     Parameters:
         noLogo (bool): Specifies whether "EOSC" has to be shown or not.
@@ -113,17 +113,44 @@ def header(noLogo=False, provider=None, results=None):
 header()
 
 # -----------------CMD OPTIONS--------------------------------------------
-parser = argparse.ArgumentParser(description='EOSC Test-Suite.',allow_abbrev=False)
-parser.add_argument('-y',help='No interactive.',action='store_false', dest="interactive")
-parser.add_argument('-o','--onlyTest',help='Only test run.',action='store_true')
-parser.add_argument('--noTerraform',help='Skip Terraform, run only Ansible.', action='store_true')
-parser.add_argument('-c','--configs',help='Path to configs.', type=str, dest="cfgPathCLI")
-parser.add_argument('-t','--testsCatalog',help='Path to tests catalog.',metavar="CATALOG", type=str, dest="tcPathCLI")
-parser.add_argument('--destroy', nargs='+', dest="clustersToDestroy", help='Destroy infrastructure.',metavar="CLUSTERS", choices=['all']+clusters, type=str)
-parser.add_argument('--destroyOnCompletion', nargs='+', dest="clustersToDestroyOnCompletion",help='Destroy infrastructure at the end of the run.',metavar="CLUSTERS", choices=['all']+clusters)
-parser.add_argument('--customNodes',help='Use a specific amount of nodes.',metavar="NODES", type=int)
-#parser.add_argument('viaBackend', # Not available
-#parser.add_argument('retry', # Not available
+parser = argparse.ArgumentParser(description='EOSC Test-Suite.',
+                                 allow_abbrev=False)
+parser.add_argument('-y',
+                    help='No interactive.',
+                    action='store_false',
+                    dest="interactive")
+parser.add_argument('-o','--onlyTest',
+                    help='Only test run.',
+                    action='store_true')
+parser.add_argument('--noTerraform',
+                    help='Skip Terraform, run only Ansible.',
+                    action='store_true')
+parser.add_argument('-c','--configs',
+                    help='Path to configs.',
+                    type=str,
+                    dest="cfgPathCLI")
+parser.add_argument('-t','--testsCatalog',
+                    help='Path to tests catalog.',
+                    metavar="CATALOG",
+                    type=str,
+                    dest="tcPathCLI")
+parser.add_argument('--destroy',
+                    nargs='+',
+                    dest="clustersToDestroy",
+                    help='Destroy infrastructure.',
+                    metavar="CLUSTERS",
+                    choices=['all']+clusters,
+                    type=str)
+parser.add_argument('--destroyOnCompletion',
+                    nargs='+',
+                    dest="clustersToDestroyOnCompletion",
+                    help='Destroy infrastructure at the end of the run.',
+                    metavar="CLUSTERS",
+                    choices=['all']+clusters)
+parser.add_argument('--customNodes',
+                    help='Use a specific amount of nodes.',
+                    metavar="NODES",
+                    type=int)
 
 args = parser.parse_args()
 

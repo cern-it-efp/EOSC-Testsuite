@@ -6,9 +6,16 @@ from aux import *
 
 
 def supportedProvider(configs):
-    """Return True in case the provider supports Terraform officially or
-       unofficially (plugin required).
-       In other words, check if docs exist for it."""
+    """ Return True in case the provider supports Terraform officially or
+        unofficially (plugin required).
+        In other words, check if docs exist for it.
+
+    Parameters:
+        configs (dict): Content of configs.yaml.
+
+    Returns:
+        bool: True if the provider is supported, False otherwise.
+    """
 
     if requests.get("https://www.terraform.io/docs/providers/%s"
         % configs["providerName"]).status_code == 404:
@@ -20,7 +27,11 @@ def supportedProvider(configs):
 
 
 def formerProvisionExists():
-    """Checks whether there are .tf files from a previous run."""
+    """ Checks whether there are .tf files from a previous run.
+
+    Returns:
+        bool: True if .tf files exist, False otherwise.
+    """
 
     if os.path.exists("src/tests/dlTest/main.tf") or \
        os.path.exists("src/tests/hpcTest/main.tf") or \
@@ -47,20 +58,20 @@ def checkCost(obtainCost, value):
 
 
 def checkDLsupport():
-    """Check whether infrastructure supports DL.
+    """ Check whether infrastructure supports DL.
 
     Returns:
         bool: True in case cluster supports DL, False otherwise.
     """
 
-    pods = runCMD( 
+    pods = runCMD(
         'kubectl --kubeconfig tests/dlTest/config get pods -n kubeflow',
         read=True)
     return len(pods) > 0 and "No resources found." not in pods
 
 
 def checkResultsExist(resDir):
-    """Checks results exist inside the results dir created for the current run.
+    """ Checks results exist inside the results dir created for the current run.
 
     Parameters:
         resDir (str): Path to the folder to check
@@ -77,8 +88,8 @@ def checkProvidedIPs(sharedClusterTests,
                      customClustersTests,
                      configs,
                      testsCatalog):
-    """Checks, when the option '--no-terraform' has been used that the
-       IPs for the selected tests were provided at testsCatalog.yaml
+    """ Checks, when the option '--no-terraform' has been used that the
+        IPs for the selected tests were provided at testsCatalog.yaml
 
     Parameters:
         sharedClusterTests (Array<str>): Tests sharing general purpose cluster.
@@ -106,8 +117,8 @@ def checkProvidedIPs(sharedClusterTests,
 
 
 def checkRequiredTFexist(selectedTests):
-    """Called when --retry option is used, checks the main.tf files exist for
-       the required tests: those with run: true at testsCatalog.yaml
+    """ Called when --retry option is used, checks the main.tf files exist for
+        the required tests: those with run: true at testsCatalog.yaml
 
     Parameters:
         selectedTests (Array<str>): Array containing the selected tests.
@@ -140,7 +151,7 @@ def checkRequiredTFexist(selectedTests):
 
 
 def checkClustersToDestroy(cliParameterValue, clusters):
-    """Checks the given argument matches cluster to be destroyed
+    """ Checks the given argument matches cluster to be destroyed
 
     Parameters:
         cliParameterValue (str): CLI arguments.
@@ -164,15 +175,14 @@ def checkClustersToDestroy(cliParameterValue, clusters):
 
 
 def checkClusterWasProvisioned(cluster, generalResultsTesting):
-    """Checks whether a cluster was provisioned.
+    """ Checks whether a cluster was provisioned.
 
     Parameters:
         cluster (str): Cluster ID.
         generalResults (object): "testing" section of general.json.
 
     Returns:
-        bool: True in case the given cluster was indeed provisioned.
-         otherwise.
+        bool: True in case the given cluster was provisioned, False otherwise.
     """
 
     res = True

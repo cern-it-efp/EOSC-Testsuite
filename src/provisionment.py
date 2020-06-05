@@ -44,7 +44,7 @@ def provisionAndBootstrap(test,
                           baseCWD,
                           extraSupportedClouds,
                           noTerraform):
-    """Provision infrastructure and/or bootstrap the k8s cluster.
+    """ Provision infrastructure and/or bootstrap the k8s cluster.
 
     Parameters:
         test (str): Indicates the test for which to provision the cluster
@@ -53,6 +53,7 @@ def provisionAndBootstrap(test,
         extraInstanceConfig (str): Extra HCL code to configure VM
         toLog (str): File to which write the log msg.
         configs (dict): Object containing configs.yaml's configurations.
+        cfgPath (str): Path to the configs file.
         testsRoot (str): Tests directory root.
         retry (bool): If true, retrying after a failure.
         instanceDefinition (str): HCL code definition of an instance.
@@ -60,6 +61,7 @@ def provisionAndBootstrap(test,
         dependencies (str): HCL code related to infrastructure dependencies.
         baseCWD (str): Path to the base directory.
         extraSupportedClouds (dict): Extra supported clouds.
+        noTerraform (bool): True indicates the terraform phase is skipped.
 
     Returns:
         bool: True if the cluster was succesfully provisioned. False otherwise.
@@ -103,11 +105,14 @@ def provisionAndBootstrap(test,
     if result != 0:
         return False, bootstrapFailMsg % test
 
-    # -------- Update kubeconfig files and wait for default service account to be ready and finish
+    # -------- Update kubeconfig files and wait for default SA to be ready
 
-    #updateKubeconfig(masterIP, kubeconfig) 
+    #updateKubeconfig(masterIP, kubeconfig)
 
-    if kubectlCLI('get sa default', kubeconfig=kubeconfig, options='--request-timeout=20m', hideLogs=False) == 0:
+    if kubectlCLI('get sa default',
+                  kubeconfig=kubeconfig,
+                  options='--request-timeout=20m',
+                  hideLogs=False) == 0:
         writeToFile(toLog, clusterCreatedMsg % (test, masterIP), True)
         return True, ""
     return False, TOserviceAccountMsg % test
