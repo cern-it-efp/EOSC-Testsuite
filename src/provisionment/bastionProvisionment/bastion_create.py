@@ -126,14 +126,6 @@ os.chdir(tfPath)
 if onlySsh is not True:
     if provider == "azurerm": # in azurerm, w/o this the public ip is not initialized
 
-#    resource "azurerm_virtual_network" "myterraformnetwork
-#    resource "azurerm_subnet" "myterraformsubnet
-#resource "azurerm_network_security_group" "myterraformnsg
-#    resource "azurerm_public_ip" "myterraformpublicip
-#    resource "azurerm_network_interface" "terraformnic
-#resource "azurerm_virtual_machine" "main
-#resource "null_resource" "docker"
-
         cmd = "terraform init ; terraform apply -target=azurerm_virtual_machine.main -auto-approve ; terraform apply -refresh=true -auto-approve"
     else:
         cmd = "terraform init ; terraform apply -auto-approve"

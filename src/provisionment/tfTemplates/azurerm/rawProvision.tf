@@ -22,6 +22,8 @@ resource "azurerm_virtual_machine" "kubenode" {
   resource_group_name   = yamldecode(file(var.configsFile))["resourceGroupName"]
   vm_size               = yamldecode(file(var.configsFile))["flavor"]
   network_interface_ids = [element(azurerm_network_interface.terraformnic.*.id, count.index)]
+  delete_os_disk_on_termination = true
+
   storage_os_disk {
     name              = "myOsDisk${count.index}-${var.clusterRandomID}"
     caching           = "ReadWrite"

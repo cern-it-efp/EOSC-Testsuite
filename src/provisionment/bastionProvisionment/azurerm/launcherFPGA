@@ -69,6 +69,7 @@ resource "azurerm_virtual_machine" "main" {
   vm_size               = "Standard_PB6s"
   resource_group_name   = "efprg"
   network_interface_ids = [azurerm_network_interface.terraformnic.id]
+  delete_os_disk_on_termination = true
 
   storage_os_disk {
     name              = "myOsDisk"
