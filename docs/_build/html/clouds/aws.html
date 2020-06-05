@@ -183,7 +183,6 @@
             
   <div class="section" id="aws">
 <h1>AWS<a class="headerlink" href="#aws" title="Permalink to this headline">¶</a></h1>
-<p>It is also possible to use EKS to provision the cluster, for this refer to section “Using existing clusters”.</p>
 <p>AWS specific variables for configs.yaml:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
@@ -196,18 +195,6 @@
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>providerName</td>
-<td>It’s value must be “aws”. (required)</td>
-</tr>
-<tr class="row-odd"><td>pathToKey</td>
-<td>Path to the location of your private key, to be used for ssh connections. (required)</td>
-</tr>
-<tr class="row-even"><td>flavor</td>
-<td>Flavor to be used for the main cluster. (required)</td>
-</tr>
-<tr class="row-odd"><td>openUser</td>
-<td>User to be used for ssh connections. (required)</td>
-</tr>
 <tr class="row-even"><td>region</td>
 <td>The region in which to create the compute instances. (required)</td>
 </tr>
@@ -222,6 +209,7 @@
 </tr>
 </tbody>
 </table>
+<p>It is also possible to use EKS to provision the cluster, for this refer to section “Using existing clusters”.</p>
 </div>
 
 

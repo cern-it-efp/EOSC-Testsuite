@@ -183,7 +183,6 @@
             
   <div class="section" id="oracle-cloud-infrastructure">
 <h1>Oracle Cloud Infrastructure<a class="headerlink" href="#oracle-cloud-infrastructure" title="Permalink to this headline">¶</a></h1>
-<p>It is also possible to use OKE to provision the cluster, for this refer to section “Using existing clusters”.</p>
 <p>OCI specific variables for configs.yaml:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
@@ -196,20 +195,8 @@
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>providerName</td>
-<td>It’s value must be “oci”. (required)</td>
-</tr>
-<tr class="row-odd"><td>pathToKey</td>
-<td>Path to your private key, to be used for ssh connections. (required)</td>
-</tr>
 <tr class="row-even"><td>ssh_public_key_path</td>
 <td>Path to the public key belonging to your private key at pathToKey. This will be injected to the VMs (required)</td>
-</tr>
-<tr class="row-odd"><td>flavor</td>
-<td>Flavor to be used for the main cluster. (required)</td>
-</tr>
-<tr class="row-even"><td>storageCapacity</td>
-<td>VM’s disk size.</td>
 </tr>
 <tr class="row-odd"><td>authFile</td>
 <td>Path to the yaml file containing the OTC credentials. See below the structure of such file. (required)</td>
@@ -217,17 +204,17 @@
 <tr class="row-even"><td>image_ocid</td>
 <td>The OCID of the image to be used on the VMs. (required)</td>
 </tr>
-<tr class="row-odd"><td>openUser</td>
-<td>User to be used for ssh connections. (required)</td>
-</tr>
-<tr class="row-even"><td>compartment_ocid</td>
+<tr class="row-odd"><td>compartment_ocid</td>
 <td>Compartment’s OCID. (required)</td>
 </tr>
-<tr class="row-odd"><td>availability_domain</td>
+<tr class="row-even"><td>availability_domain</td>
 <td>Availability domain to be used. (required)</td>
 </tr>
-<tr class="row-even"><td>subnet_ocid</td>
+<tr class="row-odd"><td>subnet_ocid</td>
 <td>The OCID of the subnet to be used. (required)</td>
+</tr>
+<tr class="row-even"><td>storageCapacity</td>
+<td>VM’s disk size.</td>
 </tr>
 </tbody>
 </table>
@@ -260,6 +247,7 @@
 </tr>
 </tbody>
 </table>
+<p>It is also possible to use OKE to provision the cluster, for this refer to section “Using existing clusters”.</p>
 </div>
 
 

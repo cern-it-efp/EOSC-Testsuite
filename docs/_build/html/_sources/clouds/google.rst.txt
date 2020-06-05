@@ -1,8 +1,6 @@
 GCP
 ---------------------------------------------
 
-It is also possible to use GKE to provision the cluster, for this refer to section "Using existing clusters". You will have to |use_gke| too.
-
 GCP specific variables for configs.yaml:
 
 .. list-table::
@@ -11,14 +9,6 @@ GCP specific variables for configs.yaml:
 
    * - Name
      - Explanation / Values
-   * - providerName
-     - It's value must be "google". (required)
-   * - pathToKey
-     - Path to the location of your private key, to be used for ssh connections. (required)
-   * - flavor
-     - Flavor to be used for the main cluster. (required)
-   * - openUser
-     - User to be used for ssh connections. Note VM specific keys are not supported, only project-wide SSH keys are.(required)
    * - zone
      - The zone in which to create the compute instances. (required)
    * - pathToCredentials
@@ -30,6 +20,8 @@ GCP specific variables for configs.yaml:
    * - gpuType
      - Type of GPU to be used. Needed if the Deep Learning test was selected at testsCatalog.yaml.
 
+
+It is also possible to use GKE to provision the cluster, for this refer to section "Using existing clusters". You will have to |use_gke| too.
 
 .. |use_gke| raw:: html
 

@@ -183,7 +183,6 @@
             
   <div class="section" id="azure">
 <h1>Azure<a class="headerlink" href="#azure" title="Permalink to this headline">¶</a></h1>
-<p>It is also possible to use AKS to provision the cluster, for this refer to section “Using existing clusters”.</p>
 <p>Install az CLI and configure credentials with ‘az login’.
 Note resource group, security group, and subnet have to be created in advance.</p>
 <p>Azure specific variables for configs.yaml:</p>
@@ -198,18 +197,6 @@ Note resource group, security group, and subnet have to be created in advance.</
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>providerName</td>
-<td>It’s value must be “azurerm”. (required)</td>
-</tr>
-<tr class="row-odd"><td>pathToKey</td>
-<td>Path to the location of your private key, to be used for ssh connections. (required)</td>
-</tr>
-<tr class="row-even"><td>flavor</td>
-<td>Flavor to be used for the main cluster.</td>
-</tr>
-<tr class="row-odd"><td>openUser</td>
-<td>User to be used for ssh connections.</td>
-</tr>
 <tr class="row-even"><td>location</td>
 <td>The region in which to create the compute instances. (required)</td>
 </tr>
@@ -250,6 +237,7 @@ Omitting the image section defaults to:</p>
 <li>sku = 7.5</li>
 <li>version = latest</li>
 </ul>
+<p>It is also possible to use AKS to provision the cluster, for this refer to section “Using existing clusters”.</p>
 </div>
 
 

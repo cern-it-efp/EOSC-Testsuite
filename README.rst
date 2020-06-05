@@ -23,13 +23,13 @@ The test-suite executes four main steps:
 
 3) Harvest results: at the end of each test run a result file -written in JSON- is created. This file is collected from the pod running on the cluster.
 
-4) Through a verification system, the Test-Suite can also be triggered from a service running at CERN. In this case, results are then pushed to a S3 Bucket at CERN. (Under development)
+4) Through a verification system, the Test-Suite can also be triggered from a service running at CERN. This is an optional step and in this case, results are then pushed to a S3 Bucket at CERN. (Under development)
 
 The test set described in the Tests Catalog section of the documentation is based on the tests used in `Helix Nebula The Science Cloud <https://www.hnscicloud.eu/>`_ PCP project funded by the European Commission.
 
 The developers would like to thank all test owners and contributors to this project.
 
-**This test-suite has been tested on:**
+**This suite has been tested on:**
 
 +------------------------------+---------------------------------------------------------------------------------+
 |OS on launcher machine        | Ubuntu, CentOS, CoreOS, Debian, RedHat, Fedora                                  |
@@ -49,7 +49,7 @@ The developers would like to thank all test owners and contributors to this proj
 |                              | | CloudSigma                                                                    |
 +------------------------------+---------------------------------------------------------------------------------+
 
-The test suite is being tested in several additional cloud providers. As tests are concluded the cloud providers names will be added in the table above.
+The suite is being tested in several additional cloud providers. As tests are concluded the cloud providers names will be added in the table above.
 
 Release notes
 ---------------------------------------------
@@ -63,7 +63,7 @@ Release notes
 
 -Using Terraform's yamldecode with configs.yaml for variables instead of Python's replace function with placeholders.
 
--Disabled general Terraform support: only the providers and clouds on the table above are fully supported. To run on another provider (supporting Terraform or not), the option '--no-terraform' has to be used.
+-Disabled general Terraform support: only the providers and clouds that support Terraform and are present on the table above are fully supported by this suite. To run on another provider (supporting Terraform or not), the option '--no-terraform' has to be used.
 
 ``20.2``
 

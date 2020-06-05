@@ -1,6 +1,6 @@
 1. Getting started
 ---------------------------------------------
-Please follow the steps below in order to deploy tests in a cloud provider:
+Please follow the steps below in order to deploy tests in a cloud provider.
 
 Refer to section "Using Docker" to use the Docker image we provide to avoid dealing with required packages and dependencies.
 
@@ -52,8 +52,7 @@ Please install them with pip3.
 
 1.2 SSH key
 ==================
-A ssh key pair is needed to establish connections to the VMs to be created later. Therefore, you must create (or import) this key on your provider
-beforehand and place the private key at *~/.ssh/id_rsa*.
+A ssh key pair is needed to establish connections to the VMs to be created later. Therefore, you must create (or import) this key on your provider, when needed, beforehand.
 Note errors may occur if your key doesn't have the right permissions. Set these to the right value using the following command:
 
 .. code-block:: console
@@ -90,10 +89,10 @@ The following ports have to be opened:
 
 1.4 Networking and IPs
 ==========================================
-Some providers do not allocate public IPs to the VMs but use NAT. Hence the VM can be reached from outside but that IP is not really residing on the VM. This causes
+Some providers do not allocate public IPs to the VMs but use NAT. Hence the VM can be reached from outside but that IP is not actually residing on the VM, which causes
 conflicts when creating the Kubernetes cluster. If one wants to run the Test-Suite on a provider of this case, then the suite must be launched from within the
 network the nodes will be connected to, this is a private network. In other words, **a VM will have to be created first manually** and the Test Suite will have to be
-triggered from there.
+triggered from there. This way all the communications can happen without NAT.
 
 1.5 Clone and prepare
 ==========================================
@@ -136,17 +135,9 @@ The suite will create itself the Terraform files on the fly according to the con
    * - pathToKey
      - Path to the location of your private key, to be used for ssh connections. (required)
    * - flavor
-     - Flavor to be used for the main cluster.
+     - Flavor to be used for the main cluster. (required)
    * - openUser
      - User to be used for ssh connections.
-   * - location
-     - The region in which to create the compute instances. (required)
-   * - subscriptionId
-     - ID of the subscription. (required)
-   * - resourceGroupName
-     - Specifies the name of the Resource Group in which the Virtual Machine should exist. (required)
-   * - pubSSH
-     - Public SSH key of the key specified at configs.yaml's pathToKey. (required)
 
 **Provider specific variables:**
 
@@ -167,6 +158,8 @@ Run the container (pulls the image first):
 
     $ docker run --net=host -it cernefp/tslauncher
 
-Note the option '--net=host'. Without it, the container wouldn't be able to connect to the nodes, as it would not be in the same network as them and it is likely the nodes will not have public IPs. With that option, the container will use the network used by its host, which will be sharing the network with the nodes.
+Note the option '--net=host'. Without it, the container wouldn't be able to connect to the nodes, as it
+would not be in the same network as them and it is likely the nodes will not have public IPs (no NAT).
+With that option, the container will use the network used by its host.
 
 You will get a session on the container, directly inside the cloned repository.

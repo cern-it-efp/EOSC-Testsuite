@@ -195,35 +195,23 @@
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>providerName</td>
-<td>It’s value must be “cloudstack”. (required)</td>
-</tr>
-<tr class="row-odd"><td>pathToKey</td>
-<td>Path to the location of your private key, to be used for ssh connections. (required)</td>
-</tr>
-<tr class="row-even"><td>flavor</td>
-<td>Flavor to be used for the main cluster. (required)</td>
-</tr>
-<tr class="row-odd"><td>openUser</td>
-<td>User to be used for ssh connections. Root user will be used by default.</td>
-</tr>
 <tr class="row-even"><td>keyPair</td>
 <td>Name of the key to be used. Has to be created or imported beforehand. (required)</td>
 </tr>
-<tr class="row-odd"><td>securityGroups</td>
-<td>Security groups array.</td>
-</tr>
-<tr class="row-even"><td>zone</td>
+<tr class="row-odd"><td>zone</td>
 <td>The zone in which to create the compute instances. (required)</td>
 </tr>
-<tr class="row-odd"><td>template</td>
+<tr class="row-even"><td>template</td>
 <td>OS Image to be used for the VMs. (required)</td>
-</tr>
-<tr class="row-even"><td>storageCapacity</td>
-<td>VM’s disk size.</td>
 </tr>
 <tr class="row-odd"><td>authFile</td>
 <td>Path to the file containing the CloudStack credentials. See below the structure of such file. (required)</td>
+</tr>
+<tr class="row-even"><td>securityGroups</td>
+<td>Security groups array.</td>
+</tr>
+<tr class="row-odd"><td>storageCapacity</td>
+<td>VM’s disk size.</td>
 </tr>
 </tbody>
 </table>

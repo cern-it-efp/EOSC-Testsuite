@@ -187,7 +187,7 @@
             
   <div class="section" id="getting-started">
 <h1>1. Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
-<p>Please follow the steps below in order to deploy tests in a cloud provider:</p>
+<p>Please follow the steps below in order to deploy tests in a cloud provider.</p>
 <p>Refer to section “Using Docker” to use the Docker image we provide to avoid dealing with required packages and dependencies.</p>
 <div class="section" id="dependencies">
 <h2>1.1 Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
@@ -222,8 +222,7 @@ The following python packages are required:</p>
 </div>
 <div class="section" id="ssh-key">
 <h2>1.2 SSH key<a class="headerlink" href="#ssh-key" title="Permalink to this headline">¶</a></h2>
-<p>A ssh key pair is needed to establish connections to the VMs to be created later. Therefore, you must create (or import) this key on your provider
-beforehand and place the private key at <em>~/.ssh/id_rsa</em>.
+<p>A ssh key pair is needed to establish connections to the VMs to be created later. Therefore, you must create (or import) this key on your provider, when needed, beforehand.
 Note errors may occur if your key doesn’t have the right permissions. Set these to the right value using the following command:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> chmod <span class="m">600</span> path/to/key
 </pre></div>
@@ -270,10 +269,10 @@ Note errors may occur if your key doesn’t have the right permissions. Set thes
 </div>
 <div class="section" id="networking-and-ips">
 <h2>1.4 Networking and IPs<a class="headerlink" href="#networking-and-ips" title="Permalink to this headline">¶</a></h2>
-<p>Some providers do not allocate public IPs to the VMs but use NAT. Hence the VM can be reached from outside but that IP is not really residing on the VM. This causes
+<p>Some providers do not allocate public IPs to the VMs but use NAT. Hence the VM can be reached from outside but that IP is not actually residing on the VM, which causes
 conflicts when creating the Kubernetes cluster. If one wants to run the Test-Suite on a provider of this case, then the suite must be launched from within the
 network the nodes will be connected to, this is a private network. In other words, <strong>a VM will have to be created first manually</strong> and the Test Suite will have to be
-triggered from there.</p>
+triggered from there. This way all the communications can happen without NAT.</p>
 </div>
 <div class="section" id="clone-and-prepare">
 <h2>1.5 Clone and prepare<a class="headerlink" href="#clone-and-prepare" title="Permalink to this headline">¶</a></h2>
@@ -314,22 +313,10 @@ The suite will create itself the Terraform files on the fly according to the con
 <td>Path to the location of your private key, to be used for ssh connections. (required)</td>
 </tr>
 <tr class="row-even"><td>flavor</td>
-<td>Flavor to be used for the main cluster.</td>
+<td>Flavor to be used for the main cluster. (required)</td>
 </tr>
 <tr class="row-odd"><td>openUser</td>
 <td>User to be used for ssh connections.</td>
-</tr>
-<tr class="row-even"><td>location</td>
-<td>The region in which to create the compute instances. (required)</td>
-</tr>
-<tr class="row-odd"><td>subscriptionId</td>
-<td>ID of the subscription. (required)</td>
-</tr>
-<tr class="row-even"><td>resourceGroupName</td>
-<td>Specifies the name of the Resource Group in which the Virtual Machine should exist. (required)</td>
-</tr>
-<tr class="row-odd"><td>pubSSH</td>
-<td>Public SSH key of the key specified at configs.yaml’s pathToKey. (required)</td>
 </tr>
 </tbody>
 </table>
@@ -355,7 +342,9 @@ The suite will create itself the Terraform files on the fly according to the con
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> docker run --net<span class="o">=</span>host -it cernefp/tslauncher
 </pre></div>
 </div>
-<p>Note the option ‘–net=host’. Without it, the container wouldn’t be able to connect to the nodes, as it would not be in the same network as them and it is likely the nodes will not have public IPs. With that option, the container will use the network used by its host, which will be sharing the network with the nodes.</p>
+<p>Note the option ‘–net=host’. Without it, the container wouldn’t be able to connect to the nodes, as it
+would not be in the same network as them and it is likely the nodes will not have public IPs (no NAT).
+With that option, the container will use the network used by its host.</p>
 <p>You will get a session on the container, directly inside the cloned repository.</p>
 </div>
 </div>

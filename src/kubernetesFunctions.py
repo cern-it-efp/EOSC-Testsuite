@@ -131,7 +131,7 @@ def copyToPodAndRun(
             if checkPodAlive(podName,
                              resDir,
                              toLog,
-                             file,
+                             resultFile,
                              kubeconfig) is False: return
             if kubectl(Action.cp,
                       kubeconfig,

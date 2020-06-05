@@ -9,16 +9,8 @@ Exoscale specific variables for configs.yaml:
 
    * - Name
      - Explanation / Values
-   * - providerName
-     - It's value must be "exoscale". (required)
-   * - pathToKey
-     - Path to the location of your private key, to be used for ssh connections. (required)
-   * - flavor
-     - Flavor to be used for the main cluster. (required)
    * - keyPair
      - Name of the key to be used. Has to be created or imported beforehand. (required)
-   * - securityGroups
-     - Security groups array.
    * - zone
      - The zone in which to create the compute instances. (required)
    * - template
@@ -27,6 +19,8 @@ Exoscale specific variables for configs.yaml:
      - VM's disk size. (required)
    * - authFile
      - Path to the file containing the Exoscale credentials. See below the structure of such file. (required)
+   * - securityGroups
+     - Security groups array.
 
 
 Exoscale credentials file's structure:

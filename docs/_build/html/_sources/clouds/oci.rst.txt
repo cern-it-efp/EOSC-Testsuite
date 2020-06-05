@@ -1,8 +1,6 @@
 Oracle Cloud Infrastructure
 ---------------------------------------------
 
-It is also possible to use OKE to provision the cluster, for this refer to section "Using existing clusters".
-
 OCI specific variables for configs.yaml:
 
 .. list-table::
@@ -11,28 +9,20 @@ OCI specific variables for configs.yaml:
 
    * - Name
      - Explanation / Values
-   * - providerName
-     - It's value must be "oci". (required)
-   * - pathToKey
-     - Path to your private key, to be used for ssh connections. (required)
    * - ssh_public_key_path
      - Path to the public key belonging to your private key at pathToKey. This will be injected to the VMs (required)
-   * - flavor
-     - Flavor to be used for the main cluster. (required)
-   * - storageCapacity
-     - VM's disk size.
    * - authFile
      - Path to the yaml file containing the OTC credentials. See below the structure of such file. (required)
    * - image_ocid
      - The OCID of the image to be used on the VMs. (required)
-   * - openUser
-     - User to be used for ssh connections. (required)
    * - compartment_ocid
      - Compartment's OCID. (required)
    * - availability_domain
      - Availability domain to be used. (required)
    * - subnet_ocid
      - The OCID of the subnet to be used. (required)
+   * - storageCapacity
+     - VM's disk size.
 
 Oracle Cloud Infrastructure credentials file's must be a YAML file containing only the following variables:
 
@@ -52,3 +42,5 @@ Oracle Cloud Infrastructure credentials file's must be a YAML file containing on
      - Authentication key's fingerprint.
    * - region
      - Region to be used.
+
+It is also possible to use OKE to provision the cluster, for this refer to section "Using existing clusters".

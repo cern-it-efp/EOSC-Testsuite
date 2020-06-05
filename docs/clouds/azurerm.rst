@@ -1,8 +1,6 @@
 Azure
 ---------------------------------------------
 
-It is also possible to use AKS to provision the cluster, for this refer to section "Using existing clusters".
-
 Install az CLI and configure credentials with 'az login'.
 Note resource group, security group, and subnet have to be created in advance.
 
@@ -14,14 +12,6 @@ Azure specific variables for configs.yaml:
 
    * - Name
      - Explanation / Values
-   * - providerName
-     - It's value must be "azurerm". (required)
-   * - pathToKey
-     - Path to the location of your private key, to be used for ssh connections. (required)
-   * - flavor
-     - Flavor to be used for the main cluster.
-   * - openUser
-     - User to be used for ssh connections.
    * - location
      - The region in which to create the compute instances. (required)
    * - subscriptionId
@@ -43,7 +33,7 @@ Azure specific variables for configs.yaml:
    * - image.version
      - Specifies the version of the image used to create the virtual machines.
 
-The image section is optional but in case it is provided, all its 4 variables must be set. 
+The image section is optional but in case it is provided, all its 4 variables must be set.
 Omitting the image section defaults to:
 
 - publisher = OpenLogic
@@ -53,3 +43,5 @@ Omitting the image section defaults to:
 - sku = 7.5
 
 - version = latest
+
+It is also possible to use AKS to provision the cluster, for this refer to section "Using existing clusters".

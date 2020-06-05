@@ -183,7 +183,6 @@
             
   <div class="section" id="gcp">
 <h1>GCP<a class="headerlink" href="#gcp" title="Permalink to this headline">¶</a></h1>
-<p>It is also possible to use GKE to provision the cluster, for this refer to section “Using existing clusters”. You will have to <a href="https://cloud.google.com/sdk/gcloud/reference/container/clusters/get-credentials?hl=en_US&_ga=2.141757301.-616534808.1554462142" target="_blank">fetch the kubectl kubeconfig file</a> too.</p>
 <p>GCP specific variables for configs.yaml:</p>
 <table border="1" class="colwidths-given docutils">
 <colgroup>
@@ -196,18 +195,6 @@
 </tr>
 </thead>
 <tbody valign="top">
-<tr class="row-even"><td>providerName</td>
-<td>It’s value must be “google”. (required)</td>
-</tr>
-<tr class="row-odd"><td>pathToKey</td>
-<td>Path to the location of your private key, to be used for ssh connections. (required)</td>
-</tr>
-<tr class="row-even"><td>flavor</td>
-<td>Flavor to be used for the main cluster. (required)</td>
-</tr>
-<tr class="row-odd"><td>openUser</td>
-<td>User to be used for ssh connections. Note VM specific keys are not supported, only project-wide SSH keys are.(required)</td>
-</tr>
 <tr class="row-even"><td>zone</td>
 <td>The zone in which to create the compute instances. (required)</td>
 </tr>
@@ -225,6 +212,7 @@
 </tr>
 </tbody>
 </table>
+<p>It is also possible to use GKE to provision the cluster, for this refer to section “Using existing clusters”. You will have to <a href="https://cloud.google.com/sdk/gcloud/reference/container/clusters/get-credentials?hl=en_US&_ga=2.141757301.-616534808.1554462142" target="_blank">fetch the kubectl kubeconfig file</a> too.</p>
 </div>
 
 
