@@ -139,13 +139,15 @@ The suite will create itself the Terraform files on the fly according to the con
    * - openUser
      - User to be used for ssh connections.
 
-**Provider specific variables:**
+**Provider/cloud specific variables:**
 
 .. toctree::
    :maxdepth: 1
    :glob:
 
    clouds/*
+
+To run the suite on a provider/cloud that is not listed above, refer to the section :ref:`No Terraform runs <no-terraform-runs>`.
 
 
 1.6 Using Docker
