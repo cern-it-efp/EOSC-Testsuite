@@ -1,11 +1,3 @@
-# -------------------------- General -------------------------------------------
-variable "sshConnect" {
-  default = "../../provisionment/ssh_connect.sh"
-}
-variable "sshcTimeout" {
-  default = "2000"
-}
-
 # -------------------------- Common ones ---------------------------------------
 variable "configsFile" {}
 variable "customCount" {}

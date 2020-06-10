@@ -183,10 +183,10 @@
 </tr>
 <tr><td>&#160;</td><td>Specifies custom location of testsCatalog.yaml. If not used, default will be the ‘configurations’ folder.</td></tr>
 <tr><td class="option-group">
-<kbd><span class="option">--no-terraform</span></kbd></td>
+<kbd><span class="option">--noTerraform</span></kbd></td>
 <td>Option to skip terraform provisionment, only ansible-playbook bootstrapping. To be used on providers that do not support terraform.</td></tr>
 <tr><td class="option-group">
-<kbd><span class="option">--only-test</span></kbd></td>
+<kbd><span class="option">--onlyTest</span></kbd></td>
 <td>Run without creating the infrastructure (VMs and cluster), only deploy tests. Not valid for the first run.</td></tr>
 </tbody>
 </table>
@@ -204,11 +204,11 @@
 <p class="last">‘all’: Destroy all clusters.</p>
 </td></tr>
 <tr><td class="option-group" colspan="2">
-<kbd><span class="option">--destroy-on-completion <var>&lt;clusters&gt;</var></span></kbd></td>
+<kbd><span class="option">--destroyOnCompletion <var>&lt;clusters&gt;</var></span></kbd></td>
 </tr>
 <tr><td>&#160;</td><td>Destroy infrastructure once the test suite completes its run. Same arguments as for ‘–destroy’ apply.</td></tr>
 <tr><td class="option-group" colspan="2">
-<kbd><span class="option">--custom-nodes <var>&lt;value&gt;</var></span></kbd></td>
+<kbd><span class="option">--customNodes <var>&lt;value&gt;</var></span></kbd></td>
 </tr>
 <tr><td>&#160;</td><td>Set the number of instances that should be deployed for the shared cluster.</td></tr>
 </tbody>

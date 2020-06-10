@@ -2,7 +2,7 @@
 ---------------------------------------------
 Please follow the steps below in order to deploy tests in a cloud provider.
 
-Refer to section "Using Docker" to use the Docker image we provide to avoid dealing with required packages and dependencies.
+Refer to section :ref:`Using Docker<using-docker>` to use the Docker image we provide to avoid dealing with required packages and dependencies.
 
 1.1 Dependencies
 ==========================
@@ -12,8 +12,6 @@ Terraform
 ^^^^^^^^^^^^^^^^
 Terraform is the tool that creates the VMs that will later become a Kubernetes cluster. The test-suite makes use of it so download and
 install |Terraform_link| on your machine.
-In some cases, providers are not fully supported by Terraform, however they might provide plugins to bridge this gap. In such cases, please refer to the documentation of the provider to download the plugin.
-Once downloaded, this must be placed at *~/.terraform.d/plugins* and execution permissions must be given to it (*+x*).
 
 .. |Terraform_link| raw:: html
 
@@ -114,12 +112,12 @@ Two YAML files have to be filled to configure the run. Examples of these two fil
 ``testsCatalog.yaml``
 
 This file gathers details related to the tests that should be deployed.
-Refer to the section "Test Catalog" to learn how to fill this file.
+Refer to the section :ref:`Test Catalog<tests-catalog>` to learn how to fill this file.
 
 ``configs.yaml``
 
 This file gathers general details required to provision the infrastructure.
-The file also contains a section named *costCalculation*. Refer to the section "Cost of run calculation" to understand how to fill that part.
+The file also contains a section named *costCalculation*. Refer to the section :ref:`Cost of run calculation<cost-of-run-calculation>` to understand how to fill that part.
 The suite will create itself the Terraform files on the fly according to the configuration provided.
 
 **General variables:**
@@ -139,7 +137,7 @@ The suite will create itself the Terraform files on the fly according to the con
    * - openUser
      - User to be used for ssh connections.
 
-**Provider specific variables:**
+**Provider/cloud specific variables:**
 
 .. toctree::
    :maxdepth: 1
@@ -147,6 +145,10 @@ The suite will create itself the Terraform files on the fly according to the con
 
    clouds/*
 
+To run the suite on a provider/cloud that is not listed above, refer to the section :ref:`No Terraform runs <no-terraform-runs>`.
+
+
+.. _using-docker:
 
 1.6 Using Docker
 ===================

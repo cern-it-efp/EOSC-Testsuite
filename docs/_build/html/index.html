@@ -160,8 +160,8 @@
 <h1>EOSC Cloud Validation Test Suite<a class="headerlink" href="#eosc-cloud-validation-test-suite" title="Permalink to this headline">¶</a></h1>
 <p>This tool is intended to be used to test and validate commercial cloud services across the stack for research and education environments.
 This Test-Suite is being used as a validation tool for commercial cloud services procurement in European Commission sponsored projects such as OCRE and ARCHIVER.</p>
-<p>More information at: <a class="reference external" href="https://www.eosc-portal.eu/">https://www.eosc-portal.eu/</a>.</p>
-<p>Please find the the repository here: <a class="reference external" href="https://github.com/cern-it-efp/EOSC-Testsuite">https://github.com/cern-it-efp/EOSC-Testsuite</a></p>
+<p>Visit <a href="https://www.eosc-portal.eu/" target="_blank">EOSC website</a> for more information.</p>
+<p>Please find the the repository <a href="https://github.com/cern-it-efp/EOSC-Testsuite" target="_blank">here</a>.</p>
 <hr class="docutils" />
 <div class="toctree-wrapper compound">
 </div>
@@ -172,7 +172,7 @@ This Test-Suite is being used as a validation tool for commercial cloud services
 <li>Harvest results: at the end of each test run a result file -written in JSON- is created. This file is collected from the pod running on the cluster.</li>
 <li>Through a verification system, the Test-Suite can also be triggered from a service running at CERN. This is an optional step and in this case, results are then pushed to a S3 Bucket at CERN. (Under development)</li>
 </ol>
-<p>The test set described in the Tests Catalog section of the documentation is based on the tests used in <a class="reference external" href="https://www.hnscicloud.eu/">Helix Nebula The Science Cloud</a> PCP project funded by the European Commission.</p>
+<p>The test set described in the <a class="reference external" href="testsCatalog.html">Tests Catalog</a> section of the documentation is based on the tests used in the <a href="https://www.hnscicloud.eu" target="_blank">Helix Nebula The Science Cloud</a> PCP project funded by the European Commission.</p>
 <p>The developers would like to thank all test owners and contributors to this project.</p>
 <p><strong>This suite has been tested on:</strong></p>
 <table border="1" class="docutils">
@@ -209,11 +209,14 @@ This Test-Suite is being used as a validation tool for commercial cloud services
 <div class="section" id="release-notes">
 <h2>Release notes<a class="headerlink" href="#release-notes" title="Permalink to this headline">¶</a></h2>
 <p>(Note the versions are numbered with the date of the release: YEAR.MONTH)</p>
+<p><code class="docutils literal notranslate"><span class="pre">20.7</span> <span class="pre">-</span> <span class="pre">latest</span></code></p>
+<p>-Cluster certificate additionally signed for NAT IP, no need to use bastion method as with this solution the cluster can be reached from outside of the provider network.
+However, previous allocation of floating IPs is now required.</p>
 <p><code class="docutils literal notranslate"><span class="pre">20.6</span></code></p>
 <p>-Improved support for running on Oracle Cloud Infrastructure and T-Systems’ OTC.</p>
-<p>-Added option –custom-nodes to set the number of instances that should be deployed for the shared cluster.</p>
+<p>-Added option –customNodes to set the number of instances that should be deployed for the shared cluster.</p>
 <p>-Using Terraform’s yamldecode with configs.yaml for variables instead of Python’s replace function with placeholders.</p>
-<p>-Disabled general Terraform support: only the providers and clouds that support Terraform and are present on the table above are fully supported by this suite. To run on another provider (supporting Terraform or not), the option ‘–no-terraform’ has to be used.</p>
+<p>-Disabled general Terraform support: only the providers and clouds that support Terraform and are present on the table above are fully supported by this suite. To run on another provider (supporting Terraform or not), the option ‘–noTerraform’ has to be used.</p>
 <p><code class="docutils literal notranslate"><span class="pre">20.2</span></code></p>
 <p>-Using Ansible for VM configuration instead of Terraform’s provisioners.</p>
 <p>-Added support for non-Terraform providers (only bootstrap phase).</p>
@@ -246,7 +249,7 @@ This Test-Suite is being used as a validation tool for commercial cloud services
 <h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
 <p>Copyright (C) CERN.</p>
 <p>You should have received a copy of the GNU Affero General Public License
-along with this program. If not, see <a class="reference external" href="https://www.gnu.org/licenses/">gnu.org/licenses</a>.</p>
+along with this program. If not, see <a href="https://www.gnu.org/licenses/" target="_blank">gnu.org/licenses</a>.</p>
 </div>
 </div>
 

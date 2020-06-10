@@ -188,16 +188,14 @@
   <div class="section" id="getting-started">
 <h1>1. Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
 <p>Please follow the steps below in order to deploy tests in a cloud provider.</p>
-<p>Refer to section “Using Docker” to use the Docker image we provide to avoid dealing with required packages and dependencies.</p>
+<p>Refer to section <a class="reference internal" href="#using-docker"><span class="std std-ref">Using Docker</span></a> to use the Docker image we provide to avoid dealing with required packages and dependencies.</p>
 <div class="section" id="dependencies">
 <h2>1.1 Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
 <p>This test-suite requires some packages to work properly and these must be installed by yourself directly. Please see below.</p>
 <div class="section" id="terraform">
 <h3>Terraform<a class="headerlink" href="#terraform" title="Permalink to this headline">¶</a></h3>
 <p>Terraform is the tool that creates the VMs that will later become a Kubernetes cluster. The test-suite makes use of it so download and
-install <a href="https://learn.hashicorp.com/terraform/getting-started/install.html" target="_blank">Terraform</a> on your machine.
-In some cases, providers are not fully supported by Terraform, however they might provide plugins to bridge this gap. In such cases, please refer to the documentation of the provider to download the plugin.
-Once downloaded, this must be placed at <em>~/.terraform.d/plugins</em> and execution permissions must be given to it (<em>+x</em>).</p>
+install <a href="https://learn.hashicorp.com/terraform/getting-started/install.html" target="_blank">Terraform</a> on your machine.</p>
 </div>
 <div class="section" id="ansible">
 <h3>Ansible<a class="headerlink" href="#ansible" title="Permalink to this headline">¶</a></h3>
@@ -289,10 +287,10 @@ triggered from there. This way all the communications can happen without NAT.</p
 <p>Two YAML files have to be filled to configure the run. Examples of these two files can be found inside the examples folder of the repository.</p>
 <p><code class="docutils literal notranslate"><span class="pre">testsCatalog.yaml</span></code></p>
 <p>This file gathers details related to the tests that should be deployed.
-Refer to the section “Test Catalog” to learn how to fill this file.</p>
+Refer to the section <a class="reference internal" href="testsCatalog.html#tests-catalog"><span class="std std-ref">Test Catalog</span></a> to learn how to fill this file.</p>
 <p><code class="docutils literal notranslate"><span class="pre">configs.yaml</span></code></p>
 <p>This file gathers general details required to provision the infrastructure.
-The file also contains a section named <em>costCalculation</em>. Refer to the section “Cost of run calculation” to understand how to fill that part.
+The file also contains a section named <em>costCalculation</em>. Refer to the section <a class="reference internal" href="costs.html#cost-of-run-calculation"><span class="std std-ref">Cost of run calculation</span></a> to understand how to fill that part.
 The suite will create itself the Terraform files on the fly according to the configuration provided.</p>
 <p><strong>General variables:</strong></p>
 <table border="1" class="colwidths-given docutils">
@@ -320,7 +318,7 @@ The suite will create itself the Terraform files on the fly according to the con
 </tr>
 </tbody>
 </table>
-<p><strong>Provider specific variables:</strong></p>
+<p><strong>Provider/cloud specific variables:</strong></p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="clouds/aws.html">AWS</a></li>
@@ -333,10 +331,11 @@ The suite will create itself the Terraform files on the fly according to the con
 <li class="toctree-l1"><a class="reference internal" href="clouds/opentelekomcloud.html">T-Systems’ Open Telekom Cloud</a></li>
 </ul>
 </div>
+<p>To run the suite on a provider/cloud that is not listed above, refer to the section <a class="reference internal" href="noTerraform.html#no-terraform-runs"><span class="std std-ref">No Terraform runs</span></a>.</p>
 </div>
 </div>
 <div class="section" id="using-docker">
-<h2>1.6 Using Docker<a class="headerlink" href="#using-docker" title="Permalink to this headline">¶</a></h2>
+<span id="id1"></span><h2>1.6 Using Docker<a class="headerlink" href="#using-docker" title="Permalink to this headline">¶</a></h2>
 <p>A Docker image has been built and pushed to Docker hub. This image allows you to skip section “Dependencies” and jump to “SSH key”.</p>
 <p>Run the container (pulls the image first):</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> docker run --net<span class="o">=</span>host -it cernefp/tslauncher

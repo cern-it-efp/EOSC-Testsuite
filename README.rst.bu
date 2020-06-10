@@ -5,23 +5,13 @@ EOSC Cloud Validation Test Suite
 This tool is intended to be used to test and validate commercial cloud services across the stack for research and education environments.
 This Test-Suite is being used as a validation tool for commercial cloud services procurement in European Commission sponsored projects such as OCRE and ARCHIVER.
 
-Visit |eosc| for more information.
-
-.. |eosc| raw:: html
-
-  <a href="https://www.eosc-portal.eu/" target="_blank">EOSC website</a>
-
+More information at: https://www.eosc-portal.eu/.
 
 .. header-end
 
 Documentation
 ---------------------------------------------
-The full documentation can be found |docs|.
-
-.. |docs| raw:: html
-
-  <a href="https://eosc-testsuite.readthedocs.io/en/latest/" target="_blank">here</a>
-
+Full documentation can be found at: `http://eosc-testsuite.rtfd.io <https://eosc-testsuite.readthedocs.io/en/latest/>`_
 
 .. body
 
@@ -35,11 +25,7 @@ The test-suite executes four main steps:
 
 4) Through a verification system, the Test-Suite can also be triggered from a service running at CERN. This is an optional step and in this case, results are then pushed to a S3 Bucket at CERN. (Under development)
 
-The test set described in the `Tests Catalog <testsCatalog.html>`_ section of the documentation is based on the tests used in the |hnsc| PCP project funded by the European Commission.
-
-.. |hnsc| raw:: html
-
-  <a href="https://www.hnscicloud.eu" target="_blank">Helix Nebula The Science Cloud</a>
+The test set described in the `Tests Catalog <testsCatalog.html>`_ section of the documentation is based on the tests used in `Helix Nebula The Science Cloud <https://www.hnscicloud.eu/>`_ PCP project funded by the European Commission.
 
 The developers would like to thank all test owners and contributors to this project.
 
@@ -139,12 +125,7 @@ License
 Copyright (C) CERN.
 
 You should have received a copy of the GNU Affero General Public License
-along with this program. If not, see |licenses|.
-
-.. |licenses| raw:: html
-
-  <a href="https://www.gnu.org/licenses/" target="_blank">gnu.org/licenses</a>
-
+along with this program. If not, see `gnu.org/licenses <https://www.gnu.org/licenses/>`_.
 
 .. body-end
 

@@ -1,3 +1,5 @@
+.. _no-terraform-runs:
+
 5. No Terraform runs
 ---------------------------------------------
 
@@ -26,4 +28,4 @@ The configs.yaml file for these type of run takes the following variables:
    * - clusters.dlTest
      - IPs of the GPU cluster's VMs. (Required if the GPU test was selected)
 
-For making use of this feature use the option '--no-terraform' when running the suite.
+For making use of this feature use the option '--noTerraform' when running the suite.

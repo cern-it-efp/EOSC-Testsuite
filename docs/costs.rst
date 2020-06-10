@@ -1,3 +1,5 @@
+.. _cost-of-run-calculation:
+
 7. Cost of run calculation
 ---------------------------------------------
 
