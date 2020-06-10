@@ -35,7 +35,7 @@ The test-suite executes four main steps:
 
 4) Through a verification system, the Test-Suite can also be triggered from a service running at CERN. This is an optional step and in this case, results are then pushed to a S3 Bucket at CERN. (Under development)
 
-The test set described in the `Tests Catalog <testsCatalog.html>`_ section of the documentation is based on the tests used in the |hnsc| PCP project funded by the European Commission.
+The test set described in the `Tests Catalog <https://eosc-testsuite.readthedocs.io/en/latest/testsCatalog.html>`_ section of the documentation is based on the tests used in the |hnsc| PCP project funded by the European Commission.
 
 .. |hnsc| raw:: html
 
