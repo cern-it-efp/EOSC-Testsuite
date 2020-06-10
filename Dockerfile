@@ -62,5 +62,8 @@ RUN echo 'alias watchPods="watch kubectl get pods --kubeconfig /EOSC-Testsuite/s
 
 # ------------------ Clone TS repo and get bash
 RUN echo cd /EOSC-Testsuite >> ~/.bashrc
-ENTRYPOINT git clone -q https://github.com/cern-it-efp/EOSC-Testsuite.git && \
+ENTRYPOINT echo 'Cloning EOSC-Testsuite repository...' && \
+           git clone -q https://github.com/cern-it-efp/EOSC-Testsuite.git && \
            cd EOSC-Testsuite ; bash
+
+# ENTRYPOINT is not overriden by the cmd used in 'docker run': for that --entrypoint="" needs to be used to reset it

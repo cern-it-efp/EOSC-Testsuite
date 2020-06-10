@@ -111,8 +111,7 @@ def provisionAndBootstrap(test,
 
     if kubectlCLI('get sa default',
                   kubeconfig=kubeconfig,
-                  options='--request-timeout=20m',
-                  hideLogs=False) == 0:
+                  options='--request-timeout=20m') == 0:
         writeToFile(toLog, clusterCreatedMsg % (test, masterIP), True)
         return True, ""
     return False, TOserviceAccountMsg % test

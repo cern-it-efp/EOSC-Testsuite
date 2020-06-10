@@ -6,14 +6,13 @@ noTerraform=false
 onlyTest=false
 force=false
 noWatch=false
-jenkins=false
 
 rm -f $ld/header $ld/killMe $ld/footer $ld/hpcTest $ld/dlTest $ld/shared $ld/logs $ld/end $ld/ansibleLogs* &> /dev/null
 
 opts=""
 while [[ "$1" != "" ]]; do
-  if [[ "$1" == '-j' ]]; then
-    jenkins=true
+  if [[ "$1" == '--noWatch' ]]; then
+    noWatch=true
     shift
   elif [[ "$1" == '--destroy' ]]; then
     python3 -B -u src/main.py $1 $2
@@ -50,29 +49,29 @@ prompt(){
   fi
 }
 
+
 catAll(){
   if [[ -s header ]]; then
     cat header > logs; echo "" >> logs
   fi
+
   for f in shared dlTest hpcTest footer; do
     if [[ -s $f ]]; then # cat only the files that contain something
       cat $f >> logs; echo "" >> logs
     fi
   done
-  echo $jenkins
-  #if  [[ $jenkins = false ]]; then # TODO: this fails
-  #if  [[ $jenkins != true ]]; then # works
-  #if  [[ $jenkins == false ]]; then # TODO: this fails
-  if  [[ $jenkins=false ]]; then # works
-    cat logs # only runs this if it's not a jenkins run
+
+  if  [[ $noWatch = false ]]; then
+    cat logs # only runs this if it's a normal watch run
   fi
 }
 export -f catAll
 
+
 watchFunct(){
   cd $ld # all the following happens inside ./src/logging
   touch logs header shared dlTest hpcTest footer end
-  if  [[ $jenkins = true ]]; then
+  if  [[ $noWatch = true ]]; then
     echo "Logs in file $(pwd)/logs"
     while true; do catAll; sleep 2; done & echo $! > killMe
   else
@@ -80,8 +79,6 @@ watchFunct(){
   fi
   cd ../..
 }
-
-
 
 ############# TEST SUITE RUN #############
 #prompt

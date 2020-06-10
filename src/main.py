@@ -151,6 +151,9 @@ parser.add_argument('--customNodes',
                     help='Use a specific amount of nodes.',
                     metavar="NODES",
                     type=int)
+parser.add_argument('--noWatch', # TODO: should be noTTY or noLogs
+                    help='Do not use the watch function.',
+                    action='store_true')
 
 args = parser.parse_args()
 

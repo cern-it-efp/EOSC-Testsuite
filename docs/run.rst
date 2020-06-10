@@ -8,6 +8,8 @@ Once the configuration steps are completed, the Test-Suite is ready to be run:
     EOSC-Testsuite$ chmod +x test_suite
     EOSC-Testsuite$ ./test_suite <options>
 
+The suite uses a combination of Linux' watch and cat commands to display the logs of the run. Hence, the suite will fail if no terminal/TTY is available.
+
 Once the provisionment steps are completed (Kubernetes cluster up and running) and pods are deployed, the run can be stopped by deleting all the pods.
 
 

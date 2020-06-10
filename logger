@@ -1,0 +1,27 @@
+#!/bin/bash
+
+ld="src/logging" # logging dir
+
+catAll(){
+  if [[ -s header ]]; then
+    cat header > logs; echo "" >> logs
+  fi
+  for f in shared dlTest hpcTest footer; do
+    if [[ -s $f ]]; then # cat only the files that contain something
+      cat $f >> logs; echo "" >> logs
+    fi
+  done
+  if  [[ $jenkins != true ]]; then
+    cat logs # only runs this if it's not a jenkins run
+  fi
+}
+export -f catAll
+
+watchFunct(){
+  cd $ld
+  touch logs header shared dlTest hpcTest footer end
+  watch -n 0.1 -t -x bash -c catAll & echo $! > killMe
+  cd ../..
+}
+
+watchFunct
