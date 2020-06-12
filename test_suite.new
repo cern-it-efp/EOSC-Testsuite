@@ -6,6 +6,7 @@ noTerraform=false
 onlyTest=false
 force=false
 noWatch=false
+jenkins=false
 
 rm -f $ld/header $ld/killMe $ld/footer $ld/hpcTest $ld/dlTest $ld/shared $ld/logs $ld/end $ld/ansibleLogs* &> /dev/null
 
