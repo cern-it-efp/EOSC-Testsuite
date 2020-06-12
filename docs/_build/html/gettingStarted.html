@@ -22,11 +22,20 @@
   <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
         <script type="text/javascript" src="_static/jquery.js"></script>
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -97,6 +106,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#ssh-key">1.2 SSH key</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#security-groups">1.3 Security groups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#networking-and-ips">1.4 Networking and IPs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#permissions">1.5 Permissions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#clone-and-prepare">1.5 Clone and prepare</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#cloning-repository">Cloning repository</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a><ul>
@@ -222,7 +232,7 @@ The following python packages are required:</p>
 <h2>1.2 SSH key<a class="headerlink" href="#ssh-key" title="Permalink to this headline">¶</a></h2>
 <p>A ssh key pair is needed to establish connections to the VMs to be created later. Therefore, you must create (or import) this key on your provider, when needed, beforehand.
 Note errors may occur if your key doesn’t have the right permissions. Set these to the right value using the following command:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> chmod <span class="m">600</span> path/to/key
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> chmod <span class="m">600</span> path/to/key
 </pre></div>
 </div>
 </div>
@@ -272,12 +282,17 @@ conflicts when creating the Kubernetes cluster. If one wants to run the Test-Sui
 network the nodes will be connected to, this is a private network. In other words, <strong>a VM will have to be created first manually</strong> and the Test Suite will have to be
 triggered from there. This way all the communications can happen without NAT.</p>
 </div>
+<div class="section" id="permissions">
+<h2>1.5 Permissions<a class="headerlink" href="#permissions" title="Permalink to this headline">¶</a></h2>
+<p>The suite creates files and folders during its run: resource definition files, log and results files and folders, etc.
+Therefore, the user running the suite must have enough permissions to accomplish such tasks.</p>
+</div>
 <div class="section" id="clone-and-prepare">
 <h2>1.5 Clone and prepare<a class="headerlink" href="#clone-and-prepare" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="cloning-repository">
 <h3>Cloning repository<a class="headerlink" href="#cloning-repository" title="Permalink to this headline">¶</a></h3>
 <p>Please clone the repository as follows and cd into it. This step is not needed when using the provided Docker image, the repository is already cloned there.</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> git clone https://github.com/cern-it-efp/EOSC-Testsuite.git
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> git clone https://github.com/cern-it-efp/EOSC-Testsuite.git
 <span class="gp">$</span> <span class="nb">cd</span> EOSC-Testsuite
 </pre></div>
 </div>
@@ -285,10 +300,10 @@ triggered from there. This way all the communications can happen without NAT.</p
 <div class="section" id="configuration">
 <h3>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h3>
 <p>Two YAML files have to be filled to configure the run. Examples of these two files can be found inside the examples folder of the repository.</p>
-<p><code class="docutils literal notranslate"><span class="pre">testsCatalog.yaml</span></code></p>
+<p><code class="docutils literal"><span class="pre">testsCatalog.yaml</span></code></p>
 <p>This file gathers details related to the tests that should be deployed.
 Refer to the section <a class="reference internal" href="testsCatalog.html#tests-catalog"><span class="std std-ref">Test Catalog</span></a> to learn how to fill this file.</p>
-<p><code class="docutils literal notranslate"><span class="pre">configs.yaml</span></code></p>
+<p><code class="docutils literal"><span class="pre">configs.yaml</span></code></p>
 <p>This file gathers general details required to provision the infrastructure.
 The file also contains a section named <em>costCalculation</em>. Refer to the section <a class="reference internal" href="costs.html#cost-of-run-calculation"><span class="std std-ref">Cost of run calculation</span></a> to understand how to fill that part.
 The suite will create itself the Terraform files on the fly according to the configuration provided.</p>
@@ -338,7 +353,7 @@ The suite will create itself the Terraform files on the fly according to the con
 <span id="id1"></span><h2>1.6 Using Docker<a class="headerlink" href="#using-docker" title="Permalink to this headline">¶</a></h2>
 <p>A Docker image has been built and pushed to Docker hub. This image allows you to skip section “Dependencies” and jump to “SSH key”.</p>
 <p>Run the container (pulls the image first):</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> docker run --net<span class="o">=</span>host -it cernefp/tslauncher
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> docker run --net<span class="o">=</span>host -it cernefp/tslauncher
 </pre></div>
 </div>
 <p>Note the option ‘–net=host’. Without it, the container wouldn’t be able to connect to the nodes, as it

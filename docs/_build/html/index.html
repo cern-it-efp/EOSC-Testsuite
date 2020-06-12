@@ -22,11 +22,20 @@
   <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
         <script type="text/javascript" src="_static/jquery.js"></script>
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -209,24 +218,24 @@ This Test-Suite is being used as a validation tool for commercial cloud services
 <div class="section" id="release-notes">
 <h2>Release notes<a class="headerlink" href="#release-notes" title="Permalink to this headline">¶</a></h2>
 <p>(Note the versions are numbered with the date of the release: YEAR.MONTH)</p>
-<p><code class="docutils literal notranslate"><span class="pre">20.7</span> <span class="pre">-</span> <span class="pre">latest</span></code></p>
+<p><code class="docutils literal"><span class="pre">20.7</span> <span class="pre">-</span> <span class="pre">latest</span></code></p>
 <p>-Cluster certificate additionally signed for NAT IP, no need to use bastion method as with this solution the cluster can be reached from outside of the provider network.
 However, previous allocation of floating IPs is now required.</p>
-<p><code class="docutils literal notranslate"><span class="pre">20.6</span></code></p>
+<p><code class="docutils literal"><span class="pre">20.6</span></code></p>
 <p>-Improved support for running on Oracle Cloud Infrastructure and T-Systems’ OTC.</p>
 <p>-Added option –customNodes to set the number of instances that should be deployed for the shared cluster.</p>
 <p>-Using Terraform’s yamldecode with configs.yaml for variables instead of Python’s replace function with placeholders.</p>
 <p>-Disabled general Terraform support: only the providers and clouds that support Terraform and are present on the table above are fully supported by this suite. To run on another provider (supporting Terraform or not), the option ‘–noTerraform’ has to be used.</p>
-<p><code class="docutils literal notranslate"><span class="pre">20.2</span></code></p>
+<p><code class="docutils literal"><span class="pre">20.2</span></code></p>
 <p>-Using Ansible for VM configuration instead of Terraform’s provisioners.</p>
 <p>-Added support for non-Terraform providers (only bootstrap phase).</p>
 <p>-Added options to destroy provisioned infrastructure.</p>
 <p>-Added options to specify custom paths to configs.yaml and testsCatalog.yaml.</p>
 <p>-Added support to use Ubuntu on VMs.</p>
-<p><code class="docutils literal notranslate"><span class="pre">19.12</span></code></p>
+<p><code class="docutils literal"><span class="pre">19.12</span></code></p>
 <p>-Project restructured.</p>
 <p>-Improved support for running on Google, AWS, Azure, Exoscale, OpenStack and CloudStack.</p>
-<p><code class="docutils literal notranslate"><span class="pre">19.8</span></code></p>
+<p><code class="docutils literal"><span class="pre">19.8</span></code></p>
 <p>-Parallel creation of clusters, with different flavors according to tests needs.</p>
 <p>-New logging system to keep parallel running tests logs sorted.</p>
 <p>-Restructured configuration: moved configuration files to <em>/configurations</em> and created new files taking HCL code (terraform configuration code) to keep <em>configs.yaml</em> clean.</p>
@@ -236,9 +245,9 @@ However, previous allocation of floating IPs is now required.</p>
 <p>-New test: Dynamic On Demand Analysis Service, provided by INFN.</p>
 <p>-Added configurations validation with jsonschema.</p>
 <p>-Created Docker image to run a Test-Suite launcher container: rapidly creates a ready to use Test-Suite launcher.</p>
-<p><code class="docutils literal notranslate"><span class="pre">19.4</span></code></p>
+<p><code class="docutils literal"><span class="pre">19.4</span></code></p>
 <p>-New tests: perfsonar and cpu-benchmarking</p>
-<p><code class="docutils literal notranslate"><span class="pre">19.2</span></code></p>
+<p><code class="docutils literal"><span class="pre">19.2</span></code></p>
 <p>-First release.</p>
 </div>
 <div class="section" id="contact">

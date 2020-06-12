@@ -22,11 +22,20 @@
   <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'../',
+              VERSION:'',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
         <script type="text/javascript" src="../_static/jquery.js"></script>
         <script type="text/javascript" src="../_static/underscore.js"></script>
         <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -91,6 +100,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../gettingStarted.html#ssh-key">1.2 SSH key</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../gettingStarted.html#security-groups">1.3 Security groups</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../gettingStarted.html#networking-and-ips">1.4 Networking and IPs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gettingStarted.html#permissions">1.5 Permissions</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../gettingStarted.html#clone-and-prepare">1.5 Clone and prepare</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="../gettingStarted.html#cloning-repository">Cloning repository</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="../gettingStarted.html#configuration">Configuration</a><ul class="current">
@@ -216,7 +226,7 @@
 </tbody>
 </table>
 <p>CloudStack credentials file’s structure:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">[cloudstack]</span>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="go">[cloudstack]</span>
 <span class="go">url = your_api_url</span>
 <span class="go">apikey = your_api_key</span>
 <span class="go">secretkey = your_secret_key</span>

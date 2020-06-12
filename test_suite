@@ -2,42 +2,17 @@
 
 ld="src/logging" # logging dir
 
-noTerraform=false
-onlyTest=false
-force=false
-noWatch=false
+noTerraform=0
+onlyTest=0
+noWatch=0
 
 rm -f $ld/header $ld/killMe $ld/footer $ld/hpcTest $ld/dlTest $ld/shared $ld/logs $ld/end $ld/ansibleLogs* &> /dev/null
 
-opts=""
-while [[ "$1" != "" ]]; do
-  if [[ "$1" == '--noWatch' ]]; then
-    noWatch=true
-    shift
-  elif [[ "$1" == '--destroy' ]]; then
-    python3 -B -u src/main.py $1 $2
-    outStat=$?
-    exit $outStat
-  elif [[ "$1" == '--force' ]]; then
-    force=true
-    shift
-  else
-    opts+=" "$1
-    if [[ "$1" == '--no-terraform' ]]; then
-      noTerraform=true
-      shift
-    elif [[ "$1" == '--only-test' ]]; then
-      onlyTest=true
-      shift
-    fi
-    shift
-  fi
-done
 
 prompt(){
-  if [[ $noTerraform = false &&
-        $onlyTest = false &&
-        $force = false && (
+  if [[ $noTerraform -eq 0 &&
+        $onlyTest -eq 0 &&
+        $force -eq 0 && ( # TODO: -y
         -f src/tests/dlTest/main.tf ||
         -f src/tests/hpcTest/main.tf ||
         -f src/tests/shared/main.tf) ]]; then
@@ -58,11 +33,7 @@ catAll(){
       cat $f >> logs; echo "" >> logs
     fi
   done
-  echo $noWatch
-  #if  [[ $noWatch = false ]]; then # TODO: this fails
-  #if  [[ $noWatch != true ]]; then # works
-  #if  [[ $noWatch == false ]]; then # TODO: this fails
-  if  [[ $noWatch=false ]]; then # works
+  if [[ $noWatch -eq 0 ]]; then
     cat logs # only runs this if it's not a noWatch run
   fi
 }
@@ -71,7 +42,7 @@ export -f catAll
 watchFunct(){
   cd $ld # all the following happens inside ./src/logging
   touch logs header shared dlTest hpcTest footer end
-  if  [[ $noWatch = true ]]; then
+  if  [[ $noWatch -eq 1 ]]; then
     echo "Logs in file $(pwd)/logs"
     while true; do catAll; sleep 2; done & echo $! > killMe
   else
@@ -81,23 +52,59 @@ watchFunct(){
 }
 
 
+############# OPTIONS #############################################
+opts=""
+while [[ "$1" != "" ]]; do
 
-############# TEST SUITE RUN #############
+  if [[ "$1" == '--noWatch' ]]; then
+    noWatch=1
+    shift
+
+  elif [[ "$1" == '--destroy' ]]; then
+    python3 -B -u src/main.py $1 $2
+    outStat=$?
+    exit $outStat
+
+  else
+    opts+=" "$1
+    if [[ "$1" == '--no-terraform' ]]; then
+      noTerraform=1
+      shift
+    elif [[ "$1" == '--only-test' ]]; then
+      onlyTest=1
+      shift
+    fi
+    shift
+  fi
+
+done
+###################################################################
+
+
+
+############# TEST SUITE RUN ######################################
 #prompt
 watchFunct &
 python3 -B -u src/main.py $opts &> logs
 outStat=$?
-##########################################
+###################################################################
 
-#TS run complete, kill logger and cat logs to main terminal:
+
+
+##### RUN COMPLETE: kill logger and cat logs to main terminal #####
 kill $(cat $ld/killMe)
 sleep 1
 if [[ -s $ld/end ]]; then
   cat $ld/end >> $ld/logs
 fi
 cat $ld/logs
+###################################################################
 
-if [[ $outStat != 0 ]]; then
+
+
+##### In case of errors, cat 'logs' too ###########################
+if [[ $outStat -ne 0 ]]; then # i.e bad options
   cat logs
   exit $outStat
 fi
+###################################################################
