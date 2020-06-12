@@ -92,6 +92,11 @@ conflicts when creating the Kubernetes cluster. If one wants to run the Test-Sui
 network the nodes will be connected to, this is a private network. In other words, **a VM will have to be created first manually** and the Test Suite will have to be
 triggered from there. This way all the communications can happen without NAT.
 
+1.5 Permissions
+==========================================
+The suite creates files and folders during its run: resource definition files, log and results files and folders, etc.
+Therefore, the user running the suite must have enough permissions to accomplish such tasks.
+
 1.5 Clone and prepare
 ==========================================
 Cloning repository

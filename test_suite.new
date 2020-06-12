@@ -61,7 +61,7 @@ catAll(){
     fi
   done
 
-  if  [[ $noWatch = false ]]; then
+  if  [[ $noWatch=false ]]; then
     cat logs # only runs this if it's a normal watch run
   fi
 }
