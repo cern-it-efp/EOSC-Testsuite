@@ -20,7 +20,8 @@ def sharedClusterTests(msgArr,
                        retry,
                        noTerraform,
                        resDir,
-                       numberOfNodes):
+                       numberOfNodes,
+                       usePrivateIPs):
     """ Runs the test that share the general purpose cluster.
 
     Parameters:
@@ -31,6 +32,7 @@ def sharedClusterTests(msgArr,
         noTerraform (bool): Specifies whether current run uses terraform.
         resDir (str): Path to the results folder for the current run.
         numberOfNodes (int): Number of nodes to provision.
+        usePrivateIPs (bool): Indicates usage of private or public IPs.
 
     Returns:
         None: In case of errors the function stops (returns None)
@@ -61,7 +63,8 @@ def sharedClusterTests(msgArr,
                                           dependencies,
                                           baseCWD,
                                           extraSupportedClouds,
-                                          noTerraform)
+                                          noTerraform,
+                                          usePrivateIPs)
         if prov is False:
             toPut = {"test": "shared", "deployed": False}
             if "provision" in msg:
@@ -334,7 +337,7 @@ def dodasTest(resDir):
             cmd=cmd)
 
 
-def dlTest(onlyTest, retry, noTerraform, resDir):
+def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
     """ Run Deep Learning test -GAN training- on GPU nodes.
 
     Parameters:
@@ -342,6 +345,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir):
         retry (bool): If true, try to reuse existing infrastructure.
         noTerraform (bool): Specifies whether current run uses terraform.
         resDir (str): Path to the results folder for the current run.
+        usePrivateIPs (bool): Indicates usage of private or public IPs.
 
     Returns:
         None: In case of errors the function stops (returns None)
@@ -373,7 +377,8 @@ def dlTest(onlyTest, retry, noTerraform, resDir):
                                           dependencies,
                                           baseCWD,
                                           extraSupportedClouds,
-                                          noTerraform)
+                                          noTerraform,
+                                          usePrivateIPs)
         if prov is False:
             toPut = {"test": "dlTest", "deployed": res}
             if "provision" in msg:
@@ -484,7 +489,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir):
     init.queue.put(({"test": "dlTest", "deployed": res}, testCost))
 
 
-def hpcTest(onlyTest, retry, noTerraform, resDir):
+def hpcTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
     """ HPC test.
 
     Parameters:
@@ -492,6 +497,7 @@ def hpcTest(onlyTest, retry, noTerraform, resDir):
         retry (bool): If true, try to reuse existing infrastructure.
         noTerraform (bool): Specifies whether current run uses terraform.
         resDir (str): Path to the results folder for the current run.
+        usePrivateIPs (bool): Indicates usage of private or public IPs.
 
     Returns:
         None: In case of errors the function stops (returns None)
@@ -522,7 +528,8 @@ def hpcTest(onlyTest, retry, noTerraform, resDir):
                                           dependencies,
                                           baseCWD,
                                           extraSupportedClouds,
-                                          noTerraform)
+                                          noTerraform,
+                                          usePrivateIPs)
         if prov is False:
             toPut = {"test": "hpcTest", "deployed": res}
             if "provision" in msg:

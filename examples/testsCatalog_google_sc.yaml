@@ -1,0 +1,22 @@
+s3Test:
+  run: true
+  endpoint: https://s3.com
+  accessKey: 1234abc
+  secretKey: 1234abc
+dataRepatriationTest:
+  run: true
+cpuBenchmarking:
+  run: true
+perfsonarTest:
+  run: true
+  endpoint: psb01-gva.cern.ch
+dodasTest:
+  run: true
+dlTest:
+  run: 
+  nodes: 4
+  flavor: "n1-standard-2"
+hpcTest:
+  run:
+  nodes: 4
+  flavor: "n1-standard-2"

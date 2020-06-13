@@ -13,7 +13,6 @@ try:
     from ansible.cli import CLI
     from ansible.executor.playbook_executor import PlaybookExecutor
     from configparser import ConfigParser
-    import threading
     from multiprocessing import Process, Queue
     import contextlib
     import io
@@ -29,6 +28,7 @@ def createHostsFile(mainTfDir,
                     provider,
                     destination,
                     configs,
+                    usePrivateIPs,
                     noTerraform=None,
                     test=None):
     """Creates the hosts file required by ansible. Note destination contains
@@ -40,6 +40,7 @@ def createHostsFile(mainTfDir,
         provider (str): Provider name.
         destination (str): Destination of hosts file.
         configs (dict): Content of configs.yaml.
+        usePrivateIPs (bool): Indicates whether private IPs should be used.
         noTerraform (bool): Specifies whether current run uses terraform.
         test (str): Cluster identification.
     """
@@ -55,8 +56,12 @@ def createHostsFile(mainTfDir,
         os.chdir(baseCWD)
 
         for resource in resources:
-            #ip = getIP(resource, provider, public=True) # no bastion method
-            ip = getIP(resource, provider)
+
+            if usePrivateIPs is True:
+                ip = getIP(resource, provider)
+            else:
+                ip = getIP(resource, provider, public=True) # no bastion method
+
             if ip is not None:
                 IPs.append(ip)
     else:
@@ -78,7 +83,8 @@ def ansiblePlaybook(mainTfDir,
                     kubeconfig,
                     noTerraform,
                     test,
-                    configs):
+                    configs,
+                    usePrivateIPs):
     """Runs ansible-playbook with the given playbook.
 
     Parameters:
@@ -89,6 +95,7 @@ def ansiblePlaybook(mainTfDir,
         noTerraform (bool): Specifies whether current run uses terraform.
         test (str): Cluster identification.
         configs (dict): Content of configs.yaml.
+        usePrivateIPs (bool): Indicates whether private IPs should be used.
 
     Returns:
         int: 0 for success, 1 for failure
@@ -104,6 +111,7 @@ def ansiblePlaybook(mainTfDir,
                     providerName,
                     hostsFilePath,
                     configs,
+                    usePrivateIPs,
                     noTerraform=noTerraform,
                     test=test)
 

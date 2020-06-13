@@ -337,27 +337,51 @@ def getIP(resource, provider, public=False):
         str: Resource's IP address.
     """
 
+    # TODO: should check the resource type. See bastion_create.py's getIP function (note there the check is done because getIP get's the full set of
+    #    resources, while here it gets one at a time, so eiher it has an IP or not. In the other case, if during the iteration, a resource does not have the ip, the
+    #     function will return None and will not check the remaining resources.
+    # TODO: this assumes a single network interface in some cases (gcp, openstack)
+
     try:
         if provider == "aws":
             if public is True:
                 return resource["values"]["public_ip"]
             return resource["values"]["private_ip"]
-        elif provider == "openstack":
-            return resource["values"]["network"][0]["fixed_ip_v4"]
+
         elif provider == "google":
+            if public is True:
+                return resource["values"]["network_interface"][0]["access_config"][0]["nat_ip"]
             return resource["values"]["network_interface"][0]["network_ip"]
+
+        elif provider == "openstack":
+            if public is True:
+                return resource["values"]["floating_ip"] # type: openstack_compute_floatingip_associate_v2
+            return resource["values"]["network"][0]["fixed_ip_v4"]
+
         elif provider == "opentelekomcloud":
+            if public is True:
+                return resource["values"]["floating_ip"] # type: opentelekomcloud_compute_floatingip_associate_v2
             return resource["values"]["access_ip_v4"]
+
+        # ---
+
+        elif provider == "azurerm":
+            if public is True:
+                return resource["values"]["ip_address"] # type: azurerm_public_ip
+            return resource["values"]["private_ip_address"]
+
+        elif provider == "oci":
+            if public is True:
+                return resource["values"]["public_ip"]
+            return resource["values"]["private_ip"]
+
         elif provider == "exoscale" or provider == "cloudstack":
             if public is True:
                 return resource["values"]["ip_address"]
             return resource["values"]["ip_address"]
-        elif provider == "azurerm":
-            return resource["values"]["private_ip_address"]
-        elif provider == "oci":
-            return resource["values"]["private_ip"]
+
     except KeyError:
-        return None
+        return None # no IP was found for the given resource
 
 
 def groupReplace(input,substitution,output):

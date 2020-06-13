@@ -30,6 +30,7 @@ noTerraform = False
 testsCatalog = ""
 cfgPathCLI = None
 tcPathCLI = None
+usePrivateIPs = False
 instanceDefinition = ""
 extraInstanceConfig = ""
 dependencies = ""
@@ -61,12 +62,12 @@ def header(noLogo=False, provider=None, results=None):
                 showThis = ["EOSC Cloud Validation Test Suite",
                     "Developed by CERN IT-EFP (ignacio.peluaga.lozada@cern.ch)",
                     ".........................................................",
-                            "Provider: %s" % provider]
+                            "Cloud: %s" % provider]
             else:
                 showThis = ["EOSC Cloud Validation Test Suite",
                     "Developed by CERN IT-EFP (ignacio.peluaga.lozada@cern.ch)",
                     ".........................................................",
-                    "Provider: %s" % provider,
+                    "Cloud: %s" % provider,
                     "Results: results/%s" % results]
         else:
             showThis = ["EOSC Cloud Validation Test Suite",
@@ -84,13 +85,13 @@ def header(noLogo=False, provider=None, results=None):
                 "█▀▀ █▀▀█ █▀▀ █▀▀ | Developed by CERN IT-EFP",
                 "█▀▀ █  █  ▀▄ █   | Contact: ignacio.peluaga.lozada@cern.ch",
                 "▀▀▀ ▀▀▀▀ ▀▀▀ ▀▀▀ | ..........................................",
-                "  eosc-portal.eu | Provider: %s" % provider]
+                "  eosc-portal.eu | Cloud: %s" % provider]
             else:
                 showThis = ["                 | Cloud Validation Test Suite",
                 "█▀▀ █▀▀█ █▀▀ █▀▀ | Developed by CERN IT-EFP",
                 "█▀▀ █  █  ▀▄ █   | Contact: ignacio.peluaga.lozada@cern.ch",
                 "▀▀▀ ▀▀▀▀ ▀▀▀ ▀▀▀ | ..........................................",
-                "  eosc-portal.eu | Provider: %s" % provider,
+                "  eosc-portal.eu | Cloud: %s" % provider,
                 "                 | Results: results/%s" % results]
         else:
             showThis = ["                 | Cloud Validation Test Suite",
@@ -120,6 +121,9 @@ parser.add_argument('-y',
                     action='store_false',
                     dest="interactive")
 parser.add_argument('-o','--onlyTest',
+                    help='Only test run.',
+                    action='store_true')
+parser.add_argument('--usePrivateIPs',
                     help='Only test run.',
                     action='store_true')
 parser.add_argument('--noTerraform',
@@ -165,6 +169,8 @@ if args.interactive:
     interactive = args.interactive # disables prompts of overriding tf files and deleting infrastructure
 if args.onlyTest:
     onlyTest = args.onlyTest
+if args.usePrivateIPs:
+    usePrivateIPs = args.usePrivateIPs
 if args.customNodes:
     customNodes = args.customNodes
 if args.noTerraform:
@@ -238,7 +244,7 @@ if len(msgArr) > 1:
     else:
         numberOfNodes = len(msgArr) - 1
     p = Process(target=sharedClusterTests, args=( # shared cluster provisioning
-        msgArr, onlyTest, retry, noTerraform, resDir, numberOfNodes))
+        msgArr, onlyTest, retry, noTerraform, resDir, numberOfNodes, usePrivateIPs))
     procs.append(p)
     p.start()
     cluster += 1
@@ -248,7 +254,7 @@ for test in customClustersTests:
         logger("CLUSTER %s: %s" % (cluster, test),
                "=", "src/logging/%s" % test)
         p = Process(target=eval(test), args=( # custom clusters provisioning
-            onlyTest, retry, noTerraform, resDir))
+            onlyTest, retry, noTerraform, resDir, usePrivateIPs))
         procs.append(p)
         p.start()
         cluster += 1
@@ -305,6 +311,9 @@ if checkResultsExist(resDir) is True:
                 else:
                     msg = "   ...cluster destroyed"
                 writeToFile("src/logging/footer", msg, True)
+    else:
+        writeToFile("src/logging/footer", "No destroy scheduled", True)
+
 else:
 
     # logo with provider, no results

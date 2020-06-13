@@ -1,14 +1,14 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
 providerName: "google"
-pathToKey: "/root/.ssh/id_rsa"
+pathToKey: "/home/ipelu/.ssh/id_rsa"
 openUser: openu
 flavor: "n1-standard-2"
 zone: "us-west1-a"
 image: "centos-cloud/centos-7"
-pathToCredentials: "/gcp.json"
+pathToCredentials: "/home/ipelu/Desktop/.gcp.json"
 project: "ocrets"
 gpuType: "nvidia-tesla-p100"
-storageCapacity: 21
+storageCapacity: 50
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:

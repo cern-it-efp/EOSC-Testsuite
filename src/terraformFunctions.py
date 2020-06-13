@@ -5,7 +5,6 @@ try:
     import os
     import time
     import string
-    import threading
     from multiprocessing import Process, Queue
     import contextlib
     import io
