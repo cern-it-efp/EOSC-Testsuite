@@ -313,7 +313,6 @@ def terraformProvisionment(
             if configs["providerName"] == "google":
 
                 pathToPubKey = tryTakeFromYaml(configs,"pathToPubKey",None)
-
                 if pathToPubKey is None:
                     terraform_cli_vars["gcp_keyAsMetadata"] = "UseProjectWideKey!"
                 else:
