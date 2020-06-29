@@ -8,13 +8,6 @@ resource "google_compute_instance" "kubenode" {
   machine_type = var.flavor
   name         = "${var.instanceName}-${count.index}"
   zone         = yamldecode(file(var.configsFile))["zone"]
-
-  metadata = {
-    #ssh-keys = "${yamldecode(file(var.configsFile))["openUser"]}:${file(var.pathToPubKey)}" # WORKS: takes configs' pub. key
-    #ssh-keys = "foobar" # WORKS: takes project-wide keys
-    ssh-keys = var.gcp_keyAsMetadata # WORKS: dynamically done on python level
-  }
-
   boot_disk {
     initialize_params {
       image = yamldecode(file(var.configsFile))["image"]

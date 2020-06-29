@@ -35,6 +35,8 @@ properties:
         type: number
     gpuType:
         type: string
+    pathToPubKey:
+        type: string
     costCalculation:
         type:
             - object

@@ -225,7 +225,7 @@ def terraformProvisionment(
 
     mainTfDir = testsRoot + test
     terraform_cli_vars = {}
-    cfgPath = "%s/%s" % (baseCWD, cfgPath)
+    #cfgPath = "%s/%s" % (baseCWD, cfgPath) # TODO: with this, files inside EOSC-Testsuite are reachable w/o the absolute path but fails for files outside of it. W/o it, only absolute paths are allowed
     kubeconfig = "%s/src/tests/%s/config" % (baseCWD, test)
 
     if retry is None:
@@ -311,6 +311,13 @@ def terraformProvisionment(
                                                             None)
 
             if configs["providerName"] == "google":
+
+                pathToPubKey = tryTakeFromYaml(configs,"pathToPubKey",None)
+
+                if pathToPubKey is None:
+                    terraform_cli_vars["gcp_keyAsMetadata"] = "UseProjectWideKey!"
+                else:
+                    terraform_cli_vars["gcp_keyAsMetadata"] = "%s:%s" % (configs["openUser"],loadFile(pathToPubKey))
 
                 if test == "dlTest":
                     terraform_cli_vars["gpuCount"] = nodes
