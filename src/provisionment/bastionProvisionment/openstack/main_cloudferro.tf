@@ -1,5 +1,5 @@
 variable "ip" {
-  default = "45.130.30.9"
+  default = "45.130.31.186"
 }
 variable "openUser" {
   default = "eouser"

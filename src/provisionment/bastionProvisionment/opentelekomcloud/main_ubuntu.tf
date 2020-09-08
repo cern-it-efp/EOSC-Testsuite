@@ -1,11 +1,14 @@
-variable "networkID" {
-  default = "2593d7a9-0ecd-4a19-b4bc-65ca2c62e1c7"
+#variable "networkID" {
+#  default = "2593d7a9-0ecd-4a19-b4bc-65ca2c62e1c7"
+#}
+variable "availabilityZone" {
+  default = "eu-de-01"
 }
 variable "networkName" {
   default = "vpc-default"
 }
 variable "public_ip" {
-  default = "80.158.52.143"
+  default = "80.158.34.80"
 }
 variable "openUser" {
   default = "ubuntu"
@@ -24,10 +27,10 @@ variable "imageID" {
   default = "1616e0b6-503a-4698-946f-cf9942c4c73b" # Standard_Ubuntu_18.04_latest
 }
 variable "secGroups" {
-  default = ["default"]
+  default = ["default","Sys-FullAccess"]
 }
 variable "authFile" {
-  default = "~/Desktop/tsk.yaml"
+  default = "/tsk.yaml"
 }
 # ------------------------------------------------------------------------------
 variable "domain_name" {
@@ -49,10 +52,11 @@ resource "opentelekomcloud_compute_instance_v2" "tslauncher" {
   name = "tslauncher"
   flavor_name = var.flavor
   key_pair = var.keyPair
-  #security_groups = var.secGroups
-  network { # requires the ID as 'name'
-    name = var.networkID # var.networkName
-  }
+  security_groups = var.secGroups
+  availability_zone = var.availabilityZone
+  #network { # requires the ID as 'name'
+  #  name = var.networkID # var.networkName
+  #}
   block_device {
     uuid                  = var.imageID
     source_type           = "image"

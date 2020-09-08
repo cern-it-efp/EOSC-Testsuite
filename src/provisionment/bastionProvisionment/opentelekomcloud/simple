@@ -1,6 +1,9 @@
-variable "networkID" {
-  default = "2593d7a9-0ecd-4a19-b4bc-65ca2c62e1c7"
+variable "public_ip" {
+  default = "80.158.34.80"
 }
+#variable "networkID" {
+#  default = "2593d7a9-0ecd-4a19-b4bc-65ca2c62e1c7"
+#}
 variable "networkName" {
   default = "vpc-default"
 }
@@ -23,7 +26,7 @@ variable "secGroups" {
   default = ["default"]
 }
 variable "authFile" {
-  default = "~/Desktop/tsk.yaml"
+  default = "/tsk.yaml"
 }
 # ------------------------------------------------------------------------------
 variable "domain_name" {
@@ -45,9 +48,9 @@ resource "opentelekomcloud_compute_instance_v2" "tslauncher" {
   name = "tslauncher"
   flavor_name = var.flavor
   key_pair = var.keyPair
-  network { # requires the ID as 'name'
-    name = var.networkID # var.networkName
-  }
+  #network { # requires the ID as 'name'
+  #  name = var.networkID # var.networkName
+  #}
   block_device {
     uuid                  = var.imageID
     source_type           = "image"

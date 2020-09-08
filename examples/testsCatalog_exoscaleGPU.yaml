@@ -1,6 +1,6 @@
 s3Test:
   run:
-  endpoint: https://s3.com
+  endpoint: https://s3.amazonaws.com
   accessKey: asdfasd
   secretKey: dsfadsf
 dataRepatriationTest:
@@ -14,9 +14,9 @@ dodasTest:
   run:
 dlTest:
   run: true
-  nodes: 2 # default quota is 10
-  flavor: "p2.2xlarge.8"
+  nodes: 3
+  flavor: "GPU-small"
 hpcTest:
   run:
   nodes: 2
-  flavor: "s2.medium.2"
+  flavor: "Large"

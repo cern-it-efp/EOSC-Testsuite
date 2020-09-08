@@ -124,7 +124,7 @@ parser.add_argument('-o','--onlyTest',
                     help='Only test run.',
                     action='store_true')
 parser.add_argument('--usePrivateIPs',
-                    help='Only test run.',
+                    help='Use private IPs.',
                     action='store_true')
 parser.add_argument('--noTerraform',
                     help='Skip Terraform, run only Ansible.',

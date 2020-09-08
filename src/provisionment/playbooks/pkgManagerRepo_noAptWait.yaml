@@ -12,17 +12,10 @@
   - name: disable SELinux on reboot
     selinux:
       state: disabled
-
-  - name: Waiting for APT to be ready... # Fix https://github.com/ansible/ansible/issues/51663
-    shell: while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 1; done;
-    
   - name: Install Docker dependencies
     package:
       name: yum-utils,lvm2,device-mapper-persistent-data
       state: latest
-
-- name: Waiting for APT to be ready... # Fix https://github.com/ansible/ansible/issues/51663
-  shell: while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 1; done;
 
 - name: Package manager repositories
   #no_log: yes
@@ -31,9 +24,6 @@
       get_url:
         url: https://download.docker.com/linux/centos/docker-ce.repo
         dest: /etc/yum.repos.d/docer-ce.repo
-
-    - name: Waiting for APT to be ready... # Fix https://github.com/ansible/ansible/issues/51663
-      shell: while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 1; done;
 
     - name: Add Kubernetes repo (YUM)
       yum_repository:
@@ -48,15 +38,9 @@
         url: https://download.docker.com/linux/ubuntu/gpg
         validate_certs: no # w/a to fix error on cloudsigma's ubuntu 18
 
-    - name: Waiting for APT to be ready... # Fix https://github.com/ansible/ansible/issues/51663
-      shell: while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 1; done;
-
     - name: Add Docker repo (APT)
       apt_repository:
         repo: deb [arch=amd64] https://download.docker.com/linux/{{ansible_distribution|lower}} {{ansible_distribution_release}} stable
-
-    - name: Waiting for APT to be ready... # Fix https://github.com/ansible/ansible/issues/51663
-      shell: while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 1; done;
 
     - name: Add Kubernetes apt-key for repo (APT)
       apt_key:
@@ -64,17 +48,11 @@
         validate_certs: no # w/a to fix error on cloudsigma's ubuntu 18
         state: present
 
-    - name: Waiting for APT to be ready... # Fix https://github.com/ansible/ansible/issues/51663
-      shell: while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 1; done;
-
     - name: Add Kubernetes repo (APT)
       apt_repository:
         repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
         state: present
         filename: 'kubernetes'
-
-    - name: Waiting for APT to be ready... # Fix https://github.com/ansible/ansible/issues/51663
-      shell: while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 1; done;
 
     - name: Waiting for APT to be ready...
       shell: while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 1; done;

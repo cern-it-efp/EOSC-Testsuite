@@ -1,3 +1,6 @@
+*.terraform*
+*terraform.tfstate*
+
 src/provisionment/bastionProvisionment/*/.terraform*
 src/provisionment/bastionProvisionment/*/terraform.tfstate*
 
@@ -26,3 +29,5 @@ src/__pycache__
 src/tests/hpcTest/hosts
 src/tests/dlTest/hosts
 src/tests/hpcTest/hosts
+
+*versions.tf*

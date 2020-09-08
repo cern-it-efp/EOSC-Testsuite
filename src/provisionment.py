@@ -114,7 +114,7 @@ def provisionAndBootstrap(test,
 
     if kubectlCLI('get sa default',
                   kubeconfig=kubeconfig,
-                  options='--request-timeout=20m') == 0:
+                  options='--request-timeout=20m') == 0: # TODO: on GCP for hpcTest fails always but does not reach the time out. Shared works always tho. Re-running with -o shows no TOserviceAccountMsg
         writeToFile(toLog, clusterCreatedMsg % (test, masterIP), True)
         return True, ""
     return False, TOserviceAccountMsg % test

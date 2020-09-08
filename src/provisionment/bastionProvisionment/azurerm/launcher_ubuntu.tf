@@ -1,3 +1,6 @@
+variable "res_group_name" {
+  default = "efp"
+}
 variable "openUser" {
   default = "uroot"
 }
@@ -6,7 +9,7 @@ variable "ssh_private_key_path" {
 }
 
 provider "azurerm" {
-  subscription_id = "54f623f0-8c18-40dd-9530-d32d2f1ee14f"
+  subscription_id = "e53421f6-39d4-43d7-8ae4-3c80af669e2d" # 54f623f0-8c18-40dd-9530-d32d2f1ee14f
   features {}
 }
 
@@ -15,13 +18,13 @@ resource "azurerm_virtual_network" "myterraformnetwork" {
   name                = "myVnet"
   address_space       = ["10.0.0.0/16"]
   location            = "West Europe"
-  resource_group_name = "efprg"
+  resource_group_name = var.res_group_name
 }
 
 # Create subnet (This can actually be done IN ADVANCE)
 resource "azurerm_subnet" "myterraformsubnet" {
   name                 = "mySubnet"
-  resource_group_name  = "efprg"
+  resource_group_name  = var.res_group_name
   virtual_network_name = azurerm_virtual_network.myterraformnetwork.name
   address_prefix       = "10.0.1.0/24"
 }
@@ -30,7 +33,7 @@ resource "azurerm_subnet" "myterraformsubnet" {
 resource "azurerm_public_ip" "myterraformpublicip" {
   name                = "myPublicIP"
   location            = "West Europe"
-  resource_group_name = "efprg"
+  resource_group_name = var.res_group_name
   allocation_method   = "Dynamic"
 }
 
@@ -38,7 +41,7 @@ resource "azurerm_public_ip" "myterraformpublicip" {
 resource "azurerm_network_interface" "terraformnic" {
   name                      = "myNIC"
   location                  = "West Europe"
-  resource_group_name       = "efprg"
+  resource_group_name       = var.res_group_name
 
   ip_configuration {
     name                          = "myNicConfiguration"
@@ -54,7 +57,7 @@ resource "azurerm_virtual_machine" "main" {
   name                  = "tslauncher"
   location              = "West Europe"
   vm_size               = "Standard_D2s_v3"
-  resource_group_name   = "efprg"
+  resource_group_name   = var.res_group_name
   network_interface_ids = [azurerm_network_interface.terraformnic.id]
   delete_os_disk_on_termination = true
 

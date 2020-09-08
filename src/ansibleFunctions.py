@@ -148,10 +148,16 @@ def ansiblePlaybook(mainTfDir,
         p = Process(target=subprocPrint, args=(test,))
         p.start()
 
-    with open(ansibleLogs % test, 'a') as f:
+    with open(ansibleLogs % test, 'a') as f: # from now on, logs go to ansibleLogs
         with contextlib.redirect_stdout(f):
             with contextlib.redirect_stderr(f):
-                res = PlaybookExecutor(playbooks=[playbookPath],
+
+                # --------------- GPU support: This assumes drivers are installed
+                playbooksArray = [playbookPath]
+                if test == "dlTest":
+                    playbooksArray.append("src/provisionment/playbooks/gpuSupport.yaml")
+
+                res = PlaybookExecutor(playbooks=playbooksArray,
                                        inventory=inventory,
                                        variable_manager=variable_manager,
                                        loader=loader,
