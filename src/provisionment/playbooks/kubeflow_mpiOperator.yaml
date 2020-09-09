@@ -1,6 +1,6 @@
 # ------------------------------------ Nvidia Docker stuff (required for GPU k8s support)
-- name: Transfer and run nvidiaDocker script.
-  hosts: all
+- name: Install kubeflow and deploy MPI Operator
+  hosts: master
   become: yes
   tasks:
      - name: Transfer the script

@@ -9,13 +9,12 @@
        command: sh /tmp/nvidiaDocker.sh
 
 # ------------------------------------ Kubernetes GPU support
-- name: Kubernetes GPU support
-  hosts: master
+- hosts: master
   become: yes
   tasks:
      - name: Deploy NVIDIA device plugin
        shell: kubectl apply -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.6.0/nvidia-device-plugin.yml
-  register: device_plugin
-  until: device_plugin.rc == 0
-  retries: 10
-  delay: 3
+       register: device_plugin
+       until: device_plugin.rc == 0
+       retries: 10
+       delay: 3
