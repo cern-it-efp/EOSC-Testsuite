@@ -1,5 +1,5 @@
 # ------------------------------------ Nvidia Docker stuff (required for GPU k8s support)
-- name: Transfer and run nvidiaDocker script.
+- name: Transfer and run nvidiaDocker script
   hosts: all
   become: yes
   tasks:
@@ -13,5 +13,9 @@
   hosts: master
   become: yes
   tasks:
-     - name: install Pod network
+     - name: Deploy NVIDIA device plugin
        shell: kubectl apply -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.6.0/nvidia-device-plugin.yml
+  register: device_plugin
+  until: device_plugin.rc == 0
+  retries: 10
+  delay: 3
