@@ -430,7 +430,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
                 "src/logging/dlTest")
             return
     kubectl(Action.create, kubeconfig, file=testsRoot +
-            "dlTest/device_plugin.yaml", ignoreErr=True)
+            "dlTest/device_plugin.yaml", ignoreErr=True) # TODO: not needed, done at ansibleFunctions.py
     kubectl(Action.create, kubeconfig, file=testsRoot +
             "dlTest/pv-volume.yaml", ignoreErr=True)
     kubectl(Action.create, kubeconfig, file=testsRoot +

@@ -152,10 +152,11 @@ def ansiblePlaybook(mainTfDir,
         with contextlib.redirect_stdout(f):
             with contextlib.redirect_stderr(f):
 
-                # --------------- GPU support: This assumes drivers are installed
+                # --------------- GPU support # TODO, document: This assumes drivers are installed, i.e nvidia-smi works
                 playbooksArray = [playbookPath]
                 if test == "dlTest":
                     playbooksArray.append("src/provisionment/playbooks/gpuSupport.yaml")
+                    playbooksArray.append("src/provisionment/playbooks/kubeflow_mpiOperator.yaml")
 
                 res = PlaybookExecutor(playbooks=playbooksArray,
                                        inventory=inventory,
