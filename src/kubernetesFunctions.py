@@ -246,7 +246,7 @@ def kubectl(
             try:
                 client.CustomObjectsApi().create_namespaced_custom_object(
                     'kubeflow.org',
-                    'v1alpha1',
+                    'v1alpha2',
                     namespace,
                     'mpijobs',
                     body)

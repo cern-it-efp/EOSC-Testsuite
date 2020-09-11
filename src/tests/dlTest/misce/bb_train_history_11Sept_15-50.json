@@ -1,0 +1,96 @@
+{
+    "train_time": 1857.5562705993652,
+    "history": {
+        "1:1:-": {
+            "discriminator_model": {
+                "sum_cell_loss": [
+                    339.0090963029435
+                ],
+                "energy_loss": [
+                    23.42305629814594
+                ],
+                "classification_loss": [
+                    0.24207265475758005
+                ],
+                "loss": [
+                    36.72736121755703
+                ]
+            },
+            "combined_model": {
+                "sum_cell_loss": [
+                    820.7752716944304
+                ],
+                "energy_loss": [
+                    47.02607562580882
+                ],
+                "classification_loss": [
+                    1.1383376542917487
+                ],
+                "loss": [
+                    89.05681289027025
+                ]
+            }
+        },
+        "0:0:-": {
+            "discriminator_model": {
+                "val_classification_loss": [
+                    0.4722834470868111
+                ],
+                "val_sum_cell_loss": [
+                    8.249848752021789
+                ],
+                "val_loss": [
+                    3.9218347334861754
+                ],
+                "val_energy_loss": [
+                    21.522829437255858
+                ]
+            },
+            "combined_model": {
+                "val_classification_loss": [
+                    0.7268401396274566
+                ],
+                "val_sum_cell_loss": [
+                    16.39926694869995
+                ],
+                "val_loss": [
+                    3.9036842131614686
+                ],
+                "val_energy_loss": [
+                    8.100771894454956
+                ]
+            }
+        }
+    },
+    "args": {
+        "train_data": "train_3d.list",
+        "caching_dir": "",
+        "trial_name": "train",
+        "profile": false,
+        "master_gpu": false,
+        "batch": 100,
+        "monitor": false,
+        "elastic_lr": 1.0,
+        "target_metric": null,
+        "features_name": "X",
+        "data_preload": 0,
+        "val_data": "test_3d.list",
+        "model_json": "bb.json",
+        "worker_optimizer": "rmsprop",
+        "labels_name": "y",
+        "loss": "binary_crossentropy",
+        "elastic_force": 0.9,
+        "sync_every": 1,
+        "masters": 1,
+        "restore": null,
+        "epochs": 1,
+        "max_gpus": -1,
+        "tf": true,
+        "verbose": false,
+        "synchronous": false,
+        "optimizer": "adamtf",
+        "easgd": true,
+        "elastic_momentum": 0,
+        "early_stopping": null
+    }
+}

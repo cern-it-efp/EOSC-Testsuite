@@ -391,27 +391,11 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
         if not checkCluster("dlTest"):
             return  # Cluster not reachable, do not add cost for this test
 
-    #### This should be done at the end of this function #####################
-    if init.obtainCost is True:
-        testCost = ((time.time() - start) / 3600) * \
-            init.configs["costCalculation"]["GPUInstancePrice"] * dl["nodes"]
-    ##########################################################################
-
-    ##########################################################################
-    writeFail(
-        resDir,
-        "bb_train_history.json",
-        "Unable to download training data: bucket endpoint not reachable.",
-        "src/logging/dlTest")
-    init.queue.put(({"test": "dlTest", "deployed": res}, testCost))
-    return
-    ##########################################################################
-
     # 1) Install the stuff needed for this test: device plugin yaml file
     # (contains driver too) and dl_stack.sh for kubeflow and mpi.
     # (backend run assumes dl support)
-    kubectl(Action.create, kubeconfig, file=testsRoot +
-            "dlTest/pv-volume.yaml", ignoreErr=True)
+    #kubectl(Action.create, kubeconfig, file=testsRoot +
+    #        "dlTest/pv-volume.yaml", ignoreErr=True) # TODO: not really needed
     kubectl(Action.create, kubeconfig, file=testsRoot +
             "dlTest/3dgan-datafile-lists-configmap.yaml", ignoreErr=True)
 
@@ -428,7 +412,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
     with open(testsRoot + 'dlTest/train-mpi_3dGAN_raw.yaml', 'r') as inputfile:
         with open(testsRoot + "dlTest/train-mpi_3dGAN.yaml", 'w') as outfile:
             outfile.write(str(inputfile.read()).replace( # TODO: do not use replace
-                "REP_PH", str(nodesToUse)))
+                "REP_PH", str(nodesToUse - 1))) # -1 because these are worker replicas
 
     if kubectl(
         Action.create,
@@ -439,7 +423,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
         writeFail(resDir, "bb_train_history.json",
                   "Error deploying train-mpi_3dGAN.", "src/logging/dlTest")
     else:
-        fetchResults(
+        fetchResults( # TODO: missing toLog
             resDir,
             kubeconfig,
             "train-mpijob-worker-0:/mpi_learn/bb_train_history.json",
@@ -447,13 +431,18 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
             "src/logging/dlTest")
         res = True
 
+    # Cost estimation
+    if init.obtainCost is True:
+        testCost = ((time.time() - start) / 3600) * \
+            init.configs["costCalculation"]["GPUInstancePrice"] * dl["nodes"]
+
     # cleanup
     writeToFile("src/logging/dlTest", "Cluster cleanup...", True)
     kubectl(Action.delete, kubeconfig, type=Type.mpijob, name="train-mpijob")
     kubectl(Action.delete, kubeconfig, type=Type.configmap, name="3dgan-datafile-lists")
-    kubectl(Action.delete, kubeconfig, type=Type.pv, name="pv-volume1")
-    kubectl(Action.delete, kubeconfig, type=Type.pv, name="pv-volume2")
-    kubectl(Action.delete, kubeconfig, type=Type.pv, name="pv-volume3")
+    #kubectl(Action.delete, kubeconfig, type=Type.pv, name="pv-volume1")
+    #kubectl(Action.delete, kubeconfig, type=Type.pv, name="pv-volume2")
+    #kubectl(Action.delete, kubeconfig, type=Type.pv, name="pv-volume3")
 
     init.queue.put(({"test": "dlTest", "deployed": res}, testCost))
 
