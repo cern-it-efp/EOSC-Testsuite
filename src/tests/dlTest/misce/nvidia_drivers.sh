@@ -1,3 +1,5 @@
+# This is for VMs w/o nvidia drivers 
+
 cuda101deb(){
   # ubuntu cuda 10.1 # tensorflow's official docs (https://www.tensorflow.org/install/gpu) specify cuda 10.0 has to be installed
   wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-ubuntu1804.pin

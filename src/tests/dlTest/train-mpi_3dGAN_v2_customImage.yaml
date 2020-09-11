@@ -1,5 +1,3 @@
-# TODO: deploys the pods but launcher complains: [1,0]<stderr>:FileNotFoundError: [Errno 2] No such file or directory: 'train_3d.list'
-
 apiVersion: kubeflow.org/v1alpha2
 kind: MPIJob
 metadata:
@@ -16,6 +14,7 @@ spec:
         spec:
           hostNetwork: true
           containers:
+          #- image: gitlab-registry.cern.ch/cloud-infrastructure/gpu-mpi-containers/mpi_learn # use here my custom image tor testing: aws-cli with --no-sign-request to the public CERN s3 bucket with the GAN data
           - image: cernefp/custom_mpi_learn # gitlab-registry.cern.ch/cloud-infrastructure/gpu-mpi-containers/mpi_learn # use here my custom image tor testing: aws-cli with --no-sign-request to the public CERN s3 bucket with the GAN data
             imagePullPolicy: Always
             securityContext:
@@ -26,8 +25,9 @@ spec:
                 nvidia.com/gpu: 1
             command: ["/bin/sh","-c"]
             args:
-            - mpirun -tag-output -x LD_LIBRARY_PATH -x PATH -x TERM=linux -x GANINMEM=/tmp/gan_data -x USES3=1 -x NCCL_DEBUG=INFO -x NCCL_SOCKET_IFNAME=eth0 -mca pml ob1 -mca btl ^openib python3 MPIGDriver.py bb.json train_3d.list test_3d.list --tf --epochs 1 --features-name X --labels-name y --easgd --worker-opt rmsprop &&
-              tail -f /dev/null
+            #- cp /root/.local/bin/aws /bin/ ; ls -lah /bin/aws ; echo py2 ; python -c "import os ; os.system('aws')" ; echo py3 ; python3 -c "import os ; os.system('aws')" ; sleep 200000
+            - aws ; mpirun -tag-output -x LD_LIBRARY_PATH -x PATH -x TERM=linux -x GANINMEM=/tmp/gan_data -x USES3=1 -x NCCL_DEBUG=INFO -x NCCL_SOCKET_IFNAME=eth0 -mca pml ob1 -mca btl ^openib python3 MPIGDriver.py bb.json train_3d.list test_3d.list --tf --epochs 1 --features-name X --labels-name y --easgd --worker-opt rmsprop
+              && tail -f /dev/null
             volumeMounts:
             - name: train-list
               mountPath: "/mpi_learn/train_3d.list"
@@ -53,6 +53,7 @@ spec:
       template:
         spec:
           containers:
+          #- image: gitlab-registry.cern.ch/cloud-infrastructure/gpu-mpi-containers/mpi_learn # use here my custom image tor testing: aws-cli with --no-sign-request to the public CERN s3 bucket with the GAN data
           - image: cernefp/custom_mpi_learn
             name: train-mpijob
             resources:

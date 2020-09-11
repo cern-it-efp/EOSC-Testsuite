@@ -410,27 +410,6 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
     # 1) Install the stuff needed for this test: device plugin yaml file
     # (contains driver too) and dl_stack.sh for kubeflow and mpi.
     # (backend run assumes dl support)
-    if checkDLsupport() is False and viaBackend is False:
-        writeToFile("src/logging/dlTest",
-                    "Preparing cluster for DL test...", True)
-        masterIP = runCMD(
-            "kubectl --kubeconfig %s get nodes -owide |\
-            grep master | awk '{print $6}'" %
-            kubeconfig, read=True)
-        script = "src/tests/dlTest/installKubeflow.sh"
-        retries = 10
-        if runCMD(
-            "src/provisionment/ssh_connect.sh --usr root --ip %s\
-            --file %s --retries %s" %
-                (masterIP, script, retries)) != 0:
-            writeFail(
-                resDir,
-                "bb_train_history.json",
-                "Failed to prepare GPU/DL cluster (Kubeflow/Tensorflow/MPI)",
-                "src/logging/dlTest")
-            return
-    kubectl(Action.create, kubeconfig, file=testsRoot +
-            "dlTest/device_plugin.yaml", ignoreErr=True) # TODO: not needed, done at ansibleFunctions.py
     kubectl(Action.create, kubeconfig, file=testsRoot +
             "dlTest/pv-volume.yaml", ignoreErr=True)
     kubectl(Action.create, kubeconfig, file=testsRoot +
@@ -459,14 +438,6 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
             toLog="src/logging/dlTest") != 0:
         writeFail(resDir, "bb_train_history.json",
                   "Error deploying train-mpi_3dGAN.", "src/logging/dlTest")
-    elif runCMD(
-            'kubectl describe pods | grep \"Insufficient nvidia.com/gpu\"',
-            read=True):
-        writeFail(
-            resDir,
-            "bb_train_history.json",
-            "Cluster doesn't have enough GPU support. GPU flavor required.",
-            "src/logging/dlTest")
     else:
         fetchResults(
             resDir,
@@ -475,13 +446,11 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
             "bb_train_history.json",
             "src/logging/dlTest")
         res = True
+
     # cleanup
     writeToFile("src/logging/dlTest", "Cluster cleanup...", True)
     kubectl(Action.delete, kubeconfig, type=Type.mpijob, name="train-mpijob")
-    kubectl(Action.delete,
-            kubeconfig,
-            type=Type.configmap,
-            name="3dgan-datafile-lists")
+    kubectl(Action.delete, kubeconfig, type=Type.configmap, name="3dgan-datafile-lists")
     kubectl(Action.delete, kubeconfig, type=Type.pv, name="pv-volume1")
     kubectl(Action.delete, kubeconfig, type=Type.pv, name="pv-volume2")
     kubectl(Action.delete, kubeconfig, type=Type.pv, name="pv-volume3")
