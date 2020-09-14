@@ -414,7 +414,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
             outfile.write(str(inputfile.read()).replace( # TODO: do not use replace
                 "REP_PH", str(nodesToUse - 1))) # -1 because these are worker replicas
 
-    podName "train-mpijob-worker-0"
+    podName = "train-mpijob-worker-0"
 
     if kubectl(
         Action.create,
@@ -425,8 +425,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
         writeFail(resDir, "bb_train_history.json",
                   "Error deploying train-mpi_3dGAN.", "src/logging/dlTest")
 
-    # TODO: in this case, the pods are not deployed right after deploying the resource (its a kind MPIJob, not Pod), so kubectl get pods does not show the pod. Have to add some kind of waiting! it takes more than 2 minutes
-    elif waitForPod(podName, kubeconfig, retrials=1, sleepTime=1) is False:
+    elif waitForPod(podName, kubeconfig, retrials=6, sleepTime=10) is False:
         writeFail(resDir,
                   "bb_train_history.json",
                   "Error deploying train-mpi_3dGAN: pods were never created",

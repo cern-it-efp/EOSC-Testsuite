@@ -76,7 +76,7 @@ def checkPodAlive(podName, resDir, toLog, resultFile, kubeconfig):
     return True
 
 
-waitForPod(podName, kubeconfig):
+def waitForPod(podName, kubeconfig, retrials=None, sleepTime=None):
     """ Waits until the given pod is deployed, i.e. visible by kubectl. If
         after a specific number of retrials this does not happen, returns False.
 
@@ -98,6 +98,7 @@ waitForPod(podName, kubeconfig):
         cmd = "get pod %s" % podName
         if kubectlCLI(cmd, kubeconfig=kubeconfig, hideLogs=True) == 0:
             return True
+        print("Pod %s not ready yet..." % podName)
         time.sleep(sleepTime)
     return False
 
