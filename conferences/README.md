@@ -1,6 +1,6 @@
 # Dissemination and Outreach
 
-## This folder contains material used to present the Test-Suite in different conferences and events:
+This folder contains material used to present the Test-Suite in different conferences and events.
 
 ### ISC 2020 - Frankfurt, Germany 22nd to 25th June 2020 (Digital Event)
 
@@ -10,7 +10,7 @@
 
 -Video: https://www.youtube.com/watch?v=9cOrPbUrV-I
 
-### CERN'S IT Technical Forum - Geneva, Switzerland 29th May 2020 Cloud Validation Test Suite (Digital Event)
+### CERN'S IT Technical Forum - Geneva, Switzerland 29th May 2020 (Digital Event)
 
 -Presentation title: Cloud Validation Test Suite
 
