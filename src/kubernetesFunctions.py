@@ -76,6 +76,31 @@ def checkPodAlive(podName, resDir, toLog, resultFile, kubeconfig):
     return True
 
 
+waitForPod(podName, kubeconfig):
+    """ Waits until the given pod is deployed, i.e. visible by kubectl. If
+        after a specific number of retrials this does not happen, returns False.
+
+    Parameters:
+        podName (str): Pod name.
+        kubeconfig (str): Path to kubeconfig file of the being managed cluster.
+        retrials (int): Number of retrials.
+        sleepTime (int): Sleep time in seconds between retrials.
+
+    Returns:
+        bool: True in case the pod was deployed, False otherwise
+    """
+
+    if retrials is None:
+        retrials = 2
+    if sleepTime is None:
+        sleepTime = 2
+    for i in range(retrials):
+        cmd = "get pod %s" % podName
+        if kubectlCLI(cmd, kubeconfig=kubeconfig, hideLogs=True) == 0:
+            return True
+        time.sleep(sleepTime)
+    return False
+
 def fetchResults(resDir, kubeconfig, podName, source, file, toLog):
     """ Fetch tests results file from pod.
 
@@ -276,12 +301,13 @@ def kubectl(
                 try:
                     client.CustomObjectsApi().delete_namespaced_custom_object(
                         'kubeflow.org',
-                        'v1alpha1',
+                        'v1alpha2',
                         namespace,
                         'mpijobs',
-                        name,
-                        client.V1DeleteOptions())
-                except BaseException:
+                        name)
+                        #client.V1DeleteOptions())
+                except BaseException as ex:
+                    print(ex)
                     res = False
             elif type is Type.configmap:
                 client.CoreV1Api().delete_namespaced_config_map(

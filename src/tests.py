@@ -391,11 +391,11 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
         if not checkCluster("dlTest"):
             return  # Cluster not reachable, do not add cost for this test
 
+    # TODO: what happens when running on a non-GPU cluster or a GPU cluster that is not prepared (i.e no drivers)?
+
     # 1) Install the stuff needed for this test: device plugin yaml file
     # (contains driver too) and dl_stack.sh for kubeflow and mpi.
     # (backend run assumes dl support)
-    #kubectl(Action.create, kubeconfig, file=testsRoot +
-    #        "dlTest/pv-volume.yaml", ignoreErr=True) # TODO: not really needed
     kubectl(Action.create, kubeconfig, file=testsRoot +
             "dlTest/3dgan-datafile-lists-configmap.yaml", ignoreErr=True)
 
@@ -414,6 +414,8 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
             outfile.write(str(inputfile.read()).replace( # TODO: do not use replace
                 "REP_PH", str(nodesToUse - 1))) # -1 because these are worker replicas
 
+    podName "train-mpijob-worker-0"
+
     if kubectl(
         Action.create,
         kubeconfig,
@@ -422,11 +424,19 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
             toLog="src/logging/dlTest") != 0:
         writeFail(resDir, "bb_train_history.json",
                   "Error deploying train-mpi_3dGAN.", "src/logging/dlTest")
+
+    # TODO: in this case, the pods are not deployed right after deploying the resource (its a kind MPIJob, not Pod), so kubectl get pods does not show the pod. Have to add some kind of waiting! it takes more than 2 minutes
+    elif waitForPod(podName, kubeconfig, retrials=1, sleepTime=1) is False:
+        writeFail(resDir,
+                  "bb_train_history.json",
+                  "Error deploying train-mpi_3dGAN: pods were never created",
+                  "src/logging/dlTest")
+
     else:
-        fetchResults( 
+        fetchResults(
             resDir,
             kubeconfig,
-            "train-mpijob-worker-0",
+            podName,
             "/mpi_learn/bb_train_history.json",
             "bb_train_history.json",
             "src/logging/dlTest")
