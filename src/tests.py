@@ -423,12 +423,14 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
         writeFail(resDir, "bb_train_history.json",
                   "Error deploying train-mpi_3dGAN.", "src/logging/dlTest")
     else:
-        fetchResults( # TODO: missing toLog
+        fetchResults( 
             resDir,
             kubeconfig,
-            "train-mpijob-worker-0:/mpi_learn/bb_train_history.json",
+            "train-mpijob-worker-0",
+            "/mpi_learn/bb_train_history.json",
             "bb_train_history.json",
             "src/logging/dlTest")
+
         res = True
 
     # Cost estimation
