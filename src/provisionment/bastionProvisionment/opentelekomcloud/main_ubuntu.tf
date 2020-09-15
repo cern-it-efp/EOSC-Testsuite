@@ -8,7 +8,7 @@ variable "networkName" {
   default = "vpc-default"
 }
 variable "public_ip" {
-  default = "80.158.34.80"
+  default = "80.158.55.22"
 }
 variable "openUser" {
   default = "ubuntu"

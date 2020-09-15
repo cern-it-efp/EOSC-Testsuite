@@ -425,7 +425,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
         writeFail(resDir, "bb_train_history.json",
                   "Error deploying train-mpi_3dGAN.", "src/logging/dlTest")
 
-    elif waitForPod(podName, kubeconfig, retrials=6, sleepTime=10) is False:
+    elif waitForPod(podName, kubeconfig, retrials=10, sleepTime=10) is False:
         writeFail(resDir,
                   "bb_train_history.json",
                   "Error deploying train-mpi_3dGAN: pods were never created",

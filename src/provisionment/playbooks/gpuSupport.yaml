@@ -17,4 +17,4 @@
        register: device_plugin
        until: device_plugin.rc == 0
        retries: 10
-       delay: 3
+       delay: 4
