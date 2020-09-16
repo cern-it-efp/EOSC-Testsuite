@@ -16,5 +16,5 @@
        shell: kubectl apply -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/v0.6.0/nvidia-device-plugin.yml
        register: device_plugin
        until: device_plugin.rc == 0
-       retries: 10
-       delay: 4
+       retries: 15
+       delay: 6

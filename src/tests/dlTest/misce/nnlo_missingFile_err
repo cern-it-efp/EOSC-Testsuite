@@ -1,0 +1,20 @@
+File "MPIGDriver.py", line 134, in <module>
+  algo = make_algo( args, use_tf, comm, validate_every=int(data.count_data()/args.batch ))
+
+File "/nnlo/nnlo/train/data.py", line 265, in count_data
+  h5_file = h5py.File( in_file_name, 'r' )
+
+File "/usr/local/lib/python3.5/dist-packages/h5py/_hl/files.py", line 271, in __init__
+  fid = make_fid(name, mode, userblock_size, fapl, swmr=swmr)
+
+File "/usr/local/lib/python3.5/dist-packages/h5py/_hl/files.py", line 101, in make_fid
+  fid = h5f.open(name, flags, fapl=fapl)
+
+File "h5py/_objects.pyx", line 54, in h5py._objects.with_phil.wrapper (/tmp/pip-huypgcah-build/h5py/_objects.c:2840)
+
+File "h5py/_objects.pyx", line 55, in h5py._objects.with_phil.wrapper (/tmp/pip-huypgcah-build/h5py/_objects.c:2798)
+
+File "h5py/h5f.pyx", line 78, in h5py.h5f.open (/tmp/pip-huypgcah-build/h5py/h5f.c:2117)
+
+OSError: Unable to open file (Unable to open file: name = 'eleescan_eleescan_1_1.h5.h5', errno = 2, error message = 'no such file or directory', flags = 0, o_flags = 0)
+

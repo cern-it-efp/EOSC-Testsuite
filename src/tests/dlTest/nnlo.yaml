@@ -19,18 +19,16 @@ spec:
             securityContext:
               privileged: true
             name: train-mpijob
-            resources:
-              limits:
-                nvidia.com/gpu: 1
+            #resources: # TODO: does the launcher need a GPU?
+            #  limits:
+            #    nvidia.com/gpu: 1
             command: ["/bin/sh","-c"]
-            args:
+            args: # TODO: are all the -x really needed?
             - mpirun
               -tag-output
               -x LD_LIBRARY_PATH
               -x PATH
               -x TERM=linux
-              -x GANINMEM=/tmp/gan_data
-              -x USES3=1
               -x NCCL_DEBUG=INFO
               -x NCCL_SOCKET_IFNAME=eth0
               -mca pml ob1
@@ -41,6 +39,7 @@ spec:
               --features-name X
               --labels-name y
               --mode easgd
+              --cache-data /tmp/gan_data
               --worker-optimizer rmsprop
                 && tail -f /dev/null
             volumeMounts:
@@ -64,7 +63,7 @@ spec:
               - key: "train_3d.list"
                 path: "train_3d.list"
     Worker:
-      replicas: REP_PH
+      replicas: 2 # TODO: if set this to 2, will create 3 pods: 1 launcher and 2 workers, but in reality the launcher does not do any training, and one of the workers is actually the master. Set to 3 deploys 3 workers but one is pending because of missing gpu
       template:
         spec:
           containers:

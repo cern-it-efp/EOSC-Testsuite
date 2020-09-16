@@ -20,9 +20,9 @@ spec:
             securityContext:
               privileged: true
             name: train-mpijob
-            resources:
-              limits:
-                nvidia.com/gpu: 1
+            #resources: # TODO: does the launcher need a GPU?
+            #  limits:
+            #    nvidia.com/gpu: 1
             command: ["/bin/sh","-c"]
             args:
             - mpirun
@@ -65,7 +65,7 @@ spec:
               - key: "train_3d.list"
                 path: "train_3d.list"
     Worker:
-      replicas: REP_PH
+      replicas: REP_PH # TODO: if set this to 2, will create 3 pods: 1 launcher and 2 workers, but in reality the launcher does not do any training, and one of the workers is actually the master. Set to 3 deploys 3 workers but one is pending because of missing gpu
       template:
         spec:
           containers:
