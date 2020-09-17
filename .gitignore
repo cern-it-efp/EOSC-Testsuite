@@ -10,7 +10,8 @@ src/tests/s3/s3pod.yaml
 src/tests/cpu_benchmarking/cpu_benchmarking_pod.yaml
 src/tests/data_repatriation/repatriation_pod.yaml
 
-src/tests/dlTest/train-mpi_3dGAN.yaml
+src/tests/dlTest/mpi_learn.yaml
+src/tests/dlTest/nnlo.yaml
 src/tests/dlTest/main.tf
 src/tests/dlTest/config
 src/tests/dlTest/.terraform*

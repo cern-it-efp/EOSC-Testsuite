@@ -1,4 +1,4 @@
-apiVersion: kubeflow.org/v1alpha2 # original was v1alpha1
+apiVersion: kubeflow.org/v1alpha2
 kind: MPIJob
 metadata:
   labels:
@@ -14,8 +14,7 @@ spec:
         spec:
           hostNetwork: true
           containers:
-          #- image: gitlab-registry.cern.ch/cloud-infrastructure/gpu-mpi-containers/mpi_learn
-          - image: cernefp/custom_mpi_learn # custom image: awscli with --no-sign-request to the public CERN s3 bucket with the GAN data
+          - image: cernefp/custom_nnlo
             imagePullPolicy: Always
             securityContext:
               privileged: true
@@ -24,14 +23,12 @@ spec:
             #  limits:
             #    nvidia.com/gpu: 1
             command: ["/bin/sh","-c"]
-            args:
+            args: # TODO: are all the -x needed?
             - mpirun
               -tag-output
               -x LD_LIBRARY_PATH
               -x PATH
               -x TERM=linux
-              -x GANINMEM=/tmp/gan_data
-              -x USES3=1
               -x NCCL_DEBUG=INFO
               -x NCCL_SOCKET_IFNAME=eth0
               -mca pml ob1
@@ -41,15 +38,21 @@ spec:
               --epochs 1
               --features-name X
               --labels-name y
-              --easgd
-              --worker-opt rmsprop
-                && tail -f /dev/null
+              --mode easgd
+              --cache-data /tmp/gan_data
+              --master-gpu
+              --verbose
+              --monitor
+              --log-level debug
+              --worker-optimizer rmsprop
+              --loss dummy # what's this for?
+              && tail -f /dev/null
             volumeMounts:
             - name: train-list
-              mountPath: "/mpi_learn/train_3d.list"
+              mountPath: "/nnlo/train_3d.list"
               subPath: "train_3d.list"
             - name: test-list
-              mountPath: "/mpi_learn/test_3d.list"
+              mountPath: "/nnlo/test_3d.list"
               subPath: "test_3d.list"
           volumes:
           - name: test-list
@@ -65,22 +68,21 @@ spec:
               - key: "train_3d.list"
                 path: "train_3d.list"
     Worker:
-      replicas: REP_PH # TODO: if set this to 2, will create 3 pods: 1 launcher and 2 workers, but in reality the launcher does not do any training, and one of the workers is actually the master. Set to 3 deploys 3 workers but one is pending because of missing gpu
+      replicas: 2 # TODO: if set this to 2, will create 3 pods: 1 launcher and 2 workers, but in reality the launcher does not do any training, and one of the workers is actually the master. Set to 3 deploys 3 workers but one is pending because of missing gpu
       template:
         spec:
           containers:
-          #- image: gitlab-registry.cern.ch/cloud-infrastructure/gpu-mpi-containers/mpi_learn
-          - image: cernefp/custom_mpi_learn # custom image: awscli with --no-sign-request to the public CERN s3 bucket with the GAN data
+          - image: cernefp/custom_nnlo
             name: train-mpijob
             resources:
               limits:
                 nvidia.com/gpu: 1
             volumeMounts:
             - name: train-list
-              mountPath: "/mpi_learn/train_3d.list"
+              mountPath: "/nnlo/train_3d.list"
               subPath: "train_3d.list"
             - name: test-list
-              mountPath: "/mpi_learn/test_3d.list"
+              mountPath: "/nnlo/test_3d.list"
               subPath: "test_3d.list"
           volumes:
           - name: test-list

@@ -23,7 +23,7 @@ spec:
             #  limits:
             #    nvidia.com/gpu: 1
             command: ["/bin/sh","-c"]
-            args: # TODO: are all the -x really needed?
+            args: # TODO: are all the -x needed?
             - mpirun
               -tag-output
               -x LD_LIBRARY_PATH
@@ -40,8 +40,13 @@ spec:
               --labels-name y
               --mode easgd
               --cache-data /tmp/gan_data
+              --master-gpu
+              --verbose
+              --monitor
+              --log-level debug
               --worker-optimizer rmsprop
-                && tail -f /dev/null
+              --loss dummy # what's this for?
+              && tail -f /dev/null
             volumeMounts:
             - name: train-list
               mountPath: "/nnlo/train_3d.list"

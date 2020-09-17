@@ -11,7 +11,4 @@ RUN pip3 install mpi4py psutil gpustat scikit-optimize h5py==2.7.0
 
 RUN git clone "https://github.com/svalleco/NNLO.git" "/nnlo"
 
-# Noter for this TrainingDriver.py's '--copy-command' can be used instead
-RUN sed -i "s/,'cp /,'aws s3 cp --no-sign-request --endpoint-url=https:\/\/s3.cern.ch s3:\/\/gan-bucket\//" /nnlo/nnlo/train/data.py
-
 WORKDIR "/nnlo"

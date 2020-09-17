@@ -409,10 +409,11 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
             "Provided value for 'nodes' not valid or unset, trying to use 5.",
             True)
         nodesToUse = 5
-    with open(testsRoot + 'dlTest/train-mpi_3dGAN_raw.yaml', 'r') as inputfile:
-        with open(testsRoot + "dlTest/train-mpi_3dGAN.yaml", 'w') as outfile:
+    with open(testsRoot + 'dlTest/mpi_learn_raw.yaml', 'r') as inputfile:
+        with open(testsRoot + "dlTest/mpi_learn.yaml", 'w') as outfile:
             outfile.write(str(inputfile.read()).replace( # TODO: do not use replace
-                "REP_PH", str(nodesToUse - 1))) # -1 because these are worker replicas
+                "REP_PH", str(nodesToUse))) # w/o -1 because the launcher does not get a GPU anymore, hence all nodes can allocate worker replicas
+                #"REP_PH", str(nodesToUse - 1))) # -1 because these are worker replicas, and the launcher gets a GPU
 
     podName = "train-mpijob-worker-0"
 
@@ -420,15 +421,15 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
         Action.create,
         kubeconfig,
         file=testsRoot +
-        "dlTest/train-mpi_3dGAN.yaml",
+        "dlTest/mpi_learn.yaml",
             toLog="src/logging/dlTest") != 0:
         writeFail(resDir, "bb_train_history.json",
-                  "Error deploying train-mpi_3dGAN.", "src/logging/dlTest")
+                  "Error deploying 3D GAN benchmark.", "src/logging/dlTest")
 
     elif waitForPod(podName, kubeconfig, retrials=20, sleepTime=10) is False:
         writeFail(resDir,
                   "bb_train_history.json",
-                  "Error deploying train-mpi_3dGAN: pods were never created",
+                  "Error deploying 3D GAN benchmark: pods were never created",
                   "src/logging/dlTest")
 
     else:
