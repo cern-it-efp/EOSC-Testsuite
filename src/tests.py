@@ -394,22 +394,20 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
     # TODO: what happens when running on a non-GPU cluster or a GPU cluster that is not prepared (i.e no drivers)?
 
     # 1) Write the MPIJob resource file:
-    nodesToUse = dl["nodes"]
-
     mpijobResourceFile = '%s/dlTest/raw/%s_raw.yaml' % (testsRoot, dl["benchmark"])
 
     with open(mpijobResourceFile, 'r') as inputfile:
         with open(testsRoot + "dlTest/mpiJob.yaml", 'w') as outfile:
             outfile.write(str(inputfile.read()).replace(
-                "REP_PH", str(nodesToUse)).replace( # w/o -1 because the launcher does not get a GPU anymore, hence all nodes can allocate worker replicas
-                "EPOCHS_PH", str(epochs)))
+                "REP_PH", str(dl["nodes"])).replace( # w/o -1 because the launcher does not get a GPU anymore, hence all nodes can allocate worker replicas
+                "EPOCHS_PH", str(dl["epochs"])))
 
     # 2) Deploy the data set ConfigMap and the MPIJob resource file:
     podName = "train-mpijob-worker-0"
 
     kubectl(Action.create,
         kubeconfig,
-        file="%s/dlTest/3dgan-datafile-lists-configmap.yaml" $ testsRoot,
+        file="%s/dlTest/3dgan-datafile-lists-configmap.yaml" % testsRoot,
         ignoreErr=True)
 
     if kubectl(Action.create,
@@ -429,7 +427,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
         fetchResults(resDir,
                      kubeconfig,
                      podName,
-                     "/mpi_learn/bb_train_history.json",
+                     "/%s/bb_train_history.json" % dl["benchmark"],
                      "bb_train_history.json",
                      "src/logging/dlTest")
         res = True
