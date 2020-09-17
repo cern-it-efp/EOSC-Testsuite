@@ -86,9 +86,21 @@ properties:
         then:
             required:
                 - nodes
+                - flavor
+                - epochs
+                - benchmark
             properties:
                 nodes:
                     type: integer
+                    minimum: 1
+                flavor:
+                    type: string
+                epochs:
+                    type: integer
+                    minimum: 1
+                benchmark:
+                    type: string
+                    enum: [nnlo, mpi_learn]
     hpcTest:
         type: object
         required:

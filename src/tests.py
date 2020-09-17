@@ -393,36 +393,29 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
 
     # TODO: what happens when running on a non-GPU cluster or a GPU cluster that is not prepared (i.e no drivers)?
 
-    # 1) Install the stuff needed for this test: device plugin yaml file
-    # (contains driver too) and dl_stack.sh for kubeflow and mpi.
-    # (backend run assumes dl support)
-    kubectl(Action.create, kubeconfig, file=testsRoot +
-            "dlTest/3dgan-datafile-lists-configmap.yaml", ignoreErr=True)
+    # 1) Write the MPIJob resource file:
+    nodesToUse = dl["nodes"]
 
-    # 2) Deploy the required files.
-    if dl["nodes"] and isinstance(dl["nodes"],
-                                  int) and dl["nodes"] > 1 and dl["nodes"]:
-        nodesToUse = dl["nodes"]
-    else:
-        writeToFile(
-            "src/logging/dlTest",
-            "Provided value for 'nodes' not valid or unset, trying to use 5.",
-            True)
-        nodesToUse = 5
-    with open(testsRoot + 'dlTest/mpi_learn_raw.yaml', 'r') as inputfile:
-        with open(testsRoot + "dlTest/mpi_learn.yaml", 'w') as outfile:
-            outfile.write(str(inputfile.read()).replace( # TODO: do not use replace
-                "REP_PH", str(nodesToUse))) # w/o -1 because the launcher does not get a GPU anymore, hence all nodes can allocate worker replicas
-                #"REP_PH", str(nodesToUse - 1))) # -1 because these are worker replicas, and the launcher gets a GPU
+    mpijobResourceFile = '%s/dlTest/raw/%s_raw.yaml' % (testsRoot, dl["benchmark"])
 
+    with open(mpijobResourceFile, 'r') as inputfile:
+        with open(testsRoot + "dlTest/mpiJob.yaml", 'w') as outfile:
+            outfile.write(str(inputfile.read()).replace(
+                "REP_PH", str(nodesToUse)).replace( # w/o -1 because the launcher does not get a GPU anymore, hence all nodes can allocate worker replicas
+                "EPOCHS_PH", str(epochs)))
+
+    # 2) Deploy the data set ConfigMap and the MPIJob resource file:
     podName = "train-mpijob-worker-0"
 
-    if kubectl(
-        Action.create,
+    kubectl(Action.create,
         kubeconfig,
-        file=testsRoot +
-        "dlTest/mpi_learn.yaml",
-            toLog="src/logging/dlTest") != 0:
+        file="%s/dlTest/3dgan-datafile-lists-configmap.yaml" $ testsRoot,
+        ignoreErr=True)
+
+    if kubectl(Action.create,
+               kubeconfig,
+               file=testsRoot + "dlTest/mpiJob.yaml",
+               toLog="src/logging/dlTest") != 0:
         writeFail(resDir, "bb_train_history.json",
                   "Error deploying 3D GAN benchmark.", "src/logging/dlTest")
 
@@ -433,14 +426,12 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
                   "src/logging/dlTest")
 
     else:
-        fetchResults(
-            resDir,
-            kubeconfig,
-            podName,
-            "/mpi_learn/bb_train_history.json",
-            "bb_train_history.json",
-            "src/logging/dlTest")
-
+        fetchResults(resDir,
+                     kubeconfig,
+                     podName,
+                     "/mpi_learn/bb_train_history.json",
+                     "bb_train_history.json",
+                     "src/logging/dlTest")
         res = True
 
     # Cost estimation
@@ -452,9 +443,6 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
     writeToFile("src/logging/dlTest", "Cluster cleanup...", True)
     kubectl(Action.delete, kubeconfig, type=Type.mpijob, name="train-mpijob")
     kubectl(Action.delete, kubeconfig, type=Type.configmap, name="3dgan-datafile-lists")
-    #kubectl(Action.delete, kubeconfig, type=Type.pv, name="pv-volume1")
-    #kubectl(Action.delete, kubeconfig, type=Type.pv, name="pv-volume2")
-    #kubectl(Action.delete, kubeconfig, type=Type.pv, name="pv-volume3")
 
     init.queue.put(({"test": "dlTest", "deployed": res}, testCost))
 
