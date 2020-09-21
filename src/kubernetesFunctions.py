@@ -417,14 +417,14 @@ def kubectl(
     return 0 if res is True else 1
 
 
-def kubectlCLI(cmd, kubeconfig, options="", hideLogs=None):
+def kubectlCLI(cmd, kubeconfig, options="", hideLogs=None, read=None):
     """ Runs kubectl CLI tool.
 
     Parameters:
         cmd (str): Command to be run, without the "kubectl" part.
         kubeconfig (str): Path to kubeconfig file.
         options (str): Options to be added to the command.
-        noTerraform (bool): Specifies whether the output of the
+        hideLogs (bool): Specifies whether the output of the
                             command should be displayed.
 
     Returns:
@@ -433,7 +433,7 @@ def kubectlCLI(cmd, kubeconfig, options="", hideLogs=None):
 
     kubeconfig = '--kubeconfig=%s' % kubeconfig
     kubeCMD = "kubectl %s %s %s" % (kubeconfig,cmd,options)
-    return runCMD(kubeCMD, hideLogs=hideLogs)
+    return runCMD(kubeCMD, hideLogs=hideLogs, read=read)
 
 
 def updateKubeconfig(masterIP, kubeconfig):
