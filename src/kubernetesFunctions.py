@@ -432,7 +432,7 @@ def kubectlCLI(cmd, kubeconfig, options="", hideLogs=None):
     """
 
     kubeconfig = '--kubeconfig=%s' % kubeconfig
-    kubeCMD = "kubectl %s %s %s" % (cmd,kubeconfig,options)
+    kubeCMD = "kubectl %s %s %s" % (kubeconfig,cmd,options)
     return runCMD(kubeCMD, hideLogs=hideLogs)
 
 

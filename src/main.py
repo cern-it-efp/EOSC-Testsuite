@@ -281,6 +281,7 @@ if checkResultsExist(resDir) is True:
     # -----------------MANAGE RESULTS------------------------------------------
 
     generalResults["info"] = configs
+    generalResults["testsCatalog"] = testsCatalog
 
     with open("results/" + s3ResDirBase + "/general.json", 'w') as outfile:
         json.dump(generalResults, outfile, indent=4, sort_keys=True)

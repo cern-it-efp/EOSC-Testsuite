@@ -396,10 +396,15 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
     # 1) Write the MPIJob resource file:
     mpijobResourceFile = '%s/dlTest/raw/%s_raw.yaml' % (testsRoot, dl["benchmark"])
 
+    cmd = "get nodes"
+    options = "-ojson | jq '.items[0].status.allocatable.\"nvidia.com/gpu\"'"
+    gpusPerNode = kubectlCLI(cmd, kubeconfig, options=options) # "kubectl get nodes -ojson | jq '.items[0].status.allocatable.\"nvidia.com/gpu\"'"
+    replicas = int(gpusPerNode) * dl["nodes"]
+
     with open(mpijobResourceFile, 'r') as inputfile:
         with open(testsRoot + "dlTest/mpiJob.yaml", 'w') as outfile:
             outfile.write(str(inputfile.read()).replace(
-                "REP_PH", str(dl["nodes"])).replace( # w/o -1 because the launcher does not get a GPU anymore, hence all nodes can allocate worker replicas
+                "REP_PH", replicas).replace( # this depends on the GPUs per node not the amount of nodes
                 "EPOCHS_PH", str(dl["epochs"])))
 
     # 2) Deploy the data set ConfigMap and the MPIJob resource file:

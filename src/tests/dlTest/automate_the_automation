@@ -1,0 +1,15 @@
+# normal run with the max number of nodes:
+./test_suite -c /c.yaml -t /t.yaml --usePrivateIPs
+
+# On completion, delete and destroy a node that is not the master
+NODE_2_DELETE=$(kubectl get nodes --kubeconfig /EOSC-Testsuite/src/tests/dlTest/config | grep -v master | awk '{print $1}' | sed -n 2p)
+kubectl --kubeconfig /EOSC-Testsuite/src/tests/dlTest/config delete node $NODE_2_DELETE # TODO: this is rather useless, do terraform destroy instead of kubectl delete
+
+terraform destroy -target=opentelekomcloud_compute_instance_v2.kubenode_defaultNetwork[$INDEX]
+
+# Edit the testsCatalog.yaml (or create a new one from raw.yaml) to decrease nodes (replica) by 1
+
+# run with onlyTest
+./test_suite -c /c.yaml -t /t.yaml --onlyTest
+
+# Repeat until 1 replica (only master node remaining)

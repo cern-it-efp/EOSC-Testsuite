@@ -1,0 +1,24 @@
+s3Test:
+  run:
+  endpoint: https://s3.com
+  accessKey: asdfasd
+  secretKey: dsfadsf
+dataRepatriationTest:
+  run:
+cpuBenchmarking:
+  run:
+perfsonarTest:
+  run:
+  endpoint: psb01-gva.cern.ch
+dodasTest:
+  run:
+dlTest:
+  run: true
+  nodes: 10 
+  flavor: "p2.2xlarge.8"
+  epochs: 3
+  benchmark: nnlo
+hpcTest:
+  run:
+  nodes: 2
+  flavor: "s2.medium.2"
