@@ -423,7 +423,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
         writeFail(resDir, "bb_train_history.json",
                   "Error deploying 3D GAN benchmark.", "src/logging/dlTest")
 
-    elif waitForPod(podName, kubeconfig, retrials=20, sleepTime=10) is False:
+    elif waitForPod(podName, kubeconfig, retrials=40, sleepTime=10) is False:
         writeFail(resDir,
                   "bb_train_history.json",
                   "Error deploying 3D GAN benchmark: pods were never created",
