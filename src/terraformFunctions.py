@@ -85,6 +85,7 @@ def destroyTF(baseCWD, clusters=None):
         msg = "  -Destroying %s cluster..." % cluster
         mainTfDir = "src/tests/%s" % cluster
         cmd = "terraform destroy -auto-approve"
+        #cmd = "terraform 0.13upgrade -yes && terraform destroy -auto-approve"
         exitCode = runTerraform(toLog, cmd, mainTfDir, baseCWD, cluster, msg)
         #if all(x == 0 for x in exitCode) is True:
         if exitCode is 0:
@@ -346,7 +347,7 @@ def terraformProvisionment(
 
         # ---------------- RUN TERRAFORM: provision VMs
         beautify = "terraform fmt > /dev/null &&"
-        cmd = "terraform init && %s terraform apply -auto-approve" % beautify
+        cmd = "terraform 0.13upgrade -yes && terraform init && %s terraform apply -auto-approve" % beautify
         if runTerraform("src/logging/%s" % test,
                         cmd,
                         mainTfDir,
