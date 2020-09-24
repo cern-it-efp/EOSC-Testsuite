@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# First run: results/opentelekomcloud/22-09-2020_10-03-42 (10 nodes type p2.4xlarge.8)
+# TODO: at the end of the loop, when nodes == 1 it does not destroy the remaining VM
 
 pathToTC="/t.yaml"
 pathToCFG="/c.yaml"
@@ -19,25 +19,7 @@ function runHeader(){
   echo ""
 }
 
-runHeader $maxNodes
-
-# normal run with the max number of nodes
-#./test_suite -c $pathToCFG -t $pathToTC --usePrivateIPs &&
-./test_suite -c $pathToCFG -t $pathToTC --onlyTest &&
-
-for (( var=$(($maxNodes-1)); var>=$minNodes; var-- )) do # -1 because the first run is already done
-
-  # wait til pods are destroyed
-  #kubectl get pods --kubeconfig $dlKubeConfig | grep -i "No resources found in default namespace"
-  kubectl get pods --kubeconfig $dlKubeConfig | grep STATUS &> /dev/null
-  while [ $? == 0 ] ; do
-    echo "Former pods are still there, waiting and retrying..."
-    sleep 4
-    kubectl get pods --kubeconfig $dlKubeConfig | grep STATUS &> /dev/null
-  done
-  sleep 4
-
-  # On completion, delete and destroy a node that is not the master
+function deleteOneNode(){
   NODE_2_DELETE=$(kubectl get nodes --kubeconfig $dlKubeConfig | grep -v master | awk '{print $1}' | sed -n 2p)
   kubectl --kubeconfig $dlKubeConfig delete node $NODE_2_DELETE
   echo ""; echo Destroy node $NODE_2_DELETE; echo "" ; echo $NODE_2_DELETE >> /tmp/deleteThese
@@ -59,12 +41,40 @@ for obj in tfShow:
   """)
   terraform destroy -target=opentelekomcloud_compute_instance_v2.kubenode_defaultNetwork[$indexToDestroy] -auto-approve
   cd ../../..
+}
 
-  # Edit the testsCatalog.yaml (or create a new one from raw.yaml) to decrease nodes (replica) by 1: use
+runHeader $maxNodes
+
+# normal run with the max number of nodes # TODO: check whether a cluster for dlTest exists and in that case use onlyTest instead of usePrivateIPs
+#./test_suite -c $pathToCFG -t $pathToTC --usePrivateIPs
+./test_suite -c $pathToCFG -t $pathToTC --onlyTest
+
+if [[ $? != 0 ]] ; then # TODO: useless bc test_suite's exit code doesnt fully reflect the exit status of the run
+  exit 1
+fi
+
+for (( var=$(($maxNodes-1)); var>=$minNodes; var-- )) do # -1 because the first run is already done
+
+  # On completion, delete and destroy a node that is not the master
+  deleteOneNode
+
+  # Edit the testsCatalog.yaml (or create a new one from raw.yaml) to decrease nodes (replica) by 1:
   yq w -i $pathToTC dlTest.nodes $var
 
-  runHeader $var
+  # wait til pods are destroyed (in case there is still any...)
+  kubectl get pods --kubeconfig $dlKubeConfig | grep STATUS &> /dev/null
+  while [ $? == 0 ] ; do
+    echo "Former pods are still there, waiting and retrying..."
+    sleep 4
+    kubectl get pods --kubeconfig $dlKubeConfig | grep STATUS &> /dev/null
+  done
+  sleep 4
+
   # run with onlyTest
+  runHeader $var
   ./test_suite -c $pathToCFG -t $pathToTC --onlyTest
 
 done
+
+# Delete the remaining node
+deleteOneNode # TODO: would fail bc the function only deletes no-master nodes but the last one is the master
