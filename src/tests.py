@@ -393,7 +393,19 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
 
     # TODO: what happens when running on a non-GPU cluster or a GPU cluster that is not prepared (i.e no drivers)?
 
-    # 1) Write the MPIJob resource file:
+    # 1) Write the ConfigMap (data set) and MPIJob resource files:
+
+    fullDataset = open("%s/dlTest/fullDataset" % testsRoot, 'r').readlines()
+    selectedDataset = ""
+
+    for f in range(dl["datasetSize"]):
+        selectedDataset += "%s\\r\\n" % fullDataset[f].replace('\n','')
+
+    with open("%s/dlTest/raw/dataset_raw.yaml" % testsRoot, 'r') as inputfile:
+        with open("%s/dlTest/dataset.yaml" % testsRoot, 'w') as outfile:
+            outfile.write(str(inputfile.read()).replace(
+            "DS_PH", "\"%s\"" % selectedDataset))
+
     mpijobResourceFile = '%s/dlTest/raw/%s_raw.yaml' % (testsRoot, dl["benchmark"])
 
     cmd = "get nodes"
@@ -413,7 +425,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
 
     kubectl(Action.create,
         kubeconfig,
-        file="%s/dlTest/3dgan-datafile-lists-configmap.yaml" % testsRoot,
+        file="%s/dlTest/dataset.yaml" % testsRoot,
         ignoreErr=True)
 
     if kubectl(Action.create,
@@ -423,7 +435,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
         writeFail(resDir, "bb_train_history.json",
                   "Error deploying 3D GAN benchmark.", "src/logging/dlTest")
 
-    elif waitForPod(podName, kubeconfig, retrials=40, sleepTime=10) is False:
+    elif waitForPod(podName, kubeconfig, retrials=70, sleepTime=10) is False:
         writeFail(resDir,
                   "bb_train_history.json",
                   "Error deploying 3D GAN benchmark: pods were never created",
@@ -433,8 +445,20 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
         fetchResults(resDir,
                      kubeconfig,
                      podName,
-                     "/%s/bb_train_history.json" % dl["benchmark"],
+                     "/%s/bb_train_history.json" % dl["benchmark"], # Losses
                      "bb_train_history.json",
+                     "src/logging/dlTest")
+        fetchResults(resDir,
+                     kubeconfig,
+                     podName,
+                     "/%s/m0_bb_train_history.model" % dl["benchmark"], # Discriminator model
+                     "m0_bb_train_history.model",
+                     "src/logging/dlTest")
+        fetchResults(resDir,
+                     kubeconfig,
+                     podName,
+                     "/%s/m1_bb_train_history.model" % dl["benchmark"], # Combined model
+                     "m1_bb_train_history.model",
                      "src/logging/dlTest")
         res = True
 

@@ -7,6 +7,12 @@ variable "openUser" {
 variable "ssh_private_key_path" {
   default = "~/.ssh/id_rsa"
 }
+variable "location" { # all these worked for the spons. subscription
+  default = "West Europe"
+  #default = "East US"
+  #default = "Switzerland North"
+  #default = "Japan East"
+}
 
 provider "azurerm" {
   subscription_id = "e53421f6-39d4-43d7-8ae4-3c80af669e2d" # 54f623f0-8c18-40dd-9530-d32d2f1ee14f
@@ -17,7 +23,7 @@ provider "azurerm" {
 resource "azurerm_virtual_network" "myterraformnetwork" {
   name                = "myVnet"
   address_space       = ["10.0.0.0/16"]
-  location            = "West Europe"
+  location            = var.location
   resource_group_name = var.res_group_name
 }
 
@@ -32,7 +38,7 @@ resource "azurerm_subnet" "myterraformsubnet" {
 # Create public IPs
 resource "azurerm_public_ip" "myterraformpublicip" {
   name                = "myPublicIP"
-  location            = "West Europe"
+  location            = var.location
   resource_group_name = var.res_group_name
   allocation_method   = "Dynamic"
 }
@@ -40,7 +46,7 @@ resource "azurerm_public_ip" "myterraformpublicip" {
 # Create network interface (This CAN'T be done in advance, as I need one per VM: too much GUI work)
 resource "azurerm_network_interface" "terraformnic" {
   name                      = "myNIC"
-  location                  = "West Europe"
+  location                  = var.location
   resource_group_name       = var.res_group_name
 
   ip_configuration {
@@ -55,7 +61,7 @@ resource "azurerm_network_interface" "terraformnic" {
 
 resource "azurerm_virtual_machine" "main" {
   name                  = "tslauncher"
-  location              = "West Europe"
+  location              = var.location
   vm_size               = "Standard_D2s_v3"
   resource_group_name   = var.res_group_name
   network_interface_ids = [azurerm_network_interface.terraformnic.id]

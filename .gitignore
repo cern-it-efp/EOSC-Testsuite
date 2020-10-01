@@ -12,6 +12,7 @@ src/tests/data_repatriation/repatriation_pod.yaml
 
 src/tests/dlTest/mpi_learn.yaml
 src/tests/dlTest/nnlo.yaml
+src/tests/dlTest/dataset.yaml
 src/tests/dlTest/main.tf
 src/tests/dlTest/config
 src/tests/dlTest/.terraform*

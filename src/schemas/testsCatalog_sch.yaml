@@ -89,6 +89,7 @@ properties:
                 - flavor
                 - epochs
                 - benchmark
+                - datasetSize
             properties:
                 nodes:
                     type: integer
@@ -101,6 +102,10 @@ properties:
                 benchmark:
                     type: string
                     enum: [nnlo, mpi_learn]
+                datasetSize:
+                    type: integer
+                    minimum: 1
+                    maximum: 65
     hpcTest:
         type: object
         required:
