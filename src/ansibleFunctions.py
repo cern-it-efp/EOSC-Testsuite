@@ -65,7 +65,7 @@ def createHostsFile(mainTfDir,
             if ip is not None:
                 IPs.append(ip)
     else:
-        IPs = configs["clusters"][test]  # one of shared, dlTest, hpcTest
+        IPs = configs["clusters"][test]  # one of shared, dlTest, hpcTest, proGANTest
 
     config = ConfigParser(allow_no_value=True)
     config.add_section('master')
@@ -154,9 +154,13 @@ def ansiblePlaybook(mainTfDir,
 
                 # --------------- GPU support # TODO, document: This assumes drivers are installed, i.e nvidia-smi works
                 playbooksArray = [playbookPath]
+
                 if test == "dlTest":
                     playbooksArray.append("src/provisionment/playbooks/gpuSupport.yaml")
                     playbooksArray.append("src/provisionment/playbooks/kubeflow_mpiOperator.yaml")
+
+                if test == "proGANTest":
+                    playbooksArray.append("src/provisionment/playbooks/gpuSupport.yaml")
 
                 res = PlaybookExecutor(playbooks=playbooksArray,
                                        inventory=inventory,

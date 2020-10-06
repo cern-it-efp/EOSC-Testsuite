@@ -29,7 +29,7 @@ testsSharingCluster = ["s3Test",
                        "perfsonarTest",
                        "cpuBenchmarking",
                        "dodasTest"]
-customClustersTests = ["dlTest", "hpcTest"]
+customClustersTests = ["dlTest", "hpcTest", "proGANTest"]
 
 bootstrapFailMsg = "Failed to bootstrap '%s' k8s cluster. Check 'logs' file"
 clusterCreatedMsg = "...%s CLUSTER CREATED (masterIP: %s) => STARTING TESTS\n"
@@ -42,7 +42,7 @@ ansibleLogs = "src/logging/ansibleLogs%s"
 provisionFailMsg = "Failed to provision raw VMs. Check 'logs' file for details"
 
 publicRepo = "https://eosc-testsuite.rtfd.io"
-clusters = ["shared", "dlTest", "hpcTest"]
+clusters = ["shared", "dlTest", "hpcTest", "proGANTest"]
 
 
 def initAndChecks(noTerraform,
@@ -138,7 +138,7 @@ def initAndChecks(noTerraform,
         if testsCatalog[test]["run"] is True:
             selected.append(test)
 
-            if test == "dlTest":
+            if test == "dlTest" or test == "proGANTest":
                 instancePrice = tryTakeFromYaml(configs, "costCalculation.GPUInstancePrice", None)
             if test == "hpcTest":
                 instancePrice = tryTakeFromYaml(configs, "costCalculation.HPCInstancePrice", None)

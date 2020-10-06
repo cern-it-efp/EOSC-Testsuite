@@ -475,6 +475,62 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
     init.queue.put(({"test": "dlTest", "deployed": res}, testCost))
 
 
+def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
+    """ Train a Progressive GAN.
+
+    Parameters:
+        onlyTest (bool): If true, skip provisioning phase.
+        retry (bool): If true, try to reuse existing infrastructure.
+        noTerraform (bool): Specifies whether current run uses terraform.
+        resDir (str): Path to the results folder for the current run.
+        usePrivateIPs (bool): Indicates usage of private or public IPs.
+
+    Returns:
+        None: In case of errors the function stops (returns None)
+    """
+
+
+    start = time.time()
+    testCost = 0
+    res = False
+    proGAN = init.testsCatalog["proGANTest"]
+    kubeconfig = "src/tests/proGANTest/config"
+
+    if noTerraform is True:
+        flavor = None
+    else:
+        flavor = proGAN["flavor"]
+
+    if onlyTest is False:
+        prov, msg = provisionAndBootstrap("proGANTest",
+                                          proGAN["nodes"],
+                                          flavor,
+                                          extraInstanceConfig,
+                                          "src/logging/proGANTest",
+                                          init.configs,
+                                          init.cfgPath,
+                                          testsRoot,
+                                          retry,
+                                          instanceDefinition,
+                                          credentials,
+                                          dependencies,
+                                          baseCWD,
+                                          extraSupportedClouds,
+                                          noTerraform,
+                                          usePrivateIPs)
+        if prov is False:
+            toPut = {"test": "proGANTest", "deployed": res}
+            if "provision" in msg:
+                toPut["reason"] = "ProvisionFailed"
+            writeFail(resDir, "proGANTest.json",
+                      msg, "src/logging/proGANTest")
+            init.queue.put((toPut, testCost))
+            return
+    else:
+        if not checkCluster("proGANTest"):
+            return  # Cluster not reachable, do not add cost for this test
+
+
 def hpcTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
     """ HPC test.
 

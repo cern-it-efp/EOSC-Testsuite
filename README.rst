@@ -69,7 +69,7 @@ Release notes
 ---------------------------------------------
 (Note the versions are numbered with the date of the release: YEAR.MONTH)
 
-``20.7 - latest``
+``20.x - latest``
 
 -Cluster certificate additionally signed for NAT IP, no need to use bastion method as with this solution the cluster can be reached from outside of the provider network.
 However, previous allocation of floating IPs is now required.

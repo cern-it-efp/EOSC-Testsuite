@@ -35,6 +35,7 @@ def formerProvisionExists():
 
     if os.path.exists("src/tests/dlTest/main.tf") or \
        os.path.exists("src/tests/hpcTest/main.tf") or \
+       os.path.exists("src/tests/proGANTest/main.tf") or \
        os.path.exists("src/tests/shared/main.tf"):
         return True
     return False
@@ -57,7 +58,7 @@ def checkCost(obtainCost, value):
         return False
 
 
-def checkDLsupport():
+def checkDLsupport(): # TODO: used?
     """ Check whether infrastructure supports DL.
 
     Returns:
@@ -143,6 +144,12 @@ def checkRequiredTFexist(selectedTests):
                     "\nNormal run is required before run with '--retry'.", True)
         stop(1)
 
+    if "proGANTest" in selectedTests and not os.path.isfile(pathToMain % "proGANTest"):
+        writeToFile("src/logging/header",
+                    "ERROR: terraform files not found for proGANTest. "
+                    "\nNormal run is required before run with '--retry'.", True)
+        stop(1)
+
     if "hpcTest" in selectedTests and not os.path.isfile(pathToMain % "hpcTest"):
         writeToFile("src/logging/header",
                     "ERROR: terraform files not found for hpcTest. "
@@ -155,7 +162,7 @@ def checkClustersToDestroy(cliParameterValue, clusters):
 
     Parameters:
         cliParameterValue (str): CLI arguments.
-        clusters (Array<str>): Array containing 'shared','dlTest' and 'hpcTest'.
+        clusters (Array<str>): Array containing 'shared','dlTest', 'proGANTest' and 'hpcTest'.
 
     Returns:
         bool: True in case the given argument is correct. False otherwise.

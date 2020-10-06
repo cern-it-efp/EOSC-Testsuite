@@ -77,7 +77,7 @@ def destroyTF(baseCWD, clusters=None):
     """
 
     if clusters is None:
-        clusters = ["shared", "dlTest", "hpcTest"]
+        clusters = ["shared", "dlTest", "hpcTest", "proGANTest"]
 
     res = []
     for cluster in clusters:
