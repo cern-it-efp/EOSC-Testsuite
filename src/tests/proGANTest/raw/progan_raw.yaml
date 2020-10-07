@@ -13,11 +13,11 @@ spec:
       privileged: true
     env:
     - name: BMARK_GPUS
-      value: BMARK_GPUS_PH
+      value: "BMARK_GPUS_PH"
     - name: BMARK_KIMG
-      value: BMARK_KIMG_PH
+      value: "BMARK_KIMG_PH"
     - name: IMAGES_AMOUNT
-      value: IMAGES_AMOUNT_PH
+      value: "IMAGES_AMOUNT_PH"
     command: ["/bin/sh","-c"]
     args:
     - mkdir datasets ;
