@@ -26,7 +26,7 @@ from checker import *
 
 
 Action = Enum('Action', 'create delete cp exec')
-Type = Enum('Type', 'pod daemonset mpijob configmap pv')
+Type = Enum('Type', 'pod daemonset mpijob configmap pv sa')
 
 
 def checkCluster(test):
@@ -76,6 +76,34 @@ def checkPodAlive(podName, resDir, toLog, resultFile, kubeconfig):
     return True
 
 
+def waitForResource(resourceName, resourceType, kubeconfig, retrials=None, sleepTime=None):
+    """ Waits until the given resource is deployed, i.e. visible by kubectl. If
+        after a specific number of retrials this does not happen, returns False.
+
+    Parameters:
+        resourceName (str): Resource name.
+        resourceType (str): Resource type.
+        kubeconfig (str): Path to kubeconfig file of the being managed cluster.
+        retrials (int): Number of retrials.
+        sleepTime (int): Sleep time in seconds between retrials.
+
+    Returns:
+        bool: True in case the resource is present, False otherwise
+    """
+
+    if retrials is None:
+        retrials = 2
+    if sleepTime is None:
+        sleepTime = 2
+    for i in range(retrials):
+        cmd = "get %s %s" % (resourceType, resourceName)
+        if kubectlCLI(cmd, kubeconfig=kubeconfig, hideLogs=True) == 0:
+            return True
+        print("Rsource of type '%s' with name '%s' not ready yet..." % (resourceType, resourceName))
+        time.sleep(sleepTime)
+    return False
+
+
 def waitForPod(podName, kubeconfig, retrials=None, sleepTime=None):
     """ Waits until the given pod is deployed, i.e. visible by kubectl. If
         after a specific number of retrials this does not happen, returns False.
@@ -101,6 +129,7 @@ def waitForPod(podName, kubeconfig, retrials=None, sleepTime=None):
         print("Pod %s not ready yet..." % podName)
         time.sleep(sleepTime)
     return False
+
 
 def fetchResults(resDir, kubeconfig, podName, source, file, toLog):
     """ Fetch tests results file from pod.
