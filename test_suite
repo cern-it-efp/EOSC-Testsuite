@@ -6,7 +6,7 @@ noTerraform=0
 onlyTest=0
 noWatch=0
 
-rm -f $ld/header $ld/killMe $ld/footer $ld/hpcTest $ld/dlTest $ld/shared $ld/logs $ld/end $ld/ansibleLogs* &> /dev/null
+rm -f $ld/header $ld/killMe $ld/footer $ld/hpcTest $ld/dlTest $ld/proGANTest $ld/shared $ld/logs $ld/end $ld/ansibleLogs* &> /dev/null
 
 
 prompt(){
@@ -14,6 +14,7 @@ prompt(){
         $onlyTest -eq 0 &&
         $force -eq 0 && ( # TODO: -y
         -f src/tests/dlTest/main.tf ||
+        -f src/tests/proGANTest/main.tf ||
         -f src/tests/hpcTest/main.tf ||
         -f src/tests/shared/main.tf) ]]; then
     read -p "WARNING: Looks like infrastructure already exists. Overwrite? " yn
@@ -28,7 +29,7 @@ catAll(){
   if [[ -s header ]]; then
     cat header > logs; echo "" >> logs
   fi
-  for f in shared dlTest hpcTest footer; do
+  for f in shared dlTest proGANTest hpcTest footer; do
     if [[ -s $f ]]; then # cat only the files that contain something
       cat $f >> logs; echo "" >> logs
     fi
@@ -41,7 +42,7 @@ export -f catAll
 
 watchFunct(){
   cd $ld # all the following happens inside ./src/logging
-  touch logs header shared dlTest hpcTest footer end
+  touch logs header shared dlTest proGANTest hpcTest footer end
   if  [[ $noWatch -eq 1 ]]; then
     echo "Logs in file $(pwd)/logs"
     while true; do catAll; sleep 2; done & echo $! > killMe

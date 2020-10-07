@@ -503,7 +503,7 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
 
     if onlyTest is False:
         prov, msg = provisionAndBootstrap("proGANTest",
-                                          proGAN["nodes"],
+                                          1,
                                           flavor,
                                           extraInstanceConfig,
                                           "src/logging/proGANTest",
@@ -529,6 +529,61 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
     else:
         if not checkCluster("proGANTest"):
             return  # Cluster not reachable, do not add cost for this test
+
+    # 1) Write the proGAN pod file:
+
+    with open('%s/proGANTest/raw/progan_raw.yaml' % testsRoot, 'r') as inputfile:
+        with open('%s/proGANTest/progan.yaml' % testsRoot, 'w') as outfile:
+            outfile.write(str(inputfile.read()).replace(
+                "BMARK_GPUS_PH", str(proGAN["gpus"])).replace(
+                "BMARK_KIMG_PH", str(proGAN["kimg"])).replace(
+                "IMAGES_AMOUNT_PH", str(proGAN["images_amount"])))
+
+    # 2) Deploy the Pro-GAN pod:
+
+    podName = "progan-pod"
+    proganPodResDir = "000-pgan-syn256rgb_conditional-preset-v2-%s-fp32"
+
+    if proGAN["gpus"] == 1:
+        proganPodResDir = proganPodResDir % "1gpu"
+    elif proGAN["gpus"] == 2:
+        proganPodResDir = proganPodResDir % "2gpus"
+    elif proGAN["gpus"] == 4:
+        proganPodResDir = proganPodResDir % "4gpus"
+    else:
+        proganPodResDir = proganPodResDir % "8gpus"
+
+    if kubectl(Action.create,
+               kubeconfig,
+               file='%s/proGANTest/progan.yaml' % testsRoot,
+               toLog="src/logging/proGANTest") != 0:
+        writeFail(resDir, "progan.json",
+                  "Error deploying Pro-GAN benchmark.", "src/logging/proGANTest")
+
+    else:
+        fetchResults(resDir,
+                     kubeconfig,
+                     podName,
+                     "/root/CProGAN-ME/results/%s/network-final.pkl" % proganPodResDir,
+                     "network-final.pkl",
+                     "src/logging/proGANTest")
+        fetchResults(resDir,
+                     kubeconfig,
+                     podName,
+                     "/root/CProGAN-ME/results/%s/log.txt" % proganPodResDir,
+                     "log.txt",
+                     "src/logging/proGANTest")
+        res = True
+
+    # Cost estimation
+    if init.obtainCost is True:
+        testCost = ((time.time() - start) / 3600) * \
+            init.configs["costCalculation"]["GPUInstancePrice"] * proGAN["nodes"]
+
+    # cleanup
+    writeToFile("src/logging/proGANTest", "Cluster cleanup...", True)
+    kubectl(Action.delete, kubeconfig, type=Type.pod, name=podName)
+    init.queue.put(({"test": "proGANTest", "deployed": res}, testCost))
 
 
 def hpcTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):

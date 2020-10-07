@@ -122,14 +122,23 @@ properties:
         then:
             required:
                 - flavor
+                - gpus
                 - images_amount
+                - kimg
             properties:
                 flavor:
                     type: string
-                images_amount: # TODO: this would be the data set size, and 'kimg' would provide epochs (kimg * 1000 / nimgs = epochs). 
+                images_amount:
                     type: integer
                     minimum: 1
-                    maximum: 202599
+                    maximum: 980
+                gpus:
+                    type: integer
+                    enum: [1,2,4,8]
+                kimg:
+                    type: integer
+                    minimum: 1
+                    maximum: 12000
     hpcTest:
         type: object
         required:

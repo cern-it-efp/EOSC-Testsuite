@@ -17,14 +17,18 @@ src/tests/dlTest/main.tf
 src/tests/dlTest/config
 src/tests/dlTest/.terraform*
 src/tests/dlTest/terraform.tf*
-src/tests/dlTest/join.sh
+
+src/tests/proGANTest/progan.yaml
+src/tests/proGANTest/main.tf
+src/tests/proGANTest/config
+src/tests/proGANTest/.terraform*
+src/tests/proGANTest/terraform.tf*
 
 src/tests/hpcTest/fdmnes
 src/tests/hpcTest/main.tf
 src/tests/hpcTest/config
 src/tests/hpcTest/.terraform*
 src/tests/hpcTest/terraform.tf*
-src/tests/hpcTest/join.sh
 
 src/__pycache__
 
