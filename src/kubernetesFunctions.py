@@ -96,7 +96,7 @@ def waitForResource(resourceName, resourceType, kubeconfig, retrials=None, sleep
     if sleepTime is None:
         sleepTime = 2
     for i in range(retrials):
-        cmd = "get %s %s" % (resourceType, resourceName)
+        cmd = "get %s %s" % (resourceType.name, resourceName)
         if kubectlCLI(cmd, kubeconfig=kubeconfig, hideLogs=True) == 0:
             return True
         print("Rsource of type '%s' with name '%s' not ready yet..." % (resourceType, resourceName))
