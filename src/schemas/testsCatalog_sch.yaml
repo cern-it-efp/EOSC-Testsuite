@@ -5,6 +5,7 @@ required:
     - cpuBenchmarking
     - perfsonarTest
     - dlTest
+    - proGANTest
     - hpcTest
     - dodasTest
 properties:

@@ -245,6 +245,39 @@ def cpuBenchmarking(resDir):
         resDir (str): Path to the results folder for the current run.
     """
 
+    podName = "hep-bmk-pod"
+    definition_raw = "%scpu_benchmarking/raw/cpu_benchmarking_pod_raw.yaml" % testsRoot
+    definition = "%scpu_benchmarking/cpu_benchmarking_pod.yaml" % testsRoot
+    resultFile = "cpu_benchmarking.json"
+    toLog = "src/logging/shared"
+    testName = "cpuBenchmarking"
+    resultOnPod = "/tmp/hep-benchmark-suite_root/bmk_utils/result_profile.json"
+    substitution = [
+        {
+            "before": "PROVIDER_PH",
+            "after": init.configs["providerName"]
+        }
+    ]
+    kubeconfig = defaultKubeconfig
+    runTest(definition,
+            toLog,
+            testName,
+            resDir,
+            resultFile,
+            podName,
+            resultOnPod,
+            kubeconfig,
+            definition_raw=definition_raw,
+            substitution=substitution)
+
+
+def cpuBenchmarking_former(resDir):
+    """ Run containerised CPU Benchmarking test.
+
+    Parameters:
+        resDir (str): Path to the results folder for the current run.
+    """
+
     podName = "cpu-bmk-pod"
     definition_raw = "%scpu_benchmarking/raw/cpu_benchmarking_pod_raw.yaml" % testsRoot
     definition = "%scpu_benchmarking/cpu_benchmarking_pod.yaml" % testsRoot
