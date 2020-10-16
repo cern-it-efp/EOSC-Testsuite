@@ -103,7 +103,8 @@ def runTest(definition,
             podPath=None,
             localPath=None,
             cmd=None,
-            additionalResourcesPrices=None): # additionalResourcePrice is an array
+            additionalResourcesPrices=None,
+            keepResources=False): # additionalResourcePrice is an array
     """ Runs tests.
 
     Parameters:
@@ -153,8 +154,9 @@ def runTest(definition,
         #-----------------------------------------------------------------------
 
         # cleanup
-        writeToFile(toLog, "Cluster cleanup...", True)
-        kubectl(Action.delete, kubeconfig, type=Type.pod, name=podName)
+        if keepResources is False:
+            writeToFile(toLog, "Cluster cleanup...", True)
+            kubectl(Action.delete, kubeconfig, type=Type.pod, name=podName)
         init.queue.put(({"test": testName, "deployed": True}, testCost))
 
 
@@ -311,6 +313,8 @@ def perfsonarTest(resDir):
         resDir (str): Path to the results folder for the current run.
     """
 
+    keepPerfsonarPod = True # TODO: this has to be read from testsCatalog.yaml
+
     podName = "ps-pod"
     testName = "perfSONAR"
     endpoint = init.testsCatalog["perfsonarTest"]["endpoint"]
@@ -336,7 +340,8 @@ def perfsonarTest(resDir):
             copyToPodAndRun_flag=True,
             podPath=podPath,
             localPath=localPath,
-            cmd=cmd)
+            cmd=cmd,
+            keepResources=keepPerfsonarPod)
 
 
 def dodasTest(resDir):

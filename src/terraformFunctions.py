@@ -88,7 +88,7 @@ def destroyTF(baseCWD, clusters=None):
         #cmd = "terraform 0.13upgrade -yes && terraform destroy -auto-approve"
         exitCode = runTerraform(toLog, cmd, mainTfDir, baseCWD, cluster, msg)
         #if all(x == 0 for x in exitCode) is True:
-        if exitCode is 0:
+        if exitCode is 0 and keepTFfiles is not True:
             cleanupTF("src/tests/%s/" % cluster)
         else:
             print("INFO: destroy did not succeed completely, tf files kept.")
@@ -337,7 +337,7 @@ def terraformProvisionment(
                                                         None)
 
             if configs["providerName"] in ("cloudstack", "oci",
-                                            "aws", "google"):
+                                            "aws", "google", "azurerm"):
 
                 terraform_cli_vars["storageCapacity"] = tryTakeFromYaml(
                                                             configs,

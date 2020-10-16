@@ -53,6 +53,3 @@
         repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
         state: present
         filename: 'kubernetes'
-
-    - name: Waiting for APT to be ready...
-      shell: while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 1; done;

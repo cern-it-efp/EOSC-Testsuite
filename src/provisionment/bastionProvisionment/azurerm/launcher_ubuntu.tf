@@ -8,7 +8,8 @@ variable "ssh_private_key_path" {
   default = "~/.ssh/id_rsa"
 }
 variable "location" { # all these worked for the spons. subscription
-  default = "West Europe"
+  #default = "West Europe"
+  default = "France Central"
   #default = "East US"
   #default = "Switzerland North"
   #default = "Japan East"

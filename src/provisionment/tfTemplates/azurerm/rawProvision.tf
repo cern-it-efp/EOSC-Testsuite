@@ -29,7 +29,11 @@ resource "azurerm_virtual_machine" "kubenode" {
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Premium_LRS"
+    disk_size_gb      = var.storageCapacity
   }
+
+  # TODO: add 'plan'
+
   storage_image_reference {
     publisher = var.publisher
     offer     = var.offer
@@ -38,7 +42,7 @@ resource "azurerm_virtual_machine" "kubenode" {
   }
   os_profile {
     computer_name  = "${var.instanceName}-${count.index}"
-    admin_username = yamldecode(file(var.configsFile))["openUser"] 
+    admin_username = yamldecode(file(var.configsFile))["openUser"]
   }
   os_profile_linux_config {
     disable_password_authentication = true
