@@ -20,7 +20,7 @@ resource "azurerm_virtual_machine" "kubenode" {
   name                  = "${var.instanceName}-${count.index}"
   location              = yamldecode(file(var.configsFile))["location"]
   resource_group_name   = yamldecode(file(var.configsFile))["resourceGroupName"]
-  vm_size               = yamldecode(file(var.configsFile))["flavor"]
+  vm_size               = var.flavor
   network_interface_ids = [element(azurerm_network_interface.terraformnic.*.id, count.index)]
   delete_os_disk_on_termination = true
 

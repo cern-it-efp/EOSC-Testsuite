@@ -16,7 +16,7 @@ allowAllTfClouds = False
 baseCWD = os.getcwd()
 defaultKubeconfig = "%s/src/tests/shared/config" % baseCWD
 obtainCost = True
-keepTFfiles = False
+keepTFfiles = True
 extraSupportedClouds = ["openstack",
                         "aws",
                         "azurerm",

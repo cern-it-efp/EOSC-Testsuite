@@ -85,11 +85,12 @@ def destroyTF(baseCWD, clusters=None):
         msg = "  -Destroying %s cluster..." % cluster
         mainTfDir = "src/tests/%s" % cluster
         cmd = "terraform destroy -auto-approve"
-        #cmd = "terraform 0.13upgrade -yes && terraform destroy -auto-approve"
         exitCode = runTerraform(toLog, cmd, mainTfDir, baseCWD, cluster, msg)
-        #if all(x == 0 for x in exitCode) is True:
-        if exitCode is 0 and keepTFfiles is not True:
-            cleanupTF("src/tests/%s/" % cluster)
+        if exitCode is 0:
+            if keepTFfiles is not True:
+                cleanupTF("src/tests/%s/" % cluster)
+            else:
+                print("INFO: destroy succeed, tf files kept.")
         else:
             print("INFO: destroy did not succeed completely, tf files kept.")
         res.append(exitCode)

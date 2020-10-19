@@ -70,7 +70,7 @@ def checkPodAlive(podName, resDir, toLog, resultFile, kubeconfig):
     if kubectlCLI(cmd, kubeconfig=kubeconfig, hideLogs=True) != 0:
         writeFail(resDir,
                   resultFile,
-                  "%s pod was destroyed." % podName,
+                  "%s pod was destroyed (did not fetch %s)" % (podName,resultFile),
                   toLog)
         return False
     return True
