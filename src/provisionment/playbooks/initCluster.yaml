@@ -33,7 +33,7 @@
   retries: 10
   delay: 3
 
-- name: Taint nodes: allow pods on master node
+- name: Taint nodes - allow pods on master node
   ignore_errors: yes
   command: kubectl taint nodes --all node-role.kubernetes.io/master-
   register: taint_nodes

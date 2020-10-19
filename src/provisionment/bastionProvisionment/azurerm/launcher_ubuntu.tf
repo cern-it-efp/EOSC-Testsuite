@@ -15,6 +15,21 @@ variable "location" { # all these worked for the spons. subscription
   #default = "Japan East"
 }
 
+# ------------------------------------------------------------------------------
+variable "publisher" {
+  default = "Canonical"
+}
+variable "offer" {
+  default = "UbuntuServer"
+}
+variable "sku" {
+  default = "18.04-LTS"
+}
+variable "imageVersion" {
+  default = "latest"
+}
+# ------------------------------------------------------------------------------
+
 provider "azurerm" {
   subscription_id = "e53421f6-39d4-43d7-8ae4-3c80af669e2d" # 54f623f0-8c18-40dd-9530-d32d2f1ee14f
   features {}
@@ -33,7 +48,7 @@ resource "azurerm_subnet" "myterraformsubnet" {
   name                 = "mySubnet"
   resource_group_name  = var.res_group_name
   virtual_network_name = azurerm_virtual_network.myterraformnetwork.name
-  address_prefix       = "10.0.1.0/24"
+  address_prefixes       = ["10.0.1.0/24"]
 }
 
 # Create public IPs
@@ -75,11 +90,17 @@ resource "azurerm_virtual_machine" "main" {
     managed_disk_type = "Premium_LRS"
   }
 
+  #plan {
+  #  publisher = var.publisher
+  #  name      = var.sku
+  #  product   = var.offer
+  #}
+
   storage_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
-    version   = "latest"
+    publisher = var.publisher
+    offer     = var.offer
+    sku       = var.sku
+    version   = var.imageVersion
   }
 
   os_profile {

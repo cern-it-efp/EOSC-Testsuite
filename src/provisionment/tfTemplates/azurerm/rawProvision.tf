@@ -32,7 +32,11 @@ resource "azurerm_virtual_machine" "kubenode" {
     disk_size_gb      = var.storageCapacity
   }
 
-  # TODO: add 'plan'
+  plan {
+    publisher = var.publisher
+    name      = var.sku
+    product   = var.offer
+  }
 
   storage_image_reference {
     publisher = var.publisher
