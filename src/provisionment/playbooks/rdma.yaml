@@ -1,0 +1,22 @@
+# TODO: there's also a device plugin the be deployed for rdma, like the GPU support (only after these steps)
+
+# ------------------------------------ Allow root ssh
+- name: Enable InfiniBand / RDMA capabilities
+  hosts: all
+  become: yes
+  gather_facts: true
+  tasks:
+  - name: Add the InfiniBand extension  # TODO: this requires az login on the host machine and has to be a loop: 1 command per cluster node
+    command:
+
+  - name: Enable IP over InfiniBand
+    replace:
+      path: /etc/waagent.conf
+      regexp: '# OS.EnableRDMA=y'
+      replace: 'OS.EnableRDMA=y'
+
+  - name: Enable IP over InfiniBand - Restart walinuxagent
+    service:
+      name: walinuxagent
+      enabled: yes
+      state: restarted

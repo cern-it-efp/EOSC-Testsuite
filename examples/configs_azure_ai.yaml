@@ -3,7 +3,7 @@ providerName: azurerm
 pathToKey: "/root/.ssh/id_rsa"
 subscriptionId: "e53421f6-39d4-43d7-8ae4-3c80af669e2d"
 openUser: uroot
-flavor: "Standard_NC6s_v3" # 1 GPUs
+flavor: "foo" # 1 GPUs
 location: "France Central"
 resourceGroupName: "efp"
 pubSSH: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCFPaN62APTqDCy3eB6qy+ALngWKg/RHCU0XWlL47JQ/Bj4zjHoyviFQ3+WgRgRxakKSdbpRU28qm0dUT+5Ki72doEmcmmqdzwhTa6H/0XwoeeRc12eIUw/sn2wTgdf/c57ft0deOyxeALVArAZwCXxywNeRcAjGJsvp4LW6jjZFQ=="
@@ -19,4 +19,4 @@ costCalculation:
   GPUInstancePrice: 0.2
   HPCInstancePrice: 0.2
   s3bucketPrice: 0.1
-storageCapacity: 100
+storageCapacity: 200

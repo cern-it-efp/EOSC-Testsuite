@@ -14,8 +14,8 @@ dodasTest:
   run:
 dlTest:
   run: true
-  nodes: 2
-  flavor: "Standard_NC6s_v3"
+  nodes: 4
+  flavor: "Standard_NC24s_v3"
   epochs: 3
   benchmark: nnlo
   datasetSize: 20

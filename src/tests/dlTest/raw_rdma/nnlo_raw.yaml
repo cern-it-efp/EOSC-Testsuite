@@ -19,11 +19,8 @@ spec:
             securityContext:
               privileged: true
             name: train-mpijob
-            #resources: # TODO: does the launcher need a GPU?
-            #  limits:
-            #    nvidia.com/gpu: 1
             command: ["/bin/sh","-c"]
-            args: # TODO: are all the -x needed?
+            args: # TODO: are all the -x and --loss needed?
             - mpirun
               -tag-output
               -x LD_LIBRARY_PATH
@@ -35,7 +32,7 @@ spec:
               -mca btl ^openib
               python3 MPIGDriver.py bb.json train_3d.list test_3d.list
               --tf
-              --epochs 1
+              --epochs EPOCHS_PH
               --features-name X
               --labels-name y
               --mode easgd
@@ -45,7 +42,7 @@ spec:
               --monitor
               --log-level debug
               --worker-optimizer rmsprop
-              --loss dummy # what's this for?
+              --loss dummy
               && tail -f /dev/null
             volumeMounts:
             - name: train-list
@@ -68,7 +65,7 @@ spec:
               - key: "train_3d.list"
                 path: "train_3d.list"
     Worker:
-      replicas: 2 # TODO: if set this to 2, will create 3 pods: 1 launcher and 2 workers, but in reality the launcher does not do any training, and one of the workers is actually the master. Set to 3 deploys 3 workers but one is pending because of missing gpu
+      replicas: REP_PH
       template:
         spec:
           containers:
@@ -77,6 +74,7 @@ spec:
             resources:
               limits:
                 nvidia.com/gpu: 1
+                rdma/hca_shared_devices_a: 1
             volumeMounts:
             - name: train-list
               mountPath: "/nnlo/train_3d.list"
