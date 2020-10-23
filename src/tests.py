@@ -313,7 +313,7 @@ def perfsonarTest(resDir):
         resDir (str): Path to the results folder for the current run.
     """
 
-    keepPerfsonarPod = True # TODO: this has to be read from testsCatalog.yaml
+    keepPerfsonarPod = False # TODO: this has to be read from testsCatalog.yaml
 
     podName = "ps-pod"
     testName = "perfSONAR"

@@ -109,6 +109,7 @@ def cleanupTF(mainTfDir):
         "hosts",
         "config",
         "main.tf",
+        "versions.tf",
         "terraform.tfvars",
         "terraform.tfvars.json",
         "terraform.tfstate",

@@ -162,9 +162,9 @@ parser.add_argument('--noWatch', # TODO: should be noTTY or noLogs
 args = parser.parse_args()
 
 if args.cfgPathCLI:
-    cfgPathCLI = args.cfgPathCLI
+    cfgPathCLI = os.path.abspath(args.cfgPathCLI)
 if args.tcPathCLI:
-    tcPathCLI = args.tcPathCLI
+    tcPathCLI = os.path.abspath(args.tcPathCLI)
 if args.interactive:
     interactive = args.interactive # disables prompts of overriding tf files and deleting infrastructure
 if args.onlyTest:
