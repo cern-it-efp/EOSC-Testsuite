@@ -23,20 +23,29 @@ spec:
     imagePullPolicy: Always
     securityContext:
       privileged: true
+    env:
+    - name: BMK_RUNDIR
+      value: "/tmp/hep-benchmark-suite"
     command: ["/bin/sh","-c"]
     args:
-      - hep-benchmark-suite
+      - rm -rf $BMK_RUNDIR ;
+        hep-benchmark-suite
         -o
         -d
-        --benchmarks="hepscore,kv,DB12,hyper-benchmark"
+        --benchmarks="BMKS_PH"
         --freetext="Run as part of the Cloud Provider Validation Test-Suite CERN"
         --cloud="PROVIDER_PH" &&
         tail -f /dev/null
     volumeMounts:
     - mountPath: /var/run/docker.sock
       name: docker-sock
+    - mountPath: /tmp
+      name: tmp-dir
   volumes:
   - name: docker-sock
     hostPath:
       path: /var/run/docker.sock
       type: Socket
+  - name: tmp-dir
+    hostPath:
+      path: /tmp

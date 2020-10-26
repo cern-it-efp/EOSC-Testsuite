@@ -253,13 +253,18 @@ def cpuBenchmarking(resDir):
     resultFile = "cpu_benchmarking.json"
     toLog = "src/logging/shared"
     testName = "cpuBenchmarking"
-    resultOnPod = "/tmp/hep-benchmark-suite_root/bmk_utils/result_profile.json"
+    resultOnPod = "/tmp/hep-benchmark-suite/bmk_utils/result_profile.json"
     substitution = [
         {
             "before": "PROVIDER_PH",
             "after": init.configs["providerName"]
+        },
+        {
+            "before": "BMKS_PH",
+            "after": str(init.testsCatalog["cpuBenchmarking"]["benchmarks"]).replace("\'","").replace("[","").replace("]","") # TODO: do this with regexp
         }
     ]
+
     kubeconfig = defaultKubeconfig
     runTest(definition,
             toLog,
