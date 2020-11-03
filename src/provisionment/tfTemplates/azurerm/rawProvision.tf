@@ -3,6 +3,16 @@ provider "azurerm" {
   features {}
 }
 
+# Create public IPs
+resource "azurerm_public_ip" "terraformpublicip" {
+  count = var.customCount
+  name                = "myPublicIP${count.index}-${var.clusterRandomID}"
+  location            = yamldecode(file(var.configsFile))["location"]
+  resource_group_name = yamldecode(file(var.configsFile))["resourceGroupName"]
+  allocation_method   = "Dynamic"
+}
+
+# Create NICs
 resource "azurerm_network_interface" "terraformnic" {
   count                     = var.customCount
   name                      = "myNIC${count.index}-${var.clusterRandomID}"
@@ -12,9 +22,11 @@ resource "azurerm_network_interface" "terraformnic" {
     name                          = "myNicConfiguration"
     subnet_id                     = yamldecode(file(var.configsFile))["subnetId"]
     private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = element(azurerm_public_ip.terraformpublicip.*.id, count.index)
   }
 }
 
+# Create VMs
 resource "azurerm_virtual_machine" "kubenode" {
   count                 = var.customCount
   name                  = "${var.instanceName}-${count.index}"
