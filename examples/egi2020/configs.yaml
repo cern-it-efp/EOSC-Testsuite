@@ -1,0 +1,15 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: "exoscale"
+pathToKey: /home/ipelu/.ssh/id_rsa
+authFile: /home/ipelu/Desktop/.exoCredsEGI
+flavor: "Medium"
+zone: "ch-gva-2"
+template: "Linux CentOS 7 64-bit"
+keyPair: "k_cl"
+securityGroups: ["default"]
+storageCapacity: 100
+
+#---------------COST CALCULATION------------------------------------------------
+costCalculation:
+  generalInstancePrice: 0.04040
+  GPUInstancePrice: 1.25011

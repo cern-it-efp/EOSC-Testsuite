@@ -31,7 +31,7 @@ testsSharingCluster = ["s3Test",
                        "cpuBenchmarking",
                        "dodasTest"]
 customClustersTests = ["dlTest", "hpcTest", "proGANTest"]
-
+allTests = testsSharingCluster + customClustersTests
 bootstrapFailMsg = "Failed to bootstrap '%s' k8s cluster. Check 'logs' file"
 clusterCreatedMsg = "...%s CLUSTER CREATED (masterIP: %s) => STARTING TESTS\n"
 TOserviceAccountMsg = "ERROR: timed out waiting for %s cluster's service account\n"
@@ -89,10 +89,7 @@ def initAndChecks(noTerraform,
     else:
         tcPath = tcPathCLI
 
-    configs = loadFile(cfgPath, required=True)
-    testsCatalog = loadFile(tcPath, required=True)
-
-    validateConfigs(configs, testsCatalog, noTerraform, extraSupportedClouds)
+    configs, testsCatalog = validateConfigs(cfgPath, tcPath, noTerraform, extraSupportedClouds, allTests)
 
     if configs['providerName'] in ("oci", "opentelekomcloud"): # authFile validate (only YAML)
         authFile = loadFile(configs["authFile"], required=True)
@@ -134,14 +131,14 @@ def initAndChecks(noTerraform,
     # --------Tests config checks
     selected = []
 
-    for test in testsSharingCluster + customClustersTests:
+    for test in allTests:
 
         if testsCatalog[test]["run"] is True:
             selected.append(test)
 
             if test == "dlTest" or test == "proGANTest":
                 instancePrice = tryTakeFromYaml(configs, "costCalculation.GPUInstancePrice", None)
-            if test == "hpcTest":
+            elif test == "hpcTest":
                 instancePrice = tryTakeFromYaml(configs, "costCalculation.HPCInstancePrice", None)
             else:
                 instancePrice = tryTakeFromYaml(configs, "costCalculation.generalInstancePrice", None)

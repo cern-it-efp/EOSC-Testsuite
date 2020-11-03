@@ -1,0 +1,6 @@
+cpuBenchmarking:
+  run: true
+  benchmarks: ["kv","DB12","hyper-benchmark"]
+perfsonarTest:
+  run: true
+  endpoint: psb01-gva.cern.ch

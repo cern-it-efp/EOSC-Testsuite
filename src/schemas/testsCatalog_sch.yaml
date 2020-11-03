@@ -1,13 +1,4 @@
 type: object
-required:
-    - s3Test
-    - dataRepatriationTest
-    - cpuBenchmarking
-    - perfsonarTest
-    - dlTest
-    - proGANTest
-    - hpcTest
-    - dodasTest
 properties:
     s3Test:
         type: object
@@ -52,6 +43,27 @@ properties:
                 type:
                     - boolean
                     - "null"
+        if:
+            properties:
+                run:
+                    const: true
+        then:
+            required:
+                - benchmarks
+            properties:
+                benchmarks:
+                    type: array
+                    minItems: 1
+                    maxItems: 4
+                    items:
+                      - type: string
+                        enum: [hepscore, kv, DB12, hyper-benchmark]
+                      - type: string
+                        enum: [hepscore, kv, DB12, hyper-benchmark]
+                      - type: string
+                        enum: [hepscore, kv, DB12, hyper-benchmark]
+                      - type: string
+                        enum: [hepscore, kv, DB12, hyper-benchmark]
     perfsonarTest:
         type: object
         required:

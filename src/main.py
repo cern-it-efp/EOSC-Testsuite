@@ -60,18 +60,18 @@ def header(noLogo=False, provider=None, results=None):
         if provider is not None:
             if results is None:
                 showThis = ["EOSC Cloud Validation Test Suite",
-                    "Developed by CERN IT-EFP (ignacio.peluaga.lozada@cern.ch)",
+                    "Developed by CERN IT-EFP (ignacio.peluaga.lozada AT cern.ch)",
                     ".........................................................",
                             "Cloud: %s" % provider]
             else:
                 showThis = ["EOSC Cloud Validation Test Suite",
-                    "Developed by CERN IT-EFP (ignacio.peluaga.lozada@cern.ch)",
+                    "Developed by CERN IT-EFP (ignacio.peluaga.lozada AT cern.ch)",
                     ".........................................................",
                     "Cloud: %s" % provider,
                     "Results: results/%s" % results]
         else:
             showThis = ["EOSC Cloud Validation Test Suite",
-                "Developed by CERN IT-EFP (ignacio.peluaga.lozada@cern.ch)",
+                "Developed by CERN IT-EFP (ignacio.peluaga.lozada AT cern.ch)",
                 "........................................................."]
 
         logger(showThis, "#", "src/logging/header", override=True)
@@ -83,20 +83,20 @@ def header(noLogo=False, provider=None, results=None):
             if results is None:
                 showThis = ["                 | Cloud Validation Test Suite",
                 "█▀▀ █▀▀█ █▀▀ █▀▀ | Developed by CERN IT-EFP",
-                "█▀▀ █  █  ▀▄ █   | Contact: ignacio.peluaga.lozada@cern.ch",
+                "█▀▀ █  █  ▀▄ █   | Contact: ignacio.peluaga.lozada AT cern.ch",
                 "▀▀▀ ▀▀▀▀ ▀▀▀ ▀▀▀ | ..........................................",
                 "  eosc-portal.eu | Cloud: %s" % provider]
             else:
                 showThis = ["                 | Cloud Validation Test Suite",
                 "█▀▀ █▀▀█ █▀▀ █▀▀ | Developed by CERN IT-EFP",
-                "█▀▀ █  █  ▀▄ █   | Contact: ignacio.peluaga.lozada@cern.ch",
+                "█▀▀ █  █  ▀▄ █   | Contact: ignacio.peluaga.lozada AT cern.ch",
                 "▀▀▀ ▀▀▀▀ ▀▀▀ ▀▀▀ | ..........................................",
                 "  eosc-portal.eu | Cloud: %s" % provider,
                 "                 | Results: results/%s" % results]
         else:
             showThis = ["                 | Cloud Validation Test Suite",
                 "█▀▀ █▀▀█ █▀▀ █▀▀ | Developed by CERN IT-EFP",
-                "█▀▀ █  █  ▀▄ █   | Contact: ignacio.peluaga.lozada@cern.ch",
+                "█▀▀ █  █  ▀▄ █   | Contact: ignacio.peluaga.lozada AT cern.ch",
                 "▀▀▀ ▀▀▀▀ ▀▀▀ ▀▀▀ | ..........................................",
                 "  eosc-portal.eu | "]
 
@@ -162,9 +162,9 @@ parser.add_argument('--noWatch', # TODO: should be noTTY or noLogs
 args = parser.parse_args()
 
 if args.cfgPathCLI:
-    cfgPathCLI = args.cfgPathCLI
+    cfgPathCLI = os.path.abspath(args.cfgPathCLI)
 if args.tcPathCLI:
-    tcPathCLI = args.tcPathCLI
+    tcPathCLI = os.path.abspath(args.tcPathCLI)
 if args.interactive:
     interactive = args.interactive # disables prompts of overriding tf files and deleting infrastructure
 if args.onlyTest:

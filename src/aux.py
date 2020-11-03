@@ -238,15 +238,19 @@ def tryTakeFromYaml(dict, key, defaultValue, msgExcept=None):
         return defaultValue
 
 
-def validateConfigs(configs, testsCatalog, noTerraform, extraSupportedClouds):
+def validateConfigs(cfgPath, tcPath, noTerraform, extraSupportedClouds, allTests):
     """ Validates configs.yaml and testsCatalog.yaml file against schemas.
 
     Parameters:
-        configs (dict): Object containing configs.yaml's configurations.
-        testsCatalog (dict): Object containing testsCatalog.yaml's content.
+        cfgPath (str): Path to configs YAML file.
+        tcPath (str): Path to testsCatalog YAML file.
         noTerraform (bool): Specifies whether current run uses terraform.
         extraSupportedClouds (dict): Extra supported clouds.
+        allTests (array): Contains all test names.
     """
+
+    configs = loadFile(cfgPath, required=True)
+    testsCatalog = loadFile(tcPath, required=True)
 
     if noTerraform is False:
         configsSchema = "src/schemas/configs_sch_%s.yaml" % \
@@ -271,7 +275,15 @@ def validateConfigs(configs, testsCatalog, noTerraform, extraSupportedClouds):
     except jsonschema.exceptions.ValidationError as ex:
         print("Error validating testsCatalog file: \n %s" % ex.message)
         stop(1)
+
+    for test in allTests:
+        try:
+            testsCatalog[test]
+        except KeyError:
+            testsCatalog[test] = {"run":False}
     # ------------------
+
+    return configs, testsCatalog
 
 
 def validateAuth(authFile, schema):

@@ -2,6 +2,14 @@
 
 This folder contains material used to present the Test-Suite in different conferences and events.
 
+### EGI Conference 2020 - Amsterdam, Netherlands 2nd to 5th November 2020 (Digital Event)
+
+Demonstration title: Cloud benchmarking and validation test suite
+
+More information: https://indico.egi.eu/event/5000/contributions/14359/
+
+Video: https://www.youtube.com/watch?v=ZznFp9IlGR0
+
 ### ISC 2020 - Frankfurt, Germany 22nd to 25th June 2020 (Digital Event)
 
 Project Poster title: ARCHIVER Cloud Benchmarking Test Suite
