@@ -1,0 +1,96 @@
+apiVersion: kubeflow.org/v1alpha2
+kind: MPIJob
+metadata:
+  labels:
+    app: eleescan-3dgan
+  name: train-mpijob
+spec:
+  slotsPerWorker: 1
+  cleanPodPolicy: Running
+  mpiReplicaSpecs:
+    Launcher:
+      replicas: 1
+      template:
+        spec:
+          hostNetwork: true
+          containers:
+          - image: cernefp/custom_nnlo
+            imagePullPolicy: Always
+            securityContext:
+              privileged: true
+            name: train-mpijob
+            command: ["/bin/sh","-c"]
+            args: # TODO: are all the -x and --loss needed?
+            - mpirun
+              -tag-output
+              -x LD_LIBRARY_PATH
+              -x PATH
+              -x TERM=linux
+              -x NCCL_DEBUG=INFO
+              -x NCCL_SOCKET_IFNAME=eth0
+              -mca pml ob1
+              -mca btl ^openib
+              python3 MPIGDriver.py bb.json train_3d.list test_3d.list
+              --tf
+              --epochs 1
+              --features-name X
+              --labels-name y
+              --mode easgd
+              --cache-data /tmp/gan_data
+              --master-gpu
+              --verbose
+              --monitor
+              --log-level debug
+              --worker-optimizer rmsprop
+              --loss dummy
+              && tail -f /dev/null
+            volumeMounts:
+            - name: train-list
+              mountPath: "/nnlo/train_3d.list"
+              subPath: "train_3d.list"
+            - name: test-list
+              mountPath: "/nnlo/test_3d.list"
+              subPath: "test_3d.list"
+          volumes:
+          - name: test-list
+            configMap:
+              name: 3dgan-datafile-lists
+              items:
+              - key: "test_3d.list"
+                path: "test_3d.list"
+          - name: train-list
+            configMap:
+              name: 3dgan-datafile-lists
+              items:
+              - key: "train_3d.list"
+                path: "train_3d.list"
+    Worker:
+      replicas: 4
+      template:
+        spec:
+          containers:
+          - image: cernefp/custom_nnlo
+            name: train-mpijob
+            resources:
+              limits:
+                nvidia.com/gpu: 1
+            volumeMounts:
+            - name: train-list
+              mountPath: "/nnlo/train_3d.list"
+              subPath: "train_3d.list"
+            - name: test-list
+              mountPath: "/nnlo/test_3d.list"
+              subPath: "test_3d.list"
+          volumes:
+          - name: test-list
+            configMap:
+              name: 3dgan-datafile-lists
+              items:
+              - key: "test_3d.list"
+                path: "test_3d.list"
+          - name: train-list
+            configMap:
+              name: 3dgan-datafile-lists
+              items:
+              - key: "train_3d.list"
+                path: "train_3d.list"

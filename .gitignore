@@ -12,28 +12,28 @@ src/tests/data_repatriation/repatriation_pod.yaml
 
 src/tests/dlTest/mpi_learn.yaml
 src/tests/dlTest/nnlo.yaml
+src/tests/dlTest/mpiJob.yaml
 src/tests/dlTest/dataset.yaml
 src/tests/dlTest/main.tf
 src/tests/dlTest/config
 src/tests/dlTest/.terraform*
 src/tests/dlTest/terraform.tf*
+src/tests/dlTest/hosts
 
 src/tests/proGANTest/progan.yaml
 src/tests/proGANTest/main.tf
 src/tests/proGANTest/config
 src/tests/proGANTest/.terraform*
 src/tests/proGANTest/terraform.tf*
+src/tests/proGANTest/hosts
 
 src/tests/hpcTest/fdmnes
 src/tests/hpcTest/main.tf
 src/tests/hpcTest/config
 src/tests/hpcTest/.terraform*
 src/tests/hpcTest/terraform.tf*
+src/tests/hpcTest/hosts
 
 src/__pycache__
-
-src/tests/hpcTest/hosts
-src/tests/dlTest/hosts
-src/tests/hpcTest/hosts
 
 *versions.tf*

@@ -16,7 +16,6 @@ from init import *
 from kubernetesFunctions import *
 
 
-
 def runTerraform(toLog,
                  cmd,
                  mainTfDir,
@@ -348,8 +347,11 @@ def terraformProvisionment(
 
 
         # ---------------- RUN TERRAFORM: provision VMs
-        beautify = "terraform fmt > /dev/null &&"
-        cmd = "terraform 0.13upgrade -yes && terraform init && %s terraform apply -auto-approve" % beautify
+        cmd = "terraform 0.13upgrade -yes && \
+               terraform init && \
+               terraform fmt > /dev/null && \
+               terraform apply -auto-approve && \
+               terraform refresh"
         if runTerraform("src/logging/%s" % test,
                         cmd,
                         mainTfDir,

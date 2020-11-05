@@ -611,17 +611,14 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
                      "network-final.pkl",
                      "src/logging/proGANTest")
 
-        filler = ""
-        fillerLen = 6 - len(str(proGAN["kimg"]))
-        for i in range(fillerLen):
-            filler += "0"
-        generatedImage = "fakes%s%s.png" % (filler, proGAN["kimg"])
+        # TODO: fetches a correctly sized but corrupted png, hence do with kubectlCLI
+        generatedImage = 'fakes%06d.png' % proGAN["kimg"]
         fetchResults(resDir, # TODO: fetch the generated image
                      kubeconfig,
                      podName,
                      "/root/CProGAN-ME/results/%s/%s" % (proganPodResDir, generatedImage),
                      "fakes.png",
-                     "src/logging/proGANTest") # TODO: Fetches a correctly sized file but it is corrupted
+                     "src/logging/proGANTest")
 
         fetchResults(resDir,
                      kubeconfig,
@@ -637,7 +634,7 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
             init.configs["costCalculation"]["GPUInstancePrice"]
 
     # cleanup
-    writeToFile("src/logging/proGANTest", "Cluster cleanup...", True)
+    #writeToFile("src/logging/proGANTest", "Cluster cleanup...", True)
     kubectl(Action.delete, kubeconfig, type=Type.pod, name=podName)
     init.queue.put(({"test": "proGANTest", "deployed": res}, testCost))
 
