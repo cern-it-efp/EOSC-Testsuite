@@ -578,7 +578,7 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
     with open('%s/proGANTest/raw/progan_raw.yaml' % testsRoot, 'r') as inputfile:
         with open('%s/proGANTest/progan.yaml' % testsRoot, 'w') as outfile:
             outfile.write(str(inputfile.read()).replace(
-                "BMARK_GPUS_PH", str(proGAN["gpus"])).replace(
+                "BMARK_GPUS_PH", str(proGAN["gpus"])).replace( # TODO: this should be checked on the node like dlTest's gpusPerNode. Ideally, the user should be able to specify the number of GPUs, to a max of those the node has
                 "BMARK_KIMG_PH", str(proGAN["kimg"])).replace(
                 "IMAGES_AMOUNT_PH", str(proGAN["images_amount"])))
 
@@ -610,6 +610,19 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
                      "/root/CProGAN-ME/results/%s/network-final.pkl" % proganPodResDir,
                      "network-final.pkl",
                      "src/logging/proGANTest")
+
+        filler = ""
+        fillerLen = 6 - len(str(proGAN["kimg"]))
+        for i in range(fillerLen):
+            filler += "0"
+        generatedImage = "fakes%s%s.png" % (filler, proGAN["kimg"])
+        fetchResults(resDir, # TODO: fetch the generated image
+                     kubeconfig,
+                     podName,
+                     "/root/CProGAN-ME/results/%s/%s" % (proganPodResDir, generatedImage),
+                     "fakes.png",
+                     "src/logging/proGANTest") # TODO: Fetches a correctly sized file but it is corrupted
+
         fetchResults(resDir,
                      kubeconfig,
                      podName,
@@ -621,7 +634,7 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
     # Cost estimation
     if init.obtainCost is True:
         testCost = ((time.time() - start) / 3600) * \
-            init.configs["costCalculation"]["GPUInstancePrice"] * proGAN["nodes"]
+            init.configs["costCalculation"]["GPUInstancePrice"]
 
     # cleanup
     writeToFile("src/logging/proGANTest", "Cluster cleanup...", True)

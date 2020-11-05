@@ -375,19 +375,19 @@ def getIP(resource, provider, public=False):
                 return resource["values"]["floating_ip"] # type: opentelekomcloud_compute_floatingip_associate_v2
             return resource["values"]["access_ip_v4"]
 
-        # ---
-
         elif provider == "azurerm":
             if public is True:
-                return resource["values"]["ip_address"] # type: azurerm_public_ip
+                return resource["values"]["ip_address"] # type: azurerm_public_ip # TODO: this requires terraform show, otherwise the public IP is ""
             return resource["values"]["private_ip_address"]
+
+        # ---
 
         elif provider == "oci":
             if public is True:
                 return resource["values"]["public_ip"]
             return resource["values"]["private_ip"]
 
-        elif provider == "exoscale" or provider == "cloudstack":
+        elif provider == "exoscale" or provider == "cloudstack": # TODO: certain implementations of cloudstack may not have public IPs w/o NAT
             if public is True:
                 return resource["values"]["ip_address"]
             return resource["values"]["ip_address"]

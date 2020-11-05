@@ -11,6 +11,7 @@ spec:
     resources:
       limits:
         nvidia.com/gpu: 1
+        rdma/hca_shared_devices_a: 1
     imagePullPolicy: Always
     securityContext:
       privileged: true
