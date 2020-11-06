@@ -135,7 +135,6 @@ properties:
         then:
             required:
                 - flavor
-                - gpus
                 - images_amount
                 - kimg
             properties:

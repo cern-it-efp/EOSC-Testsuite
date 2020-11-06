@@ -8,7 +8,7 @@ required:
     - location
     - resourceGroupName
     - pubSSH
-    - subnetId
+    #- subnetId
 properties:
     subscriptionId:
         type: string

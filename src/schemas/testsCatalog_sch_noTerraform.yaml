@@ -131,7 +131,6 @@ properties:
                     const: true
         then:
             required:
-                - gpus
                 - images_amount
                 - kimg
             properties:

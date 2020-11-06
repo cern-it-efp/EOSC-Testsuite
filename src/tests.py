@@ -575,10 +575,18 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
 
     # 1) Write the proGAN pod file:
 
+    try:
+        gpusToUse = proGAN["gpus"]
+    except:
+        cmd = "get nodes"
+        options = "-ojson | jq '.items[0].status.allocatable.\"nvidia.com/gpu\"'"
+        gpusPerNode = kubectlCLI(cmd, kubeconfig, options=options, read=True) # "kubectl get nodes -ojson | jq '.items[0].status.allocatable.\"nvidia.com/gpu\"'"
+        gpusToUse = int(gpusPerNode.replace("\"",""))
+
     with open('%s/proGANTest/raw/progan_raw.yaml' % testsRoot, 'r') as inputfile:
         with open('%s/proGANTest/progan.yaml' % testsRoot, 'w') as outfile:
             outfile.write(str(inputfile.read()).replace(
-                "BMARK_GPUS_PH", str(proGAN["gpus"])).replace( # TODO: this should be checked on the node like dlTest's gpusPerNode. Ideally, the user should be able to specify the number of GPUs, to a max of those the node has
+                "BMARK_GPUS_PH", str(gpusToUse)).replace(
                 "BMARK_KIMG_PH", str(proGAN["kimg"])).replace(
                 "IMAGES_AMOUNT_PH", str(proGAN["images_amount"])))
 
@@ -587,11 +595,11 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
     podName = "progan-pod"
     proganPodResDir = "000-pgan-syn256rgb_conditional-preset-v2-%s-fp32"
 
-    if proGAN["gpus"] == 1:
+    if gpusToUse == 1:
         proganPodResDir = proganPodResDir % "1gpu"
-    elif proGAN["gpus"] == 2:
+    elif gpusToUse == 2:
         proganPodResDir = proganPodResDir % "2gpus"
-    elif proGAN["gpus"] == 4:
+    elif gpusToUse == 4:
         proganPodResDir = proganPodResDir % "4gpus"
     else:
         proganPodResDir = proganPodResDir % "8gpus"
@@ -611,14 +619,15 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
                      "network-final.pkl",
                      "src/logging/proGANTest")
 
-        # TODO: fetches a correctly sized but corrupted png, hence do with kubectlCLI
         generatedImage = 'fakes%06d.png' % proGAN["kimg"]
-        fetchResults(resDir, # TODO: fetch the generated image
-                     kubeconfig,
-                     podName,
-                     "/root/CProGAN-ME/results/%s/%s" % (proganPodResDir, generatedImage),
-                     "fakes.png",
-                     "src/logging/proGANTest")
+        #fetchResults(resDir,
+        #             kubeconfig,
+        #             podName,
+        #             "/root/CProGAN-ME/results/%s/%s" % (proganPodResDir, generatedImage),
+        #             "fakes.png",
+        #             "src/logging/proGANTest")
+        cmd = "cp progan-pod:/root/CProGAN-ME/results/%s/%s %s/fakesLast.png" % (proganPodResDir, generatedImage, resDir)
+        kubectlCLI(cmd, kubeconfig)
 
         fetchResults(resDir,
                      kubeconfig,

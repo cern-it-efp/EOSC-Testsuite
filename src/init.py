@@ -48,6 +48,7 @@ clusters = ["shared", "dlTest", "hpcTest", "proGANTest"]
 
 def initAndChecks(noTerraform,
                   extraSupportedClouds,
+                  usePrivateIPs,
                   cfgPathCLI=None,
                   tcPathCLI=None):
     """ Initial checks and initialization of variables.
@@ -55,6 +56,7 @@ def initAndChecks(noTerraform,
     Parameters:
         noTerraform (bool): Specifies whether current run uses terraform.
         extraSupportedClouds (dict): Extra supported clouds.
+        usePrivateIPs (bool): If True, the current run is not using bastion.
         cfgPath (str): Path to configs.yaml file.
         tcPath (str): Path to testsCatalog.yaml file.
 
@@ -95,6 +97,13 @@ def initAndChecks(noTerraform,
         authFile = loadFile(configs["authFile"], required=True)
         schema = loadFile("src/schemas/authFile_sch_%s.yaml" % configs["providerName"], required=True)
         validateAuth(authFile, schema)
+
+    if configs['providerName'] in ("azurerm") and usePrivateIPs is True:
+        try:
+            configs['subnetId']
+        except:
+            print("Used --usePrivateIPs but did not provide subnetId")
+            stop(1)
 
     #if noTerraform is False and supportedProvider(configs) is False: # allows all terraform supporting providers to run w/o --no-terraform
     if noTerraform is False and configs['providerName'] not in extraSupportedClouds: # allows only providers in extraSupportedClouds to run w/o --no-terraform

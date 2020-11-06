@@ -29,6 +29,7 @@ variable "vmSize" { default = "" }
 #  default = "SECGROUPID_PH"
 #}
 variable "publisher" { default = "" }
+variable "usePrivateIPs" { default = "" }
 variable "offer" { default = "" }
 variable "sku" { default = "" }
 variable "imageVersion" { default = "" }

@@ -83,7 +83,8 @@ def provisionAndBootstrap(test,
                                       credentials,
                                       dependencies,
                                       baseCWD,
-                                      extraSupportedClouds)
+                                      extraSupportedClouds,
+                                      usePrivateIPs)
         if res is False:
             return False, msg
 

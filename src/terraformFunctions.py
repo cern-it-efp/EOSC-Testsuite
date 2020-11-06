@@ -195,7 +195,8 @@ def terraformProvisionment(
         credentials,
         dependencies,
         baseCWD,
-        extraSupportedClouds):
+        extraSupportedClouds,
+        usePrivateIPs):
     """ Provisions VMs on the provider and creates a k8s cluster with them.
 
     Parameters:
@@ -213,6 +214,7 @@ def terraformProvisionment(
         dependencies (str): HCL code related to infrastructure dependencies.
         baseCWD (str): Path to the base directory.
         extraSupportedClouds (dict): Extra supported clouds.
+        usePrivateIPs (bool): If True, the current run is not using bastion.
 
     Returns:
         bool: True if the cluster was succesfully provisioned. False otherwise.
@@ -288,6 +290,7 @@ def terraformProvisionment(
                                                         configs,
                                                         "image.version",
                                                         "latest"))
+                terraform_cli_vars["usePrivateIPs"] = usePrivateIPs
 
             if configs["providerName"] == "openstack":
 
