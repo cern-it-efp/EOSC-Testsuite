@@ -10,7 +10,7 @@ provider "azurerm" {
 # Create one virtual network
 resource "azurerm_virtual_network" "myterraformnetwork" {
   count = var.usePrivateIPs ? 0 : 1
-  name                = "myVnet"
+  name                = "myVnet-${var.clusterRandomID}"
   address_space       = ["10.0.0.0/16"]
   location            = yamldecode(file(var.configsFile))["location"]
   resource_group_name = yamldecode(file(var.configsFile))["resourceGroupName"]
@@ -19,7 +19,7 @@ resource "azurerm_virtual_network" "myterraformnetwork" {
 # Create one subnet
 resource "azurerm_subnet" "myterraformsubnet" {
   count = var.usePrivateIPs ? 0 : 1
-  name                 = "mySubnet"
+  name                 = "mySubnet-${var.clusterRandomID}"
   resource_group_name = yamldecode(file(var.configsFile))["resourceGroupName"]
   virtual_network_name = element(azurerm_virtual_network.myterraformnetwork.*.name, count.index)
   address_prefixes       = ["10.0.1.0/24"]

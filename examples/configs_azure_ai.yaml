@@ -4,7 +4,7 @@ providerName: azurerm
 pathToKey: "/home/ipelu/.ssh/id_rsa"
 subscriptionId: "e53421f6-39d4-43d7-8ae4-3c80af669e2d"
 openUser: uroot
-flavor: "foo" # 1 GPUs
+flavor: "Standard_D2s_v3" # 1 GPUs
 location: "France Central"
 resourceGroupName: "efp"
 pubSSH: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCFPaN62APTqDCy3eB6qy+ALngWKg/RHCU0XWlL47JQ/Bj4zjHoyviFQ3+WgRgRxakKSdbpRU28qm0dUT+5Ki72doEmcmmqdzwhTa6H/0XwoeeRc12eIUw/sn2wTgdf/c57ft0deOyxeALVArAZwCXxywNeRcAjGJsvp4LW6jjZFQ=="

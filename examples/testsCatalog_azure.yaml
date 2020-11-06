@@ -8,6 +8,9 @@ dlTest:
 proGANTest:
   run: true
   flavor: Standard_NC24rs_v3
-  images_amount: 20
-  kimg: 10
-  gpus: 1
+  images_amount: 1
+  kimg: 1
+perfsonarTest:
+  run: true
+  endpoint: psb01-gva.cern.ch
+
