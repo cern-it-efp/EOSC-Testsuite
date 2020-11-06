@@ -11,6 +11,6 @@ proGANTest:
   images_amount: 1
   kimg: 1
 perfsonarTest:
-  run: true
+  run: # true
   endpoint: psb01-gva.cern.ch
 

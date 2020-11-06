@@ -465,6 +465,25 @@ def kubectlCLI(cmd, kubeconfig, options="", hideLogs=None, read=None):
     return runCMD(kubeCMD, hideLogs=hideLogs, read=read)
 
 
+def getGpusPerNode(kubeconfig):
+    """ Gets the number of GPUs each node has.
+
+    Parameters:
+        kubeconfig (str): Path to a kubeconfig file.
+
+    Returns:
+        Integer: Number of GPUs each node has.
+    """
+
+    cmd = "get nodes"
+    options = "-ojson | jq '.items[0].status.allocatable.\"nvidia.com/gpu\"'"
+    gpusPerNode = None
+    while gpusPerNode is None:
+        time.sleep(1)
+        gpusPerNode = kubectlCLI(cmd, kubeconfig, options=options, read=True) # "kubectl get nodes -ojson | jq '.items[0].status.allocatable.\"nvidia.com/gpu\"'"
+    return gpusPerNode
+
+
 def updateKubeconfig(masterIP, kubeconfig):
     """ Updates the given kubeconfig file.
         Done after fetching a kubeconfig file and before checking the SA.

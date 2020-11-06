@@ -451,9 +451,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
 
     mpijobResourceFile = '%s/dlTest/raw/%s_raw.yaml' % (testsRoot, dl["benchmark"])
 
-    cmd = "get nodes"
-    options = "-ojson | jq '.items[0].status.allocatable.\"nvidia.com/gpu\"'"
-    gpusPerNode = kubectlCLI(cmd, kubeconfig, options=options, read=True) # "kubectl get nodes -ojson | jq '.items[0].status.allocatable.\"nvidia.com/gpu\"'"
+    gpusPerNode = getGpusPerNode(kubeconfig)
 
     replicas = int(gpusPerNode.replace("\"","")) * dl["nodes"]
 
@@ -578,9 +576,8 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
     try:
         gpusToUse = proGAN["gpus"]
     except:
-        cmd = "get nodes"
-        options = "-ojson | jq '.items[0].status.allocatable.\"nvidia.com/gpu\"'"
-        gpusPerNode = kubectlCLI(cmd, kubeconfig, options=options, read=True) # "kubectl get nodes -ojson | jq '.items[0].status.allocatable.\"nvidia.com/gpu\"'"
+        gpusPerNode = getGpusPerNode(kubeconfig)
+        print(gpusPerNode)
         gpusToUse = int(gpusPerNode.replace("\"",""))
 
     with open('%s/proGANTest/raw/progan_raw.yaml' % testsRoot, 'r') as inputfile:
