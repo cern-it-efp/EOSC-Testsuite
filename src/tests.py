@@ -452,8 +452,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
     mpijobResourceFile = '%s/dlTest/raw/%s_raw.yaml' % (testsRoot, dl["benchmark"])
 
     gpusPerNode = getGpusPerNode(kubeconfig)
-
-    replicas = int(gpusPerNode.replace("\"","")) * dl["nodes"]
+    replicas = gpusPerNode * dl["nodes"]
 
     with open(mpijobResourceFile, 'r') as inputfile:
         with open(testsRoot + "dlTest/mpiJob.yaml", 'w') as outfile:
@@ -466,12 +465,12 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
 
     kubectl(Action.create,
         kubeconfig,
-        file="%s/dlTest/dataset.yaml" % testsRoot,
+        file="%sdlTest/dataset.yaml" % testsRoot,
         ignoreErr=True)
 
     if kubectl(Action.create,
                kubeconfig,
-               file=testsRoot + "dlTest/mpiJob.yaml",
+               file="%sdlTest/mpiJob.yaml" % testsRoot,
                toLog="src/logging/dlTest") != 0:
         writeFail(resDir, "bb_train_history.json",
                   "Error deploying 3D GAN benchmark.", "src/logging/dlTest")
@@ -576,9 +575,7 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
     try:
         gpusToUse = proGAN["gpus"]
     except:
-        gpusPerNode = getGpusPerNode(kubeconfig)
-        print(gpusPerNode)
-        gpusToUse = int(gpusPerNode.replace("\"",""))
+        gpusToUse = getGpusPerNode(kubeconfig)
 
     with open('%s/proGANTest/raw/progan_raw.yaml' % testsRoot, 'r') as inputfile:
         with open('%s/proGANTest/progan.yaml' % testsRoot, 'w') as outfile:
@@ -603,7 +600,7 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
 
     if kubectl(Action.create,
                kubeconfig,
-               file='%s/proGANTest/progan.yaml' % testsRoot,
+               file="%sproGANTest/progan.yaml" % testsRoot,
                toLog="src/logging/proGANTest") != 0:
         writeFail(resDir, "progan.json",
                   "Error deploying Pro-GAN benchmark.", "src/logging/proGANTest")

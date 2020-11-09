@@ -481,6 +481,12 @@ def getGpusPerNode(kubeconfig):
     while gpusPerNode is None:
         time.sleep(1)
         gpusPerNode = kubectlCLI(cmd, kubeconfig, options=options, read=True) # "kubectl get nodes -ojson | jq '.items[0].status.allocatable.\"nvidia.com/gpu\"'"
+        print("From kubectl: %s" % str(gpusPerNode))
+        try:
+            gpusPerNode = int(gpusPerNode.replace("\"",""))
+        except ValueError:
+            gpusPerNode = None
+        print("End of the iteration: %s" % str(gpusPerNode))
     return gpusPerNode
 
 
