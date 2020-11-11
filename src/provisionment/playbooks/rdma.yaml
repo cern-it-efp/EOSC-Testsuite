@@ -32,14 +32,16 @@
     args:
       chdir: /azhpc-images/ubuntu/ubuntu-18.x/ubuntu-18.04-hpc
 
-- name: Add the InfiniBand extension  # TODO: this requires az login on the host machine and has to be a loop: 1 command per cluster node. Note this will add the extension to all the existing VMs, which is not desired as there might be VMs that were not created by me
+- name: Add the InfiniBand extension  # TODO: Note this will add the extension to all the existing VMs, which is not desired as there might be VMs that were not created by me
+  #ignore_errors: yes # TODO: the gather_facts error "TypeError: The value 'None' is not a valid boolean" keeps happening hence added this
+  gather_facts: false # TODO: did not try this, had simply removed it but the default is 'true'
   hosts: 127.0.0.1
   connection: local
   tasks:
   - register: rdma_extension
     until: rdma_extension.rc == 0
-    retries: 15
-    delay: 3
+    retries: 50
+    delay: 4
     shell: |
       for vm in $(az vm list | jq .[].name | sed 's/"//g'); do
         az vm extension set --resource-group efp --vm-name $vm --name InfiniBandDriverLinux --publisher Microsoft.HpcCompute --version 1.1

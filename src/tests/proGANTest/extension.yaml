@@ -1,9 +1,0 @@
-- name: Add the InfiniBand extension  # TODO: this requires az login on the host machine and has to be a loop: 1 command per cluster node
-  hosts: 127.0.0.1
-  connection: local
-  gather_facts: true
-  tasks:
-  - shell: | # Note this will add the extension to all the existing VMs, which is not desired as there might be VMs that were not created by me
-      for vm in $(az vm list | jq .[].name | sed 's/"//g'); do
-        az vm extension set --resource-group efp --vm-name $vm --name InfiniBandDriverLinux --publisher Microsoft.HpcCompute --version 1.1
-      done

@@ -9,6 +9,8 @@ required:
     - pathToCredentials
     - project
 properties:
+    gpusPerNode:
+        type: integer
     providerName:
         type: string
     pathToKey:

@@ -1,6 +1,7 @@
 # ansible-playbook rdma.yaml -i path_to_hosts --ssh-extra-args "-o StrictHostKeyChecking=no" -u root
 
 - name: Add the InfiniBand extension  # TODO: this requires az login on the host machine and has to be a loop: 1 command per cluster node. Note this will add the extension to all the existing VMs, which is not desired as there might be VMs that were not created by me
+  gather_facts: false
   hosts: 127.0.0.1
   connection: local
   tasks:

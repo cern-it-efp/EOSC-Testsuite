@@ -477,16 +477,20 @@ def getGpusPerNode(kubeconfig):
 
     cmd = "get nodes"
     options = "-ojson | jq '.items[0].status.allocatable.\"nvidia.com/gpu\"'"
-    gpusPerNode = None
-    while gpusPerNode is None:
-        time.sleep(1)
-        gpusPerNode = kubectlCLI(cmd, kubeconfig, options=options, read=True) # "kubectl get nodes -ojson | jq '.items[0].status.allocatable.\"nvidia.com/gpu\"'"
-        print("From kubectl: %s" % str(gpusPerNode))
+    gpusPerNode = 0
+    tries = 60
+    while gpusPerNode == 0 and tries != 0:
+        time.sleep(2)
+        kubectlResponse = kubectlCLI(cmd, kubeconfig, options=options, read=True) # "kubectl get nodes -ojson | jq '.items[0].status.allocatable.\"nvidia.com/gpu\"'"
+        print("From kubectl: %s" % str(kubectlResponse))
         try:
-            gpusPerNode = int(gpusPerNode.replace("\"",""))
+            gpusPerNode = int(kubectlResponse.replace("\"",""))
         except ValueError:
-            gpusPerNode = None
-        print("End of the iteration: %s" % str(gpusPerNode))
+            gpusPerNode = 0
+        print("End of attempt %s: %s" % (tries, str(gpusPerNode)))
+        tries -= 1
+    if gpusPerNode == 0:
+        print("ERROR: Cluster %s doesn't have GPUs or is missing support for them!" % kubeconfig)
     return gpusPerNode
 
 

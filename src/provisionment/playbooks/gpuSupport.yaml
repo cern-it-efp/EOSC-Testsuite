@@ -1,3 +1,11 @@
+# ------------------------------------ NVIDIA driver installation script (required in GCP, drivers come pre-installed only)
+- hosts: all
+  become: yes
+  ignore_errors: yes
+  tasks:
+     - name: Run NVIDIA driver installation script (required only in GCP)
+       command: /opt/deeplearning/install-driver.sh
+
 # ------------------------------------ Nvidia Docker stuff (required for GPU k8s support)
 - name: Transfer and run nvidiaDocker script
   hosts: all

@@ -1,0 +1,12 @@
+dlTest:
+  run: true
+  nodes: 1
+  flavor: "n1-standard-32"
+  epochs: 3
+  benchmark: nnlo
+  datasetSize: 20
+proGANTest:
+  run:
+  flavor:
+  images_amount: 1
+  kimg: 1

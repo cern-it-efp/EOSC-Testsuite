@@ -324,7 +324,9 @@ def terraformProvisionment(
                     terraform_cli_vars["gcp_keyAsMetadata"] = "%s:%s" % (configs["openUser"],loadFile(pathToPubKey))
 
                 if test == "dlTest":
-                    terraform_cli_vars["gpuCount"] = nodes
+                    terraform_cli_vars["gpuCount"] = tryTakeFromYaml(configs,
+                                                                    "gpusPerNode",
+                                                                    1)
                 else:
                     terraform_cli_vars["gpuCount"] = "0"
 

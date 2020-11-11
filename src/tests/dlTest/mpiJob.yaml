@@ -32,7 +32,7 @@ spec:
               -mca btl ^openib
               python3 MPIGDriver.py bb.json train_3d.list test_3d.list
               --tf
-              --epochs 1
+              --epochs 3
               --features-name X
               --labels-name y
               --mode easgd
