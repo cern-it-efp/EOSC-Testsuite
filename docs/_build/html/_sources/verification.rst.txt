@@ -1,4 +1,4 @@
-7. Verification
+Verification
 ---------------------------------------------
 In order to verify results, please run using *--via-backend* so that the proxy at CERN runs the Test-Suite (only deploys tests, no provisioning), harvests results and push them to CERN's S3 bucket.
 Before starting the run, a message will be shown asking for yes/no answer. It warns the user that backend runs publish results to the CERN bucket.

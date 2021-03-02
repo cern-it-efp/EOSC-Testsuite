@@ -20,7 +20,7 @@
 # -- Project information -----------------------------------------------------
 
 project = u'Cloud Test Suite - CERN IT'
-copyright = u'2020, CERN IT-DI-EFP'
+copyright = u'2021, CERN IT-DI-EFP'
 author = u'CERN IT-DI-EFP'
 
 # The short X.Y version

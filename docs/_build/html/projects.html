@@ -8,10 +8,12 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>OCRE Test-Suite for cloud validation - CERN &mdash; Cloud Test Suite - CERN IT  documentation</title>
+  <title>Projects &mdash; Cloud Test Suite - CERN IT  documentation</title>
   
 
   
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
   
   
   
@@ -20,11 +22,20 @@
   <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
         <script type="text/javascript" src="_static/jquery.js"></script>
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -34,7 +45,10 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="7. Cost of run calculation" href="costs.html" />
+    <link href="_static/style.css" rel="stylesheet" type="text/css">
+
 </head>
 
 <body class="wy-body-for-nav">
@@ -79,12 +93,18 @@
             
             
               <p class="caption"><span class="caption-text">Cloud Test Suite Documentation</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="gettingStarted.html">1. Getting started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="existingClusters.html">2. Using existing clusters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="results.html">3. Results</a></li>
-<li class="toctree-l1"><a class="reference internal" href="verification.html">4. Verification</a></li>
-<li class="toctree-l1"><a class="reference internal" href="costs.html">5. Cost of run calculation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testsCatalog.html">2. Tests Catalog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="run.html">3. Run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="existingClusters.html">4. Using existing clusters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="noTerraform.html">5. No Terraform runs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="results.html">6. Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="costs.html">7. Cost of run calculation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Projects</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#open-clouds-for-research-environments-ocre">Open Clouds for Research Environments (OCRE)</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -130,17 +150,10 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>OCRE Test-Suite for cloud validation - CERN</li>
+      <li>Projects</li>
     
     
-      <li class="wy-breadcrumbs-aside">
-        
-            
-            <a href="_sources/header.rst.txt" rel="nofollow"> View page source</a>
-          
-        
-      </li>
-    
+
   </ul>
 
   
@@ -149,23 +162,12 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="ocre-test-suite-for-cloud-validation-cern">
-<h1>OCRE Test-Suite for cloud validation - CERN<a class="headerlink" href="#ocre-test-suite-for-cloud-validation-cern" title="Permalink to this headline">¶</a></h1>
-<p>This tool is intended to be used for cloud services validation and testing.
-When applicable, the test-suite executes four main steps:</p>
-<ol class="arabic simple">
-<li>Infrastructure provisioning: VMs are created using Terraform and then Kubernetes and Docker are installed on them to create a k8s cluster.</li>
-<li>Deploy the tests: Kubernetes resource definition files (YAML) are used to deploy the tests, either as single pods or deployments.</li>
-<li>Harvest results: at the end of each test run a result file -written in JSON- is created. This file is stored locally.</li>
-<li>Through the verification system, the TS is triggered from a service running at CERN. In this case results are then pushed to a S3 Bucket at CERN.</li>
-</ol>
-<p>The test set described below available derives from the tests used in <a class="reference external" href="https://www.hnscicloud.eu/">Helix Nebula The Science Cloud</a> PCP project funded by the European Commission.</p>
-<p><strong>This test-suite has been tested on:</strong></p>
-<div class="line-block">
-<div class="line">Python: 3</div>
-<div class="line">Linux distros: Ubuntu, Centos, Coreos, Debian, RedHat, Fedora</div>
-<div class="line">OS running on provider’s VMs : Centos</div>
-<div class="line">Providers:  Exoscale (Cloudstack), CERN Private Cloud (OpenStack), Cloudscale (OpenStack)</div>
+  <div class="section" id="projects">
+<h1>Projects<a class="headerlink" href="#projects" title="Permalink to this headline">¶</a></h1>
+<p>This page contains project specific information concerning the test suite.</p>
+<div class="section" id="open-clouds-for-research-environments-ocre">
+<h2>Open Clouds for Research Environments (OCRE)<a class="headerlink" href="#open-clouds-for-research-environments-ocre" title="Permalink to this headline">¶</a></h2>
+<p>To be updated.</p>
 </div>
 </div>
 
@@ -175,12 +177,19 @@ When applicable, the test-suite executes four main steps:</p>
           </div>
           <footer>
   
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="costs.html" class="btn btn-neutral float-left" title="7. Cost of run calculation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, CERN IT-DI-EFP
+        &copy; Copyright 2021, CERN IT-DI-EFP
 
     </p>
   </div>

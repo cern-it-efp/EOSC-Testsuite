@@ -22,11 +22,20 @@
   <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'',
+              LANGUAGE:'None',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
         <script type="text/javascript" src="_static/jquery.js"></script>
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -97,6 +106,7 @@
 <li class="toctree-l1"><a class="reference internal" href="noTerraform.html">5. No Terraform runs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="results.html">6. Results</a></li>
 <li class="toctree-l1"><a class="reference internal" href="costs.html">7. Cost of run calculation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="projects.html">Projects</a></li>
 </ul>
 
             
@@ -145,14 +155,7 @@
       <li>3. Run</li>
     
     
-      <li class="wy-breadcrumbs-aside">
-        
-            
-            <a href="_sources/run.rst.txt" rel="nofollow"> View page source</a>
-          
-        
-      </li>
-    
+
   </ul>
 
   
@@ -164,7 +167,7 @@
   <div class="section" id="run">
 <h1>3. Run<a class="headerlink" href="#run" title="Permalink to this headline">¶</a></h1>
 <p>Once the configuration steps are completed, the Test-Suite is ready to be run:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">EOSC-Testsuite$ chmod +x test_suite</span>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="go">EOSC-Testsuite$ chmod +x test_suite</span>
 <span class="go">EOSC-Testsuite$ ./test_suite &lt;options&gt;</span>
 </pre></div>
 </div>
@@ -217,24 +220,24 @@
 <div class="section" id="other-commands">
 <h2>Other commands<a class="headerlink" href="#other-commands" title="Permalink to this headline">¶</a></h2>
 <p>Once the test suite is running, you can view the Terraform provisionment logs by doing:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> tail -f EOSC-Testsuite/logs
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> tail -f EOSC-Testsuite/logs
 </pre></div>
 </div>
 <p>You can see the Ansible bootstrapping logs by doing:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> tail -f EOSC-Testsuite/src/logging/ansibleLogs*
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> tail -f EOSC-Testsuite/src/logging/ansibleLogs*
 </pre></div>
 </div>
 <p>Once the bootstrapping has completed and tests are deployed, you can see the pods statuses by doing:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> watch kubectl get pods --kubeconfig EOSC-Testsuite/src/tests/shared/config
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> watch kubectl get pods --kubeconfig EOSC-Testsuite/src/tests/shared/config
 </pre></div>
 </div>
 <p>If GPU and HPC tests were deployed, see their pods by doing:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> watch kubectl --kubeconfig EOSC-Testsuite/src/tests/dlTest/config get pods <span class="c1"># For GPU cluster</span>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> watch kubectl --kubeconfig EOSC-Testsuite/src/tests/dlTest/config get pods <span class="c1"># For GPU cluster</span>
 <span class="gp">$</span> watch kubectl --kubeconfig EOSC-Testsuite/src/tests/hpcTest/config get pods <span class="c1"># For HPC cluster</span>
 </pre></div>
 </div>
 <p>Once the pods are deployed, the suite run can be stopped by destroying pods, useful for example when pods go “Evicted” or “ImagePullBackOff”. Examples:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> kubectl --kubeconfig EOSC-Testsuite/src/tests/shared/config delete pods --all <span class="c1"># destroy all pods on the shared cluster</span>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> kubectl --kubeconfig EOSC-Testsuite/src/tests/shared/config delete pods --all <span class="c1"># destroy all pods on the shared cluster</span>
 <span class="gp">$</span> kubectl --kubeconfig EOSC-Testsuite/src/tests/shared/config delete pod dodas-pod <span class="c1"># destroy DODAS pod</span>
 </pre></div>
 </div>
@@ -284,7 +287,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, CERN IT-DI-EFP
+        &copy; Copyright 2021, CERN IT-DI-EFP
 
     </p>
   </div>

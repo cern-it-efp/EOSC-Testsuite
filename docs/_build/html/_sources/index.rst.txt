@@ -17,6 +17,7 @@ Please find the the repository here: https://github.com/cern-it-efp/EOSC-Testsui
    noTerraform
    results
    costs
+   projects
 ..
    verification
 
