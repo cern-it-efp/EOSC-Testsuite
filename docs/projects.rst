@@ -116,7 +116,11 @@ In order to perform multiple runs of the test set including the Machine Learning
 
 In case a platform does not offer accelerator architectures (i.e. GPUs, FPGAs or similar vendor specific) the required amount of credits can be lower.
 
-The number/type of tests is expected to evolve during 2021 in areas such as HPCaaS. Any new additional test will be documented and this page updated. It shall not imply requests of additional credit.
+The number/type of tests is expected to evolve during 2021 in areas such as HPCaaS and |cosbench_link|. Any new additional test will be documented and this page updated. It shall not imply requests of additional credit.
+
+.. |cosbench_link| raw:: html
+
+  <a href="https://fosdem.org/2021/schedule/event/sds_ceph_s3_cosbench/" target="_blank">COSBench for S3</a>
 
 
 Timeline
