@@ -64,7 +64,7 @@ The test suite is capable of evaluating different services across the cloud stac
 
 .. |3dgan_link| raw:: html
 
-  <a href="https://github.com/recardoso/ISC_HPC_3DGAN/" target="_blank">ProGAN</a>
+  <a href="https://github.com/recardoso/ISC_HPC_3DGAN/" target="_blank">3DGAN</a>
 
 
 The |tc_link| provides additional details about these tests.
