@@ -30,13 +30,18 @@ The test suite is capable of evaluating different services across the cloud stac
 
 - **Standard CPU benchmarks** - Runs of a set of |cpu_bmk_suite| to benchmark CPU performance.
 
-- **Basic S3 storage features validation** - Check the availability of the main S3 object store functionalities.
+- **Basic S3 storage features validation** - Check the availability of the main S3 object store functionalities |s3_test_link|.
 
 - **Basic Data Repatriation** - Tests data backup exports from the cloud provider to the |zenodo_link| repository service.
 
 - **Machine Learning** - Set of benchmarks for single and multiple node algorithm training of advanced GAN models (|nnlo_link|, |progan_link| and |3dgan_link|), on accelerator architectures (i.e. GPUs).
 
 - **DODAS check** - |dodas_link| is a scientific software framework running a test workload from one of the LHC experiments, |cms_link|. Success running this test indicates the DODAS framework can generate clusters on demand using public cloud, for batch workload execution based on the |htcondor_link| workload management system.
+
+
+.. |s3_test_link| raw:: html
+
+  <a href="https://github.com/cern-it-efp/EOSC-Testsuite/blob/master/src/tests/s3/s3_test.sh" target="_blank">using AWS CLI</a>
 
 .. |perfSONAR_link| raw:: html
 
