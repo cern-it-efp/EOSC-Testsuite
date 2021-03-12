@@ -26,3 +26,5 @@ src/__pycache__
 src/tests/hpcTest/hosts
 src/tests/dlTest/hosts
 src/tests/hpcTest/hosts
+
+docs/_build
