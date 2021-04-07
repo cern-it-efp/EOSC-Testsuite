@@ -83,9 +83,6 @@ resource "azurerm_virtual_machine" "main" {
     managed_disk_type = "Premium_LRS"
   }
 
-  # az vm image list-skus --location "France Central" --publisher nvidia --offer ngc_tensorflow_image_version_b
-  # az vm image accept-terms --offer tensorflow_from_nvidia --plan ngc-tensorflow-version-20-06-3 --publisher nvidia --subscription e53421f6-39d4-43d7-8ae4-3c80af669e2d
-  # az vm image accept-terms --offer ngc_tensorflow_image_version_b --plan ngc-tensorflow-version-20-3-1 --publisher nvidia --subscription e53421f6-39d4-43d7-8ae4-3c80af669e2d
   plan {
     publisher = var.publisher
     name      = var.sku

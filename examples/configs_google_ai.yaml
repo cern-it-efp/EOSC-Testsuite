@@ -6,22 +6,22 @@ openUser: openu
 
 # Note having small VMs with GPUs may cause "ssh_exchange_identification: read: Connection reset by peer". Got that on master with n1-standard-16 and 2 v100
 #flavor: "n1-standard-16" # ssh_exchange_identification with 2 v100
-flavor: "n1-standard-32" # 32 - 120 # worked fine with 4 v100
+#flavor: "n1-standard-32" # 32 - 120 # worked fine with 4 v100
 #flavor: "n1-highmem-16" # 16 - 104
 #flavor: "n1-standard-64" # 64 - 240
 #flavor: "n1-standard-96" # 96 - 360
+flavor: "foo"
 
-#zone: "europe-west4-a"
+zone: "europe-west4-a"
 #zone: "europe-west1-a"
 #zone: "europe-west3-a"
 #zone: "europe-north1-a"
-zone: "us-central1-a"
-
-#image: "ubuntu-os-cloud/ubuntu-1804-lts" # no driver installation prompt
+#zone: "us-central1-a"
 
 # gcloud compute images list --project deeplearning-platform-release --no-standard-images | grep -i "tf-1-15-cu"
 #image: "deeplearning-platform-release/tf-1-15-cu110-v20201106-ubuntu-1804"
-image: "deeplearning-platform-release/tf-1-15-cu110"
+#image: "deeplearning-platform-release/tf-1-15-cu110"
+image: "deeplearning-platform-release/tf2-ent-2-3-cu110" # TODO: with this and the proGAN: "Cannot assign a device for operation GPU4/G_shadow/lod" even tho nvidia-smi showed 8GPUs, is it bc of the unmatched tf versions? tried matching version and it happened too, tried w/o k8s and happened too
 
 pathToCredentials: "/home/ipelu/Desktop/rosetta_ialum.json"
 project: "u-129e7a54-90a9-4371-95be"
@@ -30,10 +30,5 @@ project: "u-129e7a54-90a9-4371-95be"
 #gpuType: "nvidia-tesla-p100"
 gpuType: "nvidia-tesla-v100" # these can be used in us-central1
 
-gpusPerNode: 4 # 1, 2, 4, 8 for v100 in us-central1
-storageCapacity: 300
-
-#---------------COST CALCULATION------------------------------------------------
-costCalculation:
-  generalInstancePrice: 0.2
-  GPUInstancePrice: 0.2
+gpusPerNode: 4 # 1, 2, 4, 8 for v100 in us-central1 # 8 shows the ssh conn. error regardless of the VM size. 4 with std-32 worked fine for some time but ended up showing the ssh error too
+storageCapacity: 200

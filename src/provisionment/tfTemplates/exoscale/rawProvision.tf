@@ -1,3 +1,11 @@
+terraform {
+  required_providers {
+    exoscale = {
+      source = "exoscale/exoscale"
+    }
+  }
+}
+
 provider "exoscale" {
   config = yamldecode(file(var.configsFile))["authFile"]
 }

@@ -323,10 +323,10 @@ def terraformProvisionment(
                 else:
                     terraform_cli_vars["gcp_keyAsMetadata"] = "%s:%s" % (configs["openUser"],loadFile(pathToPubKey))
 
-                if test == "dlTest":
+                if test in ("dlTest", "proGANTest") : # TODO: add here 3DGANv2
                     terraform_cli_vars["gpuCount"] = tryTakeFromYaml(configs,
                                                                     "gpusPerNode",
-                                                                    1)
+                                                                    1) # default is one
                 else:
                     terraform_cli_vars["gpuCount"] = "0"
 
@@ -362,7 +362,7 @@ def terraformProvisionment(
                         mainTfDir,
                         baseCWD,
                         test,
-                        "Provisioning '%s' VMs..." % flavor,
+                        "Provisioning %d '%s' VMs..." % (nodes, flavor),
                         terraform_cli_vars=terraform_cli_vars) != 0:
             return False, provisionFailMsg
 

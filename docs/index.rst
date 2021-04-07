@@ -21,6 +21,7 @@ Please find the the repository |repo|.
    noTerraform
    results
    costs
+   projects
 ..
    verification
 

@@ -219,7 +219,7 @@ def dataRepatriationTest(resDir):
     definition_raw = "%sdata_repatriation/raw/repatriation_pod_raw.yaml" % testsRoot
     definition = "%sdata_repatriation/repatriation_pod.yaml" % testsRoot
     resultFile = "data_repatriation_test.json"
-    testName = "cpuBenchmarking"
+    testName = "dataRepatriationTest"
     resultOnPod = "/home/data_repatriation_test.json"
     substitution = [
         {

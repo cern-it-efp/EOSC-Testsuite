@@ -5,7 +5,7 @@ openUser: openu
 flavor: "n1-standard-2"
 zone: "us-west1-a"
 image: "centos-cloud/centos-7"
-pathToCredentials: "/home/ipelu/Desktop/.gcp.json"
+pathToCredentials: "/home/ipelu/Desktop/dsktp/rosetta_ialum.json"
 project: "ocrets"
 gpuType: "nvidia-tesla-p100"
 storageCapacity: 50

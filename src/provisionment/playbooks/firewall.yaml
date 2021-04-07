@@ -1,44 +1,31 @@
-#- name: Disable firewall on redhat distros
-#  ignore_errors: yes
-#  command: systemctl stop firewalld
+- name: Disable firewalld on redhat distros # TODO: wasn't required before, currently firewalld is restarted after installing deps
+  ignore_errors: yes
+  command: systemctl stop firewalld ; systemctl disable firewalld
 
 - name: Backup original rules
   ignore_errors: yes
   shell: "iptables-save > /root/firewall.rules"
 
 # ----------------- FLUSH TABLES
-
-- name: Flush filter table
+- name: Flush filter, nat and mangle tables
   ignore_errors: yes
   iptables:
+    table: "{{ item }}"
     flush: yes
-- name: Flush nat table
-  ignore_errors: yes
-  iptables:
-    table: nat
-    flush: yes
-- name: Flush mangle table
-  ignore_errors: yes
-  iptables:
-    table: mangle
-    flush: yes
+  with_items: # TODO: filter's should be enough
+    - filter
+    - nat
+    - mangle
+- name: delete all user-defined chains
+  shell: iptables -X
 
 # ----------------- SET POLICIES
-
-- name: Set the policy for the INPUT chain to ACCEPT
+- name: Set the policy for the INPUT, OUTPUT and FORWARD chains to ACCEPT
   ignore_errors: yes
   iptables:
-    chain: INPUT
+    chain: "{{ item }}"
     policy: ACCEPT
-
-- name: Set the policy for the OUTPUT chain to ACCEPT
-  ignore_errors: yes
-  iptables:
-    chain: OUTPUT
-    policy: ACCEPT
-
-- name: Set the policy for the FORWARD chain to ACCEPT
-  ignore_errors: yes
-  iptables:
-    chain: FORWARD
-    policy: ACCEPT
+  with_items:
+    - INPUT
+    - OUTPUT
+    - FORWARD

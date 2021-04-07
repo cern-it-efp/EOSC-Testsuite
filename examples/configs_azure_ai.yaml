@@ -1,24 +1,26 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
 providerName: azurerm
-#pathToKey: "/root/.ssh/id_rsa"
 pathToKey: "/home/ipelu/.ssh/id_rsa"
 subscriptionId: "e53421f6-39d4-43d7-8ae4-3c80af669e2d"
 openUser: uroot
-flavor: "Standard_D2s_v3" # 1 GPUs
+flavor: "Standard_NC24s_v3"
 location: "France Central"
 resourceGroupName: "efp"
+storageCapacity: 200
 pubSSH: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCFPaN62APTqDCy3eB6qy+ALngWKg/RHCU0XWlL47JQ/Bj4zjHoyviFQ3+WgRgRxakKSdbpRU28qm0dUT+5Ki72doEmcmmqdzwhTa6H/0XwoeeRc12eIUw/sn2wTgdf/c57ft0deOyxeALVArAZwCXxywNeRcAjGJsvp4LW6jjZFQ=="
 #securityGroupID: "/subscriptions/e53421f6-39d4-43d7-8ae4-3c80af669e2d/resourceGroups/efp/providers/Microsoft.Network/networkSecurityGroups/myNetworkSecurityGroup"
 #subnetId: "/subscriptions/e53421f6-39d4-43d7-8ae4-3c80af669e2d/resourceGroups/efp/providers/Microsoft.Network/virtualNetworks/myVnet/subnets/mySubnet"
-#enableRDMA: true
+#enableRDMA: true # TODO: when using Azure's HPC Images this is not needed, but, do they provide any image with both IB and GPU drivers included?
 image:
-  publisher: "nvidia"
-  offer: "tensorflow_from_nvidia"
-  sku: "tensorflow_10_0"
+  #----- Linux with tensorflow and GPU drivers included
+  #publisher: "nvidia"
+  #offer: "tensorflow_from_nvidia"
+  #sku: "tensorflow_10_0" # fails starting nov 12, was apparently removed from the marketplace
+  #sku: "tensorflow_from_nvidia_19_11_3" # OK
+  #sku: "tensorflow_nvidia_20_03_1"
+  #version: "latest"
+  #----- HPC with IB included
+  publisher: "OpenLogic" # NOTE: 'plan' has to be removed from the .tf script for this and it's not the only one, the same applies to ubuntu's 'Canonical'
+  offer: "CentOS-HPC"
+  sku: "7.7" # 7_7-gen2 # related to 7.6 https://github.com/Azure/azhpc-images/issues/6
   version: "latest"
-costCalculation:
-  generalInstancePrice: 0.2
-  GPUInstancePrice: 0.2
-  HPCInstancePrice: 0.2
-  s3bucketPrice: 0.1
-storageCapacity: 200

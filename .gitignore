@@ -37,3 +37,7 @@ src/tests/hpcTest/hosts
 src/__pycache__
 
 *versions.tf*
+
+docs/_build
+docs/_static
+docs/_templates

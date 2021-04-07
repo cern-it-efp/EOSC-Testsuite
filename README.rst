@@ -11,7 +11,6 @@ Visit |eosc| for more information.
 
   <a href="https://www.eosc-portal.eu/" target="_blank">EOSC website</a>
 
-
 .. header-end
 
 Documentation
@@ -69,58 +68,79 @@ Release notes
 ---------------------------------------------
 (Note the versions are numbered with the date of the release: YEAR.MONTH)
 
-``20.x - latest``
+``21.4 - latest``
 
--Cluster certificate additionally signed for NAT IP, no need to use bastion method as with this solution the cluster can be reached from outside of the provider network.
-However, previous allocation of floating IPs is now required.
+- Cluster certificate additionally signed for NAT IP (no need to use bastion method, with this solution the cluster can be reached from outside of the provider network. However, previous allocation of floating IPs is now required).
+
+- Added usePrivateIPs option for bastion's method.
+
+- Removed CloudStack Terraform support (the provider's repository |cloudstack_tf| by HashiCorp).
+
+- Allowed both project-wide and VM-specific ssh key on GCP
+
+- Improved configuration: select network
+
+- Updated Distributed GAN test: included NNLO implementation ; more configuration (dataset size)
+
+- Added ProGAN test.
+
+- Allowed subset of costs (general configuration YAML file) and tests (tests catalog YAML file).
+
+- Allowed relative paths for -c and -t.
+
+- Updated CPU benchmark, based on the HEP Benchmarking Suite.
+
+.. |cloudstack_tf| raw:: html
+
+  <a href="https://github.com/hashicorp/terraform-provider-cloudstack" target="_blank">was archived</a>
 
 ``20.6``
 
--Improved support for running on Oracle Cloud Infrastructure and T-Systems' OTC.
+- Improved support for running on Oracle Cloud Infrastructure and T-Systems' OTC.
 
--Added option --customNodes to set the number of instances that should be deployed for the shared cluster.
+- Added option --customNodes to set the number of instances that should be deployed for the shared cluster.
 
--Using Terraform's yamldecode with configs.yaml for variables instead of Python's replace function with placeholders.
+- Using Terraform's yamldecode with configs.yaml for variables instead of Python's replace function with placeholders.
 
--Disabled general Terraform support: only the providers and clouds that support Terraform and are present on the table above are fully supported by this suite. To run on another provider (supporting Terraform or not), the option '--noTerraform' has to be used.
+- Disabled general Terraform support: only the providers and clouds that support Terraform and are present on the table above are fully supported by this suite. To run on another provider (supporting Terraform or not), the option '--noTerraform' has to be used.
 
 ``20.2``
 
--Using Ansible for VM configuration instead of Terraform's provisioners.
+- Using Ansible for VM configuration instead of Terraform's provisioners.
 
--Added support for non-Terraform providers (only bootstrap phase).
+- Added support for non-Terraform providers (only bootstrap phase).
 
--Added options to destroy provisioned infrastructure.
+- Added options to destroy provisioned infrastructure.
 
--Added options to specify custom paths to configs.yaml and testsCatalog.yaml.
+- Added options to specify custom paths to configs.yaml and testsCatalog.yaml.
 
--Added support to use Ubuntu on VMs.
+- Added support to use Ubuntu on VMs.
 
 ``19.12``
 
--Project restructured.
+- Project restructured.
 
--Improved support for running on Google, AWS, Azure, Exoscale, OpenStack and CloudStack.
+- Improved support for running on Google, AWS, Azure, Exoscale, OpenStack and CloudStack.
 
 ``19.8``
 
--Parallel creation of clusters, with different flavors according to tests needs.
+- Parallel creation of clusters, with different flavors according to tests needs.
 
--New logging system to keep parallel running tests logs sorted.
+- New logging system to keep parallel running tests logs sorted.
 
--Restructured configuration: moved configuration files to */configurations* and created new files taking HCL code (terraform configuration code) to keep *configs.yaml* clean.
+- Restructured configuration: moved configuration files to */configurations* and created new files taking HCL code (terraform configuration code) to keep *configs.yaml* clean.
 
--Automated allowance of root ssh by copying open user's authorized_keys to root's ~/.ssh as well as *sshd_config* modification.
+- Automated allowance of root ssh by copying open user's authorized_keys to root's ~/.ssh as well as *sshd_config* modification.
 
--Usage of Kubernetes API instead of Kubernetes CLI.
+- Usage of Kubernetes API instead of Kubernetes CLI.
 
--For network test (perfSONAR), usage of API instead of pscheduler CLI.
+- For network test (perfSONAR), usage of API instead of pscheduler CLI.
 
--New test: Dynamic On Demand Analysis Service, provided by INFN.
+- New test: Dynamic On Demand Analysis Service, provided by INFN.
 
--Added configurations validation with jsonschema.
+- Added configurations validation with jsonschema.
 
--Created Docker image to run a Test-Suite launcher container: rapidly creates a ready to use Test-Suite launcher.
+- Created Docker image to run a Test-Suite launcher container: rapidly creates a ready to use Test-Suite launcher.
 
 ``19.4``
 

@@ -20,7 +20,7 @@
 # -- Project information -----------------------------------------------------
 
 project = u'Cloud Test Suite - CERN IT'
-copyright = u'2020, CERN IT-DI-EFP'
+copyright = u'2021, CERN IT-DI-EFP'
 author = u'CERN IT-DI-EFP'
 
 # The short X.Y version
@@ -42,7 +42,7 @@ extensions = [
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ['templates']
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
@@ -84,7 +84,8 @@ html_theme = "sphinx_rtd_theme"
 html_theme_options = {
     'collapse_navigation': True,
     'display_version': False,
-    'logo_only': True
+    'logo_only': True,
+    'prev_next_buttons_location': None
 }
 html_logo = "../img/logo.png"
 html_favicon = "../img/favicon.ico"
@@ -92,7 +93,7 @@ html_favicon = "../img/favicon.ico"
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ['static']
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
@@ -104,6 +105,13 @@ html_static_path = ['_static']
 #
 # html_sidebars = {}
 
+# Remove github link
+html_show_sourcelink = False
+html_context = {
+    "display_github": False,  # Add 'Edit on Github' link instead of 'View page source'
+    "last_updated": True,
+    "commit": False,
+}
 
 # -- Options for HTMLHelp output ---------------------------------------------
 

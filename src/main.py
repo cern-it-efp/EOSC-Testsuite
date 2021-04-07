@@ -114,7 +114,8 @@ def header(noLogo=False, provider=None, results=None):
 header()
 
 # -----------------CMD OPTIONS--------------------------------------------
-parser = argparse.ArgumentParser(description='EOSC Test-Suite.',
+parser = argparse.ArgumentParser(prog="./test_suite",
+                                 description='EOSC Test-Suite.',
                                  allow_abbrev=False)
 parser.add_argument('-y',
                     help='No interactive.',
@@ -323,5 +324,5 @@ else:
     shutil.rmtree("results/" + s3ResDirBase, True)
 
 
-logger("Test-Suite run completed!", "#", "src/logging/end")
+logger("Run completed", "#", "src/logging/end")
 stop(0)
