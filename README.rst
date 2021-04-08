@@ -72,7 +72,7 @@ Release notes
 
 - Cluster certificate additionally signed for NAT IP (no need to use bastion method, with this solution the cluster can be reached from outside of the provider network. However, previous allocation of floating IPs is now required).
 
-- Added usePrivateIPs option for bastion's method.
+- Added --usePrivateIPs option for bastion's method.
 
 - Removed CloudStack Terraform support (the provider's repository |cloudstack_tf| by HashiCorp).
 
@@ -89,6 +89,8 @@ Release notes
 - Allowed relative paths for -c and -t.
 
 - Updated CPU benchmark, based on the HEP Benchmarking Suite.
+
+- Added option --noWatch to run in the background, without watch command.
 
 .. |cloudstack_tf| raw:: html
 
