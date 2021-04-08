@@ -377,7 +377,7 @@ def getIP(resource, provider, public=False):
 
         elif provider == "azurerm":
             if public is True:
-                return resource["values"]["ip_address"] # type: azurerm_public_ip # TODO: this requires terraform show, otherwise the public IP is ""
+                return resource["values"]["ip_address"] # type: azurerm_public_ip
             return resource["values"]["private_ip_address"]
 
         # ---
@@ -387,7 +387,7 @@ def getIP(resource, provider, public=False):
                 return resource["values"]["public_ip"]
             return resource["values"]["private_ip"]
 
-        elif provider == "exoscale" or provider == "cloudstack": # TODO: certain implementations of cloudstack may not have public IPs w/o NAT
+        elif provider == "exoscale":
             if public is True:
                 return resource["values"]["ip_address"]
             return resource["values"]["ip_address"]

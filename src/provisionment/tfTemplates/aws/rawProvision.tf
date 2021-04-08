@@ -16,7 +16,7 @@ resource "aws_vpc" "vpc" { # TODO: the VPC actually creates a default security g
   }
 }
 
-#resource "aws_security_group" "tssg" { # TODO: this custome one is not assigned to the VMs, only the VPC's default one
+#resource "aws_security_group" "tssg" { # TODO: this custom one is not assigned to the VMs, only the VPC's default one
 #  name        = "tssg"
 #  vpc_id      = aws_vpc.vpc.id
 #

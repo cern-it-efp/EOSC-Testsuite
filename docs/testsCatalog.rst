@@ -6,16 +6,14 @@
 In the root of the cloned repository, you will find a file named *testsCatalog.yaml*, in which you have to specify the tests you want to run. To run a certain test simply set its *run* variable to the True Boolean value.
 On the other hand, if you don't want it to be run set this value to False. Please find below, a description of each test that has already been integrated in the Test-Suite:
 
-Deep Learning using GPUs
-=============================
-
-(This test is currently under development and will be available in future releases)
+Distributed Training of a GAN using GPUs
+=============================================
 
 The 3DGAN application is a prototype developed to investigate the possibility to use a Deep Learning approach to speed-up the simulation of particle physics detectors. The benchmark measures the total time needed to train a
 3D convolutional Generative Adversarial Network (GAN) using a data-parallel approach on distributed systems.
 It is based on MPI for communication. As such, it tests the performance of single nodes (GPUs cards) but also latency and bandwidth of nodes interconnects and data access. The training uses a Kubernetes cluster (GPU flavored) with Kubeflow and MPI.
 
-If selected, the suite will provision a Kubernetes cluster -GPU flavored- specifically for this test.
+If selected, the suite will provision a Kubernetes cluster -GPU flavored- specifically for this test. The test suite **assumes NVIDIA drivers are installed**. Therefore, this test can only run using an OS image that includes it.
 For this test, apart from the *run* variable, the following can be set in the *testsCatalog.yaml* file:
 
 .. list-table::
@@ -31,11 +29,43 @@ For this test, apart from the *run* variable, the following can be set in the *t
 
 
 - Contributors/Owners: Sofia Vallecorsa (CERN) - sofia.vallecorsa AT cern.ch; Jean-Roch Vlimant (Caltech)
-- |Repository_mpi|
+- |Repository_nnlo| / |Repository_mpi_learn|
 
-.. |Repository_mpi| raw:: html
+.. |Repository_mpi_learn| raw:: html
 
-  <a href="https://github.com/svalleco/mpi_learn" target="_blank">Repository</a>
+  <a href="https://github.com/svalleco/mpi_learn" target="_blank">Repository MPI-learn</a>
+
+.. |Repository_nnlo| raw:: html
+
+  <a href="https://github.com/svalleco/NNLO" target="_blank">Repository NNLO</a>
+
+
+progressive Growing of GANs using GPUs
+===========================================
+
+# TODO
+
+If selected, the suite will provision a Kubernetes cluster -GPU flavored- specifically for this test. The test suite **assumes NVIDIA drivers are installed**. Therefore, this test can only run using an OS image that includes it.
+For this test, apart from the *run* variable, the following can be set in the *testsCatalog.yaml* file:
+
+.. list-table::
+   :widths: 25 50
+   :header-rows: 1
+
+   * - Name
+     - Explanation / Values
+   * - nodes
+     - Number of nodes to be used for the deployment. Default: max number of nodes available.
+   * - flavor
+     - Terraform definition of the flavor to be used for this test's cluster. (required)
+
+
+- Contributors/Owners: Sofia Vallecorsa (CERN) - sofia.vallecorsa AT cern.ch
+- |Repository_progan|
+
+.. |Repository_progan| raw:: html
+
+  <a href="https://github.com/svalleco/CProGAN-ME" target="_blank">Repository</a>
 
 
 S3 endpoint tests

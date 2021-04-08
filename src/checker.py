@@ -58,19 +58,6 @@ def checkCost(obtainCost, value):
         return False
 
 
-def checkDLsupport(): # TODO: used?
-    """ Check whether infrastructure supports DL.
-
-    Returns:
-        bool: True in case cluster supports DL, False otherwise.
-    """
-
-    pods = runCMD(
-        'kubectl --kubeconfig tests/dlTest/config get pods -n kubeflow',
-        read=True)
-    return len(pods) > 0 and "No resources found." not in pods
-
-
 def checkResultsExist(resDir):
     """ Checks results exist inside the results dir created for the current run.
 

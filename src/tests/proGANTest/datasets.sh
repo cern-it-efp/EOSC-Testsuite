@@ -20,14 +20,14 @@ celebads(){
   wget -P /tmp/celebads/ https://s3.cern.ch/swift/v1/gan-bucket/img_align_celeba_png.zip # images
   unzip /tmp/celebads/img_align_celeba_png.zip -d /tmp/celebads/
   mkdir -p datasets/celeba
-  python dataset_tool.py create_celeba datasets/celeba /tmp/celebads/ --images_amount $IMAGES_AMOUNT # TODO: (if) provided via testsCatalog.yaml
+  python dataset_tool.py create_celeba datasets/celeba /tmp/celebads/ --images_amount $IMAGES_AMOUNT
 }
 
 unosatds(){ # TODO
   wget -P /tmp/unosatds/ https://s3.cern.ch/swift/v1/gan-bucket/img_align_celeba_png.zip # records or images? if records, then dataset_tool.py is not needed
   unzip /tmp/unosatds/.zip
   mkdir -p datasets/unosatds
-  python dataset_tool.py create_from_images datasets/unosatds /tmp/unosatds/ --images_amount $IMAGES_AMOUNT # TODO: (if) provided via testsCatalog.yaml
+  python dataset_tool.py create_from_images datasets/unosatds /tmp/unosatds/ --images_amount $IMAGES_AMOUNT 
 }
 
 personds(){

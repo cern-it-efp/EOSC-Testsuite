@@ -1,4 +1,4 @@
-# This is for VMs w/o nvidia drivers 
+# This is for VMs w/o nvidia drivers
 
 cuda101deb(){
   # ubuntu cuda 10.1 # tensorflow's official docs (https://www.tensorflow.org/install/gpu) specify cuda 10.0 has to be installed
@@ -59,7 +59,6 @@ cuda102deb
 sudo apt -y install cuda-drivers
 
 bash nvidia_docker.sh
-# TODO: strange behavious here (unable to run a container on nodes because the nvidia runtime is not found), re-running installNvidiaDocker seems to fix it
 
 echo "REBOOT NEEDED?"
 echo ""

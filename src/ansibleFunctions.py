@@ -152,7 +152,7 @@ def ansiblePlaybook(mainTfDir,
         with contextlib.redirect_stdout(f):
             with contextlib.redirect_stderr(f):
 
-                # --------------- GPU support # TODO, document: This assumes drivers are installed, i.e nvidia-smi works
+                # --------------- GPU support
                 playbooksArray = [playbookPath]
 
                 if test == "dlTest":

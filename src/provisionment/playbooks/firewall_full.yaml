@@ -7,11 +7,15 @@
   shell: "iptables-save > /root/firewall.rules"
 
 # ----------------- FLUSH TABLES
-- name: Flush filter table
+- name: Flush filter, nat and mangle tables
   ignore_errors: yes
   iptables:
-    table: filter
+    table: "{{ item }}"
     flush: yes
+  with_items: # TODO: filter's should be enough
+    - filter
+    - nat
+    - mangle
 - name: delete all user-defined chains
   shell: iptables -X
 
