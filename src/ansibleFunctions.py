@@ -162,9 +162,6 @@ def ansiblePlaybook(mainTfDir,
                 if test == "proGANTest":
                     playbooksArray.append("src/provisionment/playbooks/gpuSupport.yaml")
 
-                if tryTakeFromYaml(configs, "enableRDMA", False): # only for azure
-                    playbooksArray.append("src/provisionment/playbooks/rdma.yaml")
-
                 res = PlaybookExecutor(playbooks=playbooksArray,
                                        inventory=inventory,
                                        variable_manager=variable_manager,

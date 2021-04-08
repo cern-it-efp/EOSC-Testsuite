@@ -10,8 +10,6 @@ required:
     - pubSSH
     #- subnetId
 properties:
-    enableRDMA:
-        type: boolean
     subscriptionId:
         type: string
     providerName:
