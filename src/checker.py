@@ -5,27 +5,6 @@ import requests
 from aux import *
 
 
-def supportedProvider(configs):
-    """ Return True in case the provider supports Terraform officially or
-        unofficially (plugin required).
-        In other words, check if docs exist for it.
-
-    Parameters:
-        configs (dict): Content of configs.yaml.
-
-    Returns:
-        bool: True if the provider is supported, False otherwise.
-    """
-
-    if requests.get("https://www.terraform.io/docs/providers/%s"
-        % configs["providerName"]).status_code == 404:
-        try:
-            return configs["unofficialPlugin"]
-        except:
-            return False
-    return True
-
-
 def formerProvisionExists():
     """ Checks whether there are .tf files from a previous run.
 

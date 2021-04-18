@@ -12,7 +12,7 @@ rm -f $ld/header $ld/killMe $ld/footer $ld/hpcTest $ld/dlTest $ld/proGANTest $ld
 prompt(){
   if [[ $noTerraform -eq 0 &&
         $onlyTest -eq 0 &&
-        $force -eq 0 && ( # TODO: -y
+        $force -eq 0 && ( # -y
         -f src/tests/dlTest/main.tf ||
         -f src/tests/proGANTest/main.tf ||
         -f src/tests/hpcTest/main.tf ||

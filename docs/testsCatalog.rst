@@ -3,8 +3,10 @@
 2. Tests Catalog
 ---------------------------------------------
 
-In the root of the cloned repository, you will find a file named *testsCatalog.yaml*, in which you have to specify the tests you want to run. To run a certain test simply set its *run* variable to the True Boolean value.
-On the other hand, if you don't want it to be run set this value to False. Please find below, a description of each test that has already been integrated in the Test-Suite:
+This section describes the tests that the test suite contains.
+In the root of the cloned repository, you will find a file named *testsCatalog.yaml* in which you have to specify the tests you want to run.
+The test suite relies on this YAML file to deploy the tests on the clusters. To run a certain test set its *run* variable to *True*.
+Please find below, a description of each test as well as additional parameters for the configuration of each.
 
 Distributed Training of a GAN using GPUs
 =============================================
@@ -25,7 +27,7 @@ For this test, apart from the *run* variable, the following can be set in the *t
    * - nodes
      - Number of nodes to be used for the deployment. Default: max number of nodes available.
    * - flavor
-     - Terraform definition of the flavor to be used for this test's cluster. (required)
+     - Name of the flavor to be used for this test's cluster. (required)
 
 
 - Contributors/Owners: Sofia Vallecorsa (CERN) - sofia.vallecorsa AT cern.ch; Jean-Roch Vlimant (Caltech)
@@ -43,9 +45,18 @@ For this test, apart from the *run* variable, the following can be set in the *t
 progressive Growing of GANs using GPUs
 ===========================================
 
-# TODO
+Single-node training, based on |progan_karras|. The |faces_dataset| is a generic dataset, used only as an example for this use case.
 
-If selected, the suite will provision a Kubernetes cluster -GPU flavored- specifically for this test. The test suite **assumes NVIDIA drivers are installed**. Therefore, this test can only run using an OS image that includes it.
+.. |progan_karras| raw:: html
+
+  <a href="https://github.com/tkarras/progressive_growing_of_gans" target="_blank">Progressive Growing of GANs</a>
+
+.. |faces_dataset| raw:: html
+
+  <a href="" target="_blank">dataset used for this test</a>
+
+
+If selected, the suite will provision a single-node Kubernetes cluster -GPU flavored- specifically for this test. The test suite **assumes NVIDIA drivers are installed**. Therefore, this test can only run using an OS image that includes it.
 For this test, apart from the *run* variable, the following can be set in the *testsCatalog.yaml* file:
 
 .. list-table::
@@ -54,11 +65,14 @@ For this test, apart from the *run* variable, the following can be set in the *t
 
    * - Name
      - Explanation / Values
-   * - nodes
-     - Number of nodes to be used for the deployment. Default: max number of nodes available.
    * - flavor
-     - Terraform definition of the flavor to be used for this test's cluster. (required)
-
+     - Name of the flavor to be used for this test's cluster. (required)
+   * - images_amount (1, 980)
+     - Number of images to use from the data set. Minimum 1, maximum 980. (required)
+   * - kimg
+     - Number of images provided to the network for its training. Note 1 kimg = 1000 images. Minimum 1, maximum 12000. (required)
+   * - gpus
+     - Number of GPUs to use. Accepted values are 1, 2, 4 and 8. If this parameter is not used, all the available GPUs on the VM will be used.
 
 - Contributors/Owners: Sofia Vallecorsa (CERN) - sofia.vallecorsa AT cern.ch
 - |Repository_progan|
@@ -116,22 +130,17 @@ When using cloud credits, when the credit is exhausted, data can be repatriated 
   <a href="https://zenodo.org/" target="_blank">Zenodo</a>
 
 
-Containerised CPU Benchmarking
+CPU Benchmarking
 ==========================================
-Suite containing several CPU benchmarks used for High Energy Physics (HEP).
-The following benchmarks are run on the cloud provider, using a containerised approach:
-
-* DIRAC Benchmark
-* ATLAS Kit Validation
-* Whetstone: from the UnixBench benchmark suite.
-* Hyper-benchmark: A pre-defined sequence of measurements and fast benchmarks.
+Benchmarking relying on a suite containing several High Energy Physics (HEP) based benchmarks.
+Please refer to the repository below for more details and information.
 
 - Contributors/Owners: Domenico Giordano (CERN) - domenico.giordano AT cern.ch
-- |Repository_cpu|
+- |Repository_hep_suite|
 
-.. |Repository_cpu| raw:: html
+.. |Repository_hep_suite| raw:: html
 
-  <a href="https://gitlab.cern.ch/cloud-infrastructure/cloud-benchmark-suite" target="_blank">Repository</a>
+  <a href="https://gitlab.cern.ch/hep-benchmarks/hep-benchmark-suite" target="_blank">Repository</a>
 
 
 Networking performance measurements
@@ -139,15 +148,15 @@ Networking performance measurements
 perfSONAR is a network measurement toolkit designed to provide federated coverage of paths, and help to establish end-to-end usage expectations.
 
 In this test, a perfSONAR testpoint is created using a containerised approach on the cloud provider infrastructure.
-The following tests are launched end to end:
+The following tests are run between the provisioned testpoint and another perfSONAR server that the user specifies in the test's configuration (see below):
 
 - throughput: A test to measure the observed speed of a data transfer and associated statistics between two endpoints.
 - rtt: Measure the round trip time and related statistics between hosts.
 - trace: Trace the path between IP hosts.
-- latencybg: Continuously measure one-way latency and associated statistics between hosts and report back results periodically.
+- latency: Measure one-way latency and associated statistics between hosts. Note this test does not work if the node is behind NAT.
 
 The endpoint for these tests must be specified at testsCatalog.yaml's *perfsonarTest.endpoint* variable.
-Note if the server on the provided endpoint does not allow or support a subset of these tests, those will fail but the others would still be carried out.
+Note if the server on the provided endpoint does not allow or support any of these tests, those will fail but the others would still be carried out.
 Use endpoints from:
 
 * |link1|
@@ -174,37 +183,6 @@ Use endpoints from:
   <a href="https://github.com/perfsonar/perfsonar-testpoint-docker" target="_blank">Repository</a>
 
 
-FDMNES: Simulation of X-ray spectroscopies
-=================================================
-
-(This test is currently under development and will be available in future releases)
-
-The FDMNES project provides the research the community a user friendly code to simulate x-ray spectroscopies, linked to the real absorption (XANES, XMCD) or resonant scattering (RXD in bulk or SRXRD for surfaces) of synchrotron radiation.
-It uses parallel calculations using OpenMPI. As an HPC test FDMNES is rather heavy on CPU and Memory and light on I/O.
-The objective of this test is to understand which configuration of FDMNES is the most efficient and which type of tasks and calculations can be done in a give cloud provider.
-
-If selected, the suite will provision a Kubernetes cluster -HPC flavored- specifically for this test.
-For this test, apart from the *run* variable, the following can be set in the *testsCatalog.yaml* file:
-
-.. list-table::
-   :widths: 25 50
-   :header-rows: 1
-
-   * - Name
-     - Explanation / Values
-   * - nodes
-     - Number of nodes to be used for the deployment.
-   * - flavor
-     - Terraform definition of the flavor to be used for this test's cluster. (required)
-
-- Contributors/Owners: Rainer Wilcke (ESRF) - wilcke AT esrf.fr
-- |Repository_fdmnes|
-
-.. |Repository_fdmnes| raw:: html
-
-  <a href="http://neel.cnrs.fr/spip.php?article3137&lang=en" target="_blank">Repository</a>
-
-
 DODAS: Dynamic On Demand Analysis Services test
 ====================================================
 
@@ -213,8 +191,8 @@ and storage resources, by generating clusters on demand for the execution of HTC
 HTCondor Global Pool of CMS to enable the dynamic extension of existing computing resources. A benefit of such an architecture is that it provides high
 scaling capabilities and self-healing support that results in a drastic reduction of time and cost, through setup and operational efficiency increases.
 
-If one wants to deploy this test, the machines in the general cluster (to which such test is deployed), should have rather big disks as the image for this test is 16GB.
-To set the disk size use the storageCapacity variable from configs.yaml.
+If one wants to deploy this test, the machines in the general cluster (to which such test is deployed), should have rather large disks as the image for this test is 16GB.
+To set the disk size use the *storageCapacity* variable from configs.yaml.
 
 - Contributors/Owners: Daniele Spiga (INFN) - daniele.spiga@pg.infn.it ; Diego Ciangottini (INFN) - diego.ciangottini@cern.ch
 - |Repository_dodas|

@@ -1,0 +1,16 @@
+s3Test:
+  run: false
+dataRepatriationTest:
+  run: false
+cpuBenchmarking:
+  run: false
+perfsonarTest:
+  run: false
+dodasTest:
+  run: false
+dlTest:
+  run: false
+proGANTest:
+  run: false
+hpcTest:
+  run: false

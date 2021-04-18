@@ -261,7 +261,7 @@ def cpuBenchmarking(resDir):
         },
         {
             "before": "BMKS_PH",
-            "after": str(init.testsCatalog["cpuBenchmarking"]["benchmarks"]).replace("\'","").replace("[","").replace("]","") # TODO: do this with regexp
+            "after": str(init.testsCatalog["cpuBenchmarking"]["benchmarks"])[1:-1].replace("\'","")
         }
     ]
 
@@ -318,7 +318,7 @@ def perfsonarTest(resDir):
         resDir (str): Path to the results folder for the current run.
     """
 
-    keepPerfsonarPod = False # TODO: this has to be read from testsCatalog.yaml
+    keepPerfsonarPod = False # CTS-190
 
     podName = "ps-pod"
     testName = "perfSONAR"
@@ -433,8 +433,6 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
     else:
         if not checkCluster("dlTest"):
             return  # Cluster not reachable, do not add cost for this test
-
-    # TODO: what happens when running on a non-GPU cluster or a GPU cluster that is not prepared (i.e no drivers)?
 
     # 1) Write the ConfigMap (data set) and MPIJob resource files:
 

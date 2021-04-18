@@ -22,7 +22,6 @@ extraSupportedClouds = ["openstack",
                         "azurerm",
                         "google",
                         "exoscale",
-                        "cloudstack",
                         "opentelekomcloud",
                         "oci"]
 testsSharingCluster = ["s3Test",

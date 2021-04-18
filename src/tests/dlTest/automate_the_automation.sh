@@ -49,7 +49,7 @@ runHeader $maxNodes
 #./test_suite -c $pathToCFG -t $pathToTC --usePrivateIPs
 ./test_suite -c $pathToCFG -t $pathToTC --onlyTest
 
-if [[ $? != 0 ]] ; then # TODO: useless bc test_suite's exit code doesnt fully reflect the exit status of the run
+if [[ $? != 0 ]] ; then # TODO: useless because test_suite's exit code does not fully reflect the exit status of the run
   exit 1
 fi
 
@@ -77,4 +77,4 @@ for (( var=$(($maxNodes-1)); var>=$minNodes; var-- )) do # -1 because the first 
 done
 
 # Delete the remaining node
-deleteOneNode # TODO: would fail bc the function only deletes no-master nodes but the last one is the master
+deleteOneNode # TODO: would fail because the function only deletes non-master nodes but the last one is the master

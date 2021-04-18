@@ -1,5 +1,3 @@
-# TODO - simplify
-
 provider "azurerm" {
   subscription_id = yamldecode(file(var.configsFile))["subscriptionId"]
   features {}

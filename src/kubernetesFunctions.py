@@ -454,7 +454,7 @@ def kubectlCLI(cmd, kubeconfig, options="", hideLogs=None, read=None):
         kubeconfig (str): Path to kubeconfig file.
         options (str): Options to be added to the command.
         hideLogs (bool): Specifies whether the output of the
-                            command should be displayed.
+                         command should be displayed.
 
     Returns:
         int: Exit code of the kubectl command.

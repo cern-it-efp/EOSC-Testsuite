@@ -8,9 +8,6 @@ spec:
   containers:
   - name: progan-cont
     image: cernefp/custom_progan # tensorflow/tensorflow:1.15.2-gpu
-    #resources:
-    #  limits:
-    #    nvidia.com/gpu: 1 # TODO: even when set to 1, the pod can see the 8 GPUs
     imagePullPolicy: Always
     securityContext:
       privileged: true

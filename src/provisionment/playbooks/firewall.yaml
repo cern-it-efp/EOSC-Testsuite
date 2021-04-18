@@ -1,4 +1,4 @@
-- name: Disable firewalld on redhat distros # TODO: wasn't required before, currently firewalld is restarted after installing deps
+- name: Disable firewalld on redhat distros 
   ignore_errors: yes
   command: systemctl stop firewalld ; systemctl disable firewalld
 

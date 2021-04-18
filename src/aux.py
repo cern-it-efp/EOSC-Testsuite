@@ -321,7 +321,7 @@ def getNodeName(configs, test, randomId):
 
 
 def subprocPrint(test):
-    """ This runs on a child process. Reads the ansible log file, adds clusterID
+    """ Runs on a child process. Reads the ansible log file, adds clusterID
         to each line and prints it.
 
     Parameters:
@@ -349,10 +349,7 @@ def getIP(resource, provider, public=False):
         str: Resource's IP address.
     """
 
-    # TODO: should check the resource type. See bastion_create.py's getIP function (note there the check is done because getIP get's the full set of
-    #    resources, while here it gets one at a time, so eiher it has an IP or not. In the other case, if during the iteration, a resource does not have the ip, the
-    #     function will return None and will not check the remaining resources.
-    # TODO: this assumes a single network interface in some cases (gcp, openstack)
+    # TODO: this assumes a single interface in some cases (gcp, openstack)
 
     try:
         if provider == "aws":

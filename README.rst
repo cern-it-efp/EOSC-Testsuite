@@ -2,8 +2,7 @@
 EOSC Cloud Validation Test Suite
 ============================================
 
-This tool is intended to be used to test and validate commercial cloud services across the stack for research and education environments.
-This Test-Suite is being used as a validation tool for commercial cloud services procurement in European Commission sponsored projects such as OCRE and ARCHIVER.
+This tool is intended to be used to test and validate commercial cloud services across the stack for research and education environments and it is being used as a validation tool for commercial cloud services procurement in European Commission sponsored projects such as OCRE and ARCHIVER.
 
 Visit |eosc| for more information.
 
@@ -62,7 +61,7 @@ The developers would like to thank all test owners and contributors to this proj
 |                              | | CloudSigma                                                                    |
 +------------------------------+---------------------------------------------------------------------------------+
 
-The suite is being tested in several additional cloud providers. As tests are concluded the cloud providers names will be added in the table above.
+The suite is being tested in several additional cloud providers. As tests are concluded, the cloud providers names will be added in the table above.
 
 Release notes
 ---------------------------------------------
@@ -76,11 +75,11 @@ Release notes
 
 - Removed CloudStack Terraform support (the provider's repository |cloudstack_tf| by HashiCorp).
 
-- Allowed both project-wide and VM-specific ssh key on GCP
+- Allowed both project-wide and VM-specific ssh key on GCP.
 
-- Improved configuration: select network
+- Improved configuration: select network.
 
-- Updated Distributed GAN test: included NNLO implementation ; more configuration (dataset size)
+- Updated Distributed GAN test: included NNLO implementation ; more configuration (dataset size).
 
 - Added ProGAN test.
 
@@ -90,7 +89,7 @@ Release notes
 
 - Updated CPU benchmark, based on the HEP Benchmarking Suite.
 
-- Added option --noWatch to run in the background, without watch command.
+- Added option --noWatch to run without displaying logs, without watch command.
 
 .. |cloudstack_tf| raw:: html
 

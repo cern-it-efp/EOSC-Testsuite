@@ -13,8 +13,6 @@ properties:
         type: string
     flavor:
         type: string
-    unofficialPlugin:
-        type: boolean
     openUser:
         type: string
     dockerCE:

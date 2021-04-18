@@ -13,7 +13,7 @@ installKubeflow(){
 
   # 3) Create environment variables to make the deployment process easier
   # export PATH=$PATH:"/root/kfctl" # useless
-  cp kfctl /bin/ # this one worked
+  cp kfctl /bin/ # worked
 
   export KF_NAME=KFDN
   export BASE_DIR=/opt/

@@ -21,7 +21,7 @@ zone: "europe-west4-a"
 # gcloud compute images list --project deeplearning-platform-release --no-standard-images | grep -i "tf-1-15-cu"
 #image: "deeplearning-platform-release/tf-1-15-cu110-v20201106-ubuntu-1804"
 #image: "deeplearning-platform-release/tf-1-15-cu110"
-image: "deeplearning-platform-release/tf2-ent-2-3-cu110" # TODO: with this and the proGAN: "Cannot assign a device for operation GPU4/G_shadow/lod" even tho nvidia-smi showed 8GPUs, is it bc of the unmatched tf versions? tried matching version and it happened too, tried w/o k8s and happened too
+image: "deeplearning-platform-release/tf2-ent-2-3-cu110"
 
 pathToCredentials: "/home/ipelu/Desktop/rosetta_ialum.json"
 project: "u-129e7a54-90a9-4371-95be"

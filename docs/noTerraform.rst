@@ -24,8 +24,11 @@ The configs.yaml file for these type of run takes the following variables:
    * - clusters.shared
      - IPs of the shared cluster's VMs. (Required if at least one of the general tests was selected)
    * - clusters.hpcTest
-     - IPs of the HPC cluster's VMs. (Required if the HPC test was selected)
+     - IPs of the hpcTest cluster's VMs. (Required if hpcTest was selected)
    * - clusters.dlTest
-     - IPs of the GPU cluster's VMs. (Required if the GPU test was selected)
+     - IPs of the dlTest cluster's VMs. (Required if dlTest was selected)
+   * - clusters.proGANTest
+     - IPs of the proGANTest cluster's VMs. (Required if proGANTest was selected)
+
 
 For making use of this feature use the option '--noTerraform' when running the suite.
