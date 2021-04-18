@@ -15,7 +15,6 @@ try:
     from ansible.cli import CLI
     from ansible.executor.playbook_executor import PlaybookExecutor
     from configparser import ConfigParser
-    import threading
     from multiprocessing import Process, Queue
     import contextlib
     import io
@@ -43,7 +42,8 @@ def provisionAndBootstrap(test,
                           dependencies,
                           baseCWD,
                           extraSupportedClouds,
-                          noTerraform):
+                          noTerraform,
+                          usePrivateIPs):
     """ Provision infrastructure and/or bootstrap the k8s cluster.
 
     Parameters:
@@ -62,6 +62,7 @@ def provisionAndBootstrap(test,
         baseCWD (str): Path to the base directory.
         extraSupportedClouds (dict): Extra supported clouds.
         noTerraform (bool): True indicates the terraform phase is skipped.
+        usePrivateIPs (bool): Indicates usage of public or private IPs.
 
     Returns:
         bool: True if the cluster was succesfully provisioned. False otherwise.
@@ -82,7 +83,8 @@ def provisionAndBootstrap(test,
                                       credentials,
                                       dependencies,
                                       baseCWD,
-                                      extraSupportedClouds)
+                                      extraSupportedClouds,
+                                      usePrivateIPs)
         if res is False:
             return False, msg
 
@@ -101,18 +103,22 @@ def provisionAndBootstrap(test,
                                        kubeconfig,
                                        noTerraform, # this is None in terraformFunctions
                                        test,
-                                       configs)
+                                       configs,
+                                       usePrivateIPs)
     if result != 0:
         return False, bootstrapFailMsg % test
 
     # -------- Update kubeconfig files and wait for default SA to be ready
 
-    #updateKubeconfig(masterIP, kubeconfig)
+    if usePrivateIPs is False:
+        updateKubeconfig(masterIP, kubeconfig)
 
-    if kubectlCLI('get sa default',
-                  kubeconfig=kubeconfig,
-                  options='--request-timeout=20m',
-                  hideLogs=False) == 0:
+    if waitForResource("default",
+                       Type.sa,
+                       kubeconfig,
+                       retrials=70,
+                       sleepTime=10) is not False:
         writeToFile(toLog, clusterCreatedMsg % (test, masterIP), True)
         return True, ""
+
     return False, TOserviceAccountMsg % test

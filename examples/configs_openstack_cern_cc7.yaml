@@ -1,14 +1,11 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
 providerName: openstack
-pathToKey: "/root/.ssh/id_rsa"
+pathToKey: "/home/ipelu/.ssh/id_rsa"
 #openUser:
 flavor: "m2.medium"
 imageID: "ea3575af-6013-4608-9d75-00800a855bb7" # CC7
 storageCapacity: 50
 keyPair: "exo"
-securityGroups:
-region:
-availabilityZone:
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:

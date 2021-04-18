@@ -5,27 +5,6 @@ import requests
 from aux import *
 
 
-def supportedProvider(configs):
-    """ Return True in case the provider supports Terraform officially or
-        unofficially (plugin required).
-        In other words, check if docs exist for it.
-
-    Parameters:
-        configs (dict): Content of configs.yaml.
-
-    Returns:
-        bool: True if the provider is supported, False otherwise.
-    """
-
-    if requests.get("https://www.terraform.io/docs/providers/%s"
-        % configs["providerName"]).status_code == 404:
-        try:
-            return configs["unofficialPlugin"]
-        except:
-            return False
-    return True
-
-
 def formerProvisionExists():
     """ Checks whether there are .tf files from a previous run.
 
@@ -35,6 +14,7 @@ def formerProvisionExists():
 
     if os.path.exists("src/tests/dlTest/main.tf") or \
        os.path.exists("src/tests/hpcTest/main.tf") or \
+       os.path.exists("src/tests/proGANTest/main.tf") or \
        os.path.exists("src/tests/shared/main.tf"):
         return True
     return False
@@ -55,19 +35,6 @@ def checkCost(obtainCost, value):
         return value >= 0 and obtainCost is True
     else:
         return False
-
-
-def checkDLsupport():
-    """ Check whether infrastructure supports DL.
-
-    Returns:
-        bool: True in case cluster supports DL, False otherwise.
-    """
-
-    pods = runCMD(
-        'kubectl --kubeconfig tests/dlTest/config get pods -n kubeflow',
-        read=True)
-    return len(pods) > 0 and "No resources found." not in pods
 
 
 def checkResultsExist(resDir):
@@ -143,6 +110,12 @@ def checkRequiredTFexist(selectedTests):
                     "\nNormal run is required before run with '--retry'.", True)
         stop(1)
 
+    if "proGANTest" in selectedTests and not os.path.isfile(pathToMain % "proGANTest"):
+        writeToFile("src/logging/header",
+                    "ERROR: terraform files not found for proGANTest. "
+                    "\nNormal run is required before run with '--retry'.", True)
+        stop(1)
+
     if "hpcTest" in selectedTests and not os.path.isfile(pathToMain % "hpcTest"):
         writeToFile("src/logging/header",
                     "ERROR: terraform files not found for hpcTest. "
@@ -155,7 +128,7 @@ def checkClustersToDestroy(cliParameterValue, clusters):
 
     Parameters:
         cliParameterValue (str): CLI arguments.
-        clusters (Array<str>): Array containing 'shared','dlTest' and 'hpcTest'.
+        clusters (Array<str>): Array containing 'shared','dlTest', 'proGANTest' and 'hpcTest'.
 
     Returns:
         bool: True in case the given argument is correct. False otherwise.

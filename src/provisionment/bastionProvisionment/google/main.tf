@@ -1,42 +1,31 @@
 provider "google" {
-  credentials = file("~/Desktop/.gcp.json")
-  project     = "ocrets"
+  credentials = file("/home/ipelu/Desktop/dsktp/rosetta_ialum.json")
+  project     = "u-129e7a54-90a9-4371-95be"
 }
 
 # User defined when importing the pub key (project scope SSH key) via UI
 variable "openUser" {
   default = "openu"
 }
+variable "pubKey" {
+  default = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCFPaN62APTqDCy3eB6qy+ALngWKg/RHCU0XWlL47JQ/Bj4zjHoyviFQ3+WgRgRxakKSdbpRU28qm0dUT+5Ki72doEmcmmqdzwhTa6H/0XwoeeRc12eIUw/sn2wTgdf/c57ft0deOyxeALVArAZwCXxywNeRcAjGJsvp4LW6jjZFQ=="
+}
 
 resource "google_compute_instance" "launcher" {
  name         = "launcher"
- machine_type = "n1-highmem-16"
- zone         = "us-west1-a"
+ machine_type = "n1-standard-2"
+ zone         = "us-central1-a"
  boot_disk {
    initialize_params {
      image = "centos-cloud/centos-7"
-     size = 30 # null equals to 20
+     size = 150 # null equals to 20
    }
  }
  network_interface {
    network = "default"
    access_config {}
  }
-}
-
-# ~~~~~~~~~~~~~~
-
-resource "null_resource" "docker" {
-  connection {
-    host = google_compute_instance.launcher.network_interface.0.access_config.0.nat_ip
-    user        = var.openUser
-    private_key = file("~/.ssh/id_rsa")
-  }
-  provisioner "remote-exec" {
-    inline = [
-      "sudo yum update -y ; sudo yum install docker -y ; sudo systemctl start docker",
-      "sudo docker run --name tslauncher -itd --net=host cernefp/tslauncher",
-      "echo sudo docker exec -it tslauncher bash >> ~/.bashrc"
-    ]
-  }
+ metadata = {
+   ssh-keys = "${var.openUser}:${var.pubKey}"
+ }
 }

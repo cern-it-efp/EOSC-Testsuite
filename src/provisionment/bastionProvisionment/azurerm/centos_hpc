@@ -1,0 +1,66 @@
+provider "azurerm" {
+  subscription_id = "e53421f6-39d4-43d7-8ae4-3c80af669e2d"
+  features {}
+}
+
+# Create public IPs
+resource "azurerm_public_ip" "myterraformpublicip" {
+  name                = "myPublicIP"
+  location            = "France Central"
+  resource_group_name = "efp"
+  allocation_method   = "Dynamic"
+}
+
+# Create network interface (This CAN'T be done in advance, as I need one per VM: too much GUI work)
+resource "azurerm_network_interface" "terraformnic" {
+  name                      = "myNIC"
+  location                  = "France Central"
+  resource_group_name       = "efp"
+  #network_security_group_id = azurerm_network_security_group.myterraformnsg.id # deprecated starting azure's provider version 2
+
+  ip_configuration {
+    name                          = "myNicConfiguration"
+    subnet_id                     = "/subscriptions/e53421f6-39d4-43d7-8ae4-3c80af669e2d/resourceGroups/efp/providers/Microsoft.Network/virtualNetworks/myVnet-xju5/subnets/mySubnet-xju5"
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.myterraformpublicip.id
+  }
+}
+
+############################################### CREATE VM ###############################################
+
+resource "azurerm_virtual_machine" "main" {
+  name                  = "tslauncher"
+  location              = "France Central"
+  vm_size               = "Standard_D2s_v3"
+  resource_group_name   = "efp"
+  network_interface_ids = [azurerm_network_interface.terraformnic.id]
+  delete_os_disk_on_termination = true
+
+  storage_os_disk {
+    name              = "myOsDisk"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
+    managed_disk_type = "Premium_LRS"
+  }
+
+  storage_image_reference {
+    publisher = "OpenLogic"
+    offer     = "CentOS-HPC"
+    sku       = "7.7"
+    version   = "latest"
+  }
+
+  os_profile {
+    computer_name  = "myvm"
+    admin_username = "uroot" # no root here!
+  }
+
+  os_profile_linux_config {
+    disable_password_authentication = true
+
+    ssh_keys {
+      key_data = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCFPaN62APTqDCy3eB6qy+ALngWKg/RHCU0XWlL47JQ/Bj4zjHoyviFQ3+WgRgRxakKSdbpRU28qm0dUT+5Ki72doEmcmmqdzwhTa6H/0XwoeeRc12eIUw/sn2wTgdf/c57ft0deOyxeALVArAZwCXxywNeRcAjGJsvp4LW6jjZFQ=="
+      path     = "/home/uroot/.ssh/authorized_keys"
+    }
+  }
+}

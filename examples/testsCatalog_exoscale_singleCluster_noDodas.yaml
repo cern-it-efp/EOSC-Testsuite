@@ -1,12 +1,12 @@
 s3Test:
-  run: True
+  run: 
   endpoint: https://sos-ch-gva-2.exo.io/
   accessKey: asdfadf
   secretKey: asdfasdf
 dataRepatriationTest:
-  run: true
+  run: 
 cpuBenchmarking:
-  run: true
+  run: 
 perfsonarTest:
   run: true
   endpoint: psb01-gva.cern.ch
@@ -20,3 +20,5 @@ hpcTest:
   run:
   nodes: 2
   flavor: "Small"
+proGANTest:
+  run:

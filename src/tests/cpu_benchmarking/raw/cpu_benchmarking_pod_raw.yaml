@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: cpu-bmk-pod
+  name: hep-bmk-pod
   namespace: default
   labels:
     test: test-pod
@@ -18,12 +18,34 @@ spec:
         topologyKey: kubernetes.io/hostname
   hostNetwork: true
   containers:
-  - name: cpu-benchmarking-cont
-    image: gitlab-registry.cern.ch/cloud-infrastructure/cloud-benchmark-suite/cloud-benchmark-suite-standalone:1.8
+  - name: hep-benchmark-suite
+    image: gitlab-registry.cern.ch/hep-benchmarks/hep-benchmark-suite/hep-benchmark-suite-cc7:latest
     imagePullPolicy: Always
     securityContext:
       privileged: true
+    env:
+    - name: BMK_RUNDIR
+      value: "/tmp/hep-benchmark-suite"
     command: ["/bin/sh","-c"]
     args:
-      - cern-benchmark --benchmarks="kv;whetstone;DB12;hyper-benchmark" --freetext="Run as part of the Cloud Provider Validation Test-Suite CERN" --cloud="PROVIDER_PH" -o &&
+      - rm -rf $BMK_RUNDIR ;
+        hep-benchmark-suite
+        -o
+        -d
+        --benchmarks="BMKS_PH"
+        --freetext="Run as part of the Cloud Provider Validation Test-Suite CERN"
+        --cloud="PROVIDER_PH" &&
         tail -f /dev/null
+    volumeMounts:
+    - mountPath: /var/run/docker.sock
+      name: docker-sock
+    - mountPath: /tmp
+      name: tmp-dir
+  volumes:
+  - name: docker-sock
+    hostPath:
+      path: /var/run/docker.sock
+      type: Socket
+  - name: tmp-dir
+    hostPath:
+      path: /tmp

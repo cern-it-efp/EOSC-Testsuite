@@ -34,6 +34,10 @@ RUN pip3 install --upgrade\
     jsonschema \
     ansible
 
+# ------------------ Install yq
+RUN wget https://github.com/mikefarah/yq/releases/download/3.4.0/yq_linux_amd64 -O /usr/bin/yq && \
+    chmod +x /usr/bin/yq
+
 # ------------------ Install terraform
 RUN TERRAFORM_VERSION=$(curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | jq -r .current_version) && \
     wget https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
@@ -62,5 +66,8 @@ RUN echo 'alias watchPods="watch kubectl get pods --kubeconfig /EOSC-Testsuite/s
 
 # ------------------ Clone TS repo and get bash
 RUN echo cd /EOSC-Testsuite >> ~/.bashrc
-ENTRYPOINT git clone -q https://github.com/cern-it-efp/EOSC-Testsuite.git && \
+ENTRYPOINT echo 'Cloning EOSC-Testsuite repository...' && \
+           git clone -q https://github.com/cern-it-efp/EOSC-Testsuite.git && \
            cd EOSC-Testsuite ; bash
+
+# ENTRYPOINT is not overriden by the cmd used in 'docker run': for that --entrypoint="" needs to be used to reset it

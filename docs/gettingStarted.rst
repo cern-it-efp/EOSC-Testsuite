@@ -1,19 +1,17 @@
 1. Getting started
 ---------------------------------------------
-Please follow the steps below in order to deploy tests in a cloud provider.
+This section guides the user on the whole process of preparation for running the suite, from installation of dependencies to configuration of the tool.
 
-Refer to section "Using Docker" to use the Docker image we provide to avoid dealing with required packages and dependencies.
+To ease this process, we do recommend using a Docker image that we provide which already contains the dependencies below described (Terraform, Ansible, kubectl, etc).
+Refer to section :ref:`Using Docker<using-docker>` to use the Docker image we provide to avoid dealing with required packages and dependencies.
 
 1.1 Dependencies
 ==========================
-This test-suite requires some packages to work properly and these must be installed by yourself directly. Please see below.
+This test-suite requires some packages, please see below.
 
 Terraform
 ^^^^^^^^^^^^^^^^
-Terraform is the tool that creates the VMs that will later become a Kubernetes cluster. The test-suite makes use of it so download and
-install |Terraform_link| on your machine.
-In some cases, providers are not fully supported by Terraform, however they might provide plugins to bridge this gap. In such cases, please refer to the documentation of the provider to download the plugin.
-Once downloaded, this must be placed at *~/.terraform.d/plugins* and execution permissions must be given to it (*+x*).
+Terraform is the tool that creates the VMs that will later conform a Kubernetes cluster. Download and install |Terraform_link| on your machine.
 
 .. |Terraform_link| raw:: html
 
@@ -29,7 +27,7 @@ Ansible is used to configure the VMs and install packages on them in order to bo
 
 Kubernetes client
 ^^^^^^^^^^^^^^^^^^^^^
-In order to manage the Kubernetes cluster locally instead of using the master node, install |kubectl_link| on your machine.
+In order to manage the Kubernetes cluster remotely, install |kubectl_link| on your machine.
 
 .. |kubectl_link| raw:: html
 
@@ -38,7 +36,7 @@ In order to manage the Kubernetes cluster locally instead of using the master no
 Python
 ^^^^^^^^^
 Python version 3 is required.
-The following python packages are required:
+The following python packages are required, install them with pip3:
 
 - pyyaml
 
@@ -48,12 +46,11 @@ The following python packages are required:
 
 - requests
 
-Please install them with pip3.
 
 1.2 SSH key
 ==================
 A ssh key pair is needed to establish connections to the VMs to be created later. Therefore, you must create (or import) this key on your provider, when needed, beforehand.
-Note errors may occur if your key doesn't have the right permissions. Set these to the right value using the following command:
+Note errors may occur if your key does not have the right permissions. Set these to the right value using the following command:
 
 .. code-block:: console
 
@@ -87,18 +84,16 @@ The following ports have to be opened:
      - Flannel overlay network, k8s pods communication
 
 
-1.4 Networking and IPs
+1.4 Permissions
 ==========================================
-Some providers do not allocate public IPs to the VMs but use NAT. Hence the VM can be reached from outside but that IP is not actually residing on the VM, which causes
-conflicts when creating the Kubernetes cluster. If one wants to run the Test-Suite on a provider of this case, then the suite must be launched from within the
-network the nodes will be connected to, this is a private network. In other words, **a VM will have to be created first manually** and the Test Suite will have to be
-triggered from there. This way all the communications can happen without NAT.
+During its run, the suite creates files and folders inside the directory *EOSC-Testsuite*: Kubernetes resource definition files, log and results files and folders, etc.
+Therefore, the user running the suite must have enough permissions to accomplish such tasks.
 
 1.5 Clone and prepare
 ==========================================
 Cloning repository
 ^^^^^^^^^^^^^^^^^^^^^^^
-Please clone the repository as follows and cd into it. This step is not needed when using the provided Docker image, the repository is already cloned there.
+Clone the repository as follows and cd into it. Note this step is not needed when using the provided Docker image, the repository is already cloned there.
 
 .. code-block:: console
 
@@ -109,18 +104,17 @@ Please clone the repository as follows and cd into it. This step is not needed w
 Configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Two YAML files have to be filled to configure the run. Examples of these two files can be found inside the examples folder of the repository.
+Two YAML files have to be filled to configure the run. Examples of these two files can be found inside the *examples* folder of the repository.
 
 ``testsCatalog.yaml``
 
 This file gathers details related to the tests that should be deployed.
-Refer to the section "Test Catalog" to learn how to fill this file.
+Refer to the section :ref:`Test Catalog<tests-catalog>` to learn how to fill this file.
 
 ``configs.yaml``
 
-This file gathers general details required to provision the infrastructure.
-The file also contains a section named *costCalculation*. Refer to the section "Cost of run calculation" to understand how to fill that part.
-The suite will create itself the Terraform files on the fly according to the configuration provided.
+This file gathers general details required to provision the infrastructure. The file also contains a section named *costCalculation*.
+Refer to the section :ref:`Cost of run calculation<cost-of-run-calculation>` to learn more about the estimated cost calculation feature and to understand how to fill that part.
 
 **General variables:**
 
@@ -138,6 +132,9 @@ The suite will create itself the Terraform files on the fly according to the con
      - Flavor to be used for the main cluster. (required)
    * - openUser
      - User to be used for ssh connections.
+   * - storageCapacity
+     - Storage size to have on the VM.
+
 
 **Provider/cloud specific variables:**
 
@@ -147,21 +144,19 @@ The suite will create itself the Terraform files on the fly according to the con
 
    clouds/*
 
-To run the suite on a provider/cloud that is not listed above, refer to the section :ref:`No Terraform runs <no-terraform-runs>`.
+To run the suite on a provider/cloud that is not listed above (supporting Terraform or not), refer to the section :ref:`No Terraform runs <no-terraform-runs>`.
 
+
+.. _using-docker:
 
 1.6 Using Docker
 ===================
-A Docker image has been built and pushed to Docker hub. This image allows you to skip section "Dependencies" and jump to "SSH key".
+A Docker image has been built and pushed to Docker hub. This image allows you to skip section "Dependencies" and jump to "SSH key", you can see the Dockerfile here.
 
 Run the container (pulls the image first):
 
 .. code-block:: console
 
-    $ docker run --net=host -it cernefp/tslauncher
+    $ docker run -it cernefp/tslauncher
 
-Note the option '--net=host'. Without it, the container wouldn't be able to connect to the nodes, as it
-would not be in the same network as them and it is likely the nodes will not have public IPs (no NAT).
-With that option, the container will use the network used by its host.
-
-You will get a session on the container, directly inside the cloned repository.
+You will get a terminal on the container, directly inside the cloned repository.

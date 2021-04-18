@@ -1,0 +1,22 @@
+s3Test:
+  run:
+  endpoint: https://s3.amazonaws.com
+  accessKey: asdfasd
+  secretKey: dsfadsf
+dataRepatriationTest:
+  run:
+cpuBenchmarking:
+  run:
+perfsonarTest:
+  run:
+  endpoint: psb01-gva.cern.ch
+dodasTest:
+  run:
+dlTest:
+  run: true
+  nodes: 3
+  flavor: "GPU-small"
+hpcTest:
+  run:
+  nodes: 2
+  flavor: "Large"

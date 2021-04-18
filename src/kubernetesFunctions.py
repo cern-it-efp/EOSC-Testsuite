@@ -26,7 +26,7 @@ from checker import *
 
 
 Action = Enum('Action', 'create delete cp exec')
-Type = Enum('Type', 'pod daemonset mpijob configmap pv')
+Type = Enum('Type', 'pod daemonset mpijob configmap pv sa')
 
 
 def checkCluster(test):
@@ -70,10 +70,65 @@ def checkPodAlive(podName, resDir, toLog, resultFile, kubeconfig):
     if kubectlCLI(cmd, kubeconfig=kubeconfig, hideLogs=True) != 0:
         writeFail(resDir,
                   resultFile,
-                  "%s pod was destroyed." % podName,
+                  "%s pod was destroyed (did not fetch %s)" % (podName,resultFile),
                   toLog)
         return False
     return True
+
+
+def waitForResource(resourceName, resourceType, kubeconfig, retrials=None, sleepTime=None):
+    """ Waits until the given resource is deployed, i.e. visible by kubectl. If
+        after a specific number of retrials this does not happen, returns False.
+
+    Parameters:
+        resourceName (str): Resource name.
+        resourceType (str): Resource type.
+        kubeconfig (str): Path to kubeconfig file of the being managed cluster.
+        retrials (int): Number of retrials.
+        sleepTime (int): Sleep time in seconds between retrials.
+
+    Returns:
+        bool: True in case the resource is present, False otherwise
+    """
+
+    if retrials is None:
+        retrials = 2
+    if sleepTime is None:
+        sleepTime = 2
+    for i in range(retrials):
+        cmd = "get %s %s" % (resourceType.name, resourceName)
+        if kubectlCLI(cmd, kubeconfig=kubeconfig, hideLogs=True) == 0:
+            return True
+        print("Rsource of type '%s' with name '%s' not ready yet..." % (resourceType, resourceName))
+        time.sleep(sleepTime)
+    return False
+
+
+def waitForPod(podName, kubeconfig, retrials=None, sleepTime=None):
+    """ Waits until the given pod is deployed, i.e. visible by kubectl. If
+        after a specific number of retrials this does not happen, returns False.
+
+    Parameters:
+        podName (str): Pod name.
+        kubeconfig (str): Path to kubeconfig file of the being managed cluster.
+        retrials (int): Number of retrials.
+        sleepTime (int): Sleep time in seconds between retrials.
+
+    Returns:
+        bool: True in case the pod was deployed, False otherwise
+    """
+
+    if retrials is None:
+        retrials = 2
+    if sleepTime is None:
+        sleepTime = 2
+    for i in range(retrials):
+        cmd = "get pod %s" % podName
+        if kubectlCLI(cmd, kubeconfig=kubeconfig, hideLogs=True) == 0:
+            return True
+        print("Pod %s not ready yet..." % podName)
+        time.sleep(sleepTime)
+    return False
 
 
 def fetchResults(resDir, kubeconfig, podName, source, file, toLog):
@@ -246,7 +301,7 @@ def kubectl(
             try:
                 client.CustomObjectsApi().create_namespaced_custom_object(
                     'kubeflow.org',
-                    'v1alpha1',
+                    'v1alpha2',
                     namespace,
                     'mpijobs',
                     body)
@@ -276,12 +331,13 @@ def kubectl(
                 try:
                     client.CustomObjectsApi().delete_namespaced_custom_object(
                         'kubeflow.org',
-                        'v1alpha1',
+                        'v1alpha2',
                         namespace,
                         'mpijobs',
-                        name,
-                        client.V1DeleteOptions())
-                except BaseException:
+                        name)
+                        #client.V1DeleteOptions())
+                except BaseException as ex:
+                    print(ex)
                     res = False
             elif type is Type.configmap:
                 client.CoreV1Api().delete_namespaced_config_map(
@@ -390,23 +446,52 @@ def kubectl(
     return 0 if res is True else 1
 
 
-def kubectlCLI(cmd, kubeconfig, options="", hideLogs=None):
+def kubectlCLI(cmd, kubeconfig, options="", hideLogs=None, read=None):
     """ Runs kubectl CLI tool.
 
     Parameters:
         cmd (str): Command to be run, without the "kubectl" part.
         kubeconfig (str): Path to kubeconfig file.
         options (str): Options to be added to the command.
-        noTerraform (bool): Specifies whether the output of the
-                            command should be displayed.
+        hideLogs (bool): Specifies whether the output of the
+                         command should be displayed.
 
     Returns:
         int: Exit code of the kubectl command.
     """
 
     kubeconfig = '--kubeconfig=%s' % kubeconfig
-    kubeCMD = "kubectl %s %s %s" % (cmd,kubeconfig,options)
-    return runCMD(kubeCMD, hideLogs=hideLogs)
+    kubeCMD = "kubectl %s %s %s" % (kubeconfig,cmd,options)
+    return runCMD(kubeCMD, hideLogs=hideLogs, read=read)
+
+
+def getGpusPerNode(kubeconfig):
+    """ Gets the number of GPUs each node has.
+
+    Parameters:
+        kubeconfig (str): Path to a kubeconfig file.
+
+    Returns:
+        Integer: Number of GPUs each node has.
+    """
+
+    cmd = "get nodes"
+    options = "-ojson | jq '.items[0].status.allocatable.\"nvidia.com/gpu\"'"
+    gpusPerNode = 0
+    tries = 60
+    while gpusPerNode == 0 and tries != 0:
+        time.sleep(2)
+        kubectlResponse = kubectlCLI(cmd, kubeconfig, options=options, read=True) # "kubectl get nodes -ojson | jq '.items[0].status.allocatable.\"nvidia.com/gpu\"'"
+        print("From kubectl: %s" % str(kubectlResponse))
+        try:
+            gpusPerNode = int(kubectlResponse.replace("\"",""))
+        except ValueError:
+            gpusPerNode = 0
+        print("End of attempt %s: %s" % (tries, str(gpusPerNode)))
+        tries -= 1
+    if gpusPerNode == 0:
+        print("ERROR: Cluster %s doesn't have GPUs or is missing support for them!" % kubeconfig)
+    return gpusPerNode
 
 
 def updateKubeconfig(masterIP, kubeconfig):

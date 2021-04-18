@@ -9,6 +9,8 @@ required:
     - pathToCredentials
     - project
 properties:
+    gpusPerNode:
+        type: integer
     providerName:
         type: string
     pathToKey:
@@ -35,15 +37,11 @@ properties:
         type: number
     gpuType:
         type: string
+    pathToPubKey:
+        type: string
     costCalculation:
         type:
             - object
-            - "null"
-        required:
-            - generalInstancePrice
-            - GPUInstancePrice
-            - HPCInstancePrice
-            - s3bucketPrice
         properties:
             generalInstancePrice:
                 type:

@@ -1,0 +1,13 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName:
+pathToKey:
+flavor:
+openUser:
+storageCapacity:
+
+#---------------ESTIMATED COST CALCULATION--------------------------------------
+costCalculation:
+  generalInstancePrice:
+  GPUInstancePrice:
+  HPCInstancePrice:
+  s3bucketPrice:

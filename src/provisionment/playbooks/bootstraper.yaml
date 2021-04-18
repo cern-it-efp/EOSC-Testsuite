@@ -1,5 +1,6 @@
 # ------------------------------------ Wait for infrastructure to be ready
 - hosts: all
+  become: no
   gather_facts: false
   tasks:
   - name: Waiting for VMs to be ready...
@@ -8,6 +9,7 @@
 
 # ------------------------------------ Allow root ssh
 - hosts: all
+  become: no
   gather_facts: true
   vars:
     open_user: "{{ ansible_user_id }}"

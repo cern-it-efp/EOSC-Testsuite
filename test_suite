@@ -2,56 +2,48 @@
 
 ld="src/logging" # logging dir
 
-noTerraform=false
-onlyTest=false
-force=false
+noTerraform=0
+onlyTest=0
+noWatch=0
 
-rm -f $ld/header $ld/killMe $ld/footer $ld/hpcTest $ld/dlTest $ld/shared $ld/logs $ld/end $ld/ansibleLogs* &> /dev/null
+rm -f $ld/header $ld/killMe $ld/footer $ld/hpcTest $ld/dlTest $ld/proGANTest $ld/shared $ld/logs $ld/end $ld/ansibleLogs* &> /dev/null
 
-opts=""
-while [[ "$1" != "" ]]; do
-  if [[ "$1" == '-j' ]]; then
-    jenkins=true
-    shift
-  elif [[ "$1" == '--destroy' ]]; then
-    python3 -B -u src/main.py $1 $2
-    outStat=$?
-    exit $outStat
-  elif [[ "$1" == '--force' ]]; then
-    force=true
-    shift
-  else
-    opts+=" "$1
-    if [[ "$1" == '--no-terraform' ]]; then
-      noTerraform=true
-      shift
-    elif [[ "$1" == '--only-test' ]]; then
-      onlyTest=true
-      shift
-    fi
-    shift
+
+prompt(){
+  if [[ $noTerraform -eq 0 &&
+        $onlyTest -eq 0 &&
+        $force -eq 0 && ( # -y
+        -f src/tests/dlTest/main.tf ||
+        -f src/tests/proGANTest/main.tf ||
+        -f src/tests/hpcTest/main.tf ||
+        -f src/tests/shared/main.tf) ]]; then
+    read -p "WARNING: Looks like infrastructure already exists. Overwrite? " yn
+    case $yn in
+        [Yy]* ) :;;
+        * ) echo "Aborting"; exit;;
+    esac
   fi
-done
+}
 
 catAll(){
   if [[ -s header ]]; then
     cat header > logs; echo "" >> logs
   fi
-  for f in shared dlTest hpcTest footer; do
+  for f in shared dlTest proGANTest hpcTest footer; do
     if [[ -s $f ]]; then # cat only the files that contain something
       cat $f >> logs; echo "" >> logs
     fi
   done
-  if  [[ $jenkins != true ]]; then
-    cat logs # only runs this if it's not a jenkins run
+  if [[ $noWatch -eq 0 ]]; then
+    cat logs # only runs this if it's not a noWatch run
   fi
 }
 export -f catAll
 
 watchFunct(){
-  cd $ld
-  touch logs header shared dlTest hpcTest footer end
-  if  [[ $jenkins = true ]]; then
+  cd $ld # all the following happens inside ./src/logging
+  touch logs header shared dlTest proGANTest hpcTest footer end
+  if  [[ $noWatch -eq 1 ]]; then
     echo "Logs in file $(pwd)/logs"
     while true; do catAll; sleep 2; done & echo $! > killMe
   else
@@ -60,37 +52,60 @@ watchFunct(){
   cd ../..
 }
 
-prompt(){
-  if [[ $noTerraform = false &&
-        $onlyTest = false &&
-        $force = false && (
-        -f src/tests/dlTest/main.tf ||
-        -f src/tests/hpcTest/main.tf ||
-        -f src/tests/shared/main.tf) ]]; then
-    read -p "WARNING: Looks like infrastructure already exists. Overwrite? " yn 
-    case $yn in
-        [Yy]* ) :;;
-        * ) echo "Aborting"; exit;;
-    esac
-  fi
-}
 
-############# TEST SUITE RUN #############
+############# OPTIONS #############################################
+opts=""
+while [[ "$1" != "" ]]; do
+
+  if [[ "$1" == '--noWatch' ]]; then
+    noWatch=1
+    shift
+
+  elif [[ "$1" == '--destroy' ]]; then
+    python3 -B -u src/main.py $1 $2
+    outStat=$?
+    exit $outStat
+
+  else
+    opts+=" "$1
+    if [[ "$1" == '--no-terraform' ]]; then
+      noTerraform=1
+      shift
+    elif [[ "$1" == '--only-test' ]]; then
+      onlyTest=1
+      shift
+    fi
+    shift
+  fi
+
+done
+###################################################################
+
+
+
+############# TEST SUITE RUN ######################################
 #prompt
 watchFunct &
 python3 -B -u src/main.py $opts &> logs
 outStat=$?
-##########################################
+###################################################################
 
-#TS run complete, kill logger and cat logs to main terminal:
+
+
+##### RUN COMPLETE: kill logger and cat logs to main terminal #####
 kill $(cat $ld/killMe)
 sleep 1
 if [[ -s $ld/end ]]; then
   cat $ld/end >> $ld/logs
 fi
 cat $ld/logs
+###################################################################
 
-if [[ $outStat != 0 ]]; then
+
+
+##### In case of errors, cat 'logs' too ###########################
+if [[ $outStat -ne 0 ]]; then # i.e bad options
   cat logs
   exit $outStat
 fi
+###################################################################

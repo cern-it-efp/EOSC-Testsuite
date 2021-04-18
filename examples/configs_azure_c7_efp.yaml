@@ -1,0 +1,17 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: azurerm
+pathToKey: "/home/ipelu/.ssh/id_rsa"
+subscriptionId: "e53421f6-39d4-43d7-8ae4-3c80af669e2d"
+openUser: uroot
+flavor: "Standard_D2s_v3"
+location: "West Europe"
+resourceGroupName: "efp"
+pubSSH: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCFPaN62APTqDCy3eB6qy+ALngWKg/RHCU0XWlL47JQ/Bj4zjHoyviFQ3+WgRgRxakKSdbpRU28qm0dUT+5Ki72doEmcmmqdzwhTa6H/0XwoeeRc12eIUw/sn2wTgdf/c57ft0deOyxeALVArAZwCXxywNeRcAjGJsvp4LW6jjZFQ=="
+#securityGroupID: "/subscriptions/54f623f0-8c18-40dd-9530-d32d2f1ee14f/resourceGroups/efprg/providers/Microsoft.Network/networkSecurityGroups/myNetworkSecurityGroup"
+subnetId: ""
+
+costCalculation:
+  generalInstancePrice: 0.2
+  GPUInstancePrice: 0.2
+  HPCInstancePrice: 0.2
+  s3bucketPrice: 0.1

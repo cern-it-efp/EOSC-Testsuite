@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: 3dgan-datafile-lists
+data:
+  test_3d.list: "EleEscan_EleEscan_1_10.h5.h5\r\n"
+  train_3d.list:  "EleEscan_EleEscan_1_1.h5.h5\r\nEleEscan_EleEscan_1_2.h5.h5\r\nEleEscan_EleEscan_1_3.h5.h5\r\nEleEscan_EleEscan_1_4.h5.h5\r\n"

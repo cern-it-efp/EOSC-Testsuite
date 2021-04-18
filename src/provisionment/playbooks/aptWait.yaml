@@ -1,0 +1,4 @@
+- name: Waiting for APT to be ready... # Fix https://github.com/ansible/ansible/issues/51663
+  shell: while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 1; done;
+- name: Waiting for APT to be ready... # Fix https://github.com/ansible/ansible/issues/51663
+  shell: while sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1; do sleep 1; done;

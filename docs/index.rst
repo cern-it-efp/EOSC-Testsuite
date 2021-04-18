@@ -1,7 +1,11 @@
 .. include:: ../README.rst
    :end-before: header-end
 
-Please find the the repository here: https://github.com/cern-it-efp/EOSC-Testsuite
+Please find the the repository |repo|.
+
+.. |repo| raw:: html
+
+  <a href="https://github.com/cern-it-efp/EOSC-Testsuite" target="_blank">here</a>
 
 *****
 

@@ -2,16 +2,24 @@
 EOSC Cloud Validation Test Suite
 ============================================
 
-This tool is intended to be used to test and validate commercial cloud services across the stack for research and education environments.
-This Test-Suite is being used as a validation tool for commercial cloud services procurement in European Commission sponsored projects such as OCRE and ARCHIVER.
+This tool is intended to be used to test and validate commercial cloud services across the stack for research and education environments and it is being used as a validation tool for commercial cloud services procurement in European Commission sponsored projects such as OCRE and ARCHIVER.
 
-More information at: https://www.eosc-portal.eu/.
+Visit |eosc| for more information.
+
+.. |eosc| raw:: html
+
+  <a href="https://www.eosc-portal.eu/" target="_blank">EOSC website</a>
 
 .. header-end
 
 Documentation
 ---------------------------------------------
-Full documentation can be found at: `http://eosc-testsuite.rtfd.io <https://eosc-testsuite.readthedocs.io/en/latest/>`_
+The full documentation can be found |docs|.
+
+.. |docs| raw:: html
+
+  <a href="https://eosc-testsuite.readthedocs.io/en/latest/" target="_blank">here</a>
+
 
 .. body
 
@@ -25,7 +33,11 @@ The test-suite executes four main steps:
 
 4) Through a verification system, the Test-Suite can also be triggered from a service running at CERN. This is an optional step and in this case, results are then pushed to a S3 Bucket at CERN. (Under development)
 
-The test set described in the Tests Catalog section of the documentation is based on the tests used in `Helix Nebula The Science Cloud <https://www.hnscicloud.eu/>`_ PCP project funded by the European Commission.
+The test set described in the `Tests Catalog <https://eosc-testsuite.readthedocs.io/en/latest/testsCatalog.html>`_ section of the documentation is based on the tests used in the |hnsc| PCP project funded by the European Commission.
+
+.. |hnsc| raw:: html
+
+  <a href="https://www.hnscicloud.eu" target="_blank">Helix Nebula The Science Cloud</a>
 
 The developers would like to thank all test owners and contributors to this project.
 
@@ -49,59 +61,87 @@ The developers would like to thank all test owners and contributors to this proj
 |                              | | CloudSigma                                                                    |
 +------------------------------+---------------------------------------------------------------------------------+
 
-The suite is being tested in several additional cloud providers. As tests are concluded the cloud providers names will be added in the table above.
+The suite is being tested in several additional cloud providers. As tests are concluded, the cloud providers names will be added in the table above.
 
 Release notes
 ---------------------------------------------
 (Note the versions are numbered with the date of the release: YEAR.MONTH)
 
-``20.6 - latest``
+``21.4 - latest``
 
--Improved support for running on Oracle Cloud Infrastructure and T-Systems' OTC.
+- Cluster certificate additionally signed for NAT IP (no need to use bastion method, with this solution the cluster can be reached from outside of the provider network. However, previous allocation of floating IPs is now required).
 
--Added option --customNodes to set the number of instances that should be deployed for the shared cluster.
+- Added --usePrivateIPs option for bastion's method.
 
--Using Terraform's yamldecode with configs.yaml for variables instead of Python's replace function with placeholders.
+- Removed CloudStack Terraform support (the provider's repository |cloudstack_tf| by HashiCorp).
 
--Disabled general Terraform support: only the providers and clouds that support Terraform and are present on the table above are fully supported by this suite. To run on another provider (supporting Terraform or not), the option '--noTerraform' has to be used.
+- Allowed both project-wide and VM-specific ssh key on GCP.
+
+- Improved configuration: select network.
+
+- Updated Distributed GAN test: included NNLO implementation ; more configuration (dataset size).
+
+- Added ProGAN test.
+
+- Allowed subset of costs (general configuration YAML file) and tests (tests catalog YAML file).
+
+- Allowed relative paths for -c and -t.
+
+- Updated CPU benchmark, based on the HEP Benchmarking Suite.
+
+- Added option --noWatch to run without displaying logs, without watch command.
+
+.. |cloudstack_tf| raw:: html
+
+  <a href="https://github.com/hashicorp/terraform-provider-cloudstack" target="_blank">was archived</a>
+
+``20.6``
+
+- Improved support for running on Oracle Cloud Infrastructure and T-Systems' OTC.
+
+- Added option --customNodes to set the number of instances that should be deployed for the shared cluster.
+
+- Using Terraform's yamldecode with configs.yaml for variables instead of Python's replace function with placeholders.
+
+- Disabled general Terraform support: only the providers and clouds that support Terraform and are present on the table above are fully supported by this suite. To run on another provider (supporting Terraform or not), the option '--noTerraform' has to be used.
 
 ``20.2``
 
--Using Ansible for VM configuration instead of Terraform's provisioners.
+- Using Ansible for VM configuration instead of Terraform's provisioners.
 
--Added support for non-Terraform providers (only bootstrap phase).
+- Added support for non-Terraform providers (only bootstrap phase).
 
--Added options to destroy provisioned infrastructure.
+- Added options to destroy provisioned infrastructure.
 
--Added options to specify custom paths to configs.yaml and testsCatalog.yaml.
+- Added options to specify custom paths to configs.yaml and testsCatalog.yaml.
 
--Added support to use Ubuntu on VMs.
+- Added support to use Ubuntu on VMs.
 
 ``19.12``
 
--Project restructured.
+- Project restructured.
 
--Improved support for running on Google, AWS, Azure, Exoscale, OpenStack and CloudStack.
+- Improved support for running on Google, AWS, Azure, Exoscale, OpenStack and CloudStack.
 
 ``19.8``
 
--Parallel creation of clusters, with different flavors according to tests needs.
+- Parallel creation of clusters, with different flavors according to tests needs.
 
--New logging system to keep parallel running tests logs sorted.
+- New logging system to keep parallel running tests logs sorted.
 
--Restructured configuration: moved configuration files to */configurations* and created new files taking HCL code (terraform configuration code) to keep *configs.yaml* clean.
+- Restructured configuration: moved configuration files to */configurations* and created new files taking HCL code (terraform configuration code) to keep *configs.yaml* clean.
 
--Automated allowance of root ssh by copying open user's authorized_keys to root's ~/.ssh as well as *sshd_config* modification.
+- Automated allowance of root ssh by copying open user's authorized_keys to root's ~/.ssh as well as *sshd_config* modification.
 
--Usage of Kubernetes API instead of Kubernetes CLI.
+- Usage of Kubernetes API instead of Kubernetes CLI.
 
--For network test (perfSONAR), usage of API instead of pscheduler CLI.
+- For network test (perfSONAR), usage of API instead of pscheduler CLI.
 
--New test: Dynamic On Demand Analysis Service, provided by INFN.
+- New test: Dynamic On Demand Analysis Service, provided by INFN.
 
--Added configurations validation with jsonschema.
+- Added configurations validation with jsonschema.
 
--Created Docker image to run a Test-Suite launcher container: rapidly creates a ready to use Test-Suite launcher.
+- Created Docker image to run a Test-Suite launcher container: rapidly creates a ready to use Test-Suite launcher.
 
 ``19.4``
 
@@ -122,7 +162,12 @@ License
 Copyright (C) CERN.
 
 You should have received a copy of the GNU Affero General Public License
-along with this program. If not, see `gnu.org/licenses <https://www.gnu.org/licenses/>`_.
+along with this program. If not, see |licenses|.
+
+.. |licenses| raw:: html
+
+  <a href="https://www.gnu.org/licenses/" target="_blank">gnu.org/licenses</a>
+
 
 .. body-end
 

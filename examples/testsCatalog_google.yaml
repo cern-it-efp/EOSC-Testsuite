@@ -14,9 +14,9 @@ dodasTest:
   run: true
 dlTest:
   run: true
-  nodes: 4
+  nodes: 1
   flavor: "n1-standard-2"
 hpcTest:
   run: true
-  nodes: 4
+  nodes: 1
   flavor: "n1-standard-2"

@@ -4,6 +4,5 @@ extraSupportedClouds:
   - azurerm
   - google
   - exoscale
-  - cloudstack
   - opentelekomcloud
   - oci

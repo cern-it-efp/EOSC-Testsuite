@@ -30,6 +30,7 @@ noTerraform = False
 testsCatalog = ""
 cfgPathCLI = None
 tcPathCLI = None
+usePrivateIPs = False
 instanceDefinition = ""
 extraInstanceConfig = ""
 dependencies = ""
@@ -59,18 +60,18 @@ def header(noLogo=False, provider=None, results=None):
         if provider is not None:
             if results is None:
                 showThis = ["EOSC Cloud Validation Test Suite",
-                    "Developed by CERN IT-EFP (ignacio.peluaga.lozada@cern.ch)",
+                    "Developed by CERN IT-EFP (ignacio.peluaga.lozada AT cern.ch)",
                     ".........................................................",
-                            "Provider: %s" % provider]
+                            "Cloud: %s" % provider]
             else:
                 showThis = ["EOSC Cloud Validation Test Suite",
-                    "Developed by CERN IT-EFP (ignacio.peluaga.lozada@cern.ch)",
+                    "Developed by CERN IT-EFP (ignacio.peluaga.lozada AT cern.ch)",
                     ".........................................................",
-                    "Provider: %s" % provider,
+                    "Cloud: %s" % provider,
                     "Results: results/%s" % results]
         else:
             showThis = ["EOSC Cloud Validation Test Suite",
-                "Developed by CERN IT-EFP (ignacio.peluaga.lozada@cern.ch)",
+                "Developed by CERN IT-EFP (ignacio.peluaga.lozada AT cern.ch)",
                 "........................................................."]
 
         logger(showThis, "#", "src/logging/header", override=True)
@@ -82,20 +83,20 @@ def header(noLogo=False, provider=None, results=None):
             if results is None:
                 showThis = ["                 | Cloud Validation Test Suite",
                 "█▀▀ █▀▀█ █▀▀ █▀▀ | Developed by CERN IT-EFP",
-                "█▀▀ █  █  ▀▄ █   | Contact: ignacio.peluaga.lozada@cern.ch",
+                "█▀▀ █  █  ▀▄ █   | Contact: ignacio.peluaga.lozada AT cern.ch",
                 "▀▀▀ ▀▀▀▀ ▀▀▀ ▀▀▀ | ..........................................",
-                "  eosc-portal.eu | Provider: %s" % provider]
+                "  eosc-portal.eu | Cloud: %s" % provider]
             else:
                 showThis = ["                 | Cloud Validation Test Suite",
                 "█▀▀ █▀▀█ █▀▀ █▀▀ | Developed by CERN IT-EFP",
-                "█▀▀ █  █  ▀▄ █   | Contact: ignacio.peluaga.lozada@cern.ch",
+                "█▀▀ █  █  ▀▄ █   | Contact: ignacio.peluaga.lozada AT cern.ch",
                 "▀▀▀ ▀▀▀▀ ▀▀▀ ▀▀▀ | ..........................................",
-                "  eosc-portal.eu | Provider: %s" % provider,
+                "  eosc-portal.eu | Cloud: %s" % provider,
                 "                 | Results: results/%s" % results]
         else:
             showThis = ["                 | Cloud Validation Test Suite",
                 "█▀▀ █▀▀█ █▀▀ █▀▀ | Developed by CERN IT-EFP",
-                "█▀▀ █  █  ▀▄ █   | Contact: ignacio.peluaga.lozada@cern.ch",
+                "█▀▀ █  █  ▀▄ █   | Contact: ignacio.peluaga.lozada AT cern.ch",
                 "▀▀▀ ▀▀▀▀ ▀▀▀ ▀▀▀ | ..........................................",
                 "  eosc-portal.eu | "]
 
@@ -113,7 +114,8 @@ def header(noLogo=False, provider=None, results=None):
 header()
 
 # -----------------CMD OPTIONS--------------------------------------------
-parser = argparse.ArgumentParser(description='EOSC Test-Suite.',
+parser = argparse.ArgumentParser(prog="./test_suite",
+                                 description='EOSC Test-Suite.',
                                  allow_abbrev=False)
 parser.add_argument('-y',
                     help='No interactive.',
@@ -121,6 +123,9 @@ parser.add_argument('-y',
                     dest="interactive")
 parser.add_argument('-o','--onlyTest',
                     help='Only test run.',
+                    action='store_true')
+parser.add_argument('--usePrivateIPs',
+                    help='Use private IPs.',
                     action='store_true')
 parser.add_argument('--noTerraform',
                     help='Skip Terraform, run only Ansible.',
@@ -151,17 +156,22 @@ parser.add_argument('--customNodes',
                     help='Use a specific amount of nodes.',
                     metavar="NODES",
                     type=int)
+parser.add_argument('--noWatch', 
+                    help='Do not use the watch function.',
+                    action='store_true')
 
 args = parser.parse_args()
 
 if args.cfgPathCLI:
-    cfgPathCLI = args.cfgPathCLI
+    cfgPathCLI = os.path.abspath(args.cfgPathCLI)
 if args.tcPathCLI:
-    tcPathCLI = args.tcPathCLI
+    tcPathCLI = os.path.abspath(args.tcPathCLI)
 if args.interactive:
     interactive = args.interactive # disables prompts of overriding tf files and deleting infrastructure
 if args.onlyTest:
     onlyTest = args.onlyTest
+if args.usePrivateIPs:
+    usePrivateIPs = args.usePrivateIPs
 if args.customNodes:
     customNodes = args.customNodes
 if args.noTerraform:
@@ -187,6 +197,7 @@ if args.clustersToDestroyOnCompletion:
 # -----------------CHECKS AND PREPARATION---------------------------------
 selectedTests = init.initAndChecks(noTerraform,
                                    extraSupportedClouds,
+                                   usePrivateIPs,
                                    cfgPathCLI=cfgPathCLI,
                                    tcPathCLI=tcPathCLI)
 
@@ -235,7 +246,7 @@ if len(msgArr) > 1:
     else:
         numberOfNodes = len(msgArr) - 1
     p = Process(target=sharedClusterTests, args=( # shared cluster provisioning
-        msgArr, onlyTest, retry, noTerraform, resDir, numberOfNodes))
+        msgArr, onlyTest, retry, noTerraform, resDir, numberOfNodes, usePrivateIPs))
     procs.append(p)
     p.start()
     cluster += 1
@@ -245,7 +256,7 @@ for test in customClustersTests:
         logger("CLUSTER %s: %s" % (cluster, test),
                "=", "src/logging/%s" % test)
         p = Process(target=eval(test), args=( # custom clusters provisioning
-            onlyTest, retry, noTerraform, resDir))
+            onlyTest, retry, noTerraform, resDir, usePrivateIPs))
         procs.append(p)
         p.start()
         cluster += 1
@@ -272,6 +283,7 @@ if checkResultsExist(resDir) is True:
     # -----------------MANAGE RESULTS------------------------------------------
 
     generalResults["info"] = configs
+    generalResults["testsCatalog"] = testsCatalog
 
     with open("results/" + s3ResDirBase + "/general.json", 'w') as outfile:
         json.dump(generalResults, outfile, indent=4, sort_keys=True)
@@ -302,6 +314,9 @@ if checkResultsExist(resDir) is True:
                 else:
                     msg = "   ...cluster destroyed"
                 writeToFile("src/logging/footer", msg, True)
+    else:
+        writeToFile("src/logging/footer", "No destroy scheduled", True)
+
 else:
 
     # logo with provider, no results
@@ -309,5 +324,5 @@ else:
     shutil.rmtree("results/" + s3ResDirBase, True)
 
 
-logger("Test-Suite run completed!", "#", "src/logging/end")
+logger("Run completed", "#", "src/logging/end")
 stop(0)

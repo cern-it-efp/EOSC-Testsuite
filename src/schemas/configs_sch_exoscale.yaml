@@ -36,27 +36,17 @@ properties:
     costCalculation:
         type:
             - object
-            - "null"
-        required:
-            - generalInstancePrice
-            - GPUInstancePrice
-            - HPCInstancePrice
-            - s3bucketPrice
         properties:
             generalInstancePrice:
                 type:
                     - number
-                    - "null"
             GPUInstancePrice:
                 type:
                     - number
-                    - "null"
             HPCInstancePrice:
                 type:
                     - number
-                    - "null"
             s3bucketPrice:
                 type:
                     - number
-                    - "null"
 additionalProperties: false

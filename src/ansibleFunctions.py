@@ -13,7 +13,6 @@ try:
     from ansible.cli import CLI
     from ansible.executor.playbook_executor import PlaybookExecutor
     from configparser import ConfigParser
-    import threading
     from multiprocessing import Process, Queue
     import contextlib
     import io
@@ -29,6 +28,7 @@ def createHostsFile(mainTfDir,
                     provider,
                     destination,
                     configs,
+                    usePrivateIPs,
                     noTerraform=None,
                     test=None):
     """Creates the hosts file required by ansible. Note destination contains
@@ -40,6 +40,7 @@ def createHostsFile(mainTfDir,
         provider (str): Provider name.
         destination (str): Destination of hosts file.
         configs (dict): Content of configs.yaml.
+        usePrivateIPs (bool): Indicates whether private IPs should be used.
         noTerraform (bool): Specifies whether current run uses terraform.
         test (str): Cluster identification.
     """
@@ -55,12 +56,16 @@ def createHostsFile(mainTfDir,
         os.chdir(baseCWD)
 
         for resource in resources:
-            #ip = getIP(resource, provider, public=True) # no bastion method
-            ip = getIP(resource, provider)
+
+            if usePrivateIPs is True:
+                ip = getIP(resource, provider)
+            else:
+                ip = getIP(resource, provider, public=True) # no bastion method
+
             if ip is not None:
                 IPs.append(ip)
     else:
-        IPs = configs["clusters"][test]  # one of shared, dlTest, hpcTest
+        IPs = configs["clusters"][test]  # one of shared, dlTest, hpcTest, proGANTest
 
     config = ConfigParser(allow_no_value=True)
     config.add_section('master')
@@ -78,7 +83,8 @@ def ansiblePlaybook(mainTfDir,
                     kubeconfig,
                     noTerraform,
                     test,
-                    configs):
+                    configs,
+                    usePrivateIPs):
     """Runs ansible-playbook with the given playbook.
 
     Parameters:
@@ -89,6 +95,7 @@ def ansiblePlaybook(mainTfDir,
         noTerraform (bool): Specifies whether current run uses terraform.
         test (str): Cluster identification.
         configs (dict): Content of configs.yaml.
+        usePrivateIPs (bool): Indicates whether private IPs should be used.
 
     Returns:
         int: 0 for success, 1 for failure
@@ -104,6 +111,7 @@ def ansiblePlaybook(mainTfDir,
                     providerName,
                     hostsFilePath,
                     configs,
+                    usePrivateIPs,
                     noTerraform=noTerraform,
                     test=test)
 
@@ -140,10 +148,21 @@ def ansiblePlaybook(mainTfDir,
         p = Process(target=subprocPrint, args=(test,))
         p.start()
 
-    with open(ansibleLogs % test, 'a') as f:
+    with open(ansibleLogs % test, 'a') as f: # from now on, logs go to ansibleLogs
         with contextlib.redirect_stdout(f):
             with contextlib.redirect_stderr(f):
-                res = PlaybookExecutor(playbooks=[playbookPath],
+
+                # --------------- GPU support
+                playbooksArray = [playbookPath]
+
+                if test == "dlTest":
+                    playbooksArray.append("src/provisionment/playbooks/gpuSupport.yaml")
+                    playbooksArray.append("src/provisionment/playbooks/kubeflow_mpiOperator.yaml")
+
+                if test == "proGANTest":
+                    playbooksArray.append("src/provisionment/playbooks/gpuSupport.yaml")
+
+                res = PlaybookExecutor(playbooks=playbooksArray,
                                        inventory=inventory,
                                        variable_manager=variable_manager,
                                        loader=loader,

@@ -8,7 +8,7 @@ required:
     - location
     - resourceGroupName
     - pubSSH
-    - subnetId
+    #- subnetId
 properties:
     subscriptionId:
         type: string
@@ -30,6 +30,8 @@ properties:
         type: string
     resourceGroupName:
         type: string
+    storageCapacity:
+        type: number
     pubSSH:
         type: string
     securityGroupID:
@@ -57,12 +59,6 @@ properties:
     costCalculation:
         type:
             - object
-            - "null"
-        required:
-            - generalInstancePrice
-            - GPUInstancePrice
-            - HPCInstancePrice
-            - s3bucketPrice
         properties:
             generalInstancePrice:
                 type:

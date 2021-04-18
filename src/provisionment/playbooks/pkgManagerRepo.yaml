@@ -1,5 +1,4 @@
 - name: SELinux and docker deps (YUM) # redhat distros
-  #no_log: yes
   ignore_errors: yes
   block:
   - name: disable SELinux
@@ -12,18 +11,24 @@
   - name: disable SELinux on reboot
     selinux:
       state: disabled
+
+  - include_tasks: aptWait.yaml
+
   - name: Install Docker dependencies
     package:
       name: yum-utils,lvm2,device-mapper-persistent-data
       state: latest
 
+- include_tasks: aptWait.yaml
+
 - name: Package manager repositories
-  #no_log: yes
   block:
     - name: Add Docker repo (YUM)
       get_url:
         url: https://download.docker.com/linux/centos/docker-ce.repo
         dest: /etc/yum.repos.d/docer-ce.repo
+
+    - include_tasks: aptWait.yaml
 
     - name: Add Kubernetes repo (YUM)
       yum_repository:
@@ -38,9 +43,13 @@
         url: https://download.docker.com/linux/ubuntu/gpg
         validate_certs: no # w/a to fix error on cloudsigma's ubuntu 18
 
+    - include_tasks: aptWait.yaml
+
     - name: Add Docker repo (APT)
       apt_repository:
         repo: deb [arch=amd64] https://download.docker.com/linux/{{ansible_distribution|lower}} {{ansible_distribution_release}} stable
+
+    - include_tasks: aptWait.yaml
 
     - name: Add Kubernetes apt-key for repo (APT)
       apt_key:
@@ -48,11 +57,12 @@
         validate_certs: no # w/a to fix error on cloudsigma's ubuntu 18
         state: present
 
+    - include_tasks: aptWait.yaml
+
     - name: Add Kubernetes repo (APT)
       apt_repository:
         repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
         state: present
         filename: 'kubernetes'
 
-    - name: Waiting for APT to be ready...
-      shell: while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 1; done;
+    - include_tasks: aptWait.yaml

@@ -1,0 +1,77 @@
+- name: SELinux and docker deps (YUM) # redhat distros
+  #no_log: yes
+  ignore_errors: yes
+  block:
+  - name: disable SELinux
+    command: setenforce 0
+  - name: Set SELinux in permissive mode
+    replace:
+      path: /etc/selinux/config
+      regexp: '^SELINUX=enforcing'
+      replace: 'SELINUX=permissive'
+  - name: disable SELinux on reboot
+    selinux:
+      state: disabled
+
+  - name: Waiting for APT to be ready... # Fix https://github.com/ansible/ansible/issues/51663
+    shell: while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 1; done;
+
+  - name: Install Docker dependencies
+    package:
+      name: yum-utils,lvm2,device-mapper-persistent-data
+      state: latest
+
+- name: Waiting for APT to be ready... # Fix https://github.com/ansible/ansible/issues/51663
+  shell: while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 1; done;
+
+- name: Package manager repositories
+  #no_log: yes
+  block:
+    - name: Add Docker repo (YUM)
+      get_url:
+        url: https://download.docker.com/linux/centos/docker-ce.repo
+        dest: /etc/yum.repos.d/docer-ce.repo
+
+    - name: Waiting for APT to be ready... # Fix https://github.com/ansible/ansible/issues/51663
+      shell: while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 1; done;
+
+    - name: Add Kubernetes repo (YUM)
+      yum_repository:
+        name: Kubernetes
+        description: Kubernetes YUM repository
+        baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+        gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+        gpgcheck: yes
+  rescue:
+    - name: Add Docker GPG key (APT)
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        validate_certs: no # w/a to fix error on cloudsigma's ubuntu 18
+
+    - name: Waiting for APT to be ready... # Fix https://github.com/ansible/ansible/issues/51663
+      shell: while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 1; done;
+
+    - name: Add Docker repo (APT)
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/{{ansible_distribution|lower}} {{ansible_distribution_release}} stable
+
+    - name: Waiting for APT to be ready... # Fix https://github.com/ansible/ansible/issues/51663
+      shell: while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 1; done;
+
+    - name: Add Kubernetes apt-key for repo (APT)
+      apt_key:
+        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        validate_certs: no # w/a to fix error on cloudsigma's ubuntu 18
+        state: present
+
+    - name: Waiting for APT to be ready... # Fix https://github.com/ansible/ansible/issues/51663
+      shell: while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 1; done;
+
+    - name: Add Kubernetes repo (APT)
+      apt_repository:
+        repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+        state: present
+        filename: 'kubernetes'
+
+    - name: Waiting for APT to be ready... # Fix https://github.com/ansible/ansible/issues/51663
+      shell: while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 1; done;

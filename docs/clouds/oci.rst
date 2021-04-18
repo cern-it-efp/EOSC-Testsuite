@@ -43,4 +43,4 @@ Oracle Cloud Infrastructure credentials file's must be a YAML file containing on
    * - region
      - Region to be used.
 
-It is also possible to use OKE to provision the cluster, for this refer to section "Using existing clusters".
+It is also possible to use OKE to provision the cluster, for this refer to section :ref:`Using existing clusters<using-existing-clusters>`.

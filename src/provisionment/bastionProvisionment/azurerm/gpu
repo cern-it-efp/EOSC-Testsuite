@@ -1,0 +1,112 @@
+variable "res_group_name" {
+  default = "efp"
+}
+variable "openUser" {
+  default = "uroot"
+}
+variable "ssh_private_key_path" {
+  default = "~/.ssh/id_rsa"
+}
+variable "location" {
+  default = "France Central"
+}
+
+# ------------------------------------------------------------------------------
+variable "publisher" {
+  default = "nvidia"
+}
+variable "offer" { # These are the only two tensorflow offers
+  default = "tensorflow_from_nvidia"
+  #default = "ngc_tensorflow_image_version_b"
+}
+variable "sku" {
+
+  #default = "ngc-tensorflow-version-20-06-3" # tensorflow_from_nvidia
+  #default = "ngc-tensorflow-version-20-08-1" # tensorflow_from_nvidia
+  default = "tensorflow_10_0" # tensorflow_from_nvidia
+  #default = "tensorflow_from_nvidia_19_11_3" # tensorflow_from_nvidia
+  #default = "tensorflow_nvidia_20_03_1" # tensorflow_from_nvidia
+
+  #default = "ngc-tensorflow-test-b-version-20-3-1" # ngc_tensorflow_image_version_b
+  #default = "ngc-tensorflow-test-b-version-20-6-3" # ngc_tensorflow_image_version_b
+  #default = "ngc-tensorflow-test-b-version-20-8-1" # ngc_tensorflow_image_version_b
+
+}
+variable "imageVersion" {
+  default = "latest"
+}
+# ------------------------------------------------------------------------------
+
+provider "azurerm" {
+  subscription_id = "e53421f6-39d4-43d7-8ae4-3c80af669e2d" # 54f623f0-8c18-40dd-9530-d32d2f1ee14f
+  features {}
+}
+
+
+# Create public IPs
+resource "azurerm_public_ip" "gputerraformpublicip" {
+  name                = "gpuIP"
+  location            = var.location
+  resource_group_name = "efp"
+  allocation_method   = "Dynamic"
+}
+
+# Create network interface (This CAN'T be done in advance, as I need one per VM: too much GUI work)
+resource "azurerm_network_interface" "terraformnic" {
+  name                      = "gpuNIC"
+  location                  = var.location
+  resource_group_name       = "efp"
+  #network_security_group_id = azurerm_network_security_group.myterraformnsg.id # deprecated starting azure's provider version 2
+
+  ip_configuration {
+    name                          = "gpuNicConfiguration"
+    subnet_id                     = "/subscriptions/e53421f6-39d4-43d7-8ae4-3c80af669e2d/resourceGroups/efp/providers/Microsoft.Network/virtualNetworks/myVnet/subnets/mySubnet"
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.gputerraformpublicip.id
+  }
+}
+
+############################################### CREATE VM ###############################################
+
+resource "azurerm_virtual_machine" "main" {
+  name                  = "gpuVM"
+  location              = var.location
+  vm_size               = "Standard_NC6s_v3"
+  resource_group_name   = "efp"
+  network_interface_ids = [azurerm_network_interface.terraformnic.id]
+  delete_os_disk_on_termination = true
+
+  storage_os_disk {
+    name              = "gpuOsDisk"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
+    managed_disk_type = "Premium_LRS"
+  }
+
+  plan {
+    publisher = var.publisher
+    name      = var.sku
+    product   = var.offer
+  }
+
+  storage_image_reference {
+    publisher = var.publisher
+    offer     = var.offer
+    sku       = var.sku
+    version   = var.imageVersion
+  }
+
+  os_profile {
+    computer_name  = "gpuvm"
+    admin_username = "uroot"
+  }
+
+  os_profile_linux_config {
+    disable_password_authentication = true
+
+    ssh_keys {
+      key_data = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCFPaN62APTqDCy3eB6qy+ALngWKg/RHCU0XWlL47JQ/Bj4zjHoyviFQ3+WgRgRxakKSdbpRU28qm0dUT+5Ki72doEmcmmqdzwhTa6H/0XwoeeRc12eIUw/sn2wTgdf/c57ft0deOyxeALVArAZwCXxywNeRcAjGJsvp4LW6jjZFQ=="
+      path     = "/home/uroot/.ssh/authorized_keys"
+    }
+  }
+}

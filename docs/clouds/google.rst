@@ -21,7 +21,8 @@ GCP specific variables for configs.yaml:
      - Type of GPU to be used. Needed if the Deep Learning test was selected at testsCatalog.yaml.
 
 
-It is also possible to use GKE to provision the cluster, for this refer to section "Using existing clusters". You will have to |use_gke| too.
+It is also possible to use GKE to provision the cluster, for this refer to section :ref:`Using existing clusters<using-existing-clusters>`.
+You will have to |use_gke| too.
 
 .. |use_gke| raw:: html
 

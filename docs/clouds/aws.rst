@@ -18,4 +18,4 @@ AWS specific variables for configs.yaml:
    * - keyName
      - Name of the key for the instances. (required)
 
-It is also possible to use EKS to provision the cluster, for this refer to section "Using existing clusters".
+It is also possible to use EKS to provision the cluster, for this refer to section :ref:`Using existing clusters<using-existing-clusters>`.

@@ -108,10 +108,6 @@ def getIP():
                 if res["type"] == "aws_instance":
                     return res["values"]["public_ip"]
 
-            elif provider == "cloudstack":
-                if res["type"] == "cloudstack_instance":
-                    return res["values"]["ip_address"]
-
             elif provider == "google":
                 if res["type"] == "google_compute_instance":
                     return res["values"]["network_interface"][0]["access_config"][0]["nat_ip"]

@@ -44,4 +44,4 @@ Omitting the image section defaults to:
 
 - version = latest
 
-It is also possible to use AKS to provision the cluster, for this refer to section "Using existing clusters".
+It is also possible to use AKS to provision the cluster, for this refer to section :ref:`Using existing clusters<using-existing-clusters>`.

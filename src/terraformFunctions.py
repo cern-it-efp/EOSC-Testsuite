@@ -5,7 +5,6 @@ try:
     import os
     import time
     import string
-    import threading
     from multiprocessing import Process, Queue
     import contextlib
     import io
@@ -15,7 +14,6 @@ except ModuleNotFoundError as ex:
 from aux import *
 from init import *
 from kubernetesFunctions import *
-
 
 
 def runTerraform(toLog,
@@ -78,7 +76,7 @@ def destroyTF(baseCWD, clusters=None):
     """
 
     if clusters is None:
-        clusters = ["shared", "dlTest", "hpcTest"]
+        clusters = ["shared", "dlTest", "hpcTest", "proGANTest"]
 
     res = []
     for cluster in clusters:
@@ -87,9 +85,11 @@ def destroyTF(baseCWD, clusters=None):
         mainTfDir = "src/tests/%s" % cluster
         cmd = "terraform destroy -auto-approve"
         exitCode = runTerraform(toLog, cmd, mainTfDir, baseCWD, cluster, msg)
-        #if all(x == 0 for x in exitCode) is True:
         if exitCode is 0:
-            cleanupTF("src/tests/%s/" % cluster)
+            if keepTFfiles is not True:
+                cleanupTF("src/tests/%s/" % cluster)
+            else:
+                print("INFO: destroy succeed, tf files kept.")
         else:
             print("INFO: destroy did not succeed completely, tf files kept.")
         res.append(exitCode)
@@ -108,6 +108,7 @@ def cleanupTF(mainTfDir):
         "hosts",
         "config",
         "main.tf",
+        "versions.tf",
         "terraform.tfvars",
         "terraform.tfvars.json",
         "terraform.tfstate",
@@ -118,66 +119,6 @@ def cleanupTF(mainTfDir):
             os.remove(file)
         if os.path.isdir(file):
             shutil.rmtree(file, True)
-
-
-def useGeneralTfTemplate(instanceDefinition,
-                         flavor,
-                         extraInstanceConfig,
-                         tepmplatesPath,
-                         credentials,
-                         dependencies,
-                         nodes,
-                         configs):
-    """ Uses the generic tfTemplate, which is populated with the HCL code the
-        user provides as part of the configuration.
-
-    Parameters:
-        instanceDefinition (str): Instance definition.
-        flavor (str): Machine flavor.
-        extraInstanceConfig (str): Extra instance definition.
-        tepmplatesPath (str): Path to the templates folder.
-        credentials (src): Portion of HCL containing auth. stuff.
-        dependencies (src): Dependencies related HCL.
-        nodes (int): Number of nodes to be deployed.
-        configs (dict): Content of the configs file.
-    """
-
-    instanceDefinition = "%s \n %s" % (flavor,instanceDefinition.replace(
-        "NAME_PH", "${var.instanceName}-${count.index}"))
-
-    if extraInstanceConfig:
-        instanceDefinition += "\n" + extraInstanceConfig
-
-    substitution = [
-        {
-            "before": "NODE_DEFINITION_PLACEHOLDER",
-            "after": instanceDefinition
-        },
-        {
-            "before": "DEPENDENCIES_PLACEHOLDER",
-            "after": dependencies
-        },
-        {
-            "before": "DEP_COUNT_PH",
-            "after": "count = %s" % nodes
-        },
-        {
-            "before": "PROVIDER_NAME",
-            "after": str(configs["providerName"])
-        },
-        {
-            "before": "PROVIDER_INSTANCE_NAME",
-            "after": str(configs["providerInstanceName"])
-        },
-        {
-            "before": "CREDENTIALS_PLACEHOLDER",
-            "after": credentials
-        }
-    ]
-
-    groupReplace("%s/rawProvision.tf" % templatesPath,
-                 substitution,
-                 "%s/main.tf" % mainTfDir)
 
 
 def terraformProvisionment(
@@ -194,7 +135,8 @@ def terraformProvisionment(
         credentials,
         dependencies,
         baseCWD,
-        extraSupportedClouds):
+        extraSupportedClouds,
+        usePrivateIPs):
     """ Provisions VMs on the provider and creates a k8s cluster with them.
 
     Parameters:
@@ -212,6 +154,7 @@ def terraformProvisionment(
         dependencies (str): HCL code related to infrastructure dependencies.
         baseCWD (str): Path to the base directory.
         extraSupportedClouds (dict): Extra supported clouds.
+        usePrivateIPs (bool): If True, the current run is not using bastion.
 
     Returns:
         bool: True if the cluster was succesfully provisioned. False otherwise.
@@ -219,14 +162,10 @@ def terraformProvisionment(
     """
 
     templatesPath_base = "src/provisionment/tfTemplates/%s"
-    if configs["providerName"] in extraSupportedClouds:
-        templatesPath = templatesPath_base % configs["providerName"]
-    else:
-        templatesPath = templatesPath_base % "general"
+    templatesPath = templatesPath_base % configs["providerName"]
 
     mainTfDir = testsRoot + test
     terraform_cli_vars = {}
-    cfgPath = "%s/%s" % (baseCWD, cfgPath)
     kubeconfig = "%s/src/tests/%s/config" % (baseCWD, test)
 
     if retry is None:
@@ -238,7 +177,7 @@ def terraformProvisionment(
         cleanupTF(mainTfDir)
 
         # ---------------- variables
-        variables = loadFile(templatesPath_base % "general/variables.tf",
+        variables = loadFile(templatesPath_base % "variables.tf",
                              required=True)
         writeToFile(mainTfDir + "/main.tf", variables, False)
 
@@ -253,101 +192,108 @@ def terraformProvisionment(
                                                            "kubernetes",
                                                            None)
 
-        if configs["providerName"] not in extraSupportedClouds:
-            rawProvisioning = useGeneralTfTemplate()
 
-        else:
+        rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath,
+                                   required=True)
+        #print(rawProvisioning) # OK
+        writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
+        #print("\n %s" % open(mainTfDir + "/main.tf").read()) # FU
 
-            rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath,
-                                       required=True)
-            #print(rawProvisioning) # OK
-            writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
-            #print("\n %s" % open(mainTfDir + "/main.tf").read()) # FU
+        terraform_cli_vars["configsFile"] = cfgPath
+        terraform_cli_vars["flavor"] = flavor
+        terraform_cli_vars["instanceName"] = nodeName
 
-            terraform_cli_vars["configsFile"] = cfgPath
-            terraform_cli_vars["flavor"] = flavor
-            terraform_cli_vars["instanceName"] = nodeName
+        if configs["providerName"] == "azurerm":
 
-            if configs["providerName"] == "azurerm":
-
-                terraform_cli_vars["clusterRandomID"] = randomId # var.clusterRandomID to have unique interfaces and disks names
-                terraform_cli_vars["publisher"] = tryTakeFromYaml(
-                                                    configs,
-                                                    "image.publisher",
-                                                    "OpenLogic")
-                terraform_cli_vars["offer"] = tryTakeFromYaml(
+            terraform_cli_vars["clusterRandomID"] = randomId # var.clusterRandomID to have unique interfaces and disks names
+            terraform_cli_vars["publisher"] = tryTakeFromYaml(
                                                 configs,
-                                                "image.offer",
-                                                "CentOS")
-                terraform_cli_vars["sku"] = str(tryTakeFromYaml(
+                                                "image.publisher",
+                                                "OpenLogic")
+            terraform_cli_vars["offer"] = tryTakeFromYaml(
+                                            configs,
+                                            "image.offer",
+                                            "CentOS")
+            terraform_cli_vars["sku"] = str(tryTakeFromYaml(
+                                                configs,
+                                                "image.sku",
+                                                7.5))
+            terraform_cli_vars["imageVersion"] = str(tryTakeFromYaml(
                                                     configs,
-                                                    "image.sku",
-                                                    7.5))
-                terraform_cli_vars["imageVersion"] = str(tryTakeFromYaml(
+                                                    "image.version",
+                                                    "latest"))
+            terraform_cli_vars["usePrivateIPs"] = usePrivateIPs
+
+        if configs["providerName"] == "openstack":
+
+            networkName = tryTakeFromYaml(configs, "networkName", False)
+            if networkName is not False:
+                terraform_cli_vars["useDefaultNetwork"] = False
+            terraform_cli_vars["region"] = tryTakeFromYaml(configs,
+                                                           "region",
+                                                           None)
+            terraform_cli_vars["availabilityZone"] = tryTakeFromYaml(
                                                         configs,
-                                                        "image.version",
-                                                        "latest"))
-
-            if configs["providerName"] == "openstack":
-
-                networkName = tryTakeFromYaml(configs, "networkName", False)
-                if networkName is not False:
-                    terraform_cli_vars["useDefaultNetwork"] = False
-                terraform_cli_vars["region"] = tryTakeFromYaml(configs,
-                                                               "region",
-                                                               None)
-                terraform_cli_vars["availabilityZone"] = tryTakeFromYaml(
-                                                            configs,
-                                                            "availabilityZone",
-                                                            None)
-
-            if configs["providerName"] == "opentelekomcloud":
-
-                networkID = tryTakeFromYaml(configs, "networkID", False)
-                if networkID is not False:
-                    terraform_cli_vars["useDefaultNetwork"] = False
-                terraform_cli_vars["availabilityZone"] = tryTakeFromYaml(
-                                                            configs,
-                                                            "availabilityZone",
-                                                            None)
-
-            if configs["providerName"] == "google":
-
-                if test == "dlTest":
-                    terraform_cli_vars["gpuCount"] = nodes
-                else:
-                    terraform_cli_vars["gpuCount"] = "0"
-
-                terraform_cli_vars["gpuType"] = tryTakeFromYaml(configs,
-                                                                "gpuType",
-                                                                None)
-
-            if configs["providerName"] in ("aws", "cloudstack", "google",
-                                "openstack", "opentelekomcloud", "exoscale"):
-
-                terraform_cli_vars["securityGroups"] = tryTakeFromYaml(
-                                                        configs,
-                                                        "securityGroups",
+                                                        "availabilityZone",
                                                         None)
 
-            if configs["providerName"] in ("cloudstack", "oci",
-                                            "aws", "google"):
+        if configs["providerName"] == "opentelekomcloud":
 
-                terraform_cli_vars["storageCapacity"] = tryTakeFromYaml(
-                                                            configs,
-                                                            "storageCapacity",
+            networkID = tryTakeFromYaml(configs, "networkID", False)
+            if networkID is not False:
+                terraform_cli_vars["useDefaultNetwork"] = False
+            terraform_cli_vars["availabilityZone"] = tryTakeFromYaml(
+                                                        configs,
+                                                        "availabilityZone",
+                                                        None)
+
+        if configs["providerName"] == "google":
+
+            pathToPubKey = tryTakeFromYaml(configs,"pathToPubKey",None)
+            if pathToPubKey is None:
+                terraform_cli_vars["gcp_keyAsMetadata"] = "UseProjectWideKey!"
+            else:
+                terraform_cli_vars["gcp_keyAsMetadata"] = "%s:%s" % (configs["openUser"],loadFile(pathToPubKey))
+
+            if test in ("dlTest", "proGANTest") :
+                terraform_cli_vars["gpuCount"] = tryTakeFromYaml(configs,
+                                                                "gpusPerNode",
+                                                                1) # default is one
+            else:
+                terraform_cli_vars["gpuCount"] = "0"
+
+            terraform_cli_vars["gpuType"] = tryTakeFromYaml(configs,
+                                                            "gpuType",
                                                             None)
+
+        if configs["providerName"] in ("aws", "google",
+                            "openstack", "opentelekomcloud", "exoscale"):
+
+            terraform_cli_vars["securityGroups"] = tryTakeFromYaml(
+                                                    configs,
+                                                    "securityGroups",
+                                                    None)
+
+        if configs["providerName"] in ("oci", "aws", "google", "azurerm"):
+
+            terraform_cli_vars["storageCapacity"] = tryTakeFromYaml(
+                                                        configs,
+                                                        "storageCapacity",
+                                                        None)
 
 
         # ---------------- RUN TERRAFORM: provision VMs
-        beautify = "terraform fmt > /dev/null &&"
-        cmd = "terraform init && %s terraform apply -auto-approve" % beautify
+        cmd = "terraform 0.13upgrade -yes && \
+               terraform init && \
+               terraform fmt > /dev/null && \
+               terraform apply -auto-approve && \
+               terraform refresh"
         if runTerraform("src/logging/%s" % test,
                         cmd,
                         mainTfDir,
                         baseCWD,
                         test,
-                        "Provisioning '%s' VMs..." % flavor,
+                        "Provisioning %d '%s' VMs..." % (nodes, flavor),
                         terraform_cli_vars=terraform_cli_vars) != 0:
             return False, provisionFailMsg
 

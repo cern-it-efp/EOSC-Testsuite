@@ -1,22 +1,14 @@
-s3Test:
-  run: true
-  endpoint: https://s3.com
-  accessKey: 1234abc
-  secretKey: 1234abc
+dlTest:
+  run:
+  nodes: 2
+  flavor: "Standard_NC24rs_v3"
+  epochs: 1
+  benchmark: nnlo
+  datasetSize: 1
+proGANTest:
+  run:
+  flavor: Standard_NC24s_v3
+  images_amount: 1
+  kimg: 1
 dataRepatriationTest:
   run: true
-cpuBenchmarking:
-  run: true
-perfsonarTest:
-  run: true
-  endpoint: psb01-gva.cern.ch
-dodasTest:
-  run: true
-dlTest:
-  run: true
-  nodes: 4
-  flavor: "Standard_DS1_v2"
-hpcTest:
-  run: true
-  nodes: 4
-  flavor: "Standard_B2s"

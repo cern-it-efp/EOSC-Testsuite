@@ -1,10 +1,12 @@
+.. _using-existing-clusters:
+
 4. Using existing clusters
 ---------------------------------------------
 
 It's possible to use this tool for testing providers that support Kubernetes as a Service. This means the provider offers the user a way for simply creating a cluster.
-In case one wants to validate a provider that offers this and want to take advantage of it, simply skip steps 1.1 and 1.2 (install Terraform and manage ssh keys) and when running the test-suite, use option *--onlyTest*.
+In case one wants to validate a provider that offers this and want to take advantage of it, skip the Terraform steps and when running the test-suite, use option *--onlyTest*.
 
-Note that the kubeconfig files have to be placed in the following locations, in case that test was selected:
+Note that the kubeconfig files have to be placed in the following locations, according to whether the test was selected or not:
 
 .. list-table::
    :widths: 25 50
@@ -14,7 +16,9 @@ Note that the kubeconfig files have to be placed in the following locations, in 
      - Path to kubeconfig
    * - Shared cluster
      - EOSC-Testsuite/src/tests/shared/config
-   * - GPU cluster
+   * - dlTest cluster
      - EOSC-Testsuite/src/tests/dlTest/config
-   * - HPC cluster
+   * - hpcTest cluster
      - EOSC-Testsuite/src/tests/hpcTest/config
+   * - proGANTest cluster
+     - EOSC-Testsuite/src/tests/proGANTest/config

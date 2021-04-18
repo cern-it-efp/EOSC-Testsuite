@@ -1,22 +1,22 @@
 s3Test:
-  run: true
+  run:
   endpoint: https://s3.com
   accessKey: asdfasd
   secretKey: dsfadsf
 dataRepatriationTest:
-  run: true
+  run:
 cpuBenchmarking:
-  run: true
+  run:
 perfsonarTest:
-  run: true
+  run:
   endpoint: psb01-gva.cern.ch
 dodasTest:
-  run: true
+  run:
 dlTest:
   run: true
   nodes: 2 # default quota is 10
-  flavor: "s2.medium.2"
+  flavor: "p2.2xlarge.8"
 hpcTest:
-  run: true
+  run:
   nodes: 2
   flavor: "s2.medium.2"

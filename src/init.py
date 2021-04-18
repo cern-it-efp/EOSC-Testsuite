@@ -16,12 +16,12 @@ allowAllTfClouds = False
 baseCWD = os.getcwd()
 defaultKubeconfig = "%s/src/tests/shared/config" % baseCWD
 obtainCost = True
+keepTFfiles = False
 extraSupportedClouds = ["openstack",
                         "aws",
                         "azurerm",
                         "google",
                         "exoscale",
-                        "cloudstack",
                         "opentelekomcloud",
                         "oci"]
 testsSharingCluster = ["s3Test",
@@ -29,8 +29,8 @@ testsSharingCluster = ["s3Test",
                        "perfsonarTest",
                        "cpuBenchmarking",
                        "dodasTest"]
-customClustersTests = ["dlTest", "hpcTest"]
-
+customClustersTests = ["dlTest", "hpcTest", "proGANTest"]
+allTests = testsSharingCluster + customClustersTests
 bootstrapFailMsg = "Failed to bootstrap '%s' k8s cluster. Check 'logs' file"
 clusterCreatedMsg = "...%s CLUSTER CREATED (masterIP: %s) => STARTING TESTS\n"
 TOserviceAccountMsg = "ERROR: timed out waiting for %s cluster's service account\n"
@@ -42,11 +42,12 @@ ansibleLogs = "src/logging/ansibleLogs%s"
 provisionFailMsg = "Failed to provision raw VMs. Check 'logs' file for details"
 
 publicRepo = "https://eosc-testsuite.rtfd.io"
-clusters = ["shared", "dlTest", "hpcTest"]
+clusters = ["shared", "dlTest", "hpcTest", "proGANTest"]
 
 
 def initAndChecks(noTerraform,
                   extraSupportedClouds,
+                  usePrivateIPs,
                   cfgPathCLI=None,
                   tcPathCLI=None):
     """ Initial checks and initialization of variables.
@@ -54,6 +55,7 @@ def initAndChecks(noTerraform,
     Parameters:
         noTerraform (bool): Specifies whether current run uses terraform.
         extraSupportedClouds (dict): Extra supported clouds.
+        usePrivateIPs (bool): If True, the current run is not using bastion.
         cfgPath (str): Path to configs.yaml file.
         tcPath (str): Path to testsCatalog.yaml file.
 
@@ -88,15 +90,19 @@ def initAndChecks(noTerraform,
     else:
         tcPath = tcPathCLI
 
-    configs = loadFile(cfgPath, required=True)
-    testsCatalog = loadFile(tcPath, required=True)
-
-    validateConfigs(configs, testsCatalog, noTerraform, extraSupportedClouds)
+    configs, testsCatalog = validateConfigs(cfgPath, tcPath, noTerraform, extraSupportedClouds, allTests)
 
     if configs['providerName'] in ("oci", "opentelekomcloud"): # authFile validate (only YAML)
         authFile = loadFile(configs["authFile"], required=True)
         schema = loadFile("src/schemas/authFile_sch_%s.yaml" % configs["providerName"], required=True)
         validateAuth(authFile, schema)
+
+    if configs['providerName'] in ("azurerm") and usePrivateIPs is True:
+        try:
+            configs['subnetId']
+        except:
+            print("Used --usePrivateIPs but did not provide subnetId")
+            stop(1)
 
     #if noTerraform is False and supportedProvider(configs) is False: # allows all terraform supporting providers to run w/o --no-terraform
     if noTerraform is False and configs['providerName'] not in extraSupportedClouds: # allows only providers in extraSupportedClouds to run w/o --no-terraform
@@ -133,14 +139,14 @@ def initAndChecks(noTerraform,
     # --------Tests config checks
     selected = []
 
-    for test in testsSharingCluster + customClustersTests:
+    for test in allTests:
 
         if testsCatalog[test]["run"] is True:
             selected.append(test)
 
-            if test == "dlTest":
+            if test == "dlTest" or test == "proGANTest":
                 instancePrice = tryTakeFromYaml(configs, "costCalculation.GPUInstancePrice", None)
-            if test == "hpcTest":
+            elif test == "hpcTest":
                 instancePrice = tryTakeFromYaml(configs, "costCalculation.HPCInstancePrice", None)
             else:
                 instancePrice = tryTakeFromYaml(configs, "costCalculation.generalInstancePrice", None)

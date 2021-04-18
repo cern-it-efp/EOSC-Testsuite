@@ -238,15 +238,19 @@ def tryTakeFromYaml(dict, key, defaultValue, msgExcept=None):
         return defaultValue
 
 
-def validateConfigs(configs, testsCatalog, noTerraform, extraSupportedClouds):
+def validateConfigs(cfgPath, tcPath, noTerraform, extraSupportedClouds, allTests):
     """ Validates configs.yaml and testsCatalog.yaml file against schemas.
 
     Parameters:
-        configs (dict): Object containing configs.yaml's configurations.
-        testsCatalog (dict): Object containing testsCatalog.yaml's content.
+        cfgPath (str): Path to configs YAML file.
+        tcPath (str): Path to testsCatalog YAML file.
         noTerraform (bool): Specifies whether current run uses terraform.
         extraSupportedClouds (dict): Extra supported clouds.
+        allTests (array): Contains all test names.
     """
+
+    configs = loadFile(cfgPath, required=True)
+    testsCatalog = loadFile(tcPath, required=True)
 
     if noTerraform is False:
         configsSchema = "src/schemas/configs_sch_%s.yaml" % \
@@ -271,7 +275,15 @@ def validateConfigs(configs, testsCatalog, noTerraform, extraSupportedClouds):
     except jsonschema.exceptions.ValidationError as ex:
         print("Error validating testsCatalog file: \n %s" % ex.message)
         stop(1)
+
+    for test in allTests:
+        try:
+            testsCatalog[test]
+        except KeyError:
+            testsCatalog[test] = {"run":False}
     # ------------------
+
+    return configs, testsCatalog
 
 
 def validateAuth(authFile, schema):
@@ -309,7 +321,7 @@ def getNodeName(configs, test, randomId):
 
 
 def subprocPrint(test):
-    """ This runs on a child process. Reads the ansible log file, adds clusterID
+    """ Runs on a child process. Reads the ansible log file, adds clusterID
         to each line and prints it.
 
     Parameters:
@@ -337,27 +349,48 @@ def getIP(resource, provider, public=False):
         str: Resource's IP address.
     """
 
+    # TODO: this assumes a single interface in some cases (gcp, openstack)
+
     try:
         if provider == "aws":
             if public is True:
                 return resource["values"]["public_ip"]
             return resource["values"]["private_ip"]
-        elif provider == "openstack":
-            return resource["values"]["network"][0]["fixed_ip_v4"]
+
         elif provider == "google":
+            if public is True:
+                return resource["values"]["network_interface"][0]["access_config"][0]["nat_ip"]
             return resource["values"]["network_interface"][0]["network_ip"]
+
+        elif provider == "openstack":
+            if public is True:
+                return resource["values"]["floating_ip"] # type: openstack_compute_floatingip_associate_v2
+            return resource["values"]["network"][0]["fixed_ip_v4"]
+
         elif provider == "opentelekomcloud":
+            if public is True:
+                return resource["values"]["floating_ip"] # type: opentelekomcloud_compute_floatingip_associate_v2
             return resource["values"]["access_ip_v4"]
-        elif provider == "exoscale" or provider == "cloudstack":
+
+        elif provider == "azurerm":
+            if public is True:
+                return resource["values"]["ip_address"] # type: azurerm_public_ip
+            return resource["values"]["private_ip_address"]
+
+        # ---
+
+        elif provider == "oci":
+            if public is True:
+                return resource["values"]["public_ip"]
+            return resource["values"]["private_ip"]
+
+        elif provider == "exoscale":
             if public is True:
                 return resource["values"]["ip_address"]
             return resource["values"]["ip_address"]
-        elif provider == "azurerm":
-            return resource["values"]["private_ip_address"]
-        elif provider == "oci":
-            return resource["values"]["private_ip"]
+
     except KeyError:
-        return None
+        return None # no IP was found for the given resource
 
 
 def groupReplace(input,substitution,output):

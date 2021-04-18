@@ -1,6 +1,6 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
 providerName: azurerm
-pathToKey: "/root/.ssh/id_rsa"
+pathToKey: "/home/ipelu/.ssh/id_rsa"
 subscriptionId: "54f623f0-8c18-40dd-9530-d32d2f1ee14f"
 openUser: uroot
 flavor: "Standard_D2s_v3"

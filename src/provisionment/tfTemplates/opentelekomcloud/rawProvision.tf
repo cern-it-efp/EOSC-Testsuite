@@ -1,3 +1,11 @@
+terraform {
+  required_providers {
+    opentelekomcloud = {
+      source = "opentelekomcloud/opentelekomcloud"
+    }
+  }
+}
+
 provider "opentelekomcloud" {
   access_key = yamldecode(file(yamldecode(file(var.configsFile))["authFile"]))["accK"]
   secret_key = yamldecode(file(yamldecode(file(var.configsFile))["authFile"]))["secK"]
