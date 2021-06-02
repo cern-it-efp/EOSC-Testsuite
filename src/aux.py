@@ -253,10 +253,14 @@ def validateConfigs(cfgPath, tcPath, noTerraform, extraSupportedClouds, allTests
     testsCatalog = loadFile(tcPath, required=True)
 
     if noTerraform is False:
-        configsSchema = "src/schemas/configs_sch_%s.yaml" % \
-        configs["providerName"] if configs["providerName"] \
-            in extraSupportedClouds else "src/schemas/configs_sch_general.yaml"
-        testsCatalogSchema = "src/schemas/testsCatalog_sch.yaml"
+        try:
+            configsSchema = "src/schemas/configs_sch_%s.yaml" % \
+            configs["providerName"] if configs["providerName"] \
+                in extraSupportedClouds else "src/schemas/configs_sch_general.yaml"
+            testsCatalogSchema = "src/schemas/testsCatalog_sch.yaml"
+        except KeyError:
+            print("Error validating configs file: missing 'providerName'")
+            stop(1)
     else:
         configsSchema = "src/schemas/configs_sch_noTerraform.yaml"
         testsCatalogSchema = "src/schemas/testsCatalog_sch_noTerraform.yaml"
@@ -367,7 +371,7 @@ def getIP(resource, provider, public=False):
                 return resource["values"]["floating_ip"] # type: openstack_compute_floatingip_associate_v2
             return resource["values"]["network"][0]["fixed_ip_v4"]
 
-        elif provider == "opentelekomcloud":
+        elif provider == "opentelekomcloud": # TODO: automate IP allocation
             if public is True:
                 return resource["values"]["floating_ip"] # type: opentelekomcloud_compute_floatingip_associate_v2
             return resource["values"]["access_ip_v4"]
@@ -377,6 +381,9 @@ def getIP(resource, provider, public=False):
                 return resource["values"]["ip_address"] # type: azurerm_public_ip
             return resource["values"]["private_ip_address"]
 
+        elif provider == "ionoscloud":
+            return resource["values"]["primary_ip"] # type: ionoscloud_server
+
         # ---
 
         elif provider == "oci":
@@ -385,8 +392,7 @@ def getIP(resource, provider, public=False):
             return resource["values"]["private_ip"]
 
         elif provider == "exoscale":
-            if public is True:
-                return resource["values"]["ip_address"]
+            # VMs have public IP NIC:
             return resource["values"]["ip_address"]
 
     except KeyError:

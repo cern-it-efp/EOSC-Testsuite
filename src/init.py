@@ -23,7 +23,8 @@ extraSupportedClouds = ["openstack",
                         "google",
                         "exoscale",
                         "opentelekomcloud",
-                        "oci"]
+                        "oci",
+                        "ionoscloud"]
 testsSharingCluster = ["s3Test",
                        "dataRepatriationTest",
                        "perfsonarTest",

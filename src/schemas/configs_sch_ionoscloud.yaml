@@ -1,0 +1,63 @@
+type: object
+required:
+    - storageCapacity
+    - flavor
+    - image_name
+    - pathToKey
+    - pathToPubKey
+    - providerName
+    - username
+    - password
+    - location
+properties:
+    providerName:
+        type: string
+    pathToKey:
+        type: string
+    pathToPubKey:
+        type: string
+    flavor:
+        type: object
+        required:
+          - cores
+          - ram
+        properties:
+          cores:
+              type: number
+          ram:
+              type: number
+    dockerCE:
+        type: string
+    dockerEngine:
+        type: string
+    kubernetes:
+        type: string
+    password:
+        type: string
+    username:
+        type: string
+    location:
+        type: string
+    image_name:
+        type: string
+    securityGroups:
+        type: array
+    storageCapacity:
+        type: number
+    costCalculation:
+        type:
+            - object
+        properties:
+            generalInstancePrice:
+                type:
+                    - number
+            GPUInstancePrice:
+                type:
+                    - number
+            HPCInstancePrice:
+                type:
+                    - number
+            s3bucketPrice:
+                type:
+                    - number
+additionalProperties: false

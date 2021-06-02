@@ -145,15 +145,17 @@ Release notes
 
 ``19.4``
 
--New tests: perfsonar and cpu-benchmarking
+- New tests: network performance (perfSONAR) and CPU benchmarking.
 
 ``19.2``
 
--First release.
+- First release.
+
 
 Contact
 ---------------------------------------------
 For more information contact ignacio.peluaga.lozada AT cern.ch
+
 
 License
 ---------------------------------------------
