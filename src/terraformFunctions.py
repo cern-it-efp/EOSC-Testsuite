@@ -264,7 +264,7 @@ def terraformProvisionment(
 
             terraform_cli_vars["gpuType"] = tryTakeFromYaml(configs,
                                                             "gpuType",
-                                                            None)
+                                                            "")
 
         if configs["providerName"] in ("aws", "google",
                             "openstack", "opentelekomcloud", "exoscale"):
