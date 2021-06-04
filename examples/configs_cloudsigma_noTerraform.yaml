@@ -1,0 +1,15 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: "cloudsigma"
+pathToKey: "/home/ipelu/.ssh/id_rsa"
+openUser: cloudsigma
+clusters:
+  shared: ["31.171.250.49","31.171.240.68"]
+  hpcTest: ["31.171.240.232","31.171.240.217"]
+  dlTest: ["31.171.240.226","31.171.250.129"]
+
+#---------------COST CALCULATION------------------------------------------------
+costCalculation:
+  generalInstancePrice: 0.2
+  GPUInstancePrice: 0.2
+  HPCInstancePrice: 0.2
+  s3bucketPrice: 0.1

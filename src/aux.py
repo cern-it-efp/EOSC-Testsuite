@@ -381,9 +381,6 @@ def getIP(resource, provider, public=False):
                 return resource["values"]["ip_address"] # type: azurerm_public_ip
             return resource["values"]["private_ip_address"]
 
-        elif provider == "ionoscloud":
-            return resource["values"]["primary_ip"] # type: ionoscloud_server
-
         # ---
 
         elif provider == "oci":
@@ -391,9 +388,16 @@ def getIP(resource, provider, public=False):
                 return resource["values"]["public_ip"]
             return resource["values"]["private_ip"]
 
+        # --- The following ones offer public IPs w/o NAT
+
         elif provider == "exoscale":
-            # VMs have public IP NIC:
             return resource["values"]["ip_address"]
+
+        elif provider == "ionoscloud":
+            return resource["values"]["primary_ip"] # type: ionoscloud_server
+
+        elif provider == "cloudsigma":
+            return resource["values"]["ipv4_address"] # type: cloudsigma_server
 
     except KeyError:
         return None # no IP was found for the given resource

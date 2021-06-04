@@ -7,8 +7,8 @@ terraform {
 }
 
 provider "ionoscloud" {
-  username = yamldecode(file(var.configsFile))["username"]
-  password = yamldecode(file(var.configsFile))["password"]
+  username = yamldecode(file(yamldecode(file(var.configsFile))["authFile"]))["username"]
+  password = yamldecode(file(yamldecode(file(var.configsFile))["authFile"]))["password"]
 }
 
 resource "ionoscloud_datacenter" "ionos_resource" {

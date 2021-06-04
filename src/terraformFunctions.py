@@ -137,7 +137,7 @@ def terraformProvisionment(
         baseCWD,
         extraSupportedClouds,
         usePrivateIPs):
-    """ Provisions VMs on the provider and creates a k8s cluster with them.
+    """ Provisions VMs on the provider.
 
     Parameters:
         test (str): Indicates the test for which to provision the cluster

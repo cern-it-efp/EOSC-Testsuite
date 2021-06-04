@@ -1,12 +1,3 @@
-variable "configsFile" {
-  default = "/home/ipelu/p.yaml"
-}
-variable "customCount" {
-  default = 1 # TODO: this is calculated according to the number of tests selected
-}
-
-# -----------------------------------------
-
 terraform {
   required_providers {
     cloudsigma = {
@@ -22,8 +13,8 @@ resource "random_password" "psswd" {
 
 provider "cloudsigma" {
   location = yamldecode(file(var.configsFile))["location"]
-  username = yamldecode(file(var.configsFile))["username"]
-  password = yamldecode(file(var.configsFile))["password"]
+  username = yamldecode(file(yamldecode(file(var.configsFile))["authFile"]))["username"]
+  password = yamldecode(file(yamldecode(file(var.configsFile))["authFile"]))["password"]
 }
 
 resource "cloudsigma_drive" "os_drive" {
@@ -31,19 +22,19 @@ resource "cloudsigma_drive" "os_drive" {
   clone_drive_id = yamldecode(file(var.configsFile))["clone_drive_id"]
   media = "disk"
   name  = "os-drive"
-  size  = yamldecode(file(var.configsFile))["size"]
+  size  = yamldecode(file(var.configsFile))["storageCapacity"]
 }
 
 resource "cloudsigma_ssh_key" "key" {
-  name       = "key"
-  public_key = file(yamldecode(file(var.configsFile))["pub_key_path"])
+  name       = "ts-run-key"
+  public_key = file(yamldecode(file(var.configsFile))["pathToPubKey"])
 }
 
 resource "cloudsigma_server" "server" {
   count = var.customCount
-  cpu          = yamldecode(file(var.configsFile))["cpu"]
-  memory       = yamldecode(file(var.configsFile))["memory"]
-  name         = "server"
+  cpu          = yamldecode(file(var.configsFile))["flavor"]["cpu"]
+  memory       = yamldecode(file(var.configsFile))["flavor"]["memory"]
+  name         = "${var.instanceName}-${count.index}"
   vnc_password = random_password.psswd.result
   drive {
     uuid = element(cloudsigma_drive.os_drive.*.uuid, count.index)

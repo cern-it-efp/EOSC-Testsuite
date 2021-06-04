@@ -1,15 +1,14 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
-providerName: "cloudsigma"
-pathToKey: "/home/ipelu/.ssh/id_rsa"
+providerName: cloudsigma
+pathToKey: /home/ipelu/.ssh/id_rsa
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
+authFile: /home/ipelu/p.yaml
 openUser: cloudsigma
-clusters:
-  shared: ["31.171.250.49","31.171.240.68"]
-  hpcTest: ["31.171.240.232","31.171.240.217"]
-  dlTest: ["31.171.240.226","31.171.250.129"]
-
-#---------------COST CALCULATION------------------------------------------------
-costCalculation:
-  generalInstancePrice: 0.2
-  GPUInstancePrice: 0.2
-  HPCInstancePrice: 0.2
-  s3bucketPrice: 0.1
+location: gva
+clone_drive_id: 0c94015b-034e-4c37-9511-b878d9257b0a # centos7 server from GVA location
+storageCapacity: 53687091200 # measured in bytes - 50 * 1024 * 1024 * 1024
+flavor:
+  #memory: 4294967296 # measured in bytes - 512 * 1024 * 1024 # 512MB RAM (UI max is 128GB, tf max is 137438953472)
+  #cpu: 4000 # measured in MHz CPU (UI max is 100 GHz, tf max is 124000)
+  memory: 137438953472 # measured in bytes - 512 * 1024 * 1024 # 512MB RAM (UI max is 128GB, tf max is 137438953472)
+  cpu: 124000 # measured in MHz CPU (UI max is 100 GHz, tf max is 124000)

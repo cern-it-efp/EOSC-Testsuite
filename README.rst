@@ -59,6 +59,7 @@ The developers would like to thank all test owners and contributors to this proj
 |                              | | CloudStack                                                                    |
 |                              | | OpenStack                                                                     |
 |                              | | CloudSigma                                                                    |
+|                              | | Ionos                                                                         |
 +------------------------------+---------------------------------------------------------------------------------+
 
 The suite is being tested in several additional cloud providers. As tests are concluded, the cloud providers names will be added in the table above.
@@ -66,6 +67,10 @@ The suite is being tested in several additional cloud providers. As tests are co
 Release notes
 ---------------------------------------------
 (Note the versions are numbered with the date of the release: YEAR.MONTH)
+
+``21.X - latest``
+
+- Included Terraform support to deploy on: Ionos, CloudSigma,
 
 ``21.4 - latest``
 

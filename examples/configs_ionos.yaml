@@ -2,8 +2,7 @@ pathToKey: "/home/ipelu/.ssh/id_rsa"
 pathToPubKey: "/home/ipelu/.ssh/id_rsa.pub"
 image_name: "centos-7-server-2021-04-01"
 storageCapacity: 50
-username: "ignacio.peluaga.lozada@cern.ch"
-password: ""
+authFile: ""
 location: "de/fra"
 flavor:
   cores: 2

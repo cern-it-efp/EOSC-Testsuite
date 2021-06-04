@@ -2,48 +2,40 @@ type: object
 required:
     - providerName
     - pathToKey
-    - flavor
-    - imageID
-    - keyPair
-    - openUser
-    - domainName
-    - tenantName
+    - pathToPubKey
     - authFile
+    - location
+    - openUser
     - storageCapacity
+    - clone_drive_id
+    - flavor
 properties:
     providerName:
         type: string
     pathToKey:
         type: string
-    flavor:
-        type: string
-    imageID:
-        type: string
-    keyPair:
-        type: string
-    openUser:
-        type: string
-    domainName:
-        type: string
-    tenantName:
+    pathToPubKey:
         type: string
     authFile:
         type: string
+    location:
+        type: string
+    openUser:
+        type: string
     storageCapacity:
         type: number
-    dockerCE:
+    clone_drive_id:
         type: string
-    dockerEngine:
-        type: string
-    kubernetes:
-        type: string
-    securityGroups:
-        type:
-            - array
-    availabilityZone:
-        type: string
-    networkID:
-        type: string
+    flavor:
+        type: object
+        required:
+          - cpu
+          - memory
+        properties:
+          cpu:
+              type: number
+          memory:
+              type: number
     costCalculation:
         type:
             - object
@@ -51,17 +43,19 @@ properties:
             generalInstancePrice:
                 type:
                     - number
-                    - "null"
             GPUInstancePrice:
                 type:
                     - number
-                    - "null"
             HPCInstancePrice:
                 type:
                     - number
-                    - "null"
             s3bucketPrice:
                 type:
                     - number
-                    - "null"
+    dockerCE:
+        type: string
+    dockerEngine:
+        type: string
+    kubernetes:
+        type: string
 additionalProperties: false

@@ -5,9 +5,8 @@ required:
     - image_name
     - pathToKey
     - pathToPubKey
+    - authFile
     - providerName
-    - username
-    - password
     - location
 properties:
     providerName:
@@ -15,6 +14,8 @@ properties:
     pathToKey:
         type: string
     pathToPubKey:
+        type: string
+    authFile:
         type: string
     flavor:
         type: object
@@ -31,10 +32,6 @@ properties:
     dockerEngine:
         type: string
     kubernetes:
-        type: string
-    password:
-        type: string
-    username:
         type: string
     location:
         type: string
