@@ -14,6 +14,7 @@ try:
     import string
     import re
     import shutil
+    import boto3
 
 except ModuleNotFoundError as ex:
     print(ex)
@@ -37,7 +38,7 @@ dependencies = ""
 credentials = ""
 totalCost = 0
 procs = []
-viaBackend = False
+publish = False
 resultsExist = False
 interactive = True
 retry = None
@@ -45,6 +46,8 @@ destroy = None
 destroyOnCompletion = None
 clustersToDestroy = None
 customNodes = None
+s3Endpoint = "https://s3.cern.ch"
+resultsBucket = "ts-results" # "ocre-results"
 
 
 def header(noLogo=False, provider=None, results=None):
@@ -110,6 +113,44 @@ def header(noLogo=False, provider=None, results=None):
             header(noLogo=True, provider=provider, results=results)
 
 
+# TODO: these two should go to aux.py
+def uploadDirectory(path, bucketname, client_s3):
+    """"""
+    for root, dirs, files in os.walk("results/" + path):
+        for file in files:
+            try:
+                currentResource = os.path.join(root, file)
+                client_s3.upload_file(currentResource,
+                                      bucketname,
+                                      currentResource.replace("results/",""))
+            except:
+                return False
+    return True
+
+
+def publishResults(s3ResDirBase):
+    """"""
+    aws_access_key_id = os.environ.get('S3_ACC_KEY')
+    aws_secret_access_key = os.environ.get('S3_SEC_KEY')
+    endpoint_url = os.environ.get('S3_ENDPOINT', s3Endpoint)
+
+    if aws_access_key_id == None or aws_secret_access_key == None:
+        print("WARNING: no credentials were provided, the results will not be published.")
+        return False
+
+    client_s3=boto3.client(
+        "s3",
+        aws_access_key_id=aws_access_key_id,
+        aws_secret_access_key=aws_secret_access_key,
+        endpoint_url=endpoint_url
+    )
+
+    uploadStats = uploadDirectory(s3ResDirBase, resultsBucket, client_s3)
+    if uploadStats == False:
+        return False
+    return True
+
+
 # logo, no results, no provider
 header()
 
@@ -156,8 +197,11 @@ parser.add_argument('--customNodes',
                     help='Use a specific amount of nodes.',
                     metavar="NODES",
                     type=int)
-parser.add_argument('--noWatch', 
+parser.add_argument('--noWatch',
                     help='Do not use the watch function.',
+                    action='store_true')
+parser.add_argument('--publish',
+                    help='Push results to CERN S3.',
                     action='store_true')
 
 args = parser.parse_args()
@@ -176,6 +220,8 @@ if args.customNodes:
     customNodes = args.customNodes
 if args.noTerraform:
     noTerraform = True
+if args.publish:
+    publish = True
 if args.clustersToDestroy:
     clustersToDestroy = args.clustersToDestroy
     if "all" in clustersToDestroy:
@@ -289,23 +335,19 @@ if checkResultsExist(resDir) is True:
         json.dump(generalResults, outfile, indent=4, sort_keys=True)
 
     msg1 = "TESTING COMPLETED"
-    # No results push if local run (only ts-backend has AWS creds for this)
-    if viaBackend is True:
-        s3Endpoint = "https://s3.cern.ch"
-        bucket = "s3://ts-results"
-        pushResults = runCMD(
-            "aws s3 cp --endpoint-url=%s %s %s/%s --recursive > /dev/null" %
-            (s3Endpoint, "results/" + s3ResDirBase, bucket, s3ResDirBase))
-        runCMD("cp results/%s/general.json .. " % s3ResDirBase)
-        if pushResults != 0:
-            logger("S3 upload failed! Is 'awscli' installed and configured?",
-                   "!", "src/logging/footer")
+
+    # -----------------S3 RESULTS UPLOAD---------------------------------------
+    if publish is True:
+        publishStats = publishResults(s3ResDirBase)
+
+        if publishStats == False:
+            logger("S3 upload failed!", "!", "src/logging/footer")
         else:
-            logger([msg1, "Results on the S3 bucket"],
-                   "#", "src/logging/footer")
+            logger(["TESTING COMPLETED", "S3 upload OK"],"#", "src/logging/footer")
     else:
         logger(msg1, "*", "src/logging/footer")
 
+    # -----------------RESOURCES DESTROY---------------------------------------
     if destroyOnCompletion == True:
         for cluster in clustersToDestroy:
             if checkClusterWasProvisioned(cluster, generalResults["testing"]):
