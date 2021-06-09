@@ -25,31 +25,6 @@ from tests import *
 import init
 
 
-onlyTest = False
-killResources = False
-noTerraform = False
-testsCatalog = ""
-cfgPathCLI = None
-tcPathCLI = None
-usePrivateIPs = False
-instanceDefinition = ""
-extraInstanceConfig = ""
-dependencies = ""
-credentials = ""
-totalCost = 0
-procs = []
-publish = False
-resultsExist = False
-interactive = True
-retry = None
-destroy = None
-destroyOnCompletion = None
-clustersToDestroy = None
-customNodes = None
-s3Endpoint = "https://s3.cern.ch"
-resultsBucket = "ts-results" # "ocre-results"
-
-
 def header(noLogo=False, provider=None, results=None):
     """ Prints the header according to parameters.
 
@@ -113,15 +88,24 @@ def header(noLogo=False, provider=None, results=None):
             header(noLogo=True, provider=provider, results=results)
 
 
-# TODO: these two should go to aux.py
-def uploadDirectory(path, bucketname, client_s3):
-    """"""
+def uploadDirectory(path, bucketName, client_s3):
+    """ Uploads objects one by one to a CERN S3 bucket.
+
+    Parameters:
+        path (str): Path were the S3 results are located.
+        bucketName (str): Name of the bucket.
+        client_s3 (): boto3 client.
+
+    Returns:
+        bool: Operation result, True is success.
+    """
+
     for root, dirs, files in os.walk("results/" + path):
         for file in files:
             try:
                 currentResource = os.path.join(root, file)
                 client_s3.upload_file(currentResource,
-                                      bucketname,
+                                      bucketName,
                                       currentResource.replace("results/",""))
             except:
                 return False
@@ -129,10 +113,22 @@ def uploadDirectory(path, bucketname, client_s3):
 
 
 def publishResults(s3ResDirBase):
-    """"""
+    """ Uploads objects (run results) one by one to a CERN S3
+        bucket, maintaining the local file structure.
+
+    Parameters:
+        s3ResDirBase (str): Local path to the run results.
+
+    Returns:
+        bool: Operation result, True is success.
+    """
+
     aws_access_key_id = os.environ.get('S3_ACC_KEY')
     aws_secret_access_key = os.environ.get('S3_SEC_KEY')
     endpoint_url = os.environ.get('S3_ENDPOINT', s3Endpoint)
+
+    print(aws_secret_access_key)
+    print(aws_access_key_id)
 
     if aws_access_key_id == None or aws_secret_access_key == None:
         print("WARNING: no credentials were provided, the results will not be published.")
@@ -145,9 +141,15 @@ def publishResults(s3ResDirBase):
         endpoint_url=endpoint_url
     )
 
-    uploadStats = uploadDirectory(s3ResDirBase, resultsBucket, client_s3)
-    if uploadStats == False:
-        return False
+    for root, dirs, files in os.walk("results/" + s3ResDirBase):
+        for file in files:
+            try:
+                currentResource = os.path.join(root, file)
+                client_s3.upload_file(currentResource,
+                                      resultsBucket,
+                                      currentResource.replace("results/",""))
+            except:
+                return False
     return True
 
 
@@ -338,9 +340,7 @@ if checkResultsExist(resDir) is True:
 
     # -----------------S3 RESULTS UPLOAD---------------------------------------
     if publish is True:
-        publishStats = publishResults(s3ResDirBase)
-
-        if publishStats == False:
+        if publishResults(s3ResDirBase) is False:
             logger("S3 upload failed!", "!", "src/logging/footer")
         else:
             logger(["TESTING COMPLETED", "S3 upload OK"],"#", "src/logging/footer")
@@ -348,7 +348,7 @@ if checkResultsExist(resDir) is True:
         logger(msg1, "*", "src/logging/footer")
 
     # -----------------RESOURCES DESTROY---------------------------------------
-    if destroyOnCompletion == True:
+    if destroyOnCompletion is True:
         for cluster in clustersToDestroy:
             if checkClusterWasProvisioned(cluster, generalResults["testing"]):
                 if destroyTF(baseCWD, clusters=[cluster])[0] != 0:

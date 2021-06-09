@@ -31,15 +31,11 @@ from terraformFunctions import *
 def provisionAndBootstrap(test,
                           nodes,
                           flavor,
-                          extraInstanceConfig,
                           toLog,
                           configs,
                           cfgPath,
                           testsRoot,
                           retry,
-                          instanceDefinition,
-                          credentials,
-                          dependencies,
                           baseCWD,
                           extraSupportedClouds,
                           noTerraform,
@@ -50,15 +46,11 @@ def provisionAndBootstrap(test,
         test (str): Indicates the test for which to provision the cluster
         nodes (int): Number of nodes the cluster must contain.
         flavor (str): Flavor to be used for the VMs.
-        extraInstanceConfig (str): Extra HCL code to configure VM
         toLog (str): File to which write the log msg.
         configs (dict): Object containing configs.yaml's configurations.
         cfgPath (str): Path to the configs file.
         testsRoot (str): Tests directory root.
         retry (bool): If true, retrying after a failure.
-        instanceDefinition (str): HCL code definition of an instance.
-        credentials (str): HCL code related to authentication/credentials.
-        dependencies (str): HCL code related to infrastructure dependencies.
         baseCWD (str): Path to the base directory.
         extraSupportedClouds (dict): Extra supported clouds.
         noTerraform (bool): True indicates the terraform phase is skipped.
@@ -73,15 +65,11 @@ def provisionAndBootstrap(test,
         res, msg = terraformProvisionment(test,
                                       nodes,
                                       flavor,
-                                      extraInstanceConfig,
                                       toLog,
                                       configs,
                                       cfgPath,
                                       testsRoot,
                                       retry,
-                                      instanceDefinition,
-                                      credentials,
-                                      dependencies,
                                       baseCWD,
                                       extraSupportedClouds,
                                       usePrivateIPs)

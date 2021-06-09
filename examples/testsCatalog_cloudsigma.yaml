@@ -1,5 +1,5 @@
 dataRepatriationTest:
-  run: #true
+  run: true
 cpuBenchmarking:
   run: #true
   benchmarks: ["kv"]

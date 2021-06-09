@@ -70,7 +70,9 @@ Release notes
 
 ``21.X - latest``
 
-- Included Terraform support to deploy on: Ionos, CloudSigma,
+- Included (Terraform) support to deploy on: Ionos, CloudSigma,
+
+- Updated CPU Benchmark: using new Hepscore based implementation.
 
 ``21.4 - latest``
 
