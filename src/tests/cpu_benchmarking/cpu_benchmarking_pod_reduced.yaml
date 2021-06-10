@@ -25,8 +25,10 @@ spec:
       privileged: true
     command: ["/bin/sh","-c"]
     args:
-      - python3 -m pip install --user git+https://gitlab.cern.ch/hep-benchmarks/hep-benchmark-suite.git ;
-        ~/.local/bin/bmkrun -c default &&
+      - wget https://gist.githubusercontent.com/ignpelloz/acb909115ad10175c1482c60ea7fd5ab/raw/ac93a186da08dd713c545b3888f800dfa35f518c/min_config.yaml ;
+        wget https://gist.githubusercontent.com/ignpelloz/347c4450a1de3f0f83e9208cd417d73b/raw/4f3d6f110f1cf72df7ceb5befd9ba8760ba1904d/min_hepscore.yaml ;
+        python3 -m pip install --user git+https://gitlab.cern.ch/hep-benchmarks/hep-benchmark-suite.git ;
+        ~/.local/bin/bmkrun -c min_config.yaml &&
         (cp /tmp/hep-benchmark-suite/run_*/bmkrun_report.json /tmp/hep-benchmark-suite/ ;
         cp /tmp/hep-benchmark-suite/run_*/hep-benchmark-suite.log /tmp/hep-benchmark-suite/ ;
         tail -f /dev/null)

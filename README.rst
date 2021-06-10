@@ -74,7 +74,7 @@ Release notes
 
 - Updated CPU Benchmark: using new Hepscore based implementation.
 
-``21.4 - latest``
+``21.4``
 
 - Cluster certificate additionally signed for NAT IP (no need to use bastion method, with this solution the cluster can be reached from outside of the provider network. However, previous allocation of floating IPs is now required).
 
