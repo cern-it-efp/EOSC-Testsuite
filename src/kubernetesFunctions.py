@@ -66,6 +66,34 @@ def checkPodAlive(podName, resDir, toLog, resultFile, kubeconfig):
         bool: True in case the pod is alive, False otherwise
     """
 
+    # kubectl get pods -o=json | jq .items[].metadata.name
+
+    v1 = client.CoreV1Api()
+    ret = v1.list_namespaced_pod("default") # list_pod_for_all_namespaces(watch=False) # TODO: t/o if the connection is lost?
+    podNames = [i.metadata.name for i in ret.items] # i.status.pod_ip
+    if podName not in podNames:
+        writeFail(resDir,
+                  resultFile,
+                  "%s pod was destroyed (did not fetch %s)" % (podName,resultFile),
+                  toLog)
+        return False
+    return True
+
+
+def checkPodAlive_og(podName, resDir, toLog, resultFile, kubeconfig):
+    """ Checks if a pod is alive
+
+    Parameters:
+        podName (str): Pod name.
+        resDir (str): Path to the results folder for the current run.
+        toLog (str): Path to the log file to which logs have to be sent
+        resultFile (str): Name of the results file for the current test.
+        kubeconfig (str): Path to kubeconfig file of the being managed cluster.
+
+    Returns:
+        bool: True in case the pod is alive, False otherwise
+    """
+
     cmd = "get pod %s" % podName
     if kubectlCLI(cmd, kubeconfig=kubeconfig, hideLogs=True) != 0:
         writeFail(resDir,

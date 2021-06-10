@@ -244,22 +244,11 @@ def cpuBenchmarking(resDir):
     """
 
     podName = "hep-bmk-pod"
-    definition_raw = "%scpu_benchmarking/raw/cpu_benchmarking_pod_raw.yaml" % testsRoot
     definition = "%scpu_benchmarking/cpu_benchmarking_pod.yaml" % testsRoot
     resultFile = "cpu_benchmarking.json"
     toLog = "src/logging/shared"
     testName = "cpuBenchmarking"
-    resultOnPod = "/tmp/hep-benchmark-suite/bmk_utils/result_profile.json"
-    substitution = [
-        {
-            "before": "PROVIDER_PH",
-            "after": init.configs["providerName"]
-        },
-        {
-            "before": "BMKS_PH",
-            "after": str(init.testsCatalog["cpuBenchmarking"]["benchmarks"])[1:-1].replace("\'","")
-        }
-    ]
+    resultOnPod = "/tmp/hep-benchmark-suite/bmkrun_report.json"
 
     kubeconfig = defaultKubeconfig
     runTest(definition,
@@ -269,42 +258,7 @@ def cpuBenchmarking(resDir):
             resultFile,
             podName,
             resultOnPod,
-            kubeconfig,
-            definition_raw=definition_raw,
-            substitution=substitution)
-
-
-def cpuBenchmarking_former(resDir):
-    """ Run containerised CPU Benchmarking test.
-
-    Parameters:
-        resDir (str): Path to the results folder for the current run.
-    """
-
-    podName = "cpu-bmk-pod"
-    definition_raw = "%scpu_benchmarking/raw/cpu_benchmarking_pod_raw.yaml" % testsRoot
-    definition = "%scpu_benchmarking/cpu_benchmarking_pod.yaml" % testsRoot
-    resultFile = "cpu_benchmarking.json"
-    toLog = "src/logging/shared"
-    testName = "cpuBenchmarking"
-    resultOnPod = "/tmp/cern-benchmark_root/bmk_tmp/result_profile.json"
-    substitution = [
-        {
-            "before": "PROVIDER_PH",
-            "after": init.configs["providerName"]
-        }
-    ]
-    kubeconfig = defaultKubeconfig
-    runTest(definition,
-            toLog,
-            testName,
-            resDir,
-            resultFile,
-            podName,
-            resultOnPod,
-            kubeconfig,
-            definition_raw=definition_raw,
-            substitution=substitution)
+            kubeconfig)
 
 
 def perfsonarTest(resDir):
@@ -314,7 +268,7 @@ def perfsonarTest(resDir):
         resDir (str): Path to the results folder for the current run.
     """
 
-    keepPerfsonarPod = False # CTS-190
+    keepPerfsonarPod = False # TODO: CTS-190
 
     podName = "ps-pod"
     testName = "perfSONAR"

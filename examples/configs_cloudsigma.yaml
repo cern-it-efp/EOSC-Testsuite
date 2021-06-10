@@ -10,5 +10,5 @@ storageCapacity: 53687091200 # measured in bytes - 50 * 1024 * 1024 * 1024
 flavor:
   #memory: 4294967296 # measured in bytes - 512 * 1024 * 1024 # 512MB RAM (UI max is 128GB, tf max is 137438953472)
   #cpu: 4000 # measured in MHz CPU (UI max is 100 GHz, tf max is 124000)
-  memory: 137438953472 # measured in bytes - 512 * 1024 * 1024 # 512MB RAM (UI max is 128GB, tf max is 137438953472)
-  cpu: 124000 # measured in MHz CPU (UI max is 100 GHz, tf max is 124000)
+  memory: 37438953472 # measured in bytes - 512 * 1024 * 1024 # 512MB RAM (UI max is 128GB, tf max is 137438953472)
+  cpu: 24000 # measured in MHz CPU (UI max is 100 GHz, tf max is 124000)

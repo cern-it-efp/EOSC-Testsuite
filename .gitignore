@@ -7,7 +7,6 @@ src/provisionment/bastionProvisionment/*/terraform.tfstate*
 logs
 
 src/tests/s3/s3pod.yaml
-src/tests/cpu_benchmarking/cpu_benchmarking_pod.yaml
 src/tests/data_repatriation/repatriation_pod.yaml
 
 src/tests/dlTest/mpi_learn.yaml
