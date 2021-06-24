@@ -3,17 +3,23 @@ provider "aws" {
   shared_credentials_file = yamldecode(file(var.configsFile))["sharedCredentialsFile"]
 }
 
+resource "random_string" "id" {
+  length  = 5
+  special = false
+  upper   = false
+}
+
 resource "aws_vpc" "vpc" {
   cidr_block = "172.16.0.0/16"
   tags = {
-    Name = "tsvpc"
+    Name = "tsvpc-${random_string.id.result}"
   }
 }
 
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc.id
   tags = {
-    Name = "tsigw"
+    Name = "tsigw-${random_string.id.result}"
   }
 }
 
@@ -25,8 +31,8 @@ resource "aws_default_route_table" "drt" {
   }
 }
 
-resource "aws_security_group" "tssg" { # TODO: this custom one is not assigned to the VMs, only the VPC's default one. Needs VM's vpc_security_group_ids
-  name        = "tssg"
+resource "aws_security_group" "tssg" { # this custom one is not assigned to the VMs, only the VPC's default one. Needs VM's vpc_security_group_ids
+  name        = "tssg-${random_string.id.result}"
   vpc_id      = aws_vpc.vpc.id
   ingress {
     from_port   = 0
@@ -43,7 +49,7 @@ resource "aws_security_group" "tssg" { # TODO: this custom one is not assigned t
     ipv6_cidr_blocks = ["::/0"]
   }
   tags = {
-    Name = "tssg"
+    Name = "tssg-${random_string.id.result}"
   }
 }
 
@@ -51,12 +57,12 @@ resource "aws_subnet" "subnet" {
   vpc_id            = aws_vpc.vpc.id
   cidr_block        = "172.16.10.0/24"
   tags = {
-    Name = "tssn"
+    Name = "tssn-${random_string.id.result}"
   }
 }
 
 resource "aws_key_pair" "deployer" {
-  key_name   = "eosc_test_suite_key"
+  key_name   = "tskp-${random_string.id.result}"
   public_key = file(yamldecode(file(var.configsFile))["pathToPubKey"])
 }
 
@@ -69,7 +75,7 @@ resource "aws_instance" "kubenode" {
   vpc_security_group_ids = [aws_security_group.tssg.id] # association
   instance_type = var.flavor
   ami      = yamldecode(file(var.configsFile))["ami"]
-  key_name = "eosc_test_suite_key"
+  key_name = aws_key_pair.deployer.key_name
   root_block_device {
     volume_size = var.storageCapacity
   }
