@@ -23,8 +23,8 @@ zone: "europe-west4-a"
 #image: "deeplearning-platform-release/tf-1-15-cu110"
 image: "deeplearning-platform-release/tf2-ent-2-3-cu110"
 
-pathToCredentials: "/home/ipelu/Desktop/rosetta_ialum.json"
-project: "u-129e7a54-90a9-4371-95be"
+pathToCredentials: "/data/career/cern/clouds/gcp/cern-test-suite-fb46815ac1f0.json"
+project: "cern-test-suite"
 
 # NOTE: Instances with 1 NVIDIA Tesla V100 must have at most 12 vCPU cores. Either change the machine type or increase the number of GPUs. No limits when selecting 2 or more
 #gpuType: "nvidia-tesla-p100"

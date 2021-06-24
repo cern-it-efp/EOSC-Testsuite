@@ -6,7 +6,7 @@ dlTest:
   benchmark: nnlo
   datasetSize: 5
 proGANTest:
-  run:
+  run: true
   flavor: "n1-standard-32"
   images_amount: 1
   kimg: 1

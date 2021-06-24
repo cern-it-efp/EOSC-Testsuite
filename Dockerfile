@@ -32,6 +32,7 @@ RUN pip3 install --upgrade\
     pyyaml \
     kubernetes \
     jsonschema \
+    boto3 \
     ansible
 
 # ------------------ Install yq

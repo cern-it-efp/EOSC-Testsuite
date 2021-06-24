@@ -1,15 +1,14 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
 providerName: "aws"
 pathToKey: "/home/ipelu/.ssh/id_rsa"
+pathToPubKey: "/home/ipelu/.ssh/id_rsa.pub"
 openUser: centos
-flavor: "t2.medium"
-sharedCredentialsFile: "/home/ipelu/.aws/credentials"
+flavor: t2.medium # c5.large
+sharedCredentialsFile: "/home/ipelu/.aws/credentials.21nov"
 #region: us-east-2
 #ami: ami-08ee2516c7709ea48 # Centos US
 region: "eu-central-1"
 ami: ami-0957ba512eafd08d9 # Centos EU
-
-keyName: "exo"
 storageCapacity: 50
 
 #---------------COST CALCULATION------------------------------------------------

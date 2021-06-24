@@ -1,18 +1,17 @@
 s3Test:
-  run: true
+  run: #true
   endpoint: https://s3.amazonaws.com
   accessKey: foo
   secretKey: bar
 dataRepatriationTest:
   run: true
 cpuBenchmarking:
-  run: true
-  benchmarks: [kv]
+  run: #true
 perfsonarTest:
-  run: true
+  run: #true
   endpoint: psb01-gva.cern.ch
 dodasTest:
-  run: true
+  run: #true
 dlTest:
   run:
   nodes: 2

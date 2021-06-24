@@ -2,16 +2,18 @@ type: object
 required:
     - providerName
     - pathToKey
+    - pathToPubKey
     - flavor
     - openUser
     - region
     - sharedCredentialsFile
     - ami
-    - keyName
 properties:
     providerName:
         type: string
     pathToKey:
+        type: string
+    pathToPubKey:
         type: string
     openUser:
         type: string
@@ -22,8 +24,6 @@ properties:
     sharedCredentialsFile:
         type: string
     ami:
-        type: string
-    keyName:
         type: string
     storageCapacity:
         type: number
