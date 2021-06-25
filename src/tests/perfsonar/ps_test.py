@@ -54,6 +54,19 @@ TASK_throughput = {  # pscheduler task --format=json throughput --dest $ENDPOINT
     "schedule": {}
 }
 
+TASK_throughput_reverse = {  # pscheduler task --format=json throughput --dest $ENDPOINT
+    "schema": 1,
+    "test": {
+        "spec": {
+            "dest": endpoint,
+            "reverse": true,
+            "schema": 1
+        },
+        "type": "throughput"
+    },
+    "schedule": {}
+}
+
 TASK_rtt = {  # pscheduler task --format=json rtt --dest $ENDPOINT
     "schema": 1,
     "test": {
@@ -78,7 +91,7 @@ TASK_trace = {  # pscheduler task --format=json trace --dest $ENDPOINT
     "schedule": {}
 }
 
-TASKS = [TASK_rtt, TASK_trace, TASK_latency, TASK_throughput]
+TASKS = [TASK_rtt, TASK_trace, TASK_latency, TASK_throughput, TASK_throughput_reverse]
 
 
 # -----------------------------------------------------------------------------

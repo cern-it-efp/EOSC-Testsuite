@@ -4,8 +4,8 @@ pathToKey: "/home/ipelu/.ssh/id_rsa"
 pathToPubKey: "/home/ipelu/.ssh/id_rsa.pub"
 openUser: centos
 flavor: t2.medium # c5.large
-sharedCredentialsFile: "/home/ipelu/.aws/credentials.21nov"
-#sharedCredentialsFile: "/home/ipelu/.aws/credentials.t"
+#sharedCredentialsFile: "/home/ipelu/.aws/credentials.21nov"
+sharedCredentialsFile: "/home/ipelu/.aws/credentials.t"
 #region: us-east-2
 #ami: ami-08ee2516c7709ea48 # Centos US
 region: "eu-central-1"
