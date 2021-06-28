@@ -274,7 +274,7 @@ def perfsonarTest(resDir):
     testName = "perfSONAR"
     endpoint = init.testsCatalog["perfsonarTest"]["endpoint"]
     dependenciesCMD = "yum -y install python-dateutil python-requests"
-    runScriptCMD = "python /tmp/ps_test.py --ep %s" % endpoint
+    runScriptCMD = "python /tmp/ps_test.py --ep %s &> /tmp/ps_test_logs" % endpoint
     runOnPodCMD = "%s && %s" % (dependenciesCMD, runScriptCMD)
     cmd = "%s" % runOnPodCMD
     resultFile = "perfsonar_results.json"

@@ -92,6 +92,8 @@ TASK_trace = {  # pscheduler task --format=json trace --dest $ENDPOINT
 }
 
 TASKS = [TASK_rtt, TASK_trace, TASK_latency, TASK_throughput, TASK_throughput_reverse]
+TASKS = [TASK_throughput]
+
 
 # -----------------------------------------------------------------------------
 # Utilities
@@ -99,9 +101,9 @@ def fail(message, task=None, quit=None):
     """Complain about a problem and exit."""
 
     print("----------------------------------------------------------")
-    print("message: %s" % message)
-    print("task: %s" % task)
-    print("quit: %s" % quit)
+    print(message)
+    print(task)
+    print(quit)
     print("----------------------------------------------------------")
 
     error = {
@@ -191,15 +193,13 @@ def url_get(url,          # GET URL
         return (status, text)
 
 
-def manage_and_run_task():
-    """Manage And Run Task"""
-
+def manageAndRunTask():
     # Post the task to the server's "tasks" endpoint
     try:
         status, task_url = url_post(tasks_url, data=json_dump(TASK))
     except Exception as ex:
         fail("Unable to post task: %s" % (str(ex)), TASK["test"]["type"])
-        return # continue
+        continue
 
     # -----------------------------------------------------------------------------
     # Fetch the posted task with extra details.
@@ -209,13 +209,13 @@ def manage_and_run_task():
             raise Exception(task_data)
     except Exception as ex:
         fail("Failed to post task: %s" % (str(ex)), TASK["test"]["type"])
-        return # continue
+        continue
 
     try:
         first_run_url = task_data["detail"]["first-run-href"]
     except KeyError:
         fail("Server returned incomplete data.", TASK["test"]["type"])
-        return # continue
+        continue
 
     # -----------------------------------------------------------------------------
     # Get first run and make sure we have what we need to function. Server will wait until the first run has been scheduled before returning a result.
@@ -224,10 +224,10 @@ def manage_and_run_task():
     if status == 404:
         fail("The server never scheduled a run for the task.",
              TASK["test"]["type"])
-        return # continue
+        continue
     if status != 200:
         fail("Error %d: %s" % (status, run_data), TASK["test"]["type"])
-        return # continue
+        continue
 
     skipIT = False
     for key in ["start-time", "end-time", "result-href"]:
@@ -237,7 +237,7 @@ def manage_and_run_task():
             skipIT = True
             break
     if skipIT is True:
-        return # continue
+        continue
 
     # -----------------------------------------------------------------------------
     # Wait for the end time to pass
@@ -246,7 +246,7 @@ def manage_and_run_task():
     except ValueError as ex:
         fail("Server did not return a valid end time for the task: %s" %
              (str(ex)), TASK["test"]["type"])
-        return # continue
+        continue
 
     now = datetime.datetime.now(tzlocal())
     sleep_time = end_time - now if end_time > now else datetime.timedelta()
@@ -290,34 +290,26 @@ if os.system("pscheduler ping %s" % endpoint) != 0:
 # Wait for test tools to be ready on the server
 while len(url_get("https://localhost/pscheduler/tests",
     params={"detail": True})[1]) < 1:
-    print("Tools not ready yet...")
+    #print("Tools not ready yet...")
     time.sleep(10)
     pass
 
-retries = 20
-retry_sleep = 5
 for TASK in TASKS:
 
     print("Running: "+ TASK["test"]["type"])
 
-    err, result_data = manage_and_run_task()
-
-    count = 0
-    while err != "" and count < retries:
-        print("ERROR '%s'! retrying in %s seconds..." % (err,retry_sleep))
-        time.sleep(retry_sleep)
-        err, result_data = manage_and_run_task()
-        count+=1
+    err, result_data = manageAndRunTask()
 
     if err:
         fail(err, TASK["test"]["type"])
         continue
 
     result_data["task"] = TASK["test"]["type"]
-    #print(json_dump(result_data))
+    print json_dump(result_data)
 
     with open(resultsFile, 'a') as outfile:
         outfile.write(json_dump(result_data))
+
 
 # The End
 exit(0)
