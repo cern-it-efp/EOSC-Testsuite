@@ -1,13 +1,15 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
 providerName: openstack
-pathToKey: "/root/.ssh/id_rsa"
+pathToKey: /home/ipelu/.ssh/id_rsa
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
 openUser: eouser
-flavor: "eo1.medium"
-imageID: "9f954559-da79-4c6a-a0a0-aedb889e0c6a" # CentOS 7
-storageCapacity: 13
-keyPair: mykey
-securityGroups: ["default","allow_ping_ssh_rdp"]
-#networkName: testing
+flavor: eo1.medium # 2 cores
+#flavor: eo1.large # 4 cores, FileContent--proc-sys-net-bridge-bridge-nf-call-iptables
+#flavor: eo2.xlarge # 4 cores, FileContent--proc-sys-net-bridge-bridge-nf-call-iptables
+IPpool: external
+imageID: c3aa300c-57ab-4caa-a6e0-1e653ac6e42a # CentOS 7
+storageCapacity: 50
+externalNetID: be3cb8d6-5b30-42e7-8fc8-4b5371cd6fe4
 
 #---------------COST CALCULATION------------------------------------------------
 costCalculation:

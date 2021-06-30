@@ -3,13 +3,19 @@ providerName: "aws"
 pathToKey: "/home/ipelu/.ssh/id_rsa"
 pathToPubKey: "/home/ipelu/.ssh/id_rsa.pub"
 openUser: centos
-flavor: t2.medium # c5.large
-#sharedCredentialsFile: "/home/ipelu/.aws/credentials.21nov"
-sharedCredentialsFile: "/home/ipelu/.aws/credentials.t"
+flavor: t2.medium # t2.xlarge # c5.large
+sharedCredentialsFile: "/home/ipelu/.aws/credentials.21nov"
+#sharedCredentialsFile: "/home/ipelu/.aws/credentials.t"
+
 #region: us-east-2
 #ami: ami-08ee2516c7709ea48 # Centos US
-region: "eu-central-1"
-ami: ami-0957ba512eafd08d9 # Centos EU
+
+#region: "eu-central-1" # Frankfurt
+#ami: ami-0957ba512eafd08d9 # Centos Frankfurt
+
+region: eu-west-1 # Ireland
+ami: ami-0d116949fdb20215e # Centos Ireland
+
 storageCapacity: 50
 
 #---------------COST CALCULATION------------------------------------------------

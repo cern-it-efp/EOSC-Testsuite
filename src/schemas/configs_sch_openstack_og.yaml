@@ -2,27 +2,21 @@ type: object
 required:
     - providerName
     - pathToKey
-    - pathToPubKey
     - flavor
     - imageID
+    - keyPair
     - storageCapacity
-    - externalNetID
-    - IPpool
 
 properties:
     providerName:
         type: string
     pathToKey:
         type: string
-    pathToPubKey:
-        type: string
     flavor:
         type: string
     imageID:
         type: string
-    externalNetID:
-        type: string
-    IPpool:
+    keyPair:
         type: string
     storageCapacity:
         type: number
