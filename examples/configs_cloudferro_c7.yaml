@@ -3,9 +3,9 @@ providerName: openstack
 pathToKey: /home/ipelu/.ssh/id_rsa
 pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
 openUser: eouser
-flavor: eo1.medium # 2 cores
+#flavor: eo1.medium # 2 cores
 #flavor: eo1.large # 4 cores, FileContent--proc-sys-net-bridge-bridge-nf-call-iptables
-#flavor: eo2.xlarge # 4 cores, FileContent--proc-sys-net-bridge-bridge-nf-call-iptables
+flavor: eo2.xlarge # 4 cores, FileContent--proc-sys-net-bridge-bridge-nf-call-iptables
 IPpool: external
 imageID: c3aa300c-57ab-4caa-a6e0-1e653ac6e42a # CentOS 7
 storageCapacity: 50
