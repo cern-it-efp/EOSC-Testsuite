@@ -5,7 +5,7 @@
   tasks:
   - name: Waiting for VMs to be ready...
     wait_for_connection:
-      timeout: 200
+      timeout: 400
 
 # ------------------------------------ Allow root ssh
 - hosts: all
@@ -43,7 +43,7 @@
 - hosts: slaves
   become: yes
   tasks:
-  - name: slaves join cluster
+  - name: Slaves join cluster
     shell: "{{ hostvars[groups['master'][0]]['join_command'] }} --ignore-preflight-errors all  >> node_joined.txt"
     args:
       chdir: $HOME

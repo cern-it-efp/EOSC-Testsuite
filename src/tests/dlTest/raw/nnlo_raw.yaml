@@ -20,7 +20,7 @@ spec:
               privileged: true
             name: train-mpijob
             command: ["/bin/sh","-c"]
-            args: 
+            args:
             - mpirun
               -tag-output
               -x LD_LIBRARY_PATH

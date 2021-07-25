@@ -39,7 +39,8 @@ def provisionAndBootstrap(test,
                           baseCWD,
                           extraSupportedClouds,
                           noTerraform,
-                          usePrivateIPs):
+                          usePrivateIPs,
+                          freeMaster):
     """ Provision infrastructure and/or bootstrap the k8s cluster.
 
     Parameters:
@@ -92,7 +93,8 @@ def provisionAndBootstrap(test,
                                        noTerraform, # this is None in terraformFunctions
                                        test,
                                        configs,
-                                       usePrivateIPs)
+                                       usePrivateIPs,
+                                       freeMaster)
     if result != 0:
         return False, bootstrapFailMsg % test
 

@@ -1,5 +1,5 @@
 s3Test:
-  run: True
+  run: true
   endpoint: https://sos-ch-gva-2.exo.io/
   accessKey: asdfadf
   secretKey: asdfasdf

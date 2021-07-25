@@ -33,14 +33,6 @@
   retries: 10
   delay: 3
 
-- name: Taint nodes - allow pods on master node
-  ignore_errors: yes
-  command: kubectl taint nodes --all node-role.kubernetes.io/master-
-  register: taint_nodes
-  until: taint_nodes.rc == 0
-  retries: 10
-  delay: 3
-
 - name: Set default namespace to 'default'
   command: kubectl config set-context --current --namespace=default # WA to fix namespace issues on jenkins runs
   register: set_context

@@ -9,6 +9,7 @@ noTerraform = False
 testsCatalog = ""
 cfgPathCLI = None
 tcPathCLI = None
+freeMaster = False
 usePrivateIPs = False
 totalCost = 0
 procs = []

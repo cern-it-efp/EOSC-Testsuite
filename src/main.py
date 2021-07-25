@@ -161,7 +161,7 @@ parser = argparse.ArgumentParser(prog="./test_suite",
                                  description='EOSC Test-Suite.',
                                  allow_abbrev=False)
 parser.add_argument('-y',
-                    help='No interactive.',
+                    help='No interactive (TBD).',
                     action='store_false',
                     dest="interactive")
 parser.add_argument('-o','--onlyTest',
@@ -205,6 +205,9 @@ parser.add_argument('--noWatch',
 parser.add_argument('--publish',
                     help='Push results to CERN S3.',
                     action='store_true')
+parser.add_argument('--freeMaster',
+                    help='Do not allow running tests on the master node.',
+                    action='store_true')
 
 args = parser.parse_args()
 
@@ -224,6 +227,8 @@ if args.noTerraform:
     noTerraform = True
 if args.publish:
     publish = True
+if args.freeMaster:
+    freeMaster = True
 if args.clustersToDestroy:
     clustersToDestroy = args.clustersToDestroy
     if "all" in clustersToDestroy:
@@ -292,9 +297,19 @@ if len(msgArr) > 1:
     if customNodes is not None:
         numberOfNodes = customNodes
     else:
-        numberOfNodes = len(msgArr) - 1
+        if freeMaster:
+            numberOfNodes = len(msgArr) # No test/bmk will be deployed on the master node, hence an extra node.
+        else:
+            numberOfNodes = len(msgArr) - 1
     p = Process(target=sharedClusterTests, args=( # shared cluster provisioning
-        msgArr, onlyTest, retry, noTerraform, resDir, numberOfNodes, usePrivateIPs))
+                                                msgArr,
+                                                onlyTest,
+                                                retry,
+                                                noTerraform,
+                                                resDir,
+                                                numberOfNodes,
+                                                usePrivateIPs,
+                                                freeMaster))
     procs.append(p)
     p.start()
     cluster += 1
@@ -304,7 +319,12 @@ for test in customClustersTests:
         logger("CLUSTER %s: %s" % (cluster, test),
                "=", "src/logging/%s" % test)
         p = Process(target=eval(test), args=( # custom clusters provisioning
-            onlyTest, retry, noTerraform, resDir, usePrivateIPs))
+                                            onlyTest,
+                                            retry,
+                                            noTerraform,
+                                            resDir,
+                                            usePrivateIPs,
+                                            freeMaster))
         procs.append(p)
         p.start()
         cluster += 1

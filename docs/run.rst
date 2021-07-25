@@ -62,6 +62,14 @@ Options
 --noWatch
     Makes the test suite not use the watch function, hence disabling logs.
 
+--freeMaster
+    Disables running pods (tests and/or benchmarks) on the master node.
+    For the shared cluster, an extra node would be added. For example, if 3 tests were selected, 4 nodes would be created.
+    For the other clusters, the number of nodes created would still be the one the user specified on the tests catalog YAML file.
+
+--publish
+    Upload results to CERN's S3. More information can be found here.
+
 
 Other commands
 ==================

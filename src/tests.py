@@ -21,7 +21,8 @@ def sharedClusterTests(msgArr,
                        noTerraform,
                        resDir,
                        numberOfNodes,
-                       usePrivateIPs):
+                       usePrivateIPs,
+                       freeMaster):
     """ Runs the test that share the general purpose cluster.
 
     Parameters:
@@ -60,7 +61,8 @@ def sharedClusterTests(msgArr,
                                           baseCWD,
                                           extraSupportedClouds,
                                           noTerraform,
-                                          usePrivateIPs)
+                                          usePrivateIPs,
+                                          freeMaster)
         if prov is False:
             toPut = {"test": "shared", "deployed": False}
             if "provision" in msg:

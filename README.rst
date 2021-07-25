@@ -31,7 +31,7 @@ The test-suite executes four main steps:
 
 3) Harvest results: at the end of each test run a result file -written in JSON- is created. This file is collected from the pod running on the cluster.
 
-4) Through a verification system, the Test-Suite can also be triggered from a service running at CERN. This is an optional step and in this case, results are then pushed to a S3 Bucket at CERN. (Under development)
+4) Optionally, destroy resources.
 
 The test set described in the `Tests Catalog <https://eosc-testsuite.readthedocs.io/en/latest/testsCatalog.html>`_ section of the documentation is based on the tests used in the |hnsc| PCP project funded by the European Commission.
 
@@ -43,8 +43,6 @@ The developers would like to thank all test owners and contributors to this proj
 
 **This suite has been tested on:**
 
-+------------------------------+---------------------------------------------------------------------------------+
-|OS on launcher machine        | Ubuntu, CentOS, CoreOS, Debian, RedHat, Fedora                                  |
 +------------------------------+---------------------------------------------------------------------------------+
 |OS running on provider's VMs  | CentOS7, Ubuntu 16.04, Ubuntu 18.04                                             |
 +------------------------------+---------------------------------------------------------------------------------+
@@ -68,11 +66,19 @@ Release notes
 ---------------------------------------------
 (Note the versions are numbered with the date of the release: YEAR.MONTH)
 
-``21.X - latest``
+``21.7 - latest``
 
 - Included (Terraform) support to deploy on: Ionos, CloudSigma,
 
 - Updated CPU Benchmark: using new Hepscore based implementation.
+
+- Network test (perfSONAR) update: added reverse throughput measurement & retries.
+
+- Complete networking provisioning: AWS and Openstack.
+
+- Added option --freeMaster to disable running tests/benchmarks on the master node.
+
+- Updated results upload to CERN's private Object Storage.
 
 ``21.4``
 

@@ -84,7 +84,8 @@ def ansiblePlaybook(mainTfDir,
                     noTerraform,
                     test,
                     configs,
-                    usePrivateIPs):
+                    usePrivateIPs,
+                    freeMaster):
     """Runs ansible-playbook with the given playbook.
 
     Parameters:
@@ -154,6 +155,9 @@ def ansiblePlaybook(mainTfDir,
 
                 # --------------- GPU support
                 playbooksArray = [playbookPath]
+
+                if not freeMaster:
+                    playbooksArray.append("src/provisionment/playbooks/allowMasterRuns.yaml")
 
                 if test == "dlTest":
                     playbooksArray.append("src/provisionment/playbooks/gpuSupport.yaml")
