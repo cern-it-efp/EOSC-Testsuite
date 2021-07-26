@@ -19,7 +19,7 @@ spec:
   hostNetwork: true
   containers:
   - name: ps-cont
-    image: perfsonar/testpoint:latest
+    image: perfsonar/testpoint:v4.3.4
     securityContext:
       privileged: true
     imagePullPolicy: Always
