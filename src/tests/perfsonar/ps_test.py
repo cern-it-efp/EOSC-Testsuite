@@ -319,5 +319,14 @@ for TASK in TASKS:
     with open(resultsFile, 'a') as outfile:
         outfile.write(json_dump(result_data))
 
+############# TODO - improve
+with open(resultsFile, 'r') as infile:
+    result_data = infile.read()
+    result_data = "[%s]" % result_data.replace("}{","},{")
+
+with open(resultsFile, 'w') as outfile:
+    outfile.write(result_data)
+#############
+
 # The End
 exit(0)

@@ -22,7 +22,7 @@ destroyOnCompletion = None
 clustersToDestroy = None
 customNodes = None
 s3Endpoint = "https://s3.cern.ch"
-resultsBucket = "ts-results" # "ocre-results"
+resultsBucket = "ocre-results" # "ts-results"
 
 configs = ""
 testsCatalog = ""

@@ -1,24 +1,12 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
 providerName: "aws"
 pathToKey: "/home/ipelu/.ssh/id_rsa"
+pathToPubKey: "/home/ipelu/.ssh/id_rsa.pub"
 openUser: centos # ubuntu
-flavor: "t2.medium"
-sharedCredentialsFile: "/home/ipelu/.aws/credentials"
+flavor: t2.medium
+sharedCredentialsFile: "/home/ipelu/.aws/credentials_aws"
 
-#region: us-east-2
-#ami: ami-08ee2516c7709ea48 # Centos US
-#ami: ami-0fc20dd1da406780b # Ubuntu US ohio
+region: "eu-central-1" # Frankfurt
+ami: ami-0957ba512eafd08d9 # Centos Frankfurt
 
-region: "eu-central-1"
-ami: ami-0957ba512eafd08d9 # Centos EU
-#ami: ami-07dc7ebc6545c4e3c # Ubuntu EU-central 1
-
-keyName: "exo"
 storageCapacity: 100
-
-#securityGroups: ["launch-wizard-1"] # optional
-
-#---------------COST CALCULATION------------------------------------------------
-costCalculation:
-  generalInstancePrice: 0.2
-  GPUInstancePrice: 0.2
