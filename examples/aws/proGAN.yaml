@@ -1,0 +1,5 @@
+proGANTest:
+  run: true
+  flavor: p3.2xlarge
+  images_amount: 1
+  kimg: 1

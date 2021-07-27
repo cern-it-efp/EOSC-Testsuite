@@ -1,12 +1,10 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
-providerName: "aws"
-pathToKey: "/home/ipelu/.ssh/id_rsa"
-pathToPubKey: "/home/ipelu/.ssh/id_rsa.pub"
-openUser: centos # ubuntu
+providerName: aws
+pathToKey: /home/ipelu/.ssh/id_rsa
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
+openUser: ubuntu
 flavor: t2.medium
-sharedCredentialsFile: "/home/ipelu/.aws/credentials_aws"
-
-region: "eu-central-1" # Frankfurt
-ami: ami-0957ba512eafd08d9 # Centos Frankfurt
-
-storageCapacity: 100
+sharedCredentialsFile: /home/ipelu/.aws/credentials_aws
+region: us-east-2
+ami: ami-028dbc12531690cf4 # amazon/Deep Learning AMI (Ubuntu 18.04) Version 48.0
+storageCapacity: 150

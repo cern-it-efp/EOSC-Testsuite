@@ -461,7 +461,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
     init.queue.put(({"test": "dlTest", "deployed": res}, testCost))
 
 
-def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
+def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs, freeMaster):
     """ Train a Progressive GAN.
 
     Parameters:
@@ -487,9 +487,13 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
     else:
         flavor = proGAN["flavor"]
 
+    numberOfNodes = 1
+    if freeMaster is True:
+        numberOfNodes = 2
+
     if onlyTest is False:
         prov, msg = provisionAndBootstrap("proGANTest",
-                                          1,
+                                          numberOfNodes,
                                           flavor,
                                           "src/logging/proGANTest",
                                           init.configs,
@@ -499,7 +503,8 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
                                           baseCWD,
                                           extraSupportedClouds,
                                           noTerraform,
-                                          usePrivateIPs)
+                                          usePrivateIPs,
+                                          freeMaster)
         if prov is False:
             toPut = {"test": "proGANTest", "deployed": res}
             if "provision" in msg:
