@@ -1,10 +1,10 @@
-pathToKey: "/home/ipelu/.ssh/id_rsa"
-pathToPubKey: "/home/ipelu/.ssh/id_rsa.pub"
-image_name: "centos-7-server-2021-04-01"
+pathToKey: /home/ipelu/.ssh/id_rsa
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
+image_name: centos-7-server-2021-07-01
 storageCapacity: 50
-authFile: ""
+authFile: /data/career/cern/clouds/bechtle_ionos/p.yaml
 location: "de/fra"
 flavor:
-  cores: 2
-  ram: 4096 # The amount of memory for the server in MB.
+  cores: 8
+  ram: 32768 # The amount of memory for the server in MB.
 providerName: ionoscloud

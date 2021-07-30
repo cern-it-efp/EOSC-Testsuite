@@ -10,7 +10,7 @@
 # ------------------------------------ Allow root ssh
 - hosts: all
   become: no
-  gather_facts: true
+  #gather_facts: true
   vars:
     open_user: "{{ ansible_user_id }}"
   tasks:
