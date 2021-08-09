@@ -284,15 +284,16 @@ except:
 # TESTING BEGINS HERE
 # -----------------------------------------------------------------------------
 
-if os.system("pscheduler ping %s" % endpoint) != 0:
-    fail("perfSONAR not reachable at '%s'" % endpoint, quit=True)
-
 # Wait for test tools to be ready on the server
 while len(url_get("https://localhost/pscheduler/tests",
     params={"detail": True})[1]) < 1:
     print("Tools not ready yet...")
     time.sleep(10)
     pass
+
+# TODO: unreliable
+#if os.system("pscheduler ping %s" % endpoint) != 0:
+#    fail("perfSONAR not reachable at '%s'" % endpoint, quit=True)
 
 retries = 20
 retry_sleep = 5

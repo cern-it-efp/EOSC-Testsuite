@@ -133,6 +133,7 @@ When using cloud credits, when the credit is exhausted, data can be repatriated 
 CPU Benchmarking
 ==========================================
 Benchmarking relying on a suite containing several High Energy Physics (HEP) based benchmarks.
+For this test, the VM should have at least 4 cores.
 Please refer to the repository below for more details and information.
 
 - Contributors/Owners: Domenico Giordano (CERN) - domenico.giordano AT cern.ch

@@ -8,10 +8,3 @@ template: "Linux Ubuntu 18.04 LTS 64-bit"
 keyPair: "k_cl"
 securityGroups: ["default"]
 storageCapacity: 100
-
-#---------------COST CALCULATION------------------------------------------------
-costCalculation:
-  generalInstancePrice: 0.2
-  GPUInstancePrice: 0.2
-  HPCInstancePrice: 0.2
-  s3bucketPrice:

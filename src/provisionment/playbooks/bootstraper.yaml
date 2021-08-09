@@ -16,6 +16,20 @@
   tasks:
   - include_tasks: allow_root.yaml
 
+# ------------------------------------ Set VMs hostnames (needed for Ionos)
+- hosts: master
+  become: yes
+  tasks:
+  - name: Set master hostname
+    ansible.builtin.hostname:
+      name: kubenode-0
+- hosts: slaves
+  become: yes
+  tasks:
+  - name: Set slaves hostnames
+    ansible.builtin.hostname:
+      name: kubenode-{{ query('community.general.random_string', upper=false, numbers=false, special=false, length=4)[0] }}
+
 # ------------------------------------ pkg manager & install dependencies
 - hosts: all
   become: yes

@@ -8,6 +8,16 @@
     name: docker
     state: started
 
+- name: Set Docker's cgroup driver to systemd
+  copy:
+    dest: /etc/docker/daemon.json
+    content: "{\"exec-opts\": [\"native.cgroupdriver=systemd\"]}"
+
+- name: Restart Docker
+  service:
+    name: docker
+    state: restarted
+
 - name: Install kubeadm, kubelet and kubectl
   package:
     name: kubeadm,kubectl,kubelet
@@ -36,5 +46,4 @@
 #net.bridge.bridge-nf-call-iptables = 1
 #EOF
 #sysctl --system
-
 #echo 1 > /proc/sys/net/ipv4/ip_forward # only master or all nodes?
