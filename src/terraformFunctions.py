@@ -195,6 +195,13 @@ def terraformProvisionment(
         terraform_cli_vars["flavor"] = flavor
         terraform_cli_vars["instanceName"] = nodeName
 
+        if configs["providerName"] == "cloudsigma":
+
+            staticIPs = tryTakeFromYaml(configs,"staticIPs",None)
+            if staticIPs is not None:
+                terraform_cli_vars["customCount"] = len(staticIPs)
+                terraform_cli_vars["staticIPs"] = staticIPs
+
         if configs["providerName"] == "azurerm":
 
             terraform_cli_vars["clusterRandomID"] = randomId # var.clusterRandomID to have unique interfaces and disks names
@@ -285,7 +292,7 @@ def terraformProvisionment(
                         mainTfDir,
                         baseCWD,
                         test,
-                        "Provisioning %d '%s' VMs..." % (nodes, flavor),
+                        "Provisioning %d '%s' VMs..." % (terraform_cli_vars["customCount"], flavor), # "Provisioning %d '%s' VMs..." % (nodes, flavor),
                         terraform_cli_vars=terraform_cli_vars) != 0:
             return False, provisionFailMsg
 

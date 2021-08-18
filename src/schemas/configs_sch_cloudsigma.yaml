@@ -9,6 +9,7 @@ required:
     - storageCapacity
     - clone_drive_id
     - flavor
+    - staticIPs
 properties:
     providerName:
         type: string
@@ -36,6 +37,10 @@ properties:
               type: number
           memory:
               type: number
+    staticIPs:
+        type: array
+        items:
+          type: string
     costCalculation:
         type:
             - object

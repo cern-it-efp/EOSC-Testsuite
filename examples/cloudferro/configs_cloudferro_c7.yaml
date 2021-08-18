@@ -5,15 +5,9 @@ pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
 openUser: eouser
 #flavor: eo1.medium # 2 cores
 #flavor: eo1.large # 4 cores, FileContent--proc-sys-net-bridge-bridge-nf-call-iptables
-flavor: eo2.xlarge # 4 cores, FileContent--proc-sys-net-bridge-bridge-nf-call-iptables
+#flavor: eo2.xlarge # 4 cores, FileContent--proc-sys-net-bridge-bridge-nf-call-iptables
+flavor: eo2.2xlarge # 8 cores / 32GB
 IPpool: external
 imageID: c3aa300c-57ab-4caa-a6e0-1e653ac6e42a # CentOS 7
-storageCapacity: 50
+storageCapacity: 100
 externalNetID: be3cb8d6-5b30-42e7-8fc8-4b5371cd6fe4
-
-#---------------COST CALCULATION------------------------------------------------
-costCalculation:
-  generalInstancePrice:
-  GPUInstancePrice:
-  HPCInstancePrice: 0.2
-  s3bucketPrice: 0.1

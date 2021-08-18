@@ -39,4 +39,7 @@ variable "gpuCount" { default = "" }
 variable "gpuType" { default = "" }
 variable "gcp_keyAsMetadata" { default = "" }
 
+############################ CLOUDSIGMA ########################################
+variable "staticIPs" { default = "" }
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~ END OF VARS  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

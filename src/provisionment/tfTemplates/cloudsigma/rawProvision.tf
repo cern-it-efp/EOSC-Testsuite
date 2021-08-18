@@ -39,5 +39,9 @@ resource "cloudsigma_server" "server" {
   drive {
     uuid = element(cloudsigma_drive.os_drive.*.uuid, count.index)
   }
+  network {
+    ipv4_address = element(var.staticIPs, count.index) # TODO: staticIPs should be optional
+    type         = "static"
+  }
   ssh_keys = [cloudsigma_ssh_key.key.uuid]
 }
