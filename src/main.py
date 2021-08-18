@@ -127,9 +127,6 @@ def publishResults(s3ResDirBase):
     aws_secret_access_key = os.environ.get('S3_SEC_KEY')
     endpoint_url = os.environ.get('S3_ENDPOINT', s3Endpoint)
 
-    print(aws_secret_access_key)
-    print(aws_access_key_id)
-
     if aws_access_key_id == None or aws_secret_access_key == None:
         print("WARNING: no credentials were provided, the results will not be published.")
         return False

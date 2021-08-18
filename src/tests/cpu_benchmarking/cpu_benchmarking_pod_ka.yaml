@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: dodas-pod
+  name: hep-bmk-pod
   namespace: default
   labels:
     test: test-pod
@@ -18,13 +18,11 @@ spec:
         topologyKey: kubernetes.io/hostname
   hostNetwork: true
   containers:
-  - name: dodas-cont
-    image: cloudpg/cmssw:mc-test
+  - name: hep-benchmark-suite
+    image: gitlab-registry.cern.ch/hep-benchmarks/hep-benchmark-suite/hep-benchmark-suite-cc7:prior
     imagePullPolicy: Always
     securityContext:
       privileged: true
     command: ["/bin/sh","-c"]
     args:
-    - wget https://raw.githubusercontent.com/cern-it-efp/EOSC-Testsuite/development/src/tests/dodas/custom_entrypoint.sh &&
-      sh custom_entrypoint.sh &&
-      sleep infinity
+      - tail -f /dev/null

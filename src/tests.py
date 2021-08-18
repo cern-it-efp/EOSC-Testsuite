@@ -317,6 +317,7 @@ def dodasTest(resDir):
     podPath = "%s:/CMSSW/CMSSW_9_4_0/src" % podName
     localPath = "%sdodas/custom_entrypoint.sh" % testsRoot
     cmd = "sh /CMSSW/CMSSW_9_4_0/src/custom_entrypoint.sh"
+    cmd = "sleep infinity"
     kubeconfig = defaultKubeconfig
     runTest(definition,
             toLog,
