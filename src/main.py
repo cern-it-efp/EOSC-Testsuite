@@ -271,8 +271,13 @@ if retry is True:
 
 
 # -----------------CREATE RESULTS FOLDER AND GENERAL FILE------------------
-s3ResDirBase = configs["providerName"] + "/" + str(
+vendorDir = configs["providerName"]
+if vendorDir == "openstack":
+    vendorDir = configs["vendor"]
+
+s3ResDirBase = vendorDir + "/" + str(
     datetime.datetime.now().strftime("%d-%m-%Y_%H-%M-%S"))
+
 resDir = "results/%s/detailed" % s3ResDirBase
 os.makedirs(resDir)
 generalResults = {

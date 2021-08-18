@@ -1,5 +1,6 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
 providerName: openstack
+vendor: cloudferro
 pathToKey: /home/ipelu/.ssh/id_rsa
 pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
 openUser: eouser
