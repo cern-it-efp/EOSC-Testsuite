@@ -20,6 +20,12 @@ spec:
   containers:
   - name: ps-cont
     image: perfsonar/testpoint:v4.3.4
+    imagePullPolicy: Always
     securityContext:
       privileged: true
-    imagePullPolicy: Always
+    command: ["/bin/sh","-c"]
+    args:
+    - wget https://raw.githubusercontent.com/cern-it-efp/EOSC-Testsuite/development/src/tests/perfsonar/ps_test.py &&
+      yum -y install python-dateutil python-requests &&
+      python -u ps_test.py --ep $ENDPOINT &&
+      sleep infinity

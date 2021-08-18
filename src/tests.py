@@ -262,6 +262,30 @@ def cpuBenchmarking(resDir):
             resultOnPod,
             kubeconfig)
 
+def dodasTest(resDir):
+    """ Run DODAS test.
+
+    Parameters:
+        resDir (str): Path to the results folder for the current run.
+    """
+
+    podName = "dodas-pod"
+    definition = "%sdodas/dodas_pod.yaml" % testsRoot
+    resultFile = "dodas_results.json"
+    toLog = "src/logging/shared"
+    testName = "dodasTest"
+    resultOnPod = "/tmp/%s" % resultFile
+
+    kubeconfig = defaultKubeconfig
+    runTest(definition,
+            toLog,
+            testName,
+            resDir,
+            resultFile,
+            podName,
+            resultOnPod,
+            kubeconfig)
+
 
 def perfsonarTest(resDir):
     """ Run Networking Performance test -perfSONAR toolkit-.
@@ -277,14 +301,14 @@ def perfsonarTest(resDir):
     endpoint = init.testsCatalog["perfsonarTest"]["endpoint"]
     dependenciesCMD = "yum -y install python-dateutil python-requests"
     runScriptCMD = "python -u /tmp/ps_test.py --ep %s > /tmp/ps_test_logs 2>&1" % endpoint
-    runOnPodCMD = "%s && %s" % (dependenciesCMD, runScriptCMD)
-    cmd = "%s" % runOnPodCMD
+    cmd = "%s && %s" % (dependenciesCMD, runScriptCMD)
     resultFile = "perfsonar_results.json"
     definition = "%sperfsonar/ps_pod.yaml" % testsRoot
     toLog = "src/logging/shared"
     podPath="%s:/tmp" % podName
     localPath=testsRoot + "perfsonar/ps_test.py"
     resultOnPod = "/tmp/perfsonar_results.json"
+
     kubeconfig = defaultKubeconfig
     runTest(definition,
             toLog,
@@ -299,38 +323,6 @@ def perfsonarTest(resDir):
             localPath=localPath,
             cmd=cmd,
             keepResources=keepPerfsonarPod)
-
-
-def dodasTest(resDir):
-    """ Run DODAS test.
-
-    Parameters:
-        resDir (str): Path to the results folder for the current run.
-    """
-
-    podName = "dodas-pod"
-    toLog = "src/logging/shared"
-    resultFile = "dodas_results.json"
-    resultOnPod = "/tmp/%s" % resultFile
-    definition = "%sdodas/dodas_pod.yaml" % testsRoot
-    testName = "dodasTest"
-    podPath = "%s:/CMSSW/CMSSW_9_4_0/src" % podName
-    localPath = "%sdodas/custom_entrypoint.sh" % testsRoot
-    cmd = "sh /CMSSW/CMSSW_9_4_0/src/custom_entrypoint.sh"
-    cmd = "sleep infinity"
-    kubeconfig = defaultKubeconfig
-    runTest(definition,
-            toLog,
-            testName,
-            resDir,
-            resultFile,
-            podName,
-            resultOnPod,
-            kubeconfig,
-            copyToPodAndRun_flag=True,
-            podPath=podPath,
-            localPath=localPath,
-            cmd=cmd)
 
 
 def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
