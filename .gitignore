@@ -8,6 +8,7 @@ logs
 
 src/tests/s3/s3pod.yaml
 src/tests/data_repatriation/repatriation_pod.yaml
+src/tests/perfsonar/ps_pod.yaml
 
 src/tests/dlTest/mpi_learn.yaml
 src/tests/dlTest/nnlo.yaml

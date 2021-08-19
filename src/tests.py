@@ -214,17 +214,11 @@ def dataRepatriationTest(resDir):
 
     podName = "repatriation-pod"
     toLog = "src/logging/shared"
-    definition_raw = "%sdata_repatriation/raw/repatriation_pod_raw.yaml" % testsRoot
     definition = "%sdata_repatriation/repatriation_pod.yaml" % testsRoot
     resultFile = "data_repatriation_test.json"
     testName = "dataRepatriationTest"
     resultOnPod = "/home/data_repatriation_test.json"
-    substitution = [
-        {
-            "before": "PROVIDER_PH",
-            "after": init.configs["providerName"]
-        }
-    ]
+
     kubeconfig = defaultKubeconfig
     runTest(definition,
             toLog,
@@ -233,9 +227,7 @@ def dataRepatriationTest(resDir):
             resultFile,
             podName,
             resultOnPod,
-            kubeconfig,
-            definition_raw=definition_raw,
-            substitution=substitution)
+            kubeconfig)
 
 
 def cpuBenchmarking(resDir):
@@ -296,6 +288,44 @@ def perfsonarTest(resDir):
 
     keepPerfsonarPod = False # TODO: CTS-190
 
+    endpoint = init.testsCatalog["perfsonarTest"]["endpoint"]
+    podName = "ps-pod"
+    definition_raw = "%sperfsonar/raw/ps_pod.yaml" % testsRoot
+    definition = "%sperfsonar/ps_pod.yaml" % testsRoot
+    resultFile = "perfsonar_results.json"
+    toLog = "src/logging/shared"
+    testName = "perfSONAR"
+    resultOnPod = "/home/perfsonar_results.json"
+    substitution = [
+        {
+            "before": "ENDPOINT_PH",
+            "after": init.testsCatalog["perfsonarTest"]["endpoint"]
+        }
+    ]
+
+    kubeconfig = defaultKubeconfig
+    runTest(definition,
+            toLog,
+            testName,
+            resDir,
+            resultFile,
+            podName,
+            resultOnPod,
+            kubeconfig,
+            definition_raw=definition_raw,
+            substitution=substitution,
+            keepResources=keepPerfsonarPod)
+
+
+def perfsonarTest_og(resDir):
+    """ Run Networking Performance test -perfSONAR toolkit-.
+
+    Parameters:
+        resDir (str): Path to the results folder for the current run.
+    """
+
+    keepPerfsonarPod = False # TODO: CTS-190
+
     podName = "ps-pod"
     testName = "perfSONAR"
     endpoint = init.testsCatalog["perfsonarTest"]["endpoint"]
@@ -307,7 +337,7 @@ def perfsonarTest(resDir):
     toLog = "src/logging/shared"
     podPath="%s:/tmp" % podName
     localPath=testsRoot + "perfsonar/ps_test.py"
-    resultOnPod = "/tmp/perfsonar_results.json"
+    resultOnPod = "/home/perfsonar_results.json"
 
     kubeconfig = defaultKubeconfig
     runTest(definition,
