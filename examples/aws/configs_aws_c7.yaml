@@ -4,7 +4,7 @@ pathToKey: /home/ipelu/.ssh/id_rsa
 pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
 openUser: centos
 flavor: t2.medium # t2.2xlarge # t2.xlarge # c5.large
-sharedCredentialsFile: /home/ipelu/.aws/credentials_aws
+sharedCredentialsFile: /home/ipelu/.aws/credentials_ocre
 
 #region: us-east-2 # Ohio
 #ami: ami-08ee2516c7709ea48 # Centos US
@@ -18,11 +18,4 @@ ami: ami-0957ba512eafd08d9 # Centos Frankfurt
 #region: eu-west-1 # Ireland
 #ami: ami-0d116949fdb20215e # Centos Ireland
 
-storageCapacity: 50
-
-#---------------COST CALCULATION------------------------------------------------
-costCalculation:
-  generalInstancePrice: 0.2
-  GPUInstancePrice: 0.2
-  HPCInstancePrice: 0.2
-  s3bucketPrice: 0.1
+storageCapacity: 100

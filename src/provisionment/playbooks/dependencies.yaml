@@ -1,3 +1,5 @@
+- include_tasks: aptWait.yaml
+
 - name: Install Docker
   package:
     name: docker-ce

@@ -14,7 +14,7 @@ properties:
         type: string
     vendor:
         type: string
-        enum: [cloudferro]
+        enum: [cloudferro, ovh]
     pathToKey:
         type: string
     pathToPubKey:

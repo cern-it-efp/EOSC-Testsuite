@@ -1,0 +1,14 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: openstack
+vendor: ovh
+pathToKey: /home/ipelu/.ssh/id_rsa
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
+openUser: centos
+#flavor: eo1.medium # 2 cores
+#flavor: eo1.large # 4 cores, FileContent--proc-sys-net-bridge-bridge-nf-call-iptables
+#flavor: eo2.xlarge # 4 cores, FileContent--proc-sys-net-bridge-bridge-nf-call-iptables
+flavor: s1-2 # 8 cores / 32GB
+IPpool: external # TODO: if not used, should assume VMs have public IPs (use what normally should be initialized with the private IPs)
+imageID: 72ef0eb7-f1e8-4b9f-a0b3-aa48d400027f # CentOS 7
+storageCapacity: 100
+externalNetID: 6011fbc9-4cbf-46a4-8452-6890a340b60b

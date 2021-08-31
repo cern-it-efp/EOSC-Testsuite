@@ -39,6 +39,7 @@
   - include_tasks: firewall.yaml
   # - include_tasks: bridged_traffic.yaml
   - include_tasks: pkgManagerRepo.yaml
+  - include_tasks: aptWait.yaml
   - include_tasks: dependencies.yaml
 
 # ------------------------------------ Init cluster & generate join command

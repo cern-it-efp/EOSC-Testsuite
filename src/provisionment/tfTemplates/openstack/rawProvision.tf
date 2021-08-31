@@ -1,3 +1,5 @@
+# TODO: add 'region'
+
 terraform {
   required_providers {
     openstack = {
