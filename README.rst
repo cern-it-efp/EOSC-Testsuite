@@ -66,9 +66,9 @@ Release notes
 ---------------------------------------------
 (Note the versions are numbered with the date of the release: YEAR.MONTH)
 
-``21.7 - latest``
+``21.9 - latest``
 
-- Included (Terraform) support to deploy on: Ionos, CloudSigma,
+- Included deployment support for Ionos, CloudSigma, OVH
 
 - Updated CPU Benchmark: using new Hepscore based implementation.
 

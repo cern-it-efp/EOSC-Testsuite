@@ -2,6 +2,8 @@
 providerName: "google"
 pathToKey: "/home/ipelu/.ssh/id_rsa"
 pathToPubKey: "/home/ipelu/.ssh/id_rsa.pub"
+pathToCredentials: "/data/career/cern/clouds/gcp/cern-test-suite-fb46815ac1f0.json"
+project: "cern-test-suite"
 openUser: openu
 
 # Note having small VMs with GPUs may cause "ssh_exchange_identification: read: Connection reset by peer". Got that on master with n1-standard-16 and 2 v100
@@ -21,12 +23,8 @@ zone: "europe-west4-a"
 # gcloud compute images list --project deeplearning-platform-release --no-standard-images | grep -i "tf-1-15-cu"
 #image: "ubuntu-os-cloud/ubuntu-1804-lts" # OK
 #image: "deeplearning-platform-release/tf-1-15-cu110-v20201106-ubuntu-1804" # Failed to update apt cache: unknown reason
-image: "deeplearning-platform-release/tf-1-15-cu110" # Failed to auto-install python-apt. Error was: 'E: Could not get lock /var/lib/dpkg/lock-frontend - open (11: Resource temporarily unavailable)\nE: Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend), is another process using it?
-#image: "deeplearning-platform-release/tf2-ent-2-3-cu110"
-
-
-pathToCredentials: "/data/career/cern/clouds/gcp/cern-test-suite-fb46815ac1f0.json"
-project: "cern-test-suite"
+#image: "deeplearning-platform-release/tf-1-15-cu110" # Failed to auto-install python-apt. Error was: 'E: Could not get lock /var/lib/dpkg/lock-frontend - open (11: Resource temporarily unavailable)\nE: Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend), is another process using it?
+image: "deeplearning-platform-release/tf2-ent-2-3-cu110"
 
 # NOTE: Instances with 1 NVIDIA Tesla V100 must have at most 12 vCPU cores. Either change the machine type or increase the number of GPUs. No limits when selecting 2 or more
 #gpuType: "nvidia-tesla-p100"

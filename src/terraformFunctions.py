@@ -156,6 +156,11 @@ def terraformProvisionment(
     templatesPath_base = "src/provisionment/tfTemplates/%s"
     templatesPath = templatesPath_base % configs["providerName"]
 
+    ########### TODO: add OVH to Opentack's tf script
+    if configs["providerName"] == "openstack" and configs["vendor"] == "ovh":
+        templatesPath = templatesPath_base % "ovh"
+    ###########
+
     mainTfDir = testsRoot + test
     terraform_cli_vars = {}
     kubeconfig = "%s/src/tests/%s/config" % (baseCWD, test)

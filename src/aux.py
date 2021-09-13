@@ -340,13 +340,14 @@ def subprocPrint(test):
                 print("[ %s ] %s" % (test, line.replace('\n', '')))
 
 
-def getIP(resource, provider, public=False):
+def getIP(resource, provider, openstackVendor, public=False):
     """ Given a terraform resource json description, returns the resource's
         IP address if such exists
 
     Parameters:
         resource (object): Terraform resource definition.
         provider (str): Provider name.
+        openstackVendor (str): Openstack Vendor.
         public (bool): If True, get the public IP.
 
     Returns:
@@ -367,9 +368,10 @@ def getIP(resource, provider, public=False):
             return resource["values"]["network_interface"][0]["network_ip"]
 
         elif provider == "openstack":
-            if public is True:
+            if public is not True or openstackVendor == "ovh":
+                return resource["values"]["network"][0]["fixed_ip_v4"]
+            else:
                 return resource["values"]["floating_ip"] # type: openstack_compute_floatingip_associate_v2
-            return resource["values"]["network"][0]["fixed_ip_v4"]
 
         elif provider == "opentelekomcloud": # TODO: automate IP allocation
             if public is True:

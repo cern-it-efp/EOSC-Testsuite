@@ -72,8 +72,6 @@ resource "openstack_compute_instance_v2" "server" {
   depends_on = [openstack_networking_subnet_v2.subnet]
   count = var.customCount
   name = "${var.instanceName}-${count.index}"
-  #image_name = var.image
-  image_id = yamldecode(file(var.configsFile))["imageID"]
   flavor_name = yamldecode(file(var.configsFile))["flavor"]
   security_groups = [openstack_networking_secgroup_v2.secgroup.name] # ["default","allow_ping_ssh_rdp"]
   #config_drive = "true"
@@ -81,6 +79,14 @@ resource "openstack_compute_instance_v2" "server" {
   user_data     = "#cloud-config\n\nssh_authorized_keys:\n  - ${file(yamldecode(file(var.configsFile))["pathToPubKey"])}"
   network {
     uuid = openstack_networking_network_v2.network.id
+  }
+  block_device { # Boots from volume
+    uuid                  = yamldecode(file(var.configsFile))["imageID"]
+    source_type           = "image"
+    volume_size           = yamldecode(file(var.configsFile))["storageCapacity"]
+    boot_index            = 0
+    destination_type      = "volume"
+    delete_on_termination = true
   }
 }
 

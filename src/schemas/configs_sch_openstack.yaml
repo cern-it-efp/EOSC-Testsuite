@@ -7,8 +7,8 @@ required:
     - flavor
     - imageID
     - storageCapacity
-    - externalNetID
-    - IPpool
+    #- externalNetID
+    #- IPpool
 properties:
     providerName:
         type: string

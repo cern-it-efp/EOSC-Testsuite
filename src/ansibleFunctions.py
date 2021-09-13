@@ -49,18 +49,18 @@ def createHostsFile(mainTfDir,
 
     if noTerraform is not True:
         os.chdir(mainTfDir)
-
         tfShowJson = json.loads(runCMD("terraform show -json", read=True))
         resources = tfShowJson["values"]["root_module"]["resources"]
-
         os.chdir(baseCWD)
+
+        openstackVendor = tryTakeFromYaml(configs, "vendor", None)
 
         for resource in resources:
 
             if usePrivateIPs is True:
-                ip = getIP(resource, provider)
+                ip = getIP(resource, provider, openstackVendor)
             else:
-                ip = getIP(resource, provider, public=True) # no bastion method
+                ip = getIP(resource, provider, openstackVendor, public=True) # no bastion method
 
             if ip is not None:
                 IPs.append(ip)

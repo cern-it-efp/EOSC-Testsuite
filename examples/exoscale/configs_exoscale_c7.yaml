@@ -1,11 +1,11 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
-providerName: "exoscale"
+providerName: exoscale
 pathToKey: /home/ipelu/.ssh/id_rsa
 authFile: /home/ipelu/Desktop/.exoCreds
-flavor: "Medium"
-zone: de-fra-1 # "ch-gva-2"
+flavor: Medium
+zone: ch-gva-2 # de-fra-1
 template: "Linux CentOS 7 64-bit"
-keyPair: "k_cl"
+keyPair: k_cl
 securityGroups: ["default"]
 storageCapacity: 100
 
