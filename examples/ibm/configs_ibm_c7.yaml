@@ -1,0 +1,15 @@
+providerName: ibm
+pathToKey: /home/ipelu/.ssh/id_rsa
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
+authFile: /data/career/cern/clouds/ibm/p.yaml
+os_reference_code: CENTOS_7_64
+network_speed: 1000 # The connection speed (in Mbps) for the instance's network components
+flavor: BL1_8X32X100
+#storageCapacity: 25 # TODO
+
+datacenter: ams01 # OK
+#datacenter: fra02 # The location provided for this order is invalid. (HTTP 500)
+#datacenter: fra05 # The location provided for this order is invalid. (HTTP 500)
+#datacenter: foobar # A datacenter could not be found with the name foobar. (HTTP 500)
+#datacenter: ams03 # The location provided for this order is invalid. (HTTP 500)
+#datacenter: sjc03 # The location provided for this order is invalid. (HTTP 500)

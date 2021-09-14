@@ -383,6 +383,11 @@ def getIP(resource, provider, openstackVendor, public=False):
                 return resource["values"]["ip_address"] # type: azurerm_public_ip
             return resource["values"]["private_ip_address"]
 
+        elif provider == "ibm":
+            if public is True:
+                return resource["values"]["ipv4_address"]
+            return resource["values"]["ipv4_address_private"]
+
         # ---
 
         elif provider == "oci":

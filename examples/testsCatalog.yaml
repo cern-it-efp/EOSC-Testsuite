@@ -4,6 +4,6 @@ cpuBenchmarking:
   run: true
 perfsonarTest:
   run: true
-  endpoint: picperfsonar-bandwidth.pic.es
+  endpoint: hx-perfsonar-1a.ebi.ac.uk
 dodasTest:
   run: true

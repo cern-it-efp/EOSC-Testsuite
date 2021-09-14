@@ -68,7 +68,7 @@ Release notes
 
 ``21.9 - latest``
 
-- Included deployment support for Ionos, CloudSigma, OVH
+- Included deployment support for Ionos, CloudSigma, OVH, IBM
 
 - Updated CPU Benchmark: using new Hepscore based implementation.
 

@@ -37,7 +37,7 @@
   - name: Disable swap (if configured)
     command: swapoff -a
   - include_tasks: firewall.yaml
-  # - include_tasks: bridged_traffic.yaml
+  - include_tasks: bridged_traffic.yaml
   - include_tasks: pkgManagerRepo.yaml
   - include_tasks: aptWait.yaml
   - include_tasks: dependencies.yaml

@@ -1,0 +1,55 @@
+type: object
+required:
+    #- storageCapacity
+    - flavor
+    - os_reference_code
+    - pathToKey
+    - pathToPubKey
+    - authFile
+    - providerName
+    - datacenter
+    - network_speed
+properties:
+    providerName:
+        type: string
+    pathToKey:
+        type: string
+    pathToPubKey:
+        type: string
+    authFile:
+        type: string
+    flavor:
+        type: string
+    network_speed:
+        type: number
+    datacenter:
+        type: string
+    os_reference_code:
+        type: string
+    dockerCE:
+        type: string
+    dockerEngine:
+        type: string
+    kubernetes:
+        type: string
+    securityGroups:
+        type: array
+    storageCapacity:
+        type: number
+    costCalculation:
+        type:
+            - object
+        properties:
+            generalInstancePrice:
+                type:
+                    - number
+            GPUInstancePrice:
+                type:
+                    - number
+            HPCInstancePrice:
+                type:
+                    - number
+            s3bucketPrice:
+                type:
+                    - number
+additionalProperties: false

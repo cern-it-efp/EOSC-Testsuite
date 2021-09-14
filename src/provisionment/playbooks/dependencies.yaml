@@ -42,10 +42,3 @@
     name: kubelet
     enabled: yes
     state: started
-
-#cat <<EOF >  /etc/sysctl.d/k8s.conf
-#net.bridge.bridge-nf-call-ip6tables = 1
-#net.bridge.bridge-nf-call-iptables = 1
-#EOF
-#sysctl --system
-#echo 1 > /proc/sys/net/ipv4/ip_forward # only master or all nodes?
