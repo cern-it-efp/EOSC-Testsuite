@@ -46,6 +46,7 @@
 - hosts: master
   become: yes
   tasks:
+  - include_tasks: bridged_traffic.yaml
   - include_tasks: initCluster.yaml
   - name: Get join command
     shell: kubeadm token create --print-join-command

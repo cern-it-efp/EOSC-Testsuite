@@ -1,5 +1,3 @@
-# TODO: add 'region'
-
 terraform {
   required_providers {
     openstack = {
@@ -8,7 +6,10 @@ terraform {
   }
 }
 
-provider "openstack" {}
+provider "openstack" {
+  auth_url = var.authUrl
+  region = var.region
+}
 
 # ID String for resources
 resource "random_string" "id" {
@@ -77,6 +78,7 @@ resource "openstack_compute_instance_v2" "server" {
   #config_drive = "true"
   #power_state = "active"
   user_data     = "#cloud-config\n\nssh_authorized_keys:\n  - ${file(yamldecode(file(var.configsFile))["pathToPubKey"])}"
+  availability_zone = var.availabilityZone
   network {
     uuid = openstack_networking_network_v2.network.id
   }

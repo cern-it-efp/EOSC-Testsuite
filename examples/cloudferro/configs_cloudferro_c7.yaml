@@ -9,6 +9,6 @@ openUser: eouser
 #flavor: eo2.xlarge # 4 cores, FileContent--proc-sys-net-bridge-bridge-nf-call-iptables
 flavor: eo2.2xlarge # 8 cores / 32GB
 IPpool: external
-imageID: c3aa300c-57ab-4caa-a6e0-1e653ac6e42a # CentOS 7
+imageID: 95ff4962-4030-45ad-9718-e640ee4a9f86 # CentOS 7
 storageCapacity: 100
 externalNetID: be3cb8d6-5b30-42e7-8fc8-4b5371cd6fe4

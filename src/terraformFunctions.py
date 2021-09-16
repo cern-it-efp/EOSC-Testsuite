@@ -240,6 +240,14 @@ def terraformProvisionment(
                                                         configs,
                                                         "availabilityZone",
                                                         None)
+            terraform_cli_vars["region"] = tryTakeFromYaml(
+                                                        configs,
+                                                        "region",
+                                                        None)
+            terraform_cli_vars["authUrl"] = tryTakeFromYaml(
+                                                        configs,
+                                                        "authUrl",
+                                                        None)
 
         if configs["providerName"] == "opentelekomcloud":
 

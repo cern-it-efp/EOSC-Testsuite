@@ -1,0 +1,20 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: openstack
+vendor: x-ion
+pathToKey: /home/ipelu/.ssh/id_rsa
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
+openUser: centos
+
+flavor: blc.1-2 # 1vCPU / 2GB
+#flavor: blc.8-24 # 8vCPU / 24GB
+#flavor: blc.8-32 # 8vCPU / 32GB
+
+imageID: f7aa8253-a2d2-4a7a-98f9-455fa102796f # CentOS 7 (Downloaded from http://cloud.centos.org/centos/7/images, then imported)
+storageCapacity: 60
+
+externalNetID: bb44f95a-29a1-49fd-b39b-182d27b9fc75 # public
+IPpool: public
+
+#availabilityZone: zone01
+#availabilityZone: zone02
+availabilityZone: zone03

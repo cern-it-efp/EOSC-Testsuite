@@ -21,6 +21,7 @@ variable "kubernetes" { default = "" }
 ############################ OPENSTACK #########################################
 variable "availabilityZone" { default = "" } # region is above
 variable "useDefaultNetwork" { default = true } # default uses existing network (if only 1, otherwise fails)
+variable "authUrl" { default = "" }
 
 ############################ AZURE #############################################
 variable "clusterRandomID" { default = "" }

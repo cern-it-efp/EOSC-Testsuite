@@ -10,11 +10,15 @@ required:
     #- externalNetID
     #- IPpool
 properties:
+    authUrl:
+        type: string
+    region:
+        type: string
     providerName:
         type: string
     vendor:
         type: string
-        enum: [cloudferro, ovh]
+        enum: [cloudferro, ovh, citynetwork, x-ion]
     pathToKey:
         type: string
     pathToPubKey:
@@ -39,8 +43,6 @@ properties:
         type: string
     securityGroups:
         type: array
-    region:
-        type: string
     availabilityZone:
         type: string
     networkName:

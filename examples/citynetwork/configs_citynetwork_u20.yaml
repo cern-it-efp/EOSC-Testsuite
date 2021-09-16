@@ -1,0 +1,19 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: openstack
+vendor: citynetwork
+pathToKey: /home/ipelu/.ssh/id_rsa
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
+openUser: ubuntu
+
+flavor: 8C-32GB-100GB
+
+IPpool: ext-net
+
+storageCapacity: 100
+
+# TODO - Different regions have different image IDs
+#imageID: a4703fcd-3e1d-4cda-9790-89b96ed834c4 # Ubuntu 20.04 Focal Fossa (qcow2 format) - fails with block_device
+#imageID: 235d9bfb-7a13-4434-9966-cfc0ae033e79 # Ubuntu 20.04 Focal Fossa (raw format) - works
+
+# did "terraform apply" and "terraform show" because dont have access to the Horizon dashboard and the ext-net network is not shown in the UI
+externalNetID: 2aec7a99-3783-4e2a-bd2b-bbe4fef97d1c
