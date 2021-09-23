@@ -17,7 +17,7 @@ prompt(){
         -f src/tests/proGANTest/main.tf ||
         -f src/tests/hpcTest/main.tf ||
         -f src/tests/shared/main.tf) ]]; then
-    read -p "WARNING: Looks like infrastructure already exists. Overwrite? " yn
+    read -p "WARNING: there are infrastructure files from a previous run which would be deleted now. Continue? [yN]" yn
     case $yn in
         [Yy]* ) :;;
         * ) echo "Aborting"; exit;;
@@ -68,23 +68,22 @@ while [[ "$1" != "" ]]; do
 
   else
     opts+=" "$1
-    if [[ "$1" == '--no-terraform' ]]; then
+    if [[ "$1" == '--noTerraform' ]]; then
       noTerraform=1
       shift
-    elif [[ "$1" == '--only-test' ]]; then
+    elif [ "$1" == '--onlyTest' ] || [ "$1" == '-o' ]; then
       onlyTest=1
       shift
     fi
     shift
   fi
-
 done
 ###################################################################
 
 
 
 ############# TEST SUITE RUN ######################################
-#prompt
+prompt
 watchFunct &
 python3 -B -u src/main.py $opts &> logs
 outStat=$?

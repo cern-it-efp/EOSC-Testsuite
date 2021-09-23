@@ -19,15 +19,18 @@ spec:
   hostNetwork: true
   containers:
   - name: ps-cont
-    image: perfsonar/testpoint:v4.3.4
+    #image: perfsonar/testpoint:v4.3.4 # ok
+    #image: perfsonar/testpoint # 4.4.1 - fails https://github.com/perfsonar/perfsonar-testpoint-docker/issues/22
+    image: perfsonar/testpoint:systemd # ok - systemd instead of supervisord
     imagePullPolicy: Always
     securityContext:
       privileged: true
     command: ["/bin/sh","-c"]
     args: # https://github.com/perfsonar/perfsonar-testpoint-docker/blob/master/Dockerfile#L80
-    - /usr/bin/supervisord -c /etc/supervisord.conf &
+    #- /usr/bin/supervisord -c /etc/supervisord.conf &
+    - /usr/sbin/init &
       yum install wget python-dateutil python-requests -y &&
       wget https://raw.githubusercontent.com/cern-it-efp/EOSC-Testsuite/development/src/tests/perfsonar/ps_test.py &&
-      python -u ps_test.py --ep pse01-gva.cern.ch &&
+      python -u ps_test.py --ep ENDPOINT_PH &&
       mv /tmp/perfsonar_results.json /home/perfsonar_results.json &&
       sleep infinity

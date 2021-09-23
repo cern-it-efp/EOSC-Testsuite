@@ -2,12 +2,12 @@
 providerName: exoscale
 pathToKey: /home/ipelu/.ssh/id_rsa
 authFile: /home/ipelu/Desktop/.exoCreds
-flavor: Medium
+flavor: Small # Medium
 zone: ch-gva-2 # de-fra-1
 template: "Linux CentOS 7 64-bit"
 keyPair: k_cl
 securityGroups: ["default"]
-storageCapacity: 100
+storageCapacity: 50
 
 #---------------COST CALCULATION------------------------------------------------
 #costCalculation:

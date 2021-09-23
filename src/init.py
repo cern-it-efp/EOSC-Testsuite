@@ -89,6 +89,14 @@ def initAndChecks(noTerraform,
     global testsCatalog
 
     # --------File & deps check
+
+    # TODO - currently at test_suite
+    #if checkFormerInfraFiles() == False:
+    #    if input("WARNING: there are infrastructure files from a previous \
+    #              run which would be deleted now. Continue?") != "yes":
+    #        print("Quitting")
+    #        stop(1)
+
     if runCMD("terraform version", hideLogs=True) != 0:
         print("Terraform is not installed")
         stop(1)

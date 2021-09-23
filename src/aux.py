@@ -12,6 +12,7 @@ try:
     import shutil
     import random
     import string
+    import glob
     from configparser import ConfigParser
 
 except ModuleNotFoundError as ex:
@@ -20,6 +21,13 @@ except ModuleNotFoundError as ex:
 
 yaml.warnings({'YAMLLoadWarning': False}) # https://github.com/yaml/pyyaml/wiki/PyYAML-yaml.load(input)-Deprecation
 
+
+def checkFormerInfraFiles():
+    """ Checks if there are Terraform state files from a previous run. """
+
+    if len(glob.glob("src/tests/*/terraform.tfstate")) == 0:
+        return True
+    return False
 
 def getRandomID():
     """ Returns a random ID """

@@ -4,16 +4,23 @@ vendor: citynetwork
 pathToKey: /home/ipelu/.ssh/id_rsa
 pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
 openUser: ubuntu
+IPpool: ext-net
 
 flavor: 8C-32GB-100GB
 
-IPpool: ext-net
-
 storageCapacity: 100
 
-# TODO - Different regions have different image IDs
-#imageID: a4703fcd-3e1d-4cda-9790-89b96ed834c4 # Ubuntu 20.04 Focal Fossa (qcow2 format) - fails with block_device
-#imageID: 235d9bfb-7a13-4434-9966-cfc0ae033e79 # Ubuntu 20.04 Focal Fossa (raw format) - works
-
-# did "terraform apply" and "terraform show" because dont have access to the Horizon dashboard and the ext-net network is not shown in the UI
+region: Fra1 # Frankfurt
+imageID: 235d9bfb-7a13-4434-9966-cfc0ae033e79 # Ubuntu 20.04 Focal Fossa (raw format) - works
+authUrl: https://fra1.citycloud.com:5000
 externalNetID: 2aec7a99-3783-4e2a-bd2b-bbe4fef97d1c
+
+#region: Sto2 # Stockholm
+#imageID:
+#authUrl: https://sto2.citycloud.com:5000
+#externalNetID: 3e4a9105-7b10-4186-a053-dc9373bba0f4
+
+#region: Kna1 # Karlskrona
+#imageID:
+#authUrl: https://kna1.citycloud.com:5000
+#externalNetID: fba95253-5543-4078-b793-e2de58c31378

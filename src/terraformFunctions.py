@@ -113,6 +113,7 @@ def cleanupTF(mainTfDir):
         "terraform.tfvars.json",
         "terraform.tfstate",
         "terraform.tfstate.backup",
+        ".terraform.lock.hcl",
         ".terraform"]:
         file = "%s/%s" % (mainTfDir, filename)
         if os.path.isfile(file):
