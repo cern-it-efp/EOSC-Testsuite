@@ -6,23 +6,70 @@ terraform {
   }
 }
 
+# Configure the IBM Provider
 provider "ibm" {
-    iaas_classic_username = yamldecode(file(yamldecode(file(var.configsFile))["authFile"]))["iaas_classic_username"]
-    iaas_classic_api_key = yamldecode(file(yamldecode(file(var.configsFile))["authFile"]))["iaas_classic_api_key"]
+    region = yamldecode(file(var.configsFile))["region"]
+    ibmcloud_api_key = yamldecode(file(yamldecode(file(var.configsFile))["authFile"]))["ibmcloud_api_key"]
 }
 
-resource "ibm_compute_ssh_key" "ssh_key" {
-    label = "ocrets_ssh_key"
-    public_key = "${file(yamldecode(file(var.configsFile))["pathToPubKey"])}"
+# ID String for resources
+resource "random_string" "id" {
+  length  = 5
+  special = false
+  upper   = false
 }
 
-resource "ibm_compute_vm_instance" "instance" {
-  count             = var.customCount
-  hostname          = "${var.instanceName}-${count.index}"
-  domain            = "ocre.ts"
-  ssh_key_ids       = [ibm_compute_ssh_key.ssh_key.id]
-  os_reference_code = yamldecode(file(var.configsFile))["os_reference_code"]
-  datacenter        = yamldecode(file(var.configsFile))["datacenter"]
-  network_speed     = yamldecode(file(var.configsFile))["network_speed"]
-  flavor_key_name   = yamldecode(file(var.configsFile))["flavor"]
+# Create VPC
+resource "ibm_is_vpc" "vpc" { # Available only in MZRs
+  name = "ts-vpc-${random_string.id.result}"
+}
+
+# Create Security Group (and attach rules)
+resource "ibm_is_security_group" "security_group" {
+  name = "ts-secgroup-${random_string.id.result}"
+  vpc  = ibm_is_vpc.vpc.id
+}
+resource "ibm_is_security_group_rule" "security_group_rule_all_in" {
+    group = ibm_is_security_group.security_group.id
+    direction = "inbound"
+}
+resource "ibm_is_security_group_rule" "security_group_rule_all_out" {
+    group = ibm_is_security_group.security_group.id
+    direction = "outbound"
+}
+
+# Create Subnet
+resource "ibm_is_subnet" "subnet" {
+  name            = "ts-subnet-${random_string.id.result}"
+  vpc             = ibm_is_vpc.vpc.id
+  zone            = yamldecode(file(var.configsFile))["zone"]
+  total_ipv4_address_count = 32
+}
+
+# Create SSH Key
+resource "ibm_is_ssh_key" "sshkey" {
+  name       = "ts-sshkey-${random_string.id.result}"
+  public_key = "${file(yamldecode(file(var.configsFile))["pathToPubKey"])}"
+}
+
+# Create Instance(s)
+resource "ibm_is_instance" "instance" {
+  count = var.customCount
+  name    = "${var.instanceName}-${count.index}"
+  image   = yamldecode(file(var.configsFile))["image"]
+  profile = yamldecode(file(var.configsFile))["flavor"]
+  primary_network_interface {
+    subnet = ibm_is_subnet.subnet.id
+    security_groups = [ibm_is_security_group.security_group.id]
+  }
+  vpc  = ibm_is_vpc.vpc.id
+  zone = yamldecode(file(var.configsFile))["zone"]
+  keys = [ibm_is_ssh_key.sshkey.id]
+}
+
+# Create Floating IP
+resource "ibm_is_floating_ip" "floating_ip" {
+  count = var.customCount
+  name   = "ts-fip-${random_string.id.result}-${count.index}"
+  target = ibm_is_instance.instance[count.index].primary_network_interface[0].id
 }

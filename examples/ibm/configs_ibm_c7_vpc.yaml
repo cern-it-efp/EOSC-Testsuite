@@ -1,0 +1,17 @@
+providerName: ibm
+pathToKey: /home/ipelu/.ssh/id_rsa
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
+authFile: /data/career/cern/clouds/ibm/p.yaml
+flavor: "bx2-2x8"
+#flavor: "bx2-8x32" # 100GB
+#flavor: "bx2d-8x32" # 300GB
+
+#image: "r010-28e8b4ba-6ab7-4af8-a01c-d9c38ccb3203" # centos7 eu-de
+#zone: "eu-de-1"
+#region: "eu-de"
+
+image: "r018-3cba45f6-4c4d-46fe-aef3-f458feda6cfe" # centos7 eu-gb
+zone: "eu-gb-1"
+region: "eu-gb"
+
+#storageCapacity: 25 # TODO

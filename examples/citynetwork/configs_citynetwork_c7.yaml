@@ -10,15 +10,15 @@ flavor: 8C-32GB-100GB
 
 storageCapacity: 100
 
-region: Fra1 # Frankfurt
-imageID: 215aa686-d986-4b10-9bed-f2b57e7a7a07 # CentOS 7 1602 - block_device accepts only raw format images
-authUrl: https://fra1.citycloud.com:5000
-externalNetID: 2aec7a99-3783-4e2a-bd2b-bbe4fef97d1c
+#region: Fra1 # Frankfurt
+#imageID: 215aa686-d986-4b10-9bed-f2b57e7a7a07 # CentOS 7 1602 - block_device accepts only raw format images
+#authUrl: https://fra1.citycloud.com:5000
+#externalNetID: 2aec7a99-3783-4e2a-bd2b-bbe4fef97d1c
 
-#region: Sto2 # Stockholm
-#imageID: 11863132-1a7b-4328-a0d8-80d282f687ae # CentOS 7 1602 - block_device accepts only raw format images
-#authUrl: https://sto2.citycloud.com:5000
-#externalNetID: 3e4a9105-7b10-4186-a053-dc9373bba0f4
+region: Sto2 # Stockholm
+imageID: 11863132-1a7b-4328-a0d8-80d282f687ae # CentOS 7 1602 - block_device accepts only raw format images
+authUrl: https://sto2.citycloud.com:5000
+externalNetID: 3e4a9105-7b10-4186-a053-dc9373bba0f4
 
 #region: Kna1 # Karlskrona
 #imageID: 0b44d240-3822-4d46-b6aa-33073d574522 # CentOS 7 1602 - block_device accepts only raw format images

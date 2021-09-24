@@ -1,14 +1,17 @@
 type: object
 required:
-    #- storageCapacity
-    - flavor
-    - os_reference_code
     - pathToKey
     - pathToPubKey
     - authFile
     - providerName
-    - datacenter
-    - network_speed
+    - flavor
+    - image
+    - zone
+    - region
+    #- storageCapacity
+    #- os_reference_code # Classic
+    #- datacenter # Classic
+    #- network_speed # Classic
 properties:
     providerName:
         type: string
@@ -19,6 +22,12 @@ properties:
     authFile:
         type: string
     flavor:
+        type: string
+    image:
+        type: string
+    zone:
+        type: string
+    region:
         type: string
     network_speed:
         type: number

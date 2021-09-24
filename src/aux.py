@@ -393,9 +393,10 @@ def getIP(resource, provider, openstackVendor, public=False):
 
         elif provider == "ibm":
             if public is True:
-                return resource["values"]["ipv4_address"]
-            return resource["values"]["ipv4_address_private"]
-
+                #return resource["values"]["ipv4_address"] # Classic Infrastructure
+                return resource["values"]["address"] # VPC Infrastructure
+            #return resource["values"]["ipv4_address_private"] # Classic Infrastructure
+            return resource["values"]["primary_network_interface"][0]["primary_ipv4_address"] # VPC Infrastructure
         # ---
 
         elif provider == "oci":

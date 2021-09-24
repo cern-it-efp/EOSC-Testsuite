@@ -4,6 +4,6 @@ cpuBenchmarking:
   run: true
 perfsonarTest:
   run: true
-  endpoint: hx-perfsonar-1a.ebi.ac.uk
+  endpoint: pse01-gva.cern.ch
 dodasTest:
   run: true
