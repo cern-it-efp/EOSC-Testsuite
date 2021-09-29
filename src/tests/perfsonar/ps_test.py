@@ -106,9 +106,9 @@ TASK_traceroute_reverse = {
     "schema": 1,
     "test": {
         "spec": {
-            "source-node": endpoint,
             "dest": cloudIP,
-            "schema": 1
+            "schema": 1,
+            "source": endpoint,
         },
         "type": "trace"
     },
@@ -125,7 +125,9 @@ TASK_tracepath = {
         },
         "type": "trace"
     },
-    "tool": "tracepath",
+    "tools": [
+        "tracepath"
+    ],
     "schedule": {}
 }
 
@@ -134,13 +136,15 @@ TASK_tracepath_reverse = {
     "schema": 1,
     "test": {
         "spec": {
-            "source-node": endpoint,
             "dest": cloudIP,
-            "schema": 1
+            "schema": 1,
+            "source": endpoint
         },
         "type": "trace"
     },
-    "tool": "tracepath",
+    "tools": [
+        "tracepath"
+    ],
     "schedule": {}
 }
 

@@ -28,6 +28,6 @@ spec:
     - /usr/bin/supervisord -c /etc/supervisord.conf &
       yum install wget python-dateutil python-requests -y &&
       wget https://raw.githubusercontent.com/cern-it-efp/EOSC-Testsuite/development/src/tests/perfsonar/ps_test.py &&
-      python -u ps_test.py --ep pse01-gva.cern.ch &&
+      python -u ps_test.py --ep pse01-gva.cern.ch --cloudIP 158.177.3.67 &&
       mv /tmp/perfsonar_results.json /home/perfsonar_results.json &&
       sleep infinity
