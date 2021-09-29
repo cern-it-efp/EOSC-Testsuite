@@ -52,11 +52,16 @@ resource "ibm_is_ssh_key" "sshkey" {
   public_key = "${file(yamldecode(file(var.configsFile))["pathToPubKey"])}"
 }
 
+# Retrieve Image
+data "ibm_is_image" "image" {
+  name = yamldecode(file(var.configsFile))["image"] # "centos-7.x-amd64"
+}
+
 # Create Instance(s)
 resource "ibm_is_instance" "instance" {
   count = var.customCount
   name    = "${var.instanceName}-${count.index}"
-  image   = yamldecode(file(var.configsFile))["image"]
+  image   = data.ibm_is_image.image.id
   profile = yamldecode(file(var.configsFile))["flavor"]
   primary_network_interface {
     subnet = ibm_is_subnet.subnet.id

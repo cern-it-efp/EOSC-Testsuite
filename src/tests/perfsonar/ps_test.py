@@ -13,11 +13,16 @@ import sys
 # This is the name of the host where the task should be posted.
 LEAD = "localhost"
 tasks_url = "https://%s/pscheduler/tasks" % (LEAD)
-endpoint = getopt.getopt(sys.argv, "", ["--ep"])[1][2]
+
+cli_args = getopt.getopt(sys.argv, "", ["--ep","--cloudIP"])[1]
+endpoint = cli_args[2]
+cloudIP = cli_args[4]
+
 resultsFile = "/tmp/perfsonar_results.json"
 customTO=30
 
 TASK_latency = {  # pscheduler task --format=json latencybg --packet-count 38 --dest $ENDPOINT / pscheduler task --format=json latency --dest $ENDPOINT
+    "msg": "Latency from Cloud to Buyer",
     "schema": 1,
     "test": {
         "spec": {
@@ -30,6 +35,7 @@ TASK_latency = {  # pscheduler task --format=json latencybg --packet-count 38 --
 }
 
 TASK_latencybg = {
+    "msg": "Latencybg from Cloud to Buyer",
     "schema": 1,
     "test": {
         "spec": {
@@ -43,6 +49,7 @@ TASK_latencybg = {
 }
 
 TASK_throughput = {  # pscheduler task --format=json throughput --dest $ENDPOINT
+    "msg": "Throughput from Cloud to Buyer",
     "schema": 1,
     "test": {
         "spec": {
@@ -55,6 +62,7 @@ TASK_throughput = {  # pscheduler task --format=json throughput --dest $ENDPOINT
 }
 
 TASK_throughput_reverse = {
+    "msg": "Throughput from Buyer to Cloud",
     "schema": 1,
     "test": {
         "spec": {
@@ -68,6 +76,7 @@ TASK_throughput_reverse = {
 }
 
 TASK_rtt = {  # pscheduler task --format=json rtt --dest $ENDPOINT
+    "msg": "Round Trip Time",
     "schema": 1,
     "test": {
         "spec": {
@@ -79,7 +88,8 @@ TASK_rtt = {  # pscheduler task --format=json rtt --dest $ENDPOINT
     "schedule": {}
 }
 
-TASK_trace = {  # pscheduler task --format=json trace --dest $ENDPOINT
+TASK_traceroute = {  # pscheduler task --format=json trace --dest $ENDPOINT
+    "msg": "Traceroute from Cloud to Buyer",
     "schema": 1,
     "test": {
         "spec": {
@@ -91,7 +101,57 @@ TASK_trace = {  # pscheduler task --format=json trace --dest $ENDPOINT
     "schedule": {}
 }
 
-TASKS = [TASK_rtt, TASK_trace, TASK_latency, TASK_throughput, TASK_throughput_reverse]
+TASK_traceroute_reverse = {
+    "msg": "Traceroute from Buyer to Cloud",
+    "schema": 1,
+    "test": {
+        "spec": {
+            "source-node": endpoint,
+            "dest": cloudIP,
+            "schema": 1
+        },
+        "type": "trace"
+    },
+    "schedule": {}
+}
+
+TASK_tracepath = {
+    "msg": "Tracepath from Cloud to Buyer",
+    "schema": 1,
+    "test": {
+        "spec": {
+            "dest": endpoint,
+            "schema": 1
+        },
+        "type": "trace"
+    },
+    "tool": "tracepath",
+    "schedule": {}
+}
+
+TASK_tracepath_reverse = {
+    "msg": "Tracepath from Buyer to Cloud",
+    "schema": 1,
+    "test": {
+        "spec": {
+            "source-node": endpoint,
+            "dest": cloudIP,
+            "schema": 1
+        },
+        "type": "trace"
+    },
+    "tool": "tracepath",
+    "schedule": {}
+}
+
+TASKS = [TASK_rtt,
+         TASK_traceroute,
+         #TASK_traceroute_reverse,
+         TASK_tracepath,
+         #TASK_tracepath_reverse,
+         TASK_latency,
+         TASK_throughput,
+         TASK_throughput_reverse]
 
 # -----------------------------------------------------------------------------
 # Utilities
@@ -99,9 +159,9 @@ def fail(message, task=None, quit=None):
     """Complain about a problem and exit."""
 
     print("----------------------------------------------------------")
-    print("message: %s" % message)
-    print("task: %s" % task)
-    print("quit: %s" % quit)
+    print("message: %s" % str(message))
+    print("task: %s" % str(task))
+    print("quit: %s" % str(quit))
     print("----------------------------------------------------------")
 
     error = {
@@ -299,7 +359,8 @@ retries = 20
 retry_sleep = 5
 for TASK in TASKS:
 
-    print("Running: "+ TASK["test"]["type"])
+    print("Running: "+ TASK["msg"])
+    del(TASK["msg"])
 
     err, result_data = manage_and_run_task()
 

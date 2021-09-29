@@ -159,8 +159,16 @@ def terraformProvisionment(
 
     ########### TODO: add OVH to Opentack's tf script
     if configs["providerName"] == "openstack" and configs["vendor"] == "ovh":
-        templatesPath = templatesPath_base % "ovh"
-    ###########
+        templatesPath = templatesPath_base % configs["vendor"]
+    ############################################################################
+
+    ########### IBM offers two infrastructures: Classic and VPC
+    if configs["providerName"] == "ibm" and configs["useClassic"] == True:
+        rawProvisioning = loadFile("%s/rawProvision_classic.tf" % templatesPath,
+                                   required=True)
+    else:
+        rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath,
+                                   required=True)
 
     mainTfDir = testsRoot + test
     terraform_cli_vars = {}
@@ -191,8 +199,7 @@ def terraformProvisionment(
                                                            None)
 
 
-        rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath,
-                                   required=True)
+
         #print(rawProvisioning) # OK
         writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
         #print("\n %s" % open(mainTfDir + "/main.tf").read()) # FU

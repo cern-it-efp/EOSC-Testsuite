@@ -5,16 +5,13 @@ required:
     - authFile
     - providerName
     - flavor
-    - image
-    - zone
-    - region
+    - useClassic
     #- storageCapacity
-    #- os_reference_code # Classic
-    #- datacenter # Classic
-    #- network_speed # Classic
 properties:
     providerName:
         type: string
+    useClassic:
+        type: boolean
     pathToKey:
         type: string
     pathToPubKey:
@@ -23,26 +20,27 @@ properties:
         type: string
     flavor:
         type: string
-    image:
-        type: string
-    zone:
-        type: string
-    region:
-        type: string
-    network_speed:
-        type: number
-    datacenter:
-        type: string
-    os_reference_code:
-        type: string
     dockerCE:
         type: string
     dockerEngine:
         type: string
     kubernetes:
         type: string
-    securityGroups:
-        type: array
+    ####### Classic Infrastructure
+    os_reference_code:
+        type: string
+    datacenter:
+        type: string
+    network_speed:
+        type: number
+    ####### VPC Infrastructure
+    zone:
+        type: string
+    region:
+        type: string
+    image:
+        type: string
+
     storageCapacity:
         type: number
     costCalculation:
@@ -61,4 +59,27 @@ properties:
             s3bucketPrice:
                 type:
                     - number
+
+####### Classic Infrastructure
+if:
+    properties:
+        useClassic:
+            const: true
+then:
+    required:
+        - os_reference_code
+        - datacenter
+        - network_speed
+
+####### VPC Infrastructure
+if:
+    properties:
+        useClassic:
+            const: False
+then:
+    required:
+        - zone
+        - region
+        - image
+
 additionalProperties: false

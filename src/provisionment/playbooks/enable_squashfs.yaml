@@ -1,0 +1,10 @@
+# On IBM's VPC Infrastructure CentOS7 VMs squashfs is disabled "(...) per security requirements" at /etc/modprobe.d/squashfs.conf (https://forums.centos.org/viewtopic.php?t=71485)
+# -----------------
+- name: Remove squashfs disability (IBM VPC Infra.)
+  ignore_errors: yes
+  shell: mv /etc/modprobe.d/squashfs.conf /etc/modprobe.d/squashfs
+
+# -----------------
+- name: Enable squashfs module (IBM VPC Infra.)
+  ignore_errors: yes
+  shell: modprobe squashfs

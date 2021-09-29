@@ -290,7 +290,7 @@ queue = Queue()
 init.queue = queue
 cluster = 1
 
-msgArr = ["CLUSTER %s: (parallel running tests):" % (cluster)]
+msgArr = ["CLUSTER %s: (parallel running tests)" % (cluster)]
 for test in testsSharingCluster:
     if testsCatalog[test]["run"] is True:
         msgArr.append(test)

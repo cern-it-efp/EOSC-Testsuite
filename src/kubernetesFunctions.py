@@ -69,7 +69,18 @@ def checkPodAlive(podName, resDir, toLog, resultFile, kubeconfig):
     # kubectl get pods -o=json | jq .items[].metadata.name
 
     v1 = client.CoreV1Api()
-    ret = v1.list_namespaced_pod("default") # list_pod_for_all_namespaces(watch=False) # TODO: t/o if the connection is lost?
+
+    ############ TODO: list_namespaced_pod times out if the connection is lost
+    while True:
+        try:
+            ret = v1.list_namespaced_pod("default")
+            break
+        except ApiException: # kubernetes.client.exceptions.ApiException,
+            print("WARNING: Error from server: etcdserver - request timed out" \
+                   " (%s). Retrying in 5 seconds" % podName)
+            time.sleep(5)
+    ############################################################################
+
     podNames = [i.metadata.name for i in ret.items] # i.status.pod_ip
     if podName not in podNames:
         writeFail(resDir,

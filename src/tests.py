@@ -286,9 +286,11 @@ def perfsonarTest(resDir):
         resDir (str): Path to the results folder for the current run.
     """
 
-    keepPerfsonarPod = False # TODO: CTS-190
+    try:
+        keepPerfsonarPod = init.testsCatalog["perfsonarTest"]["keepPod"]
+    except:
+        keepPerfsonarPod = False
 
-    endpoint = init.testsCatalog["perfsonarTest"]["endpoint"]
     podName = "ps-pod"
     definition_raw = "%sperfsonar/raw/ps_pod.yaml" % testsRoot
     definition = "%sperfsonar/ps_pod.yaml" % testsRoot
@@ -300,6 +302,9 @@ def perfsonarTest(resDir):
         {
             "before": "ENDPOINT_PH",
             "after": init.testsCatalog["perfsonarTest"]["endpoint"]
+        },{
+            "before": "CLOUDIP_PH",
+            "after": getMasterIP("src/tests/shared/hosts")
         }
     ]
 

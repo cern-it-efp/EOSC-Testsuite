@@ -44,7 +44,7 @@ The developers would like to thank all test owners and contributors to this proj
 **This suite has been tested on:**
 
 +------------------------------+---------------------------------------------------------------------------------+
-|OS running on provider's VMs  | CentOS7, Ubuntu 16.04, Ubuntu 18.04                                             |
+|OS running on provider's VMs  | CentOS7, Ubuntu 18.04, Ubuntu 20.04                                             |
 +------------------------------+---------------------------------------------------------------------------------+
 |Providers / clouds            | | AWS                                                                           |
 |                              | | Google Cloud                                                                  |
@@ -56,8 +56,12 @@ The developers would like to thank all test owners and contributors to this proj
 |                              | | CloudFerro (OpenStack)                                                        |
 |                              | | CloudStack                                                                    |
 |                              | | OpenStack                                                                     |
-|                              | | CloudSigma                                                                    |
 |                              | | Ionos                                                                         |
+|                              | | CloudSigma                                                                    |
+|                              | | OVH                                                                           |
+|                              | | IBM                                                                           |
+|                              | | CityNetwork                                                                   |
+|                              | | X-ion                                                                         |
 +------------------------------+---------------------------------------------------------------------------------+
 
 The suite is being tested in several additional cloud providers. As tests are concluded, the cloud providers names will be added in the table above.
@@ -72,9 +76,11 @@ Release notes
 
 - Updated CPU Benchmark: using new Hepscore based implementation.
 
+- Enabled prompt to inform of existing Terraform files.
+
 - Network test (perfSONAR) update: added reverse throughput measurement & retries.
 
-- Complete networking provisioning: AWS and Openstack.
+- Complete networking/VPC provisioning: AWS, Openstack, IBM.
 
 - Added option --freeMaster to disable running tests/benchmarks on the master node.
 

@@ -53,14 +53,12 @@ def createHostsFile(mainTfDir,
         resources = tfShowJson["values"]["root_module"]["resources"]
         os.chdir(baseCWD)
 
-        openstackVendor = tryTakeFromYaml(configs, "vendor", None)
-
         for resource in resources:
 
             if usePrivateIPs is True:
-                ip = getIP(resource, provider, openstackVendor)
+                ip = getIP(resource, configs)
             else:
-                ip = getIP(resource, provider, openstackVendor, public=True) # no bastion method
+                ip = getIP(resource, configs, public=True) # no bastion method
 
             if ip is not None:
                 IPs.append(ip)
