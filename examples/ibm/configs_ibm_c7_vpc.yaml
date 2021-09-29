@@ -5,12 +5,14 @@ authFile: /data/career/cern/clouds/ibm/p.yaml
 useClassic: False
 image: ibm-centos-7-9-minimal-amd64-3
 
-flavor: "bx2-2x8" # 2 cores / 8GB / 100GB
-#flavor: "bx2-8x32" # 8 cores / 32GB / 100GB
+#flavor: "bx2-2x8" # 2 cores / 8GB / 100GB
+flavor: "bx2-8x32" # 8 cores / 32GB / 100GB
 #flavor: "bx2d-8x32" # 8 cores / 32GB / 300GB
 
+# FRANKFURT
 zone: "eu-de-1"
 region: "eu-de"
 
+# LONDON
 #zone: "eu-gb-1"
 #region: "eu-gb"
