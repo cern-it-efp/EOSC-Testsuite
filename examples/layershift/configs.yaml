@@ -1,0 +1,6 @@
+providerName: layershift
+cores: 8
+nodes: 5
+tokenPath: /data/career/cern/clouds/layershift/token.yaml
+podsOnMaster: False
+# TODO: memory? storage?

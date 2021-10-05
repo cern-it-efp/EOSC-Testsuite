@@ -247,6 +247,7 @@ if args.clustersToDestroyOnCompletion:
 # -----------------CHECKS AND PREPARATION---------------------------------
 selectedTests = init.initAndChecks(noTerraform,
                                    extraSupportedClouds,
+                                   onlyTest,
                                    usePrivateIPs,
                                    cfgPathCLI=cfgPathCLI,
                                    tcPathCLI=tcPathCLI)

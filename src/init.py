@@ -42,7 +42,8 @@ extraSupportedClouds = ["openstack",
                         "oci",
                         "ionoscloud",
                         "cloudsigma",
-                        "ibm"]
+                        "ibm",
+                        "layershift"]
 testsSharingCluster = ["s3Test",
                        "dataRepatriationTest",
                        "perfsonarTest",
@@ -66,6 +67,7 @@ provisionFailMsg = "Failed to provision raw VMs. Check 'logs' file for details"
 
 def initAndChecks(noTerraform,
                   extraSupportedClouds,
+                  onlyTest,
                   usePrivateIPs,
                   cfgPathCLI=None,
                   tcPathCLI=None):
@@ -74,6 +76,7 @@ def initAndChecks(noTerraform,
     Parameters:
         noTerraform (bool): Specifies whether current run uses terraform.
         extraSupportedClouds (dict): Extra supported clouds.
+        onlyTest (str): If True the provisioning phase is skipped.
         usePrivateIPs (bool): If True, the current run is not using bastion.
         cfgPath (str): Path to configs.yaml file.
         tcPath (str): Path to testsCatalog.yaml file.
@@ -115,7 +118,7 @@ def initAndChecks(noTerraform,
 
     configs, testsCatalog = validateConfigs(cfgPath, tcPath, noTerraform, extraSupportedClouds, allTests)
 
-    if configs['providerName'] in ("oci", "opentelekomcloud"): # authFile validate (only YAML)
+    if configs['providerName'] in ("oci", "opentelekomcloud"): # authFile validate (only YAML) # TODO: some missing here (new ones)
         authFile = loadFile(configs["authFile"], required=True)
         schema = loadFile("src/schemas/authFile_sch_%s.yaml" % configs["providerName"], required=True)
         validateAuth(authFile, schema)
@@ -132,13 +135,14 @@ def initAndChecks(noTerraform,
                     configs['providerName'], True)
         stop(1)
 
-    # SSH key checks: exists and permissions set to 600
-    if os.path.isfile(configs["pathToKey"]) is False:
-        print("Key file not found at '%s'" % configs["pathToKey"])
-        stop(1)
-    if "600" not in oct(os.stat(configs["pathToKey"]).st_mode & 0o777):
-        print("Key permissions must be set to 600")
-        stop(1)
+    if onlyTest is False:
+        # SSH key checks: exists and permissions set to 600
+        if os.path.isfile(configs["pathToKey"]) is False:
+            print("Key file not found at '%s'" % configs["pathToKey"])
+            stop(1)
+        if "600" not in oct(os.stat(configs["pathToKey"]).st_mode & 0o777):
+            print("Key permissions must be set to 600")
+            stop(1)
 
     # --------Tests config checks
     selected = []

@@ -61,7 +61,8 @@ The developers would like to thank all test owners and contributors to this proj
 |                              | | OVH                                                                           |
 |                              | | IBM                                                                           |
 |                              | | CityNetwork                                                                   |
-|                              | | X-ion                                                                         |
+|                              | | X-Ion                                                                         |
+|                              | | Layershift                                                                    |
 +------------------------------+---------------------------------------------------------------------------------+
 
 The suite is being tested in several additional cloud providers. As tests are concluded, the cloud providers names will be added in the table above.
@@ -70,9 +71,9 @@ Release notes
 ---------------------------------------------
 (Note the versions are numbered with the date of the release: YEAR.MONTH)
 
-``21.9 - latest``
+``21.10 - latest``
 
-- Included deployment support for Ionos, CloudSigma, OVH, IBM, CityNetwork, X-ion
+- Included deployment support for Ionos, CloudSigma, OVH, IBM, CityNetwork, X-Ion, Layershift
 
 - Updated CPU Benchmark: using new Hepscore based implementation.
 

@@ -3,6 +3,8 @@
 
 src/provisionment/bastionProvisionment/*/.terraform*
 src/provisionment/bastionProvisionment/*/terraform.tfstate*
+src/provisionment/nonTerraform/layershift/k8s-full.yaml
+src/provisionment/nonTerraform/layershift/response.json
 
 logs
 

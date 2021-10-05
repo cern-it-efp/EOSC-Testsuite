@@ -10,9 +10,9 @@ flavor: "bx2-8x32" # 8 cores / 32GB / 100GB
 #flavor: "bx2d-8x32" # 8 cores / 32GB / 300GB
 
 # FRANKFURT
-zone: "eu-de-1"
-region: "eu-de"
+#zone: "eu-de-1"
+#region: "eu-de"
 
 # LONDON
-#zone: "eu-gb-1"
-#region: "eu-gb"
+zone: "eu-gb-1"
+region: "eu-gb"

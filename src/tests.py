@@ -44,7 +44,7 @@ def sharedClusterTests(msgArr,
     testCost = 0
     logger(msgArr, "=", "src/logging/shared")
 
-    if noTerraform is True:
+    if noTerraform is True or onlyTest is True:
         flavor = None
     else:
         flavor = init.configs["flavor"]
@@ -302,10 +302,10 @@ def perfsonarTest(resDir):
         {
             "before": "ENDPOINT_PH",
             "after": init.testsCatalog["perfsonarTest"]["endpoint"]
-        },{
-            "before": "CLOUDIP_PH",
-            "after": getMasterIP("src/tests/shared/hosts")
-        }
+        }#,{  # TODO: unable to run "reverse" trace using the pS API
+        #    "before": "CLOUDIP_PH",
+        #    "after": getMasterIP("src/tests/shared/hosts")
+        #}
     ]
 
     kubeconfig = defaultKubeconfig

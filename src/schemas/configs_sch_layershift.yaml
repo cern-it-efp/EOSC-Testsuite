@@ -1,0 +1,35 @@
+type: object
+required:
+    - providerName
+    - cores
+    - nodes
+    - tokenPath
+    - podsOnMaster
+properties:
+    providerName:
+        type: string
+    cores:
+        type: number
+    nodes:
+        type: number
+    tokenPath:
+        type: string
+    podsOnMaster:
+        type: boolean
+    costCalculation:
+        type:
+            - object
+        properties:
+            generalInstancePrice:
+                type:
+                    - number
+            GPUInstancePrice:
+                type:
+                    - number
+            HPCInstancePrice:
+                type:
+                    - number
+            s3bucketPrice:
+                type:
+                    - number
+additionalProperties: false
