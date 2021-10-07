@@ -4,7 +4,6 @@ required:
     - cores
     - nodes
     - tokenPath
-    - podsOnMaster
 properties:
     providerName:
         type: string
@@ -14,8 +13,6 @@ properties:
         type: number
     tokenPath:
         type: string
-    podsOnMaster:
-        type: boolean
     costCalculation:
         type:
             - object

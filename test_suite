@@ -66,6 +66,10 @@ while [[ "$1" != "" ]]; do
     outStat=$?
     exit $outStat
 
+  elif [ "$1" == '--help' ] || [ "$1" == '-h' ]; then
+    python3 -B -u src/main.py -h
+    exit
+
   else
     opts+=" "$1
     if [[ "$1" == '--noTerraform' ]]; then

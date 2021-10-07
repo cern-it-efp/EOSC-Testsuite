@@ -34,22 +34,19 @@ def loadFile(loadThis, required=None):
         else:
             return inputfile.read().strip()
 
-def createCluster(podsOnMaster):
+def createCluster():
     """ Create a cluster. """
 
     cmd = "curl --silent -X POST '%s' --data session=%s --data-urlencode jps@%s" % (installURL, token, k8senv_path)
     resp = os.popen(cmd).read().strip()
-
-    if podsOnMaster is True:
-        cmd = "kubectl taint nodes --selector='node-role.kubernetes.io/master' node-role.kubernetes.io/master-"
-        resp = os.popen(cmd).read().strip()
+    print("Cluster create curl response: %s" % resp)
 
     clusterParams = {}
     clusterParams["apiEndpoint"] = json.loads(resp)["startPage"]
     clusterParams["accessToken"] = json.loads(resp)["successText"]
     clusterParams["environmentName"] = json.loads(resp)["startPage"].replace("https://","").replace(".j.layershift.co.uk/api/","")
 
-    #Persist cluster details
+    #Persist cluster details # TODO: if the previous curl fails, the cluster may be created but not the response.json file
     with open(clusterDetails, 'w') as outfile:
         json.dump(clusterParams, outfile, indent=4, sort_keys=True)
 
@@ -63,9 +60,12 @@ def configKubectl(clusterParams):
           "kubectl config set-context jelastic --cluster=jelastic && " \
           "kubectl config set-credentials user --token=%s && " \
           "kubectl config set-context jelastic --user=user && " \
-          "kubectl config use-context jelastic" % (clusterParams["apiEndpoint"], clusterParams["accessToken"])
+          "kubectl config use-context jelastic &> /dev/null" % (clusterParams["apiEndpoint"], clusterParams["accessToken"])
 
-    return os.system(cmd)
+    exitCode = os.system(cmd)
+    while exitCode != 0:
+        print("Failed to create kubeconfig, retrying in 5 seconds...")
+        exitCode = os.system(cmd)
 
 
 def clusterCleanup():
@@ -101,6 +101,11 @@ parser.add_argument('-d',
                     help='Destroy existing cluster.',
                     action='store_true',
                     dest="destroyFlag")
+parser.add_argument('--cluster',
+                    help='Cluster (environment) name.',
+                    type=str,
+                    dest="envName")
+
 args = parser.parse_args()
 
 configs_path = os.path.abspath(args.cfgPathCLI) # ../../../../examples/layershift/configs.yaml
@@ -127,7 +132,12 @@ except:
 
 
 if args.destroyFlag:
-    if os.path.isfile(clusterDetails) is True:
+    if args.envName:
+        if destroyCluster(args.envName, token) == 0:
+            print("Cluster removed")
+        else:
+            print("Error removing cluster")
+    elif os.path.isfile(clusterDetails) is True:
         envName = json.loads(loadFile(clusterDetails))["environmentName"]
         if destroyCluster(envName, token) == 0:
             os.remove(clusterDetails)
@@ -149,9 +159,13 @@ else:
         print("A cluster already exists.")
         sys.exit()
 
-    print("Creating cluster... (takes around 10 minutes)")
-    respCC = createCluster(configs["podsOnMaster"])
-    print("Cluster created, configuring it...")
+    print("#### Creating cluster... (takes around 10 minutes)")
+    respCC = createCluster()
+
+    print("#### Cluster created, configuring it...")
     configKubectl(respCC)
+
+    print("#### Cluster cleanup...")
     clusterCleanup()
-    print("DONE (manage ~/.kube/config)")
+
+    print("#### DONE (manage ~/.kube/config)")

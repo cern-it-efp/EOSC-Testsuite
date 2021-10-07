@@ -155,7 +155,7 @@ header()
 
 # -----------------CMD OPTIONS--------------------------------------------
 parser = argparse.ArgumentParser(prog="./test_suite",
-                                 description='EOSC Test-Suite.',
+                                 description='EOSC Test-Suite - Cloud Benchmarking And Validation',
                                  allow_abbrev=False)
 parser.add_argument('-y',
                     help='No interactive (TBD).',
