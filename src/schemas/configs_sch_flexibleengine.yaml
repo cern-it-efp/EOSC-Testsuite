@@ -1,24 +1,19 @@
 type: object
 required:
     - providerName
-    - vendor
     - pathToKey
     - pathToPubKey
     - flavor
     - imageID
+    - openUser
+    - region
+    - availabilityZone
+    - authFile
     - storageCapacity
-    #- externalNetID
-    #- IPpool
+    - bandwidth
 properties:
-    authUrl:
-        type: string
-    region:
-        type: string
     providerName:
         type: string
-    vendor:
-        type: string
-        enum: [cloudferro, ovh, citynetwork, x-ion, cern]
     pathToKey:
         type: string
     pathToPubKey:
@@ -27,25 +22,23 @@ properties:
         type: string
     imageID:
         type: string
-    externalNetID:
+    openUser:
         type: string
-    IPpool:
+    authFile:
         type: string
     storageCapacity:
         type: number
-    openUser:
+    bandwidth:
+        type: number
+    availabilityZone:
+        type: string
+    region:
         type: string
     dockerCE:
         type: string
     dockerEngine:
         type: string
     kubernetes:
-        type: string
-    securityGroups:
-        type: array
-    availabilityZone:
-        type: string
-    networkName:
         type: string
     costCalculation:
         type:

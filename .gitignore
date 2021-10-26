@@ -1,6 +1,8 @@
 *.terraform*
 *terraform.tfstate*
 
+examples/cern/*
+
 src/provisionment/bastionProvisionment/*/.terraform*
 src/provisionment/bastionProvisionment/*/terraform.tfstate*
 src/provisionment/nonTerraform/layershift/k8s-full.yaml
@@ -8,7 +10,7 @@ src/provisionment/nonTerraform/layershift/response.json
 
 logs
 
-src/tests/s3/s3pod.yaml
+src/tests/s3/cosbench_pod.yaml
 src/tests/data_repatriation/repatriation_pod.yaml
 src/tests/perfsonar/ps_pod.yaml
 

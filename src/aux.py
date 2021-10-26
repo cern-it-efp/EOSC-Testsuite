@@ -383,9 +383,9 @@ def getIP(resource, configs, public=False):
             else:
                 return resource["values"]["floating_ip"] # type: openstack_compute_floatingip_associate_v2
 
-        elif provider == "opentelekomcloud":
+        elif provider == "opentelekomcloud" or provider == "flexibleengine":
             if public is True:
-                return resource["values"]["floating_ip"] # type: opentelekomcloud_compute_floatingip_associate_v2
+                return resource["values"]["floating_ip"] # type: opentelekomcloud_compute_floatingip_associate_v2 / flexibleengine_compute_floatingip_associate_v2
             return resource["values"]["access_ip_v4"]
 
         elif provider == "azurerm":

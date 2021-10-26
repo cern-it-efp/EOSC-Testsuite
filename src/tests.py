@@ -159,36 +159,44 @@ def runTest(definition,
 
 
 def s3Test(resDir):
-    """ Run S3 endpoints test.
+    """ Run S3 test (COSBench).
 
     Parameters:
         resDir (str): Path to the results folder for the current run.
     """
 
+    try:
+        keepPod = init.testsCatalog["s3Test"]["keepPod"]
+    except:
+        keepPod = False
+
     testCost = 0
-    podName = "s3pod"
-    definition_raw = "%ss3/raw/s3pod_raw.yaml" % testsRoot
-    definition = "%ss3/s3pod.yaml" % testsRoot
-    resultFile = "s3Test.json"
+    podName = "cosbench-pod"
+    definition_raw = "%ss3/raw/cosbench_pod_raw.yaml" % testsRoot
+    definition = "%ss3/cosbench_pod.yaml" % testsRoot
+    resultFile = "s3-main.csv"
     toLog = "src/logging/shared"
     testName = "s3Test"
-    resultOnPod = "/home/s3_test.json"
+    resultOnPod = "/cosbench/archive/w1-s3-sample/s3-main.csv"
     additionalResourcesPrices = [tryTakeFromYaml(
                                 init.configs,
                                 "costCalculation.s3bucketPrice",
                                 None)]
+
+    keysFile = loadFile(init.testsCatalog["s3Test"]["keysFile"])
+
     substitution = [
         {
             "before": "ENDPOINT_PH",
-            "after": init.testsCatalog["s3Test"]["endpoint"]
+            "after": init.testsCatalog["s3Test"]["endpoint"].replace("/","\/") # TODO: enough escaping?
         },
         {
-            "before": "ACCESS_PH",
-            "after": init.testsCatalog["s3Test"]["accessKey"]
+            "before": "ACCESS_PH", # TODO: these should not go in the tests catalog file
+            "after": keysFile["accessKey"]
         },
         {
             "before": "SECRET_PH",
-            "after": init.testsCatalog["s3Test"]["secretKey"]
+            "after": keysFile["secretKey"]
         }
     ]
     kubeconfig = defaultKubeconfig
@@ -202,7 +210,8 @@ def s3Test(resDir):
             kubeconfig,
             definition_raw=definition_raw,
             substitution=substitution,
-            additionalResourcesPrices=additionalResourcesPrices)
+            additionalResourcesPrices=additionalResourcesPrices,
+            keepResources=keepPod)
 
 
 def dataRepatriationTest(resDir):
@@ -287,9 +296,9 @@ def perfsonarTest(resDir):
     """
 
     try:
-        keepPerfsonarPod = init.testsCatalog["perfsonarTest"]["keepPod"]
+        keepPod = init.testsCatalog["perfsonarTest"]["keepPod"]
     except:
-        keepPerfsonarPod = False
+        keepPod = False
 
     podName = "ps-pod"
     definition_raw = "%sperfsonar/raw/ps_pod.yaml" % testsRoot
@@ -319,45 +328,7 @@ def perfsonarTest(resDir):
             kubeconfig,
             definition_raw=definition_raw,
             substitution=substitution,
-            keepResources=keepPerfsonarPod)
-
-
-def perfsonarTest_og(resDir):
-    """ Run Networking Performance test -perfSONAR toolkit-.
-
-    Parameters:
-        resDir (str): Path to the results folder for the current run.
-    """
-
-    keepPerfsonarPod = False # TODO: CTS-190
-
-    podName = "ps-pod"
-    testName = "perfSONAR"
-    endpoint = init.testsCatalog["perfsonarTest"]["endpoint"]
-    dependenciesCMD = "yum -y install python-dateutil python-requests"
-    runScriptCMD = "python -u /tmp/ps_test.py --ep %s > /tmp/ps_test_logs 2>&1" % endpoint
-    cmd = "%s && %s" % (dependenciesCMD, runScriptCMD)
-    resultFile = "perfsonar_results.json"
-    definition = "%sperfsonar/ps_pod.yaml" % testsRoot
-    toLog = "src/logging/shared"
-    podPath="%s:/tmp" % podName
-    localPath=testsRoot + "perfsonar/ps_test.py"
-    resultOnPod = "/home/perfsonar_results.json"
-
-    kubeconfig = defaultKubeconfig
-    runTest(definition,
-            toLog,
-            testName,
-            resDir,
-            resultFile,
-            podName,
-            resultOnPod,
-            kubeconfig,
-            copyToPodAndRun_flag=True,
-            podPath=podPath,
-            localPath=localPath,
-            cmd=cmd,
-            keepResources=keepPerfsonarPod)
+            keepResources=keepPod)
 
 
 def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):

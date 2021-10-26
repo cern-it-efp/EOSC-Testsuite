@@ -9,6 +9,8 @@ properties:
                 type:
                     - boolean
                     - "null"
+            keepPod:
+                type: boolean
         if:
             properties:
                 run:
@@ -16,14 +18,11 @@ properties:
         then:
             required:
                 - endpoint
-                - accessKey
-                - secretKey
+                - keysFile
             properties:
                 endpoint:
                     type: string
-                accessKey:
-                    type: string
-                secretKey:
+                keysFile:
                     type: string
     dataRepatriationTest:
         type: object

@@ -45,12 +45,6 @@ resource "openstack_networking_router_interface_v2" "router_iface" {
   subnet_id = openstack_networking_subnet_v2.subnet.id
 }
 
-# Get floating IPs
-resource "openstack_networking_floatingip_v2" "floating_ip" {
-  count = var.customCount
-  pool = yamldecode(file(var.configsFile))["IPpool"]
-}
-
 # Create security group
 resource "openstack_networking_secgroup_v2" "secgroup" {
   name        = "ts-secgroup-${random_string.id.result}"
@@ -68,6 +62,12 @@ resource "openstack_networking_secgroup_rule_v2" "secgroup_rule_ingress6" {
   security_group_id = openstack_networking_secgroup_v2.secgroup.id
 }
 
+# Get floating IPs
+resource "openstack_networking_floatingip_v2" "floating_ip" {
+  count = var.customCount
+  pool = yamldecode(file(var.configsFile))["IPpool"]
+}
+
 # Create VMs
 resource "openstack_compute_instance_v2" "server" {
   depends_on = [openstack_networking_subnet_v2.subnet]
@@ -75,8 +75,6 @@ resource "openstack_compute_instance_v2" "server" {
   name = "${var.instanceName}-${count.index}"
   flavor_name = yamldecode(file(var.configsFile))["flavor"]
   security_groups = [openstack_networking_secgroup_v2.secgroup.name] # ["default","allow_ping_ssh_rdp"]
-  #config_drive = "true"
-  #power_state = "active"
   user_data     = "#cloud-config\n\nssh_authorized_keys:\n  - ${file(yamldecode(file(var.configsFile))["pathToPubKey"])}"
   availability_zone = var.availabilityZone
   network {

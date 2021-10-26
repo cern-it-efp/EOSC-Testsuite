@@ -1,0 +1,15 @@
+providerName: flexibleengine
+pathToKey: /home/ipelu/.ssh/id_rsa
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
+authFile: /home/ipelu/Desktop/work/clouds/orange/k.yaml
+openUser: cloud
+imageID: 716b96e1-a48c-4039-9fb0-b3f4146bc2c6
+storageCapacity: 50
+region: eu-west-0
+availabilityZone: eu-west-0b
+bandwidth: 1000 # TODO: over 1000Mbps?
+flavor: s3.small.1 # s3.2xlarge.4
+
+#externalGateway: 0a2228f2-7f8a-45f1-8e09-9039e1d09975 # https://github.com/FlexibleEngineCloud/terraform-provider-flexibleengine/blob/master/examples/router.tf
+#externalGateway: f67f0d72-0ddf-11e4-9d95-e1f29f417e2f # https://registry.terraform.io/providers/FlexibleEngineCloud/flexibleengine/latest/docs/resources/networking_router_v2
+#IPpool: admin_external_net
