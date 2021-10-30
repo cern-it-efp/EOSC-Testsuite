@@ -76,8 +76,11 @@ def checkPodAlive(podName, resDir, toLog, resultFile, kubeconfig):
             ret = v1.list_namespaced_pod("default")
             break
         except ApiException: # kubernetes.client.exceptions.ApiException,
-            print("WARNING: Error from server: etcdserver - request timed out" \
+            print("WARNING: ApiException - Error from server: etcdserver, request timed out" \
                    " (%s). Retrying in 5 seconds" % podName)
+            time.sleep(5)
+        except:
+            print("WARNING: Exception! (%s). Retrying in 5 seconds" % podName)
             time.sleep(5)
     ############################################################################
 

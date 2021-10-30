@@ -14,7 +14,7 @@ provider "openstack" {
 resource "openstack_compute_instance_v2" "instance" { # The default sec. group already allows everything
   count       = var.customCount
   name        = "${var.instanceName}-${count.index}"
-  flavor_name = yamldecode(file(var.configsFile))["flavor"]
+  flavor_name = var.flavor
   user_data   = "#cloud-config\n\nssh_authorized_keys:\n  - ${file(yamldecode(file(var.configsFile))["pathToPubKey"])}"
 
   block_device { # Boots from volume

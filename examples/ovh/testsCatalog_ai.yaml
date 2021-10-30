@@ -7,6 +7,6 @@ dlTest:
   datasetSize: 5
 proGANTest:
   run: true
-  flavor: "n1-standard-8"
+  flavor: "t1-45"
   images_amount: 100
   kimg: 300

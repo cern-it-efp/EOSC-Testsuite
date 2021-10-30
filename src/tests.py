@@ -5,6 +5,7 @@ try:
     from multiprocessing import Process, Queue
     import contextlib
     import io
+    import json
 except ModuleNotFoundError as ex:
     print(ex)
     sys.exit(1)
@@ -551,13 +552,22 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs, freeMaster):
         writeFail(resDir, "progan.json",
                   "Error deploying Pro-GAN benchmark.", "src/logging/proGANTest")
 
-    else:
+    else: # TODO: API fetching (fetchResults) .pkl and .png do not work
+        fetchResults(resDir,
+                     kubeconfig,
+                     podName,
+                     "/root/CProGAN-ME/results/%s/time.json" % proganPodResDir,
+                     "time.json",
+                     "src/logging/proGANTest")
+
         fetchResults(resDir,
                      kubeconfig,
                      podName,
                      "/root/CProGAN-ME/results/%s/network-final.pkl" % proganPodResDir,
                      "network-final.pkl",
                      "src/logging/proGANTest")
+        #cmd = "cp progan-pod:/root/CProGAN-ME/results/%s/network-final.pkl %s/network-final.pkl" % (proganPodResDir, resDir)
+        #kubectlCLI(cmd, kubeconfig) # TODO: this must be fone with fetchResults to avoid going straight to collecting log.txt
 
         generatedImage = 'fakes%06d.png' % proGAN["kimg"]
         #fetchResults(resDir,
@@ -575,6 +585,7 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs, freeMaster):
                      "/root/CProGAN-ME/results/%s/log.txt" % proganPodResDir,
                      "log.txt",
                      "src/logging/proGANTest")
+
         res = True
 
     # Cost estimation

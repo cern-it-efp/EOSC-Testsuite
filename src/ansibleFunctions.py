@@ -47,23 +47,19 @@ def createHostsFile(mainTfDir,
 
     IPs = []
 
-    if noTerraform is not True:
+    if noTerraform is True:
+        IPs = configs["clusters"][test]  # one of shared, dlTest, hpcTest, proGANTest
+
+    else:
         os.chdir(mainTfDir)
         tfShowJson = json.loads(runCMD("terraform show -json", read=True))
         resources = tfShowJson["values"]["root_module"]["resources"]
         os.chdir(baseCWD)
 
         for resource in resources:
-
-            if usePrivateIPs is True:
-                ip = getIP(resource, configs)
-            else:
-                ip = getIP(resource, configs, public=True) # no bastion method
-
-            if ip is not None:
+            ip = getIP(resource, configs, public=not usePrivateIPs)
+            if ip is not None and ip not in IPs:
                 IPs.append(ip)
-    else:
-        IPs = configs["clusters"][test]  # one of shared, dlTest, hpcTest, proGANTest
 
     config = ConfigParser(allow_no_value=True)
     config.add_section('master')
