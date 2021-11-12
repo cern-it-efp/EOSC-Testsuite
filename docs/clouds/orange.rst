@@ -27,6 +27,10 @@ Orange's Flexible Engine specific variables for configs.yaml:
      - VM flavor. (required)
    * - bandwidth
      - VM's public bandwidth in Mbps, maximum 1000. (required)
+   * - staticIPs
+     - Array of Elastic IPs to use, instead of automatically allocated ones.
+
+# TODO: document this is optional and how it works/behaves
 
 Open Telekom Cloud credentials file's structure:
 

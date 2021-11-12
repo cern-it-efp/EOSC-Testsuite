@@ -12,6 +12,7 @@ variable "openUser" { default = "" }
 variable "zone" { default = "" }
 variable "region" { default = "" }
 variable "keyPair" { default = "" }
+variable "staticIPs" { default = "" }
 
 # -------------------------- Stack versioning ----------------------------------
 variable "dockerCE" { default = "" }
@@ -39,8 +40,5 @@ variable "imageVersion" { default = "" }
 variable "gpuCount" { default = "" }
 variable "gpuType" { default = "" }
 variable "gcp_keyAsMetadata" { default = "" }
-
-############################ CLOUDSIGMA ########################################
-variable "staticIPs" { default = "" }
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~ END OF VARS  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

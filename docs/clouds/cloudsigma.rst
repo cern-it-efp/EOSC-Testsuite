@@ -25,6 +25,8 @@ CloudSigma specific variables for configs.yaml:
      - VM's RAM measured in bytes (max is 137438953472). (required)
    * - flavor.cpu
      - VM's CPU Clock speed measured in MHz (max is 124000). (required)
+   * - staticIPs
+     - Array of Static IPs to use, instead of automatically obtained ones.
 
 Credentials file's example:
 

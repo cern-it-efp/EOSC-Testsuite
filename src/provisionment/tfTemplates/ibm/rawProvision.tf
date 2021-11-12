@@ -62,7 +62,7 @@ resource "ibm_is_instance" "instance" {
   count = var.customCount
   name    = "${var.instanceName}-${count.index}"
   image   = data.ibm_is_image.image.id
-  profile = yamldecode(file(var.configsFile))["flavor"]
+  profile = var.flavor
   primary_network_interface {
     subnet = ibm_is_subnet.subnet.id
     security_groups = [ibm_is_security_group.security_group.id]

@@ -75,22 +75,9 @@ resource "flexibleengine_compute_instance_v2" "kubenode" {
   }
 }
 
-# Get floating IPs
-resource "flexibleengine_vpc_eip_v1" "eip" {
-  count = var.customCount
-  publicip {
-    type = "5_bgp"
-  }
-  bandwidth {
-    name       = "test"
-    size       = yamldecode(file(var.configsFile))["bandwidth"]
-    share_type = "PER"
-  }
-}
-
 # Associate the IPs to VMs
 resource "flexibleengine_compute_floatingip_associate_v2" "server-fip-assoc" {
   count = var.customCount
-  floating_ip = element(flexibleengine_vpc_eip_v1.eip.*.publicip.0.ip_address, count.index)
+  floating_ip = element(var.staticIPs, count.index)
   instance_id = element(flexibleengine_compute_instance_v2.kubenode.*.id, count.index)
 }

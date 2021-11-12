@@ -73,7 +73,7 @@ resource "openstack_compute_instance_v2" "server" {
   depends_on = [openstack_networking_subnet_v2.subnet]
   count = var.customCount
   name = "${var.instanceName}-${count.index}"
-  flavor_name = yamldecode(file(var.configsFile))["flavor"]
+  flavor_name = var.flavor
   security_groups = [openstack_networking_secgroup_v2.secgroup.name] # ["default","allow_ping_ssh_rdp"]
   user_data     = "#cloud-config\n\nssh_authorized_keys:\n  - ${file(yamldecode(file(var.configsFile))["pathToPubKey"])}"
   availability_zone = var.availabilityZone

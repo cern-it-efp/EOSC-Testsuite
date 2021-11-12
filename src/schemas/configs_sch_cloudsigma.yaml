@@ -9,7 +9,6 @@ required:
     - storageCapacity
     - clone_drive_id
     - flavor
-    - staticIPs
 properties:
     providerName:
         type: string

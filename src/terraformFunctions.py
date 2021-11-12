@@ -182,11 +182,16 @@ def terraformProvisionment(
         # ---------------- delete TF stuff from previous run if existing
         cleanupTF(mainTfDir)
 
-        # ---------------- variables
+        # ---------------- main.tf generation (including variables defaults)
         variables = loadFile(templatesPath_base % "variables.tf",
                              required=True)
         writeToFile(mainTfDir + "/main.tf", variables, False)
+        writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
 
+        # ---------------- Terraform variables setting
+        terraform_cli_vars["configsFile"] = cfgPath
+        terraform_cli_vars["flavor"] = flavor
+        terraform_cli_vars["instanceName"] = nodeName
         terraform_cli_vars["customCount"] = nodes
         terraform_cli_vars["dockerCE"] = tryTakeFromYaml(configs,
                                                          "dockerCE",
@@ -198,22 +203,16 @@ def terraformProvisionment(
                                                            "kubernetes",
                                                            None)
 
+        if configs["providerName"] in ("cloudsigma", "flexibleengine"): # TODO: unify .tf files using conditionals as in opentelekomcloud
 
-
-        #print(rawProvisioning) # OK
-        writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
-        #print("\n %s" % open(mainTfDir + "/main.tf").read()) # FU
-
-        terraform_cli_vars["configsFile"] = cfgPath
-        terraform_cli_vars["flavor"] = flavor
-        terraform_cli_vars["instanceName"] = nodeName
-
-        if configs["providerName"] == "cloudsigma":
-
-            staticIPs = tryTakeFromYaml(configs,"staticIPs",None)
+            staticIPs = tryTakeFromYaml(configs,"staticIPs",None) # These two providers (must) support specifying the IPs to be used on the VMs
             if staticIPs is not None:
-                terraform_cli_vars["customCount"] = len(staticIPs)
+                terraform_cli_vars["customCount"] = min(len(staticIPs), nodes)
                 terraform_cli_vars["staticIPs"] = staticIPs
+                rawProvisioning = loadFile("%s/rawProvision_staticIPs.tf" % templatesPath,
+                                           required=True)
+                writeToFile(mainTfDir + "/main.tf", variables, False)
+                writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
 
         if configs["providerName"] == "azurerm":
 

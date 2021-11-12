@@ -24,5 +24,5 @@ resource "ibm_compute_vm_instance" "instance" {
   os_reference_code = yamldecode(file(var.configsFile))["os_reference_code"]
   datacenter        = yamldecode(file(var.configsFile))["datacenter"]
   network_speed     = yamldecode(file(var.configsFile))["network_speed"]
-  flavor_key_name   = yamldecode(file(var.configsFile))["flavor"]
+  flavor_key_name   = var.flavor
 }
