@@ -148,18 +148,18 @@ def ansiblePlaybook(mainTfDir,
         with contextlib.redirect_stdout(f):
             with contextlib.redirect_stderr(f):
 
-                # --------------- GPU support
                 playbooksArray = [playbookPath]
 
                 if not freeMaster:
                     playbooksArray.append("src/provisionment/playbooks/allowMasterRuns.yaml")
 
-                if test == "dlTest":
+                # --------------- GPU support
+                if test in ("dlTest", "proGANTest"):
                     playbooksArray.append("src/provisionment/playbooks/gpuSupport.yaml")
-                    playbooksArray.append("src/provisionment/playbooks/kubeflow_mpiOperator.yaml")
 
-                if test == "proGANTest":
-                    playbooksArray.append("src/provisionment/playbooks/gpuSupport.yaml")
+                # --------------- MPI support
+                if test in ("dlTest", "hpcTest"):
+                    playbooksArray.append("src/provisionment/playbooks/kubeflow_mpiOperator.yaml")
 
                 res = PlaybookExecutor(playbooks=playbooksArray,
                                        inventory=inventory,

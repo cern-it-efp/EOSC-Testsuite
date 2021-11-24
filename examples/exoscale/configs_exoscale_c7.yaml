@@ -3,11 +3,11 @@ providerName: exoscale
 pathToKey: /home/ipelu/.ssh/id_rsa
 authFile: /home/ipelu/Desktop/work/clouds/exoscale/creds
 flavor: Small # Medium
-zone: at-vie-1 # ch-gva-2 # de-fra-1
+zone: ch-gva-2 # at-vie-1 # de-fra-1
 template: "Linux CentOS 7 64-bit"
 keyPair: k_cl
 securityGroups: ["default"]
-storageCapacity: 50
+storageCapacity: 100
 
 #---------------COST CALCULATION------------------------------------------------
 #costCalculation:

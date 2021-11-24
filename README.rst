@@ -33,7 +33,7 @@ The test-suite executes four main steps:
 
 4) Optionally, destroy resources.
 
-The test set described in the `Tests Catalog <https://eosc-testsuite.readthedocs.io/en/latest/testsCatalog.html>`_ section of the documentation is based on the tests used in the |hnsc| PCP project funded by the European Commission.
+The test set described in the `Tests Catalog <https://eosc-testsuite.readthedocs.io/en/latest/testsCatalog.html>`_ section of the documentation is originally based on the tests used in the |hnsc| PCP project funded by the European Commission.
 
 .. |hnsc| raw:: html
 
@@ -41,7 +41,7 @@ The test set described in the `Tests Catalog <https://eosc-testsuite.readthedocs
 
 The developers would like to thank all test owners and contributors to this project.
 
-**This suite has been tested on:**
+**The latest version of the suite has been tested on:**
 
 +------------------------------+---------------------------------------------------------------------------------+
 |OS running on provider's VMs  | CentOS7, Ubuntu 18.04, Ubuntu 20.04                                             |
@@ -63,6 +63,7 @@ The developers would like to thank all test owners and contributors to this proj
 |                              | | CityNetwork                                                                   |
 |                              | | X-Ion                                                                         |
 |                              | | Layershift                                                                    |
+|                              | | Orange's Flexible Engine                                                      |
 +------------------------------+---------------------------------------------------------------------------------+
 
 The suite is being tested in several additional cloud providers. As tests are concluded, the cloud providers names will be added in the table above.
@@ -73,7 +74,7 @@ Release notes
 
 ``21.12 - latest``
 
-- Included deployment support for Ionos, CloudSigma, OVH, IBM, CityNetwork, X-Ion, Layershift
+- Included deployment support for Ionos, CloudSigma, OVH, IBM, CityNetwork, X-Ion, Layershift and Orange.
 
 - Updated CPU Benchmark: using new Hepscore based implementation.
 
@@ -81,11 +82,18 @@ Release notes
 
 - Network test (perfSONAR) update: added reverse throughput measurement & retries.
 
-- Complete networking/VPC provisioning: AWS, Openstack, IBM.
+- Complete networking/VPC provisioning: AWS, Openstack, IBM and Orange.
 
 - Added option --freeMaster to disable running tests/benchmarks on the master node.
 
 - Updated results upload to CERN's private Object Storage.
+
+- Implemented a dashboard to visually display results. Its source code can be found |dashboard_repo|, but the actual deployment is not public yet.
+
+.. |dashboard_repo| raw:: html
+
+  <a href="https://github.com/cern-it-efp/test-suite-results-dashboard" target="_blank">here</a>
+
 
 ``21.4``
 

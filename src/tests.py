@@ -599,7 +599,7 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs, freeMaster):
     init.queue.put(({"test": "proGANTest", "deployed": res}, testCost))
 
 
-def hpcTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
+def hpcTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs, freeMaster):
     """ HPC test.
 
     Parameters:
@@ -608,6 +608,7 @@ def hpcTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
         noTerraform (bool): Specifies whether current run uses terraform.
         resDir (str): Path to the results folder for the current run.
         usePrivateIPs (bool): Indicates usage of private or public IPs.
+        freeMaster (bool): Indicates whether test pods should run on the master.
 
     Returns:
         None: In case of errors the function stops (returns None)
@@ -635,7 +636,8 @@ def hpcTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
                                           baseCWD,
                                           extraSupportedClouds,
                                           noTerraform,
-                                          usePrivateIPs)
+                                          usePrivateIPs,
+                                          freeMaster)
         if prov is False:
             toPut = {"test": "hpcTest", "deployed": res}
             if "provision" in msg:
