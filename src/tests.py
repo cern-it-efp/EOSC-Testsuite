@@ -332,7 +332,7 @@ def perfsonarTest(resDir):
             keepResources=keepPod)
 
 
-def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
+def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs, freeMaster):
     """ Run Deep Learning test -GAN training- on GPU nodes.
 
     Parameters:
@@ -369,7 +369,8 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
                                           baseCWD,
                                           extraSupportedClouds,
                                           noTerraform,
-                                          usePrivateIPs)
+                                          usePrivateIPs,
+                                          freeMaster)
         if prov is False:
             toPut = {"test": "dlTest", "deployed": res}
             if "provision" in msg:

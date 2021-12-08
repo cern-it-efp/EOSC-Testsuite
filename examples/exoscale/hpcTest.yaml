@@ -1,0 +1,4 @@
+hpcTest:
+  run: true
+  nodes: 4
+  flavor: Huge

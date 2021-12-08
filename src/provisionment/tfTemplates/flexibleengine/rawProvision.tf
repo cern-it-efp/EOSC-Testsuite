@@ -11,6 +11,7 @@ provider "flexibleengine" {
   secret_key  = yamldecode(file(yamldecode(file(var.configsFile))["authFile"]))["secretKey"]
   domain_name = yamldecode(file(yamldecode(file(var.configsFile))["authFile"]))["domainName"]
   region      = yamldecode(file(var.configsFile))["region"]
+  auth_url    = "https://iam.eu-west-0.prod-cloud-ocb.orange-business.com/v3"
 }
 
 # ID String for resources

@@ -1,12 +1,12 @@
 dlTest:
   run: #true
   nodes: 1
-  flavor: "p2s.2xlarge.8"
+  flavor: p2s.2xlarge.8
   epochs: 1
   benchmark: nnlo
   datasetSize: 5
 proGANTest:
   run: true
   flavor: p2.2xlarge.8
-  images_amount: 1
-  kimg: 1
+  images_amount: 100
+  kimg: 300

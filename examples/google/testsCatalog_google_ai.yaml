@@ -1,12 +1,12 @@
 dlTest:
-  run: #true
+  run: true
   nodes: 4
-  flavor: "n1-standard-8"
+  flavor: n1-standard-8
   epochs: 1
-  benchmark: nnlo
+  benchmark: nnlo # mpi_learn
   datasetSize: 5
 proGANTest:
-  run: true
-  flavor: "n1-standard-8"
+  run:
+  flavor: n1-standard-8
   images_amount: 100
   kimg: 300

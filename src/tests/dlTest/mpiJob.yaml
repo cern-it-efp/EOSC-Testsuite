@@ -20,8 +20,9 @@ spec:
               privileged: true
             name: train-mpijob
             command: ["/bin/sh","-c"]
-            args: 
+            args:
             - mpirun
+              --allow-run-as-root
               -tag-output
               -x LD_LIBRARY_PATH
               -x PATH
@@ -30,6 +31,10 @@ spec:
               -x NCCL_SOCKET_IFNAME=eth0
               -mca pml ob1
               -mca btl ^openib
+              -mca routed=direct
+              -mca OMPI_MCA_orte_debug=true
+              -mca orte_base_help_aggregate=0
+              --mca plm_base_verbose 5
               python3 MPIGDriver.py bb.json train_3d.list test_3d.list
               --tf
               --epochs 1
@@ -65,7 +70,7 @@ spec:
               - key: "train_3d.list"
                 path: "train_3d.list"
     Worker:
-      replicas: 4
+      replicas: 8
       template:
         spec:
           containers:

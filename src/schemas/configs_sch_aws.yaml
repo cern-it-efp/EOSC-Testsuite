@@ -6,6 +6,7 @@ required:
     - flavor
     - openUser
     - region
+    - availability_zone
     - sharedCredentialsFile
     - ami
 properties:
@@ -20,6 +21,8 @@ properties:
     flavor:
         type: string
     region:
+        type: string
+    availability_zone:
         type: string
     sharedCredentialsFile:
         type: string

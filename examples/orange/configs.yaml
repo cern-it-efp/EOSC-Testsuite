@@ -4,7 +4,7 @@ pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
 authFile: /home/ipelu/Desktop/work/clouds/orange/k.yaml
 openUser: cloud
 storageCapacity: 150
-bandwidth: 1000
+bandwidth: 10000
 flavor: s3.2xlarge.4 # s3.small.1
 
 #region: eu-west-0 # Paris
@@ -17,7 +17,8 @@ flavor: s3.2xlarge.4 # s3.small.1
 region: eu-west-1 # Amsterdam
 staticIPs: ["57.79.255.183","57.79.255.32","57.79.251.105","57.79.252.128","57.79.255.129"]
 availabilityZone: eu-west-1a
-imageID: 63cd82ac-61be-4684-8ec6-27ef9222631c
+imageID: 63cd82ac-61be-4684-8ec6-27ef9222631c # Centos7
+#imageID: ec3189b7-8164-49e6-9806-83d2be645538 # Ubuntu 18.04
 
 #region: na-east-0 # Atlanta
 #availabilityZone: na-east-0a
