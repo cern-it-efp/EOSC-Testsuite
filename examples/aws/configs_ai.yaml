@@ -7,6 +7,7 @@ sharedCredentialsFile: /home/ipelu/.aws/credentials_ocrets
 storageCapacity: 200
 
 region: eu-central-1 # Frankfurt
-availabilityZone: eu-central-1a
-ami: ami-0e085eeb23012bfeb # Deep Learning AMI (Amazon Linux 2) Version 50.0
+availabilityZone: eu-central-1b
+#ami: ami-097a9b7064efeee5f # Deep Learning AMI (Amazon Linux 2) Version 55.0
+ami: ami-0bdfa178b5c1fb9e6 # Deep Learning AMI (Ubuntu 18.04) Version 53.0
 flavor: foo
