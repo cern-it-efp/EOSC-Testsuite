@@ -56,6 +56,7 @@ resource "aws_security_group" "tssg" { # this custom one is not assigned to the 
 resource "aws_subnet" "subnet" {
   vpc_id            = aws_vpc.vpc.id
   cidr_block        = "172.16.10.0/24"
+  availability_zone = yamldecode(file(var.configsFile))["availabilityZone"]
   tags = {
     Name = "tssn-${random_string.id.result}"
   }
