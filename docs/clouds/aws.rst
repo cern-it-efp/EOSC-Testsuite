@@ -11,7 +11,7 @@ AWS specific variables for configs.yaml:
      - Explanation / Values
    * - region
      - The region in which to create the compute instances. (required)
-   * - availability_zone
+   * - availabilityZone
      - The availability zone within the region where the compute instances should be created. (required)
    * - sharedCredentialsFile
      - The authentication method supported is AWS shared credential file. Specify here the absolute path to such file. (required)

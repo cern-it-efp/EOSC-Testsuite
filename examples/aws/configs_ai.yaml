@@ -1,0 +1,12 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: aws
+pathToKey: /home/ipelu/.ssh/id_rsa
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
+openUser: ubuntu
+sharedCredentialsFile: /home/ipelu/.aws/credentials_ocrets
+storageCapacity: 200
+
+region: eu-central-1 # Frankfurt
+availabilityZone: eu-central-1a
+ami: ami-0e085eeb23012bfeb # Deep Learning AMI (Amazon Linux 2) Version 50.0
+flavor: foo

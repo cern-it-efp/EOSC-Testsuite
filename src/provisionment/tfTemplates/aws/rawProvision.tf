@@ -72,6 +72,7 @@ resource "aws_instance" "kubenode" {
   tags = {
     Name = "${var.instanceName}-${count.index}"
   }
+  availability_zone = yamldecode(file(var.configsFile))["availabilityZone"]
   vpc_security_group_ids = [aws_security_group.tssg.id] # association
   instance_type = var.flavor
   ami      = yamldecode(file(var.configsFile))["ami"]
