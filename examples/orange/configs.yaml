@@ -7,17 +7,17 @@ storageCapacity: 150
 bandwidth: 10000
 flavor: s3.2xlarge.4 # s3.small.1
 
-#region: eu-west-0 # Paris
-#availabilityZone: eu-west-0a
-#staticIPs: ["90.84.188.225","90.84.192.35","90.84.189.138","90.84.245.251","90.84.192.79"]
-#imageID: 716b96e1-a48c-4039-9fb0-b3f4146bc2c6 # Centos7
+region: eu-west-0 # Paris
+availabilityZone: eu-west-0a
+staticIPs: ["90.84.188.225","90.84.192.35","90.84.189.138","90.84.245.251","90.84.192.79"]
+imageID: 716b96e1-a48c-4039-9fb0-b3f4146bc2c6 # Centos7
 #imageID: 0249222b-c9be-419b-a953-f47e91c3fc81 # Ubuntu 18.04
 #imageID: 89f909c2-d47f-4347-af50-a8156b752c07 # OBS Ubuntu 18.04 for GPU
 
-region: eu-west-1 # Amsterdam
-staticIPs: ["57.79.255.183","57.79.255.32","57.79.251.105","57.79.252.128","57.79.255.129"]
-availabilityZone: eu-west-1a
-imageID: 63cd82ac-61be-4684-8ec6-27ef9222631c # Centos7
+#region: eu-west-1 # Amsterdam
+#staticIPs: ["57.79.255.183","57.79.255.32","57.79.251.105","57.79.252.128","57.79.255.129"]
+#availabilityZone: eu-west-1a
+#imageID: 63cd82ac-61be-4684-8ec6-27ef9222631c # Centos7
 #imageID: ec3189b7-8164-49e6-9806-83d2be645538 # Ubuntu 18.04
 
 #region: na-east-0 # Atlanta

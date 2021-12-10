@@ -523,7 +523,7 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs, freeMaster):
     try:
         gpusToUse = proGAN["gpus"]
     except:
-        gpusToUse = getGpusPerNode(kubeconfig)
+        gpusToUse = getGpusPerNode(kubeconfig) # This benchmark runs on a single node
 
     with open('%s/proGANTest/raw/progan_raw.yaml' % testsRoot, 'r') as inputfile:
         with open('%s/proGANTest/progan.yaml' % testsRoot, 'w') as outfile:

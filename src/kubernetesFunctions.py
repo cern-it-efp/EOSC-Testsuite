@@ -343,7 +343,7 @@ def kubectl(
             try:
                 client.CustomObjectsApi().create_namespaced_custom_object(
                     'kubeflow.org',
-                    'v1alpha2',
+                    'v2beta1', #'v1alpha2',
                     namespace,
                     'mpijobs',
                     body)
@@ -373,7 +373,7 @@ def kubectl(
                 try:
                     client.CustomObjectsApi().delete_namespaced_custom_object(
                         'kubeflow.org',
-                        'v1alpha2',
+                        'v2beta1', #'v1alpha2',
                         namespace,
                         'mpijobs',
                         name)
@@ -518,20 +518,25 @@ def getGpusPerNode(kubeconfig):
     """
 
     cmd = "get nodes"
-    options = "-ojson | jq '.items[0].status.allocatable.\"nvidia.com/gpu\"'"
+    options = "-ojson | jq '.items[].status.allocatable.\"nvidia.com/gpu\"'"
     gpusPerNode = 0
-    tries = 60
+    tries = 100
     while gpusPerNode == 0 and tries != 0:
-        time.sleep(2)
-        kubectlResponse = kubectlCLI(cmd, kubeconfig, options=options, read=True) # "kubectl get nodes -ojson | jq '.items[0].status.allocatable.\"nvidia.com/gpu\"'"
+        time.sleep(3)
+        kubectlResponse = kubectlCLI(cmd, kubeconfig, options=options, read=True)
         print("From kubectl: %s" % str(kubectlResponse))
+        kubectlResponse = kubectlResponse.split("\n")
+        print("From kubectl after split: %s" % str(kubectlResponse))
         try:
-            gpusPerNode = int(kubectlResponse.replace("\"",""))
-        except ValueError:
+            # If freeMaster was used, the first will be "null"
+            gpusPerNode = int(next(x for x in
+                kubectlResponse if x != "null").replace("\"",""))
+        except:
             gpusPerNode = 0
         print("End of attempt %s: %s" % (tries, str(gpusPerNode)))
         tries -= 1
     if gpusPerNode == 0:
+        # TODO: should mark the test as failed instead of returning 0
         print("ERROR: Cluster %s doesn't have GPUs or is missing support for them!" % kubeconfig)
     return gpusPerNode
 

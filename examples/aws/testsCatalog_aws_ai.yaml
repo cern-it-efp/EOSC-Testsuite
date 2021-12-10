@@ -1,12 +1,12 @@
 dlTest:
-  run:
-  nodes: 2
-  flavor: p2.xlarge # "g3s.xlarge"
+  run: true
+  nodes: 3
+  flavor: p3.2xlarge
   epochs: 1
-  benchmark: nnlo
+  benchmark: nnlo # mpi_learn
   datasetSize: 5
 proGANTest:
-  run: true
+  run:
   flavor: p3.2xlarge
   images_amount: 100
   kimg: 300
