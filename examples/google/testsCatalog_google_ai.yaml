@@ -1,10 +1,10 @@
 dlTest:
   run: true
-  nodes: 3
+  nodes: 6
   flavor: n1-standard-8
-  epochs: 1
+  epochs: 10
   benchmark: nnlo # mpi_learn
-  datasetSize: 5
+  datasetSize: 30
 proGANTest:
   run:
   flavor: n1-standard-8

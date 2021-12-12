@@ -7,7 +7,7 @@
        package:
          name: git
          state: latest
-     - name: Transfer the script
+     - name: Transfer the script kubeflow_mpiOperator.sh
        copy: src=../../tests/dlTest/kubeflow_mpiOperator.sh dest=/tmp/kubeflow_mpiOperator.sh mode=0777
-     - name: Execute the script
+     - name: Execute the script kubeflow_mpiOperator.sh
        command: sh /tmp/kubeflow_mpiOperator.sh

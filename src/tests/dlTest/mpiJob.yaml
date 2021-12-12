@@ -1,4 +1,4 @@
-apiVersion: kubeflow.org/v2beta1 #og: kubeflow.org/v1alpha2
+apiVersion: kubeflow.org/v2beta1 # was kubeflow.org/v1alpha2
 kind: MPIJob
 metadata:
   name: train-mpijob
@@ -16,8 +16,9 @@ spec:
              imagePullPolicy: Always
              name: train-mpijob
              command: ["/bin/sh","-c"]
-             args: # TODO: this one does not have -np which tensorflow-benchmarks.yaml has
-             - mpirun
+             args:
+             - cd /nnlo
+               && mpirun
                --allow-run-as-root
                -tag-output
                -x LD_LIBRARY_PATH
@@ -28,7 +29,7 @@ spec:
                -mca btl ^openib
                python3 MPIGDriver.py bb.json train_3d.list test_3d.list
                --tf
-               --epochs 1
+               --epochs 10
                --features-name X
                --labels-name y
                --mode easgd
@@ -61,7 +62,7 @@ spec:
                - key: "train_3d.list"
                  path: "train_3d.list"
     Worker:
-      replicas: 3
+      replicas: 6
       template:
         spec:
           containers:

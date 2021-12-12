@@ -1,0 +1,11 @@
+providerName: flexibleengine
+pathToKey: /home/ipelu/.ssh/id_rsa
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
+authFile: /home/ipelu/Desktop/work/clouds/orange/k.yaml
+openUser: cloud
+storageCapacity: 150
+bandwidth: 1000
+flavor: foo
+region: eu-west-0 # Paris
+availabilityZone: eu-west-0a
+imageID: 89f909c2-d47f-4347-af50-a8156b752c07 # OBS Ubuntu 18.04 for GPU
