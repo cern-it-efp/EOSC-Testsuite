@@ -74,7 +74,7 @@ Release notes
 
 ``21.12 - latest``
 
-- Included deployment support for Ionos, CloudSigma, OVH, IBM, CityNetwork, X-Ion, Layershift and Orange.
+- Included deployment support for Ionos, CloudSigma, OVH, IBM, CityNetwork, X-Ion, Layershift, Orange and Yandex.
 
 - Updated CPU Benchmark: using new Hepscore based implementation.
 
@@ -88,7 +88,7 @@ Release notes
 
 - Updated results upload to CERN's private Object Storage.
 
-- Implemented a dashboard to visually display results. Its source code can be found |dashboard_repo|, but the actual deployment is not public yet.
+- Implemented a dashboard to visually display results. While the actual deployment is not public, its source code can be found |dashboard_repo|.
 
 .. |dashboard_repo| raw:: html
 

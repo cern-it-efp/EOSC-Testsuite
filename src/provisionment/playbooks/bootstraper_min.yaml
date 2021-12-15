@@ -1,0 +1,35 @@
+# ------------------------------------ pkg manager & install dependencies
+- hosts: all
+  become: yes
+  tasks:
+  - name: Disable swap (if configured)
+    command: swapoff -a
+  - include_tasks: firewall.yaml
+  - include_tasks: bridged_traffic.yaml
+  - include_tasks: enable_squashfs.yaml
+  - include_tasks: pkgManagerRepo.yaml
+  - include_tasks: aptWait.yaml
+  - include_tasks: dependencies.yaml
+
+# ------------------------------------ Init cluster & generate join command
+- hosts: master
+  become: yes
+  tasks:
+  - include_tasks: bridged_traffic.yaml
+  - include_tasks: initCluster.yaml
+  - name: Get join command
+    shell: kubeadm token create --print-join-command
+    register: join_command_raw
+  - name: Set join command
+    set_fact:
+      join_command: "{{ join_command_raw.stdout_lines[0] }}"
+
+# ------------------------------------ Make slaves join cluster
+- hosts: slaves
+  become: yes
+  tasks:
+  - name: Slaves join cluster
+    shell: "{{ hostvars[groups['master'][0]]['join_command'] }} --ignore-preflight-errors all  >> node_joined.txt"
+    args:
+      chdir: $HOME
+      creates: node_joined.txt

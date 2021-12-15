@@ -393,6 +393,11 @@ def getIP(resource, configs, public=False):
                 return resource["values"]["ip_address"] # type: azurerm_public_ip
             return resource["values"]["private_ip_address"]
 
+        elif provider == "yandex":
+            if public is True:
+                return resource["values"]["network_interface"][0]["nat_ip_address"] # type: yandex_compute_instance
+            return resource["values"]["network_interface"][0]["ip_address"]
+
         elif provider == "ibm":
             useClassic = configs["useClassic"]
             if public is True:
