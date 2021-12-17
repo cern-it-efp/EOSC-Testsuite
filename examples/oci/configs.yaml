@@ -1,0 +1,17 @@
+providerName: "oci"
+pathToKey: /home/ipelu/.ssh/id_rsa
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
+authFile: /home/ipelu/Desktop/work/clouds/oracle/oci.yaml
+availabilityDomain: mQZP:EU-FRANKFURT-1-AD-1 # OG was BKrI:EU-FRANKFURT-1-AD-1 # AD-3 has gpu
+compartmentOcid: ocid1.tenancy.oc1..aaaaaaaaga7f4joh3iwda62mrejpbxmevc34y2cecdd6lmjse2ctczw4lapq # OG was ocid1.compartment.oc1..aaaaaaaancwe6dcw2rvht2wjrysyxxnyxwknq2hxrltpct53acnpyhjcys7a
+openUser: opc # For Oracle Linux and CentOS images, the default username is opc
+storageCapacity: 160 # optional
+#imageOcid: ocid1.image.oc1.eu-frankfurt-1.aaaaaaaa6zpubgqnm3j46smrd7fjehmmj3emusyfljypxcwzrmlcnuno7gra # CentOS 7
+imageOcid: ocid1.image.oc1.eu-frankfurt-1.aaaaaaaazeabhemive3rd3e37jf4p6d7ybwxcjkcjka2dnjdpmc7kjy6g6zq
+
+useFlexShape: true
+#flavor: VM.Optimized3.Flex # Intel's flexible shape
+flavor: VM.Standard.E4.Flex	# AMD's flexible shape, there's also E3
+#flavor: VM.Standard2.8 # VM.Optimized3.Flex
+memoryInGbs: 32
+ocpus: 8

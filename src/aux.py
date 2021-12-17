@@ -408,8 +408,6 @@ def getIP(resource, configs, public=False):
                 return resource["values"]["ipv4_address_private"] # Classic Infrastructure
             return resource["values"]["primary_network_interface"][0]["primary_ipv4_address"] # VPC Infrastructure
 
-        # ---
-
         elif provider == "oci":
             if public is True:
                 return resource["values"]["public_ip"]

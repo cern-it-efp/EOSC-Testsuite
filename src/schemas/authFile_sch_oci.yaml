@@ -1,16 +1,16 @@
 type: object
 required:
-    - auth_private_key_path
-    - tenancy_ocid
-    - user_ocid
+    - privateKeyPath
+    - tenancyOcid
+    - userOcid
     - fingerprint
     - region
 properties:
-    auth_private_key_path:
+    privateKeyPath:
         type: string
-    tenancy_ocid:
+    tenancyOcid:
         type: string
-    user_ocid:
+    userOcid:
         type: string
     fingerprint:
         type: string

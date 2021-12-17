@@ -266,6 +266,10 @@ def terraformProvisionment(
                                                         "availabilityZone",
                                                         None)
 
+        if configs["providerName"] == "oci":
+
+            terraform_cli_vars["useFlexShape"] = configs["useFlexShape"]
+
         if configs["providerName"] == "google":
 
             pathToPubKey = tryTakeFromYaml(configs,"pathToPubKey",None)

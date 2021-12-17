@@ -41,4 +41,7 @@ variable "gpuCount" { default = "" }
 variable "gpuType" { default = "" }
 variable "gcp_keyAsMetadata" { default = "" }
 
+############################ OCI ###############################################
+variable "useFlexShape" { default = "" }
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~ END OF VARS  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
