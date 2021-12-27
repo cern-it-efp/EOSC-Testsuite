@@ -10,6 +10,7 @@ required:
     - imageOcid
     - authFile
     - useFlexShape
+    - region
 properties:
     providerName:
         type: string
@@ -19,6 +20,8 @@ properties:
         type: string
     useFlexShape:
         type: boolean
+    region:
+        type: string
     memoryInGbs:
         type: number
     ocpus:

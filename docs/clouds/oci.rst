@@ -14,7 +14,7 @@ OCI specific variables for configs.yaml:
    * - authFile
      - Path to the yaml file containing the OTC credentials. See below the structure of such file. (required)
    * - image_ocid
-     - The OCID of the image to be used on the VMs. (required)
+     - The OCID of the image to be used on the VMs. The OCID list can be consulted here: https://docs.oracle.com/en-us/iaas/images/centos-7x/ (required)
    * - compartment_ocid
      - Compartment's OCID. (required)
    * - availability_domain

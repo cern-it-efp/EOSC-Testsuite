@@ -2,7 +2,7 @@
 providerName: "google"
 pathToKey: "/home/ipelu/.ssh/id_rsa"
 pathToPubKey: "/home/ipelu/.ssh/id_rsa.pub"
-pathToCredentials: "/home/ipelu/Desktop/work/clouds/gcp/cern-test-suite-fb46815ac1f0.json"
+pathToCredentials: "/tmp/cern-test-suite-fb46815ac1f0.json"
 
 project: "cern-test-suite"
 openUser: openu

@@ -23,7 +23,7 @@ installKubeflow(){
   # 4) Set up and deploy Kubeflow
   mkdir -p ${KF_DIR}
   cd ${KF_DIR}
-  kfctl apply -V -f ${CONFIG_URI} # TODO: this failed with 500 and periodical retries, fixed it with: https://github.com/kubeflow/kubeflow/issues/4762
+  kfctl apply -V -f ${CONFIG_URI} # https://github.com/kubeflow/kubeflow/issues/4762
 
   # 5) Check the resources deployed in namespace kubeflow
   kubectl -n kubeflow get all

@@ -4,7 +4,6 @@ required:
     - tenancyOcid
     - userOcid
     - fingerprint
-    - region
 properties:
     privateKeyPath:
         type: string
@@ -13,7 +12,5 @@ properties:
     userOcid:
         type: string
     fingerprint:
-        type: string
-    region:
         type: string
 additionalProperties: false

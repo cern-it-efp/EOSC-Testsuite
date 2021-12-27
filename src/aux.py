@@ -361,8 +361,6 @@ def getIP(resource, configs, public=False):
         str: Resource's IP address.
     """
 
-    # TODO: this assumes a single interface in some cases (gcp, openstack)
-
     provider = configs["providerName"]
 
     try:

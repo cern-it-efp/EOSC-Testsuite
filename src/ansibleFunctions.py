@@ -161,10 +161,6 @@ def ansiblePlaybook(mainTfDir,
                 if test in ("dlTest", "hpcTest"):
                     playbooksArray.append("src/provisionment/playbooks/kubeflow_mpiOperator.yaml")
 
-                # TODO: this is a workaround for Orange
-                if providerName == "flexibleengine":
-                    playbooksArray.insert(0, "src/provisionment/playbooks/orange_dns.yaml")
-
                 res = PlaybookExecutor(playbooks=playbooksArray,
                                        inventory=inventory,
                                        variable_manager=variable_manager,

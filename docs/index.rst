@@ -1,7 +1,7 @@
 .. include:: ../README.rst
    :end-before: header-end
 
-Please find the the repository |repo|.
+Please find |repo| the repository hosting the source code of this tool.
 
 .. |repo| raw:: html
 

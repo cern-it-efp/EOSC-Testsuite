@@ -46,7 +46,7 @@ def createCluster():
     clusterParams["accessToken"] = json.loads(resp)["successText"]
     clusterParams["environmentName"] = json.loads(resp)["startPage"].replace("https://","").replace(".j.layershift.co.uk/api/","")
 
-    #Persist cluster details # TODO: if the previous curl fails, the cluster may be created but not the response.json file
+    #Persist cluster details - NOTE: if the previous curl fails, the cluster may be created but not the response.json file
     with open(clusterDetails, 'w') as outfile:
         json.dump(clusterParams, outfile, indent=4, sort_keys=True)
 

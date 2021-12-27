@@ -2,13 +2,26 @@
 EOSC Cloud Validation Test Suite
 ============================================
 
-This tool is intended to be used to test and validate commercial cloud services across the stack for research and education environments and it is being used as a validation tool for commercial cloud services procurement in European Commission sponsored projects such as OCRE and ARCHIVER.
+This tool is intended to be used to test and validate commercial cloud services across the stack for research and education
+environments and it is being used as a validation tool for commercial cloud services procurement in European Commission
+sponsored projects such as |ocre|, |archiver| and |cloudbank|.
+For more information about the European Open Science Cloud (EOSC) visits its website |eosc|.
 
-Visit |eosc| for more information.
+.. |ocre| raw:: html
+
+  <a href="https://www.ocre-project.eu/" target="_blank">OCRE</a>
+
+.. |archiver| raw:: html
+
+  <a href="https://www.archiver-project.eu/" target="_blank">ARCHIVER</a>
+
+.. |cloudbank| raw:: html
+
+  <a href="https://ngiatlantic.eu/funded-experiments/cloudbank-eu-ngi" target="_blank">CloudBank EU</a>
 
 .. |eosc| raw:: html
 
-  <a href="https://www.eosc-portal.eu/" target="_blank">EOSC website</a>
+  <a href="https://www.eosc.eu/" target="_blank">here</a>
 
 .. header-end
 
@@ -64,9 +77,10 @@ The developers would like to thank all test owners and contributors to this proj
 |                              | | X-Ion                                                                         |
 |                              | | Layershift                                                                    |
 |                              | | Orange's Flexible Engine                                                      |
+|                              | | Yandex Cloud                                                                  |
 +------------------------------+---------------------------------------------------------------------------------+
 
-The suite is being tested in several additional cloud providers. As tests are concluded, the cloud providers names will be added in the table above.
+The suite is continuously tested in new cloud providers. As tests are concluded, the cloud providers names will be added to the table above.
 
 Release notes
 ---------------------------------------------
@@ -74,15 +88,15 @@ Release notes
 
 ``21.12 - latest``
 
-- Included deployment support for Ionos, CloudSigma, OVH, IBM, CityNetwork, X-Ion, Layershift, Orange and Yandex.
+- Included deployment support for Ionos, CloudSigma, OVH, IBM, CityNetwork, X-Ion, Layershift, Orange, Yandex and Oracle Cloud Infrastructure.
 
 - Updated CPU Benchmark: using new Hepscore based implementation.
 
-- Enabled prompt to inform of existing Terraform files.
+- Enabled prompt asking for confirmation prior to starting the run in case of existing Terraform files.
 
 - Network test (perfSONAR) update: added reverse throughput measurement & retries.
 
-- Complete networking/VPC provisioning: AWS, Openstack, IBM and Orange.
+- Complete networking/VPC provisioning: AWS, Openstack, IBM, Orange, OCI. # TODO: complete
 
 - Added option --freeMaster to disable running tests/benchmarks on the master node.
 

@@ -46,6 +46,10 @@ The following python packages are required, install them with pip3:
 
 - requests
 
+jq
+^^^^^^^^^
+Linux' jq is a flexible and lightweight command-line processor for JSON.
+In the test suite it is used to work with JSON data produced by commands such as kubectl. 
 
 1.2 SSH key
 ==================

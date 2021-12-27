@@ -3,7 +3,7 @@ provider "oci" {
   user_ocid = yamldecode(file(yamldecode(file(var.configsFile))["authFile"]))["userOcid"]
   fingerprint = yamldecode(file(yamldecode(file(var.configsFile))["authFile"]))["fingerprint"]
   private_key_path = yamldecode(file(yamldecode(file(var.configsFile))["authFile"]))["privateKeyPath"]
-  region = yamldecode(file(yamldecode(file(var.configsFile))["authFile"]))["region"]
+  region = yamldecode(file(var.configsFile))["region"]
 }
 
 resource "random_string" "id" {
