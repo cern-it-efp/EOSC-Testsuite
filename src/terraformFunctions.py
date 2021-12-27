@@ -85,7 +85,7 @@ def destroyTF(baseCWD, clusters=None):
         mainTfDir = "src/tests/%s" % cluster
         cmd = "terraform destroy -auto-approve"
         exitCode = runTerraform(toLog, cmd, mainTfDir, baseCWD, cluster, msg)
-        if exitCode is 0:
+        if exitCode == 0:
             if keepTFfiles is not True:
                 cleanupTF("src/tests/%s/" % cluster)
             else:
