@@ -1,0 +1,13 @@
+# ---------------- This is needed because by default the main partition does not take the whole disk. 
+- name: OCI's Grow File System
+  hosts: all
+  become: yes
+  tasks:
+     - name: Install git and gdisk
+       package:
+         name: git, gdisk
+         state: latest
+     - name: Get OCI-Utils from repo
+       shell: git clone https://github.com/oracle/oci-utils && cp -r oci-utils/libexec /usr
+     - name: Run oci-growfs
+       command: bash /usr/libexec/oci-growfs -y

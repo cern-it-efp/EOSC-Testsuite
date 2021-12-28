@@ -161,6 +161,11 @@ def ansiblePlaybook(mainTfDir,
                 if test in ("dlTest", "hpcTest"):
                     playbooksArray.append("src/provisionment/playbooks/kubeflow_mpiOperator.yaml")
 
+                # --------------- OCI's Grow File System
+                if providerName == "oci":
+                    playbooksArray.append("src/provisionment/playbooks/oci_growfs.yaml")
+
+
                 res = PlaybookExecutor(playbooks=playbooksArray,
                                        inventory=inventory,
                                        variable_manager=variable_manager,
