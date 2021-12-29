@@ -95,13 +95,6 @@ def initAndChecks(noTerraform,
 
     # --------File & deps check
 
-    # TODO - currently at test_suite
-    #if checkFormerInfraFiles() == False:
-    #    if input("WARNING: there are infrastructure files from a previous \
-    #              run which would be deleted now. Continue?") != "yes":
-    #        print("Quitting")
-    #        stop(1)
-
     if runCMD("terraform version", hideLogs=True) != 0:
         print("Terraform is not installed")
         stop(1)
@@ -120,7 +113,13 @@ def initAndChecks(noTerraform,
 
     configs, testsCatalog = validateConfigs(cfgPath, tcPath, noTerraform, extraSupportedClouds, allTests)
 
-    if configs['providerName'] in ("oci", "opentelekomcloud"): # authFile validate (only YAML) # TODO: some missing here (new ones)
+    if configs['providerName'] in ("oci",
+                                   "opentelekomcloud",
+                                   "cloudsigma",
+                                   "exoscale",
+                                   "flexibleengine",
+                                   "ibm",
+                                   "ionoscloud"): # authFile validate (only YAML so no AWS and GCP)
         authFile = loadFile(configs["authFile"], required=True)
         schema = loadFile("src/schemas/authFile_sch_%s.yaml" % configs["providerName"], required=True)
         validateAuth(authFile, schema)

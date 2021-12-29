@@ -11,7 +11,6 @@ variable "pathToPubKey" { default = "" }
 variable "openUser" { default = "" }
 variable "zone" { default = "" }
 variable "region" { default = "" }
-variable "keyPair" { default = "" }
 variable "staticIPs" { default = "" }
 
 # -------------------------- Stack versioning ----------------------------------

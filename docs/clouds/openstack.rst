@@ -15,8 +15,8 @@ OpenStack specific variables for configs.yaml:
      - VM's disk size. The VMs will boot from disk, this sets the size of it. (required)
    * - imageID
      - OS Image ID to be used for the VMs. (required)
-   * - keyPair
-     - Name of the key to be used. Has to be created or imported beforehand. (required)
+   * - pathToPubKey
+     - Path to your public key, which is injected into the VMs. (required)
    * - securityGroups
      - Security groups array.
    * - region

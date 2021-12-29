@@ -4,7 +4,7 @@ required:
     - flavor
     - zone
     - template
-    - keyPair
+    - pathToPubKey
     - authFile
     - pathToKey
     - providerName
@@ -27,7 +27,7 @@ properties:
         type: string
     template:
         type: string
-    keyPair:
+    pathToPubKey:
         type: string
     securityGroups:
         type: array

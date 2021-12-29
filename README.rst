@@ -96,7 +96,7 @@ Release notes
 
 - Network test (perfSONAR) update: added reverse throughput measurement & retries.
 
-- Complete networking/VPC provisioning: AWS, Openstack, IBM, Orange, OCI. # TODO: complete
+- Complete networking/VPC provisioning: AWS, Openstack, IBM, Orange, OCI, Ionos and Yandex. 
 
 - Added option --freeMaster to disable running tests/benchmarks on the master node.
 

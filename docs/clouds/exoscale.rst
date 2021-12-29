@@ -9,8 +9,8 @@ Exoscale specific variables for configs.yaml:
 
    * - Name
      - Explanation / Values
-   * - keyPair
-     - Name of the key to be used. Has to be created or imported beforehand. (required)
+   * - pathToPubKey
+     - Path to your public key, which is injected into the VMs. (required)
    * - zone
      - The zone in which to create the compute instances. (required)
    * - template

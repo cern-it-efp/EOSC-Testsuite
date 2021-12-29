@@ -8,7 +8,7 @@ flavor: "s2.medium.4" # No GPU
 #imageID: "b1b0db52-4c6c-46d4-892d-ff7b23d46968" # OTC-Automated-AI-CondaImage
 imageID: "f617354e-4dfa-4a0c-b905-96cc6858a058" # Standard Ubuntu 18.04
 
-keyPair: "exo"
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
 domainName: "OTC-EU-DE-00000000001000046175"
 tenantName: "eu-de"
 storageCapacity: 50

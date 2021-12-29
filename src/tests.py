@@ -189,10 +189,10 @@ def s3Test(resDir):
     substitution = [
         {
             "before": "ENDPOINT_PH",
-            "after": init.testsCatalog["s3Test"]["endpoint"].replace("/","\/") # TODO: enough escaping?
+            "after": init.testsCatalog["s3Test"]["endpoint"].replace("/","\/")
         },
         {
-            "before": "ACCESS_PH", # TODO: these should not go in the tests catalog file
+            "before": "ACCESS_PH",
             "after": keysFile["accessKey"]
         },
         {
@@ -312,10 +312,7 @@ def perfsonarTest(resDir):
         {
             "before": "ENDPOINT_PH",
             "after": init.testsCatalog["perfsonarTest"]["endpoint"]
-        }#,{  # TODO: unable to run "reverse" trace using the pS API
-        #    "before": "CLOUDIP_PH",
-        #    "after": getMasterIP("src/tests/shared/hosts")
-        #}
+        }
     ]
 
     kubeconfig = defaultKubeconfig
@@ -399,6 +396,11 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs, freeMaster):
     mpijobResourceFile = '%s/dlTest/raw/%s_raw.yaml' % (testsRoot, dl["benchmark"])
 
     gpusPerNode = getGpusPerNode(kubeconfig)
+    if gpusPerNode == 0:
+        writeFail(resDir,
+                  "bb_train_history.json",
+                  "ERROR: Cluster %s doesn't have GPUs!" % kubeconfig,
+                  "src/logging/dlTest")
     replicas = gpusPerNode * dl["nodes"]
 
     with open(mpijobResourceFile, 'r') as inputfile:
@@ -523,7 +525,13 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs, freeMaster):
     try:
         gpusToUse = proGAN["gpus"]
     except:
-        gpusToUse = getGpusPerNode(kubeconfig) # This benchmark runs on a single node
+        gpusToUse = getGpusPerNode(kubeconfig) # This benchmark runs on 1 VM
+
+    if gpusToUse == 0:
+        writeFail(resDir,
+                  "progan.json",
+                  "ERROR: Cluster %s doesn't have GPUs!" % kubeconfig,
+                  "src/logging/proGANTest")
 
     with open('%s/proGANTest/raw/progan_raw.yaml' % testsRoot, 'r') as inputfile:
         with open('%s/proGANTest/progan.yaml' % testsRoot, 'w') as outfile:
@@ -553,7 +561,7 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs, freeMaster):
         writeFail(resDir, "progan.json",
                   "Error deploying Pro-GAN benchmark.", "src/logging/proGANTest")
 
-    else: # TODO: API fetching (fetchResults) .pkl and .png do not work
+    else:
         fetchResults(resDir,
                      kubeconfig,
                      podName,
@@ -567,8 +575,6 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs, freeMaster):
                      "/root/CProGAN-ME/results/%s/network-final.pkl" % proganPodResDir,
                      "network-final.pkl",
                      "src/logging/proGANTest")
-        #cmd = "cp progan-pod:/root/CProGAN-ME/results/%s/network-final.pkl %s/network-final.pkl" % (proganPodResDir, resDir)
-        #kubectlCLI(cmd, kubeconfig) # TODO: this must be fone with fetchResults to avoid going straight to collecting log.txt
 
         generatedImage = 'fakes%06d.png' % proGAN["kimg"]
         #fetchResults(resDir,

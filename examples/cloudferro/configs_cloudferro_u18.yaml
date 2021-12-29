@@ -1,17 +1,12 @@
 #---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
 providerName: openstack
-pathToKey: "/root/.ssh/id_rsa"
+vendor: cloudferro
+pathToKey: /home/ipelu/.ssh/id_rsa
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
 openUser: eouser
 flavor: "eo1.medium"
 imageID: "880a6cc1-7ede-4da0-8020-86d07d54c4f9" # Ubuntu 18.04 LTS
-storageCapacity: 12
-keyPair: mykey
-securityGroups: ["default","allow_ping_ssh_rdp"]
-#networkName: testing
-
-#---------------COST CALCULATION------------------------------------------------
-costCalculation:
-  generalInstancePrice:
-  GPUInstancePrice:
-  HPCInstancePrice: 0.2
-  s3bucketPrice: 0.1
+IPpool: external
+imageID: 95ff4962-4030-45ad-9718-e640ee4a9f86 # CentOS 7
+storageCapacity: 100
+externalNetID: be3cb8d6-5b30-42e7-8fc8-4b5371cd6fe4

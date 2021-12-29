@@ -5,7 +5,7 @@ authFile: /home/ipelu/Desktop/.exoCreds
 flavor: "Medium"
 zone: "ch-gva-2"
 template: "Linux CentOS 8 64-bit"
-keyPair: "k_cl"
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
 securityGroups: ["default"]
 storageCapacity: 100
 

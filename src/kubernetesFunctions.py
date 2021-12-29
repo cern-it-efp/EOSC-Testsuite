@@ -70,10 +70,10 @@ def checkPodAlive(podName, resDir, toLog, resultFile, kubeconfig):
 
     v1 = client.CoreV1Api()
 
-    ############ TODO: list_namespaced_pod times out if the connection is lost
+    ############ List pods
     while True:
         try:
-            ret = v1.list_namespaced_pod("default")
+            ret = v1.list_namespaced_pod("default") # times out if the connection is lost
             break
         except ApiException: # kubernetes.client.exceptions.ApiException,
             print("WARNING: ApiException - Error from server: etcdserver, request timed out" \
@@ -536,7 +536,6 @@ def getGpusPerNode(kubeconfig):
         print("End of attempt %s: %s" % (tries, str(gpusPerNode)))
         tries -= 1
     if gpusPerNode == 0:
-        # TODO: should mark the test as failed instead of returning 0
         print("ERROR: Cluster %s doesn't have GPUs or is missing support for them!" % kubeconfig)
     return gpusPerNode
 

@@ -355,10 +355,6 @@ while len(url_get("https://localhost/pscheduler/tests",
     time.sleep(10)
     pass
 
-# TODO: unreliable
-#if os.system("pscheduler ping %s" % endpoint) != 0:
-#    fail("perfSONAR not reachable at '%s'" % endpoint, quit=True)
-
 retries = 20
 retry_sleep = 5
 for TASK in TASKS:
@@ -385,7 +381,7 @@ for TASK in TASKS:
     with open(resultsFile, 'a') as outfile:
         outfile.write(json_dump(result_data))
 
-############# TODO - improve
+############# Produce correct JSON
 with open(resultsFile, 'r') as infile:
     result_data = infile.read()
     result_data = "[%s]" % result_data.replace("}{","},{")
