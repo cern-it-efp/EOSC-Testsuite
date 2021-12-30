@@ -16,7 +16,7 @@ The testing and validation in the scope of OCRE will be used as part of the sele
 
 Below, an overview of the tool and overall test validation in the context of the OCRE project.
 
-.. image:: ../img/ts_overview.svg
+.. image:: ../img/ts_overview.png
   :width: 600
   :alt: Test Suite Overview
 
