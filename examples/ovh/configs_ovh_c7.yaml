@@ -5,14 +5,13 @@ pathToKey: /home/ipelu/.ssh/id_rsa
 pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
 openUser: centos
 flavor: c2-30-flex # 8 cores / ~30GB
+storageCapacity: 100
 
-#region: SBG5 # France
-#imageID: f0ecbeaa-9ee2-4288-8e0d-d9de9b9fd0fa # CentOS 7
+region: SBG5 # France
+imageID: 6be1d497-029f-419f-a7eb-8bc208e3c1aa # CentOS 7
 
 #region: DE1 # Germany
 #imageID: 22e01386-3563-4ab3-bbdc-91156667afb7 # CentOS 7
 
-region: UK1 # United Kingdom
-imageID: 72ef0eb7-f1e8-4b9f-a0b3-aa48d400027f # CentOS 7
-
-storageCapacity: 100
+#region: UK1 # United Kingdom
+#imageID: 72ef0eb7-f1e8-4b9f-a0b3-aa48d400027f # CentOS 7

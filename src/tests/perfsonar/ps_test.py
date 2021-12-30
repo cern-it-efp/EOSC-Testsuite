@@ -265,7 +265,7 @@ def manage_and_run_task():
         fail("Unable to post task: %s" % (str(ex)), TASK["test"]["type"])
         return # continue
 
-    # -----------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     # Fetch the posted task with extra details.
     try:
         status, task_data = url_get(task_url, params={"detail": True})
@@ -281,7 +281,7 @@ def manage_and_run_task():
         fail("Server returned incomplete data.", TASK["test"]["type"])
         return # continue
 
-    # -----------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     # Get first run and make sure we have what we need to function. Server will wait until the first run has been scheduled before returning a result.
     status, run_data = url_get(first_run_url)
 
@@ -320,7 +320,7 @@ def manage_and_run_task():
 
     time.sleep(sleep_seconds)
 
-    # -----------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
     # Wait for the result to be produced and fetch it.
     err = ""
     retries = 20
@@ -344,9 +344,9 @@ try:
 except:
     print("Error disabling insecure request warning, not quitting")
 
-# -----------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # TESTING BEGINS HERE
-# -----------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 # Wait for test tools to be ready on the server
 while len(url_get("https://localhost/pscheduler/tests",

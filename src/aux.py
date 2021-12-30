@@ -320,9 +320,9 @@ def getNodeName(configs, test, randomId):
         identifier.
 
     Parameters:
-        dict (dict): Dict object loaded from a yaml file.
-        key (object): Key whose value should be returned if existing.
-        defaultValue (object): value to return in case of KeyError exception.
+        configs (dict): Dict object loaded from a yaml file.
+        test (object): Key whose value should be returned if existing.
+        randomId (object): value to return in case of KeyError exception.
 
     Returns
         Object taken from the yaml file (dict) or default one.

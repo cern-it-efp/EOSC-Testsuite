@@ -35,6 +35,7 @@ def sharedClusterTests(msgArr,
         resDir (str): Path to the results folder for the current run.
         numberOfNodes (int): Number of nodes to provision.
         usePrivateIPs (bool): Indicates usage of private or public IPs.
+        freeMaster (bool): If True, pods can't run on the master node.
 
     Returns:
         None: In case of errors the function stops (returns None)
@@ -103,17 +104,26 @@ def runTest(definition,
             localPath=None,
             cmd=None,
             additionalResourcesPrices=None,
-            keepResources=False): # additionalResourcePrice is an array
+            keepResources=False):
     """ Runs tests.
 
     Parameters:
-        msgArray (Array<str>): Stuff to show on the banner. Contains the
-                               tests to be deployed on the shared cluster.
-        onlyTest (bool): If true, skip provisioning phase.
-        retry (bool): If true, try to reuse existing infrastructure.
-        noTerraform (bool): Specifies whether current run uses terraform.
+        definition (str): Pod definition.
+        toLog (str): File where to write logs.
+        testName (str): Name of the test.
         resDir (str): Path to the results folder for the current run.
-        numberOfNodes (int): Number of nodes to provision.
+        resultFile (str): Name of the results file.
+        podName (str): Pod name.
+        resultOnPod (str): Path on the pod where to find the results.
+        kubeconfig (str): Path to the kubeconfig file.
+        definition_raw (str): Pod definition, with placeholders.
+        substitution (str): Substitution of placeholders.
+        copyToPodAndRun_flag (bool): If True, copy test script to the pod.
+        podPath (str): Path on the pod where to place the test script.
+        localPath (str): Local path to a test script.
+        cmd (str): Command to run on the pod.
+        additionalResourcesPrices (array): Resources prices (other than VMs)
+        keepResources (bool): If True, do not destroy pod on completion.
     """
 
     testCost = 0
@@ -338,6 +348,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs, freeMaster):
         noTerraform (bool): Specifies whether current run uses terraform.
         resDir (str): Path to the results folder for the current run.
         usePrivateIPs (bool): Indicates usage of private or public IPs.
+        freeMaster (bool): If True, pods can't run on the master node.
 
     Returns:
         None: In case of errors the function stops (returns None)
@@ -424,7 +435,11 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs, freeMaster):
         writeFail(resDir, "bb_train_history.json",
                   "Error deploying 3D GAN benchmark.", "src/logging/dlTest")
 
-    elif waitForResource(podName, Type.pod, kubeconfig, retrials=70, sleepTime=10) is False:
+    elif waitForResource(podName,
+                         Type.pod,
+                         kubeconfig,
+                         retrials=70,
+                         sleepTime=10) is False:
         writeFail(resDir,
                   "bb_train_history.json",
                   "Error deploying 3D GAN benchmark: pods were never created",
@@ -458,8 +473,14 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs, freeMaster):
 
     # cleanup
     writeToFile("src/logging/dlTest", "Cluster cleanup...", True)
-    kubectl(Action.delete, kubeconfig, type=Type.mpijob, name="train-mpijob")
-    kubectl(Action.delete, kubeconfig, type=Type.configmap, name="3dgan-datafile-lists")
+    kubectl(Action.delete,
+            kubeconfig,
+            type=Type.mpijob,
+            name="train-mpijob")
+    kubectl(Action.delete,
+            kubeconfig,
+            type=Type.configmap,
+            name="3dgan-datafile-lists")
 
     init.queue.put(({"test": "dlTest", "deployed": res}, testCost))
 
@@ -473,6 +494,7 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs, freeMaster):
         noTerraform (bool): Specifies whether current run uses terraform.
         resDir (str): Path to the results folder for the current run.
         usePrivateIPs (bool): Indicates usage of private or public IPs.
+        freeMaster (bool): If True, pods can't run on the master node.
 
     Returns:
         None: In case of errors the function stops (returns None)
@@ -559,7 +581,7 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs, freeMaster):
                file="%sproGANTest/progan.yaml" % testsRoot,
                toLog="src/logging/proGANTest") != 0:
         writeFail(resDir, "progan.json",
-                  "Error deploying Pro-GAN benchmark.", "src/logging/proGANTest")
+                  "Error deploying Pro-GAN benchmark", "src/logging/proGANTest")
 
     else:
         fetchResults(resDir,
@@ -572,7 +594,8 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs, freeMaster):
         fetchResults(resDir,
                      kubeconfig,
                      podName,
-                     "/root/CProGAN-ME/results/%s/network-final.pkl" % proganPodResDir,
+                     "/root/CProGAN-ME/results/%s/network-final.pkl" \
+                        % proganPodResDir,
                      "network-final.pkl",
                      "src/logging/proGANTest")
 
@@ -580,10 +603,12 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs, freeMaster):
         #fetchResults(resDir,
         #             kubeconfig,
         #             podName,
-        #             "/root/CProGAN-ME/results/%s/%s" % (proganPodResDir, generatedImage),
+        #             "/root/CProGAN-ME/results/%s/%s" \
+        #                % (proganPodResDir, generatedImage),
         #             "fakes.png",
         #             "src/logging/proGANTest")
-        cmd = "cp progan-pod:/root/CProGAN-ME/results/%s/%s %s/fakesLast.png" % (proganPodResDir, generatedImage, resDir)
+        cmd = "cp progan-pod:/root/CProGAN-ME/results/%s/%s %s/fakesLast.png" \
+                % (proganPodResDir, generatedImage, resDir)
         kubectlCLI(cmd, kubeconfig)
 
         fetchResults(resDir,

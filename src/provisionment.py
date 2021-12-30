@@ -56,6 +56,7 @@ def provisionAndBootstrap(test,
         extraSupportedClouds (dict): Extra supported clouds.
         noTerraform (bool): True indicates the terraform phase is skipped.
         usePrivateIPs (bool): Indicates usage of public or private IPs.
+        freeMaster (bool): If True, pods can't run on the master node. 
 
     Returns:
         bool: True if the cluster was succesfully provisioned. False otherwise.

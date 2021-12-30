@@ -6,13 +6,22 @@ terraform {
   }
 }
 
+# Configure the IBM Provider
 provider "ibm" {
     iaas_classic_username = yamldecode(file(yamldecode(file(var.configsFile))["authFile"]))["iaas_classic_username"]
     iaas_classic_api_key = yamldecode(file(yamldecode(file(var.configsFile))["authFile"]))["iaas_classic_api_key"]
 }
 
+# ID String for resources
+resource "random_string" "id" {
+  length  = 5
+  special = false
+  upper   = false
+}
+
+# Create SSH Key
 resource "ibm_compute_ssh_key" "ssh_key" {
-    label = "ocrets_ssh_key"
+    label = "ts-sshkey-${random_string.id.result}"
     public_key = "${file(yamldecode(file(var.configsFile))["pathToPubKey"])}"
 }
 

@@ -12,6 +12,7 @@ variable "openUser" { default = "" }
 variable "zone" { default = "" }
 variable "region" { default = "" }
 variable "staticIPs" { default = "" }
+variable "useStaticIPs" { default = false }
 
 # -------------------------- Stack versioning ----------------------------------
 variable "dockerCE" { default = "" }

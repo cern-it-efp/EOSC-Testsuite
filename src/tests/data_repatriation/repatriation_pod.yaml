@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: hep-bmk-pod
+  name: repatriation-pod
   namespace: default
   labels:
     test: test-pod
@@ -18,11 +18,11 @@ spec:
         topologyKey: kubernetes.io/hostname
   hostNetwork: true
   containers:
-  - name: hep-benchmark-suite
-    image: gitlab-registry.cern.ch/hep-benchmarks/hep-benchmark-suite/hep-benchmark-suite-cc7:prior
+  - name: repatriation-cont
+    image: cernefp/data_repatriation_test_image:latest
     imagePullPolicy: Always
     securityContext:
       privileged: true
-    command: ["/bin/sh","-c"]
-    args:
-      - tail -f /dev/null
+    env:
+    - name: TOKEN
+      value: 5YB2PVNhIJMm7RSFuTZk1tKgX0GF9D4MvG333okfXpEhJxHaVLs21OX3iaMz

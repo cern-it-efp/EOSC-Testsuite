@@ -80,8 +80,8 @@ def initAndChecks(noTerraform,
         extraSupportedClouds (dict): Extra supported clouds.
         onlyTest (str): If True the provisioning phase is skipped.
         usePrivateIPs (bool): If True, the current run is not using bastion.
-        cfgPath (str): Path to configs.yaml file.
-        tcPath (str): Path to testsCatalog.yaml file.
+        cfgPathCLI (str): Path to configs.yaml file.
+        tcPathCLI (str): Path to testsCatalog.yaml file.
 
     Returns:
         Array(str): Array containing the selected tests.
@@ -111,17 +111,23 @@ def initAndChecks(noTerraform,
     else:
         tcPath = tcPathCLI
 
-    configs, testsCatalog = validateConfigs(cfgPath, tcPath, noTerraform, extraSupportedClouds, allTests)
+    configs, testsCatalog = validateConfigs(cfgPath,
+                                            tcPath,
+                                            noTerraform,
+                                            extraSupportedClouds,
+                                            allTests)
 
+    # authFile validattion (only YAML so no AWS and GCP)
     if configs['providerName'] in ("oci",
                                    "opentelekomcloud",
                                    "cloudsigma",
                                    "exoscale",
                                    "flexibleengine",
                                    "ibm",
-                                   "ionoscloud"): # authFile validate (only YAML so no AWS and GCP)
+                                   "ionoscloud"):
         authFile = loadFile(configs["authFile"], required=True)
-        schema = loadFile("src/schemas/authFile_sch_%s.yaml" % configs["providerName"], required=True)
+        schema = loadFile("src/schemas/authFile_sch_%s.yaml" \
+                % configs["providerName"], required=True)
         validateAuth(authFile, schema)
 
     if configs['providerName'] in ("azurerm") and usePrivateIPs is True:
@@ -131,9 +137,10 @@ def initAndChecks(noTerraform,
             print("Used --usePrivateIPs but did not provide subnetId")
             stop(1)
 
-    if noTerraform is False and configs['providerName'] not in extraSupportedClouds: # allows only providers in extraSupportedClouds to run w/o --no-terraform
-        writeToFile("src/logging/header", "Provider '%s' not fully supported, run using '--no-terraform'" %
-                    configs['providerName'], True)
+    # allows only providers in extraSupportedClouds to run w/o --no-terraform
+    if noTerraform is False and configs['providerName'] not in extraSupportedClouds:
+        writeToFile("src/logging/header", "Provider '%s' not fully supported," \
+            " run using '--no-terraform'" % configs['providerName'], True)
         stop(1)
 
     if onlyTest is False:
@@ -154,14 +161,22 @@ def initAndChecks(noTerraform,
             selected.append(test)
 
             if test == "dlTest" or test == "proGANTest":
-                instancePrice = tryTakeFromYaml(configs, "costCalculation.GPUInstancePrice", None)
+                instancePrice = tryTakeFromYaml(configs,
+                                        "costCalculation.GPUInstancePrice",
+                                        None)
             elif test == "hpcTest":
-                instancePrice = tryTakeFromYaml(configs, "costCalculation.HPCInstancePrice", None)
+                instancePrice = tryTakeFromYaml(configs,
+                                        "costCalculation.HPCInstancePrice",
+                                        None)
             else:
-                instancePrice = tryTakeFromYaml(configs, "costCalculation.generalInstancePrice", None)
+                instancePrice = tryTakeFromYaml(configs,
+                                        "costCalculation.generalInstancePrice",
+                                        None)
 
             if test == "s3Test":
-                s3bucketPrice = tryTakeFromYaml(configs, "costCalculation.s3bucketPrice", None)
+                s3bucketPrice = tryTakeFromYaml(configs,
+                                        "costCalculation.s3bucketPrice",
+                                        None)
                 obtainCost = checkCost(obtainCost, s3bucketPrice)
 
             obtainCost = checkCost(obtainCost, instancePrice)

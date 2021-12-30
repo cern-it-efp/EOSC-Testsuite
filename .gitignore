@@ -11,7 +11,6 @@ src/provisionment/nonTerraform/layershift/response.json
 logs
 
 src/tests/s3/cosbench_pod.yaml
-src/tests/data_repatriation/repatriation_pod.yaml
 src/tests/perfsonar/ps_pod.yaml
 
 src/tests/dlTest/mpi_learn.yaml

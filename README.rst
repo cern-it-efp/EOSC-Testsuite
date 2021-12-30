@@ -88,7 +88,7 @@ Release notes
 
 ``21.12 - latest``
 
-- Included deployment support for Ionos, CloudSigma, OVH, IBM, CityNetwork, X-Ion, Layershift, Orange, Yandex and Oracle Cloud Infrastructure.
+- Included deployment support for Ionos, CloudSigma, OVH, IBM, CityNetwork, X-Ion, Layershift, Orange and Yandex.
 
 - Updated CPU Benchmark: using new Hepscore based implementation.
 
@@ -96,7 +96,7 @@ Release notes
 
 - Network test (perfSONAR) update: added reverse throughput measurement & retries.
 
-- Complete networking/VPC provisioning: AWS, Openstack, IBM, Orange, OCI, Ionos and Yandex. 
+- Complete networking/VPC provisioning: AWS, Openstack, IBM, Orange, OCI, Ionos and Yandex.
 
 - Added option --freeMaster to disable running tests/benchmarks on the master node.
 

@@ -11,7 +11,7 @@ provider "openstack" {
 }
 
 # Creating the instance
-resource "openstack_compute_instance_v2" "instance" { # The default sec. group already allows everything
+resource "openstack_compute_instance_v2" "instance" {
   count       = var.customCount
   name        = "${var.instanceName}-${count.index}"
   flavor_name = var.flavor

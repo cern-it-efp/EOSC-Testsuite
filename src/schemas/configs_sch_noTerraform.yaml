@@ -29,6 +29,10 @@ properties:
                 type: array
                 items:
                   type: string
+            proGANTest:
+                type: array
+                items:
+                  type: string
     dockerCE:
         type: string
     dockerEngine:

@@ -128,7 +128,7 @@ def publishResults(s3ResDirBase):
     endpoint_url = os.environ.get('S3_ENDPOINT', s3Endpoint)
 
     if aws_access_key_id == None or aws_secret_access_key == None:
-        print("WARNING: no credentials were provided, the results will not be published.")
+        print("WARNING: credentials not found so results won't be published.")
         return False
 
     client_s3=boto3.client(
@@ -155,8 +155,8 @@ header()
 
 # -----------------CMD OPTIONS--------------------------------------------
 parser = argparse.ArgumentParser(prog="./test_suite",
-                                 description='EOSC Test-Suite - Cloud Benchmarking And Validation',
-                                 allow_abbrev=False)
+                        description='EOSC Test-Suite - Cloud Benchmarking',
+                        allow_abbrev=False)
 parser.add_argument('-y',
                     help='No interactive (TBD).',
                     action='store_false',
@@ -364,9 +364,9 @@ if checkResultsExist(resDir) is True:
     # -----------------S3 RESULTS UPLOAD---------------------------------------
     if publish is True:
         if publishResults(s3ResDirBase) is False:
-            logger("S3 upload failed!", "!", "src/logging/footer")
+            logger("S3 upload failed!","!","src/logging/footer")
         else:
-            logger(["TESTING COMPLETED", "S3 upload OK"],"#", "src/logging/footer")
+            logger(["TESTING COMPLETED","S3 push OK"],"#","src/logging/footer")
     else:
         logger(msg1, "*", "src/logging/footer")
 

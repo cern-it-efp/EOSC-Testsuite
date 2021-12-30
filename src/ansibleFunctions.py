@@ -91,6 +91,7 @@ def ansiblePlaybook(mainTfDir,
         test (str): Cluster identification.
         configs (dict): Content of configs.yaml.
         usePrivateIPs (bool): Indicates whether private IPs should be used.
+        freeMaster (bool): If True, pods can't run on the master node. 
 
     Returns:
         int: 0 for success, 1 for failure
