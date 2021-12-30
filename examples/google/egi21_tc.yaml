@@ -1,0 +1,12 @@
+perfsonarTest:
+  run: true
+  endpoint: pse01-gva.cern.ch
+
+dodasTest:
+  run: true
+
+proGANTest:
+  run: true
+  flavor: n1-standard-32
+  images_amount: 1
+  kimg: 1

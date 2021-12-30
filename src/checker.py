@@ -128,7 +128,7 @@ def checkClustersToDestroy(cliParameterValue, clusters):
 
     Parameters:
         cliParameterValue (str): CLI arguments.
-        clusters (Array<str>): Array containing 'shared','dlTest', 'proGANTest' and 'hpcTest'.
+        clusters (Array<str>): Contains 'shared','dlTest','proGANTest','hpcTest'.
 
     Returns:
         bool: True in case the given argument is correct. False otherwise.

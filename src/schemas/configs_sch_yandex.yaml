@@ -1,0 +1,70 @@
+type: object
+required:
+    - providerName
+    - pathToKey
+    - pathToPubKey
+    - serviceAccountKeyFile
+    - zone
+    - openUser
+    - storageCapacity
+    - cloudID
+    - folderID
+    - platformID
+    - imageID
+    - flavor
+properties:
+    providerName:
+        type: string
+    pathToKey:
+        type: string
+    pathToPubKey:
+        type: string
+    serviceAccountKeyFile:
+        type: string
+    zone:
+        type: string
+    openUser:
+        type: string
+    storageCapacity:
+        type: number
+    imageID:
+        type: string
+    cloudID:
+        type: string
+    folderID:
+        type: string
+    platformID:
+        type: string
+    flavor:
+        type: object
+        required:
+          - cores
+          - memory
+        properties:
+          cores:
+              type: number
+          memory:
+              type: number
+    costCalculation:
+        type:
+            - object
+        properties:
+            generalInstancePrice:
+                type:
+                    - number
+            GPUInstancePrice:
+                type:
+                    - number
+            HPCInstancePrice:
+                type:
+                    - number
+            s3bucketPrice:
+                type:
+                    - number
+    dockerCE:
+        type: string
+    dockerEngine:
+        type: string
+    kubernetes:
+        type: string
+additionalProperties: false

@@ -1,0 +1,85 @@
+type: object
+required:
+    - pathToKey
+    - pathToPubKey
+    - authFile
+    - providerName
+    - flavor
+    - useClassic
+    #- storageCapacity
+properties:
+    providerName:
+        type: string
+    useClassic:
+        type: boolean
+    pathToKey:
+        type: string
+    pathToPubKey:
+        type: string
+    authFile:
+        type: string
+    flavor:
+        type: string
+    dockerCE:
+        type: string
+    dockerEngine:
+        type: string
+    kubernetes:
+        type: string
+    ####### Classic Infrastructure
+    os_reference_code:
+        type: string
+    datacenter:
+        type: string
+    network_speed:
+        type: number
+    ####### VPC Infrastructure
+    zone:
+        type: string
+    region:
+        type: string
+    image:
+        type: string
+
+    storageCapacity:
+        type: number
+    costCalculation:
+        type:
+            - object
+        properties:
+            generalInstancePrice:
+                type:
+                    - number
+            GPUInstancePrice:
+                type:
+                    - number
+            HPCInstancePrice:
+                type:
+                    - number
+            s3bucketPrice:
+                type:
+                    - number
+
+####### Classic Infrastructure
+if:
+    properties:
+        useClassic:
+            const: true
+then:
+    required:
+        - os_reference_code
+        - datacenter
+        - network_speed
+
+####### VPC Infrastructure
+if:
+    properties:
+        useClassic:
+            const: False
+then:
+    required:
+        - zone
+        - region
+        - image
+
+additionalProperties: false

@@ -1,0 +1,18 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: google
+pathToKey: /home/ipelu/.ssh/id_rsa
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
+pathToCredentials: /data/career/cern/clouds/gcp/cern-test-suite-fb46815ac1f0.json
+project: cern-test-suite
+openUser: openu
+
+flavor: n1-standard-8 # 8 / 30
+
+zone: europe-west4-a
+
+image: deeplearning-platform-release/tf2-ent-2-3-cu110
+
+gpuType: nvidia-tesla-v100
+
+gpusPerNode: 4
+storageCapacity: 200

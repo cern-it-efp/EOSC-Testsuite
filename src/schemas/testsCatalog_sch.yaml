@@ -9,6 +9,8 @@ properties:
                 type:
                     - boolean
                     - "null"
+            keepPod:
+                type: boolean
         if:
             properties:
                 run:
@@ -16,14 +18,11 @@ properties:
         then:
             required:
                 - endpoint
-                - accessKey
-                - secretKey
+                - keysFile
             properties:
                 endpoint:
                     type: string
-                accessKey:
-                    type: string
-                secretKey:
+                keysFile:
                     type: string
     dataRepatriationTest:
         type: object
@@ -43,27 +42,6 @@ properties:
                 type:
                     - boolean
                     - "null"
-        if:
-            properties:
-                run:
-                    const: true
-        then:
-            required:
-                - benchmarks
-            properties:
-                benchmarks:
-                    type: array
-                    minItems: 1
-                    maxItems: 4
-                    items:
-                      - type: string
-                        enum: [hepscore, kv, DB12, hyper-benchmark]
-                      - type: string
-                        enum: [hepscore, kv, DB12, hyper-benchmark]
-                      - type: string
-                        enum: [hepscore, kv, DB12, hyper-benchmark]
-                      - type: string
-                        enum: [hepscore, kv, DB12, hyper-benchmark]
     perfsonarTest:
         type: object
         required:
@@ -73,6 +51,8 @@ properties:
                 type:
                     - boolean
                     - "null"
+            keepPod:
+                type: boolean
         if:
             properties:
                 run:

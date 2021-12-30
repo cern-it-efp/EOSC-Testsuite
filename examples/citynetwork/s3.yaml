@@ -1,0 +1,4 @@
+s3Test:
+  run: true
+  endpoint: s3-fra1.citycloud.com:8080
+  keysFile: /home/ipelu/Desktop/work/clouds/citynetwork/k.yaml

@@ -6,7 +6,7 @@ source /CMSSW/cmsset_default.sh
 
 cmsenv
 
-cmsRun -j jobReport.xml RSGravitonToZZ_kMpl01_M_1000_TuneCUETP8M1_13TeV_pythia8_GEN-SIM_cfg.py &> cmsRunLogs
+cmsRun -j jobReport.xml RSGravitonToZZ_kMpl01_M_1000_TuneCUETP8M1_13TeV_pythia8_GEN-SIM_cfg.py 2>&1 | tee cmsRunLogs
 
 cmsRunOut=$?
 

@@ -47,25 +47,19 @@ def createHostsFile(mainTfDir,
 
     IPs = []
 
-    if noTerraform is not True:
-        os.chdir(mainTfDir)
+    if noTerraform is True:
+        IPs = configs["clusters"][test]  # one of shared, dlTest, hpcTest, proGANTest
 
+    else:
+        os.chdir(mainTfDir)
         tfShowJson = json.loads(runCMD("terraform show -json", read=True))
         resources = tfShowJson["values"]["root_module"]["resources"]
-
         os.chdir(baseCWD)
 
         for resource in resources:
-
-            if usePrivateIPs is True:
-                ip = getIP(resource, provider)
-            else:
-                ip = getIP(resource, provider, public=True) # no bastion method
-
-            if ip is not None:
+            ip = getIP(resource, configs, public=not usePrivateIPs)
+            if ip is not None and ip not in IPs:
                 IPs.append(ip)
-    else:
-        IPs = configs["clusters"][test]  # one of shared, dlTest, hpcTest, proGANTest
 
     config = ConfigParser(allow_no_value=True)
     config.add_section('master')
@@ -84,7 +78,8 @@ def ansiblePlaybook(mainTfDir,
                     noTerraform,
                     test,
                     configs,
-                    usePrivateIPs):
+                    usePrivateIPs,
+                    freeMaster):
     """Runs ansible-playbook with the given playbook.
 
     Parameters:
@@ -96,6 +91,7 @@ def ansiblePlaybook(mainTfDir,
         test (str): Cluster identification.
         configs (dict): Content of configs.yaml.
         usePrivateIPs (bool): Indicates whether private IPs should be used.
+        freeMaster (bool): If True, pods can't run on the master node. 
 
     Returns:
         int: 0 for success, 1 for failure
@@ -123,12 +119,13 @@ def ansiblePlaybook(mainTfDir,
         tags={},
         private_key_file=configs["pathToKey"],
         connection='ssh',
+        timeout=120,
         remote_user=tryTakeFromYaml(configs, "openUser", "root"),
         become_method='sudo',
         ssh_common_args='-o StrictHostKeyChecking=no',
         extra_vars=[{'kubeconfig': kubeconfig, 'masterIP': masterIP}],
         forks=100,
-        verbosity=False,  # True,
+        verbosity=4, #True,
         listtags=False,
         listtasks=False,
         listhosts=False,
@@ -152,15 +149,23 @@ def ansiblePlaybook(mainTfDir,
         with contextlib.redirect_stdout(f):
             with contextlib.redirect_stderr(f):
 
-                # --------------- GPU support
                 playbooksArray = [playbookPath]
 
-                if test == "dlTest":
+                if not freeMaster:
+                    playbooksArray.append("src/provisionment/playbooks/allowMasterRuns.yaml")
+
+                # --------------- GPU support
+                if test in ("dlTest", "proGANTest"):
                     playbooksArray.append("src/provisionment/playbooks/gpuSupport.yaml")
+
+                # --------------- MPI support
+                if test in ("dlTest", "hpcTest"):
                     playbooksArray.append("src/provisionment/playbooks/kubeflow_mpiOperator.yaml")
 
-                if test == "proGANTest":
-                    playbooksArray.append("src/provisionment/playbooks/gpuSupport.yaml")
+                # --------------- OCI's Grow File System
+                if providerName == "oci":
+                    playbooksArray.append("src/provisionment/playbooks/oci_growfs.yaml")
+
 
                 res = PlaybookExecutor(playbooks=playbooksArray,
                                        inventory=inventory,

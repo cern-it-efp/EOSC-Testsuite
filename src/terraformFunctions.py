@@ -113,7 +113,8 @@ def cleanupTF(mainTfDir):
         "terraform.tfvars.json",
         "terraform.tfstate",
         "terraform.tfstate.backup",
-            ".terraform"]:
+        ".terraform.lock.hcl",
+        ".terraform"]:
         file = "%s/%s" % (mainTfDir, filename)
         if os.path.isfile(file):
             os.remove(file)
@@ -125,33 +126,25 @@ def terraformProvisionment(
         test,
         nodes,
         flavor,
-        extraInstanceConfig,
         toLog,
         configs,
         cfgPath,
         testsRoot,
         retry,
-        instanceDefinition,
-        credentials,
-        dependencies,
         baseCWD,
         extraSupportedClouds,
         usePrivateIPs):
-    """ Provisions VMs on the provider and creates a k8s cluster with them.
+    """ Provisions VMs on the provider.
 
     Parameters:
         test (str): Indicates the test for which to provision the cluster
         nodes (int): Number of nodes the cluster must contain.
         flavor (str): Flavor to be used for the VMs.
-        extraInstanceConfig (str): Extra HCL code to configure VM
         toLog (str): File to which write the log msg.
         configs (dict): Object containing configs.yaml's configurations.
         cfgPath (str): Path to the configs file.
         testsRoot (str): Tests directory root.
         retry (bool): If true, retrying after a failure.
-        instanceDefinition (str): HCL code definition of an instance.
-        credentials (str): HCL code related to authentication/credentials.
-        dependencies (str): HCL code related to infrastructure dependencies.
         baseCWD (str): Path to the base directory.
         extraSupportedClouds (dict): Extra supported clouds.
         usePrivateIPs (bool): If True, the current run is not using bastion.
@@ -163,6 +156,19 @@ def terraformProvisionment(
 
     templatesPath_base = "src/provisionment/tfTemplates/%s"
     templatesPath = templatesPath_base % configs["providerName"]
+
+    ########### OVH VM's have NIC with public IP, no need to use floating IPs
+    if configs["providerName"] == "openstack" and configs["vendor"] == "ovh":
+        templatesPath = templatesPath_base % configs["vendor"]
+    ############################################################################
+
+    ########### IBM offers two infrastructures: Classic and VPC
+    if configs["providerName"] == "ibm" and configs["useClassic"] == True:
+        rawProvisioning = loadFile("%s/rawProvision_classic.tf" % templatesPath,
+                                   required=True)
+    else:
+        rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath,
+                                   required=True)
 
     mainTfDir = testsRoot + test
     terraform_cli_vars = {}
@@ -176,11 +182,16 @@ def terraformProvisionment(
         # ---------------- delete TF stuff from previous run if existing
         cleanupTF(mainTfDir)
 
-        # ---------------- variables
+        # ---------------- main.tf generation (including variables defaults)
         variables = loadFile(templatesPath_base % "variables.tf",
                              required=True)
         writeToFile(mainTfDir + "/main.tf", variables, False)
+        writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
 
+        # ---------------- Terraform variables setting
+        terraform_cli_vars["configsFile"] = cfgPath
+        terraform_cli_vars["flavor"] = flavor
+        terraform_cli_vars["instanceName"] = nodeName
         terraform_cli_vars["customCount"] = nodes
         terraform_cli_vars["dockerCE"] = tryTakeFromYaml(configs,
                                                          "dockerCE",
@@ -192,16 +203,13 @@ def terraformProvisionment(
                                                            "kubernetes",
                                                            None)
 
+        if configs["providerName"] in ("cloudsigma", "flexibleengine"):
 
-        rawProvisioning = loadFile("%s/rawProvision.tf" % templatesPath,
-                                   required=True)
-        #print(rawProvisioning) # OK
-        writeToFile(mainTfDir + "/main.tf", rawProvisioning, True)
-        #print("\n %s" % open(mainTfDir + "/main.tf").read()) # FU
-
-        terraform_cli_vars["configsFile"] = cfgPath
-        terraform_cli_vars["flavor"] = flavor
-        terraform_cli_vars["instanceName"] = nodeName
+            staticIPs = tryTakeFromYaml(configs,"staticIPs",None) # These two providers (must) support specifying the IPs to be used on the VMs
+            if staticIPs is not None:
+                terraform_cli_vars["customCount"] = min(len(staticIPs), nodes)
+                terraform_cli_vars["staticIPs"] = staticIPs
+                terraform_cli_vars["useStaticIPs"] = True
 
         if configs["providerName"] == "azurerm":
 
@@ -236,6 +244,14 @@ def terraformProvisionment(
                                                         configs,
                                                         "availabilityZone",
                                                         None)
+            terraform_cli_vars["region"] = tryTakeFromYaml(
+                                                        configs,
+                                                        "region",
+                                                        None)
+            terraform_cli_vars["authUrl"] = tryTakeFromYaml(
+                                                        configs,
+                                                        "authUrl",
+                                                        None)
 
         if configs["providerName"] == "opentelekomcloud":
 
@@ -247,13 +263,18 @@ def terraformProvisionment(
                                                         "availabilityZone",
                                                         None)
 
+        if configs["providerName"] == "oci":
+
+            terraform_cli_vars["useFlexShape"] = configs["useFlexShape"]
+
         if configs["providerName"] == "google":
 
             pathToPubKey = tryTakeFromYaml(configs,"pathToPubKey",None)
             if pathToPubKey is None:
                 terraform_cli_vars["gcp_keyAsMetadata"] = "UseProjectWideKey!"
             else:
-                terraform_cli_vars["gcp_keyAsMetadata"] = "%s:%s" % (configs["openUser"],loadFile(pathToPubKey))
+                terraform_cli_vars["gcp_keyAsMetadata"] = "%s:%s" \
+                    % (configs["openUser"],loadFile(pathToPubKey))
 
             if test in ("dlTest", "proGANTest") :
                 terraform_cli_vars["gpuCount"] = tryTakeFromYaml(configs,
@@ -283,8 +304,8 @@ def terraformProvisionment(
 
 
         # ---------------- RUN TERRAFORM: provision VMs
-        cmd = "terraform 0.13upgrade -yes && \
-               terraform init && \
+             # terraform 0.13upgrade -yes && \
+        cmd = "terraform init && \
                terraform fmt > /dev/null && \
                terraform apply -auto-approve && \
                terraform refresh"
@@ -293,7 +314,8 @@ def terraformProvisionment(
                         mainTfDir,
                         baseCWD,
                         test,
-                        "Provisioning %d '%s' VMs..." % (nodes, flavor),
+                        "Provisioning %d '%s' VMs..." \
+                            % (terraform_cli_vars["customCount"], flavor), # "Provisioning %d '%s' VMs..." % (nodes, flavor),
                         terraform_cli_vars=terraform_cli_vars) != 0:
             return False, provisionFailMsg
 

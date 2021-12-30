@@ -11,7 +11,8 @@ variable "pathToPubKey" { default = "" }
 variable "openUser" { default = "" }
 variable "zone" { default = "" }
 variable "region" { default = "" }
-variable "keyPair" { default = "" }
+variable "staticIPs" { default = "" }
+variable "useStaticIPs" { default = false }
 
 # -------------------------- Stack versioning ----------------------------------
 variable "dockerCE" { default = "" }
@@ -21,6 +22,7 @@ variable "kubernetes" { default = "" }
 ############################ OPENSTACK #########################################
 variable "availabilityZone" { default = "" } # region is above
 variable "useDefaultNetwork" { default = true } # default uses existing network (if only 1, otherwise fails)
+variable "authUrl" { default = "" }
 
 ############################ AZURE #############################################
 variable "clusterRandomID" { default = "" }
@@ -38,5 +40,8 @@ variable "imageVersion" { default = "" }
 variable "gpuCount" { default = "" }
 variable "gpuType" { default = "" }
 variable "gcp_keyAsMetadata" { default = "" }
+
+############################ OCI ###############################################
+variable "useFlexShape" { default = "" }
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~ END OF VARS  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

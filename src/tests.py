@@ -5,6 +5,7 @@ try:
     from multiprocessing import Process, Queue
     import contextlib
     import io
+    import json
 except ModuleNotFoundError as ex:
     print(ex)
     sys.exit(1)
@@ -21,7 +22,8 @@ def sharedClusterTests(msgArr,
                        noTerraform,
                        resDir,
                        numberOfNodes,
-                       usePrivateIPs):
+                       usePrivateIPs,
+                       freeMaster):
     """ Runs the test that share the general purpose cluster.
 
     Parameters:
@@ -33,6 +35,7 @@ def sharedClusterTests(msgArr,
         resDir (str): Path to the results folder for the current run.
         numberOfNodes (int): Number of nodes to provision.
         usePrivateIPs (bool): Indicates usage of private or public IPs.
+        freeMaster (bool): If True, pods can't run on the master node.
 
     Returns:
         None: In case of errors the function stops (returns None)
@@ -43,7 +46,7 @@ def sharedClusterTests(msgArr,
     testCost = 0
     logger(msgArr, "=", "src/logging/shared")
 
-    if noTerraform is True:
+    if noTerraform is True or onlyTest is True:
         flavor = None
     else:
         flavor = init.configs["flavor"]
@@ -52,19 +55,16 @@ def sharedClusterTests(msgArr,
         prov, msg = provisionAndBootstrap("shared",
                                           numberOfNodes,
                                           flavor,
-                                          None,
                                           "src/logging/shared",
                                           init.configs,
                                           init.cfgPath,
                                           testsRoot,
                                           retry,
-                                          instanceDefinition,
-                                          credentials,
-                                          dependencies,
                                           baseCWD,
                                           extraSupportedClouds,
                                           noTerraform,
-                                          usePrivateIPs)
+                                          usePrivateIPs,
+                                          freeMaster)
         if prov is False:
             toPut = {"test": "shared", "deployed": False}
             if "provision" in msg:
@@ -104,17 +104,26 @@ def runTest(definition,
             localPath=None,
             cmd=None,
             additionalResourcesPrices=None,
-            keepResources=False): # additionalResourcePrice is an array
+            keepResources=False):
     """ Runs tests.
 
     Parameters:
-        msgArray (Array<str>): Stuff to show on the banner. Contains the
-                               tests to be deployed on the shared cluster.
-        onlyTest (bool): If true, skip provisioning phase.
-        retry (bool): If true, try to reuse existing infrastructure.
-        noTerraform (bool): Specifies whether current run uses terraform.
+        definition (str): Pod definition.
+        toLog (str): File where to write logs.
+        testName (str): Name of the test.
         resDir (str): Path to the results folder for the current run.
-        numberOfNodes (int): Number of nodes to provision.
+        resultFile (str): Name of the results file.
+        podName (str): Pod name.
+        resultOnPod (str): Path on the pod where to find the results.
+        kubeconfig (str): Path to the kubeconfig file.
+        definition_raw (str): Pod definition, with placeholders.
+        substitution (str): Substitution of placeholders.
+        copyToPodAndRun_flag (bool): If True, copy test script to the pod.
+        podPath (str): Path on the pod where to place the test script.
+        localPath (str): Local path to a test script.
+        cmd (str): Command to run on the pod.
+        additionalResourcesPrices (array): Resources prices (other than VMs)
+        keepResources (bool): If True, do not destroy pod on completion.
     """
 
     testCost = 0
@@ -161,36 +170,44 @@ def runTest(definition,
 
 
 def s3Test(resDir):
-    """ Run S3 endpoints test.
+    """ Run S3 test (COSBench).
 
     Parameters:
         resDir (str): Path to the results folder for the current run.
     """
 
+    try:
+        keepPod = init.testsCatalog["s3Test"]["keepPod"]
+    except:
+        keepPod = False
+
     testCost = 0
-    podName = "s3pod"
-    definition_raw = "%ss3/raw/s3pod_raw.yaml" % testsRoot
-    definition = "%ss3/s3pod.yaml" % testsRoot
-    resultFile = "s3Test.json"
+    podName = "cosbench-pod"
+    definition_raw = "%ss3/raw/cosbench_pod_raw.yaml" % testsRoot
+    definition = "%ss3/cosbench_pod.yaml" % testsRoot
+    resultFile = "s3-main.csv"
     toLog = "src/logging/shared"
     testName = "s3Test"
-    resultOnPod = "/home/s3_test.json"
+    resultOnPod = "/cosbench/archive/w1-s3-sample/s3-main.csv"
     additionalResourcesPrices = [tryTakeFromYaml(
                                 init.configs,
                                 "costCalculation.s3bucketPrice",
                                 None)]
+
+    keysFile = loadFile(init.testsCatalog["s3Test"]["keysFile"])
+
     substitution = [
         {
             "before": "ENDPOINT_PH",
-            "after": init.testsCatalog["s3Test"]["endpoint"]
+            "after": init.testsCatalog["s3Test"]["endpoint"].replace("/","\/")
         },
         {
             "before": "ACCESS_PH",
-            "after": init.testsCatalog["s3Test"]["accessKey"]
+            "after": keysFile["accessKey"]
         },
         {
             "before": "SECRET_PH",
-            "after": init.testsCatalog["s3Test"]["secretKey"]
+            "after": keysFile["secretKey"]
         }
     ]
     kubeconfig = defaultKubeconfig
@@ -204,7 +221,8 @@ def s3Test(resDir):
             kubeconfig,
             definition_raw=definition_raw,
             substitution=substitution,
-            additionalResourcesPrices=additionalResourcesPrices)
+            additionalResourcesPrices=additionalResourcesPrices,
+            keepResources=keepPod)
 
 
 def dataRepatriationTest(resDir):
@@ -216,17 +234,11 @@ def dataRepatriationTest(resDir):
 
     podName = "repatriation-pod"
     toLog = "src/logging/shared"
-    definition_raw = "%sdata_repatriation/raw/repatriation_pod_raw.yaml" % testsRoot
     definition = "%sdata_repatriation/repatriation_pod.yaml" % testsRoot
     resultFile = "data_repatriation_test.json"
     testName = "dataRepatriationTest"
     resultOnPod = "/home/data_repatriation_test.json"
-    substitution = [
-        {
-            "before": "PROVIDER_PH",
-            "after": init.configs["providerName"]
-        }
-    ]
+
     kubeconfig = defaultKubeconfig
     runTest(definition,
             toLog,
@@ -235,9 +247,7 @@ def dataRepatriationTest(resDir):
             resultFile,
             podName,
             resultOnPod,
-            kubeconfig,
-            definition_raw=definition_raw,
-            substitution=substitution)
+            kubeconfig)
 
 
 def cpuBenchmarking(resDir):
@@ -248,22 +258,11 @@ def cpuBenchmarking(resDir):
     """
 
     podName = "hep-bmk-pod"
-    definition_raw = "%scpu_benchmarking/raw/cpu_benchmarking_pod_raw.yaml" % testsRoot
     definition = "%scpu_benchmarking/cpu_benchmarking_pod.yaml" % testsRoot
     resultFile = "cpu_benchmarking.json"
     toLog = "src/logging/shared"
     testName = "cpuBenchmarking"
-    resultOnPod = "/tmp/hep-benchmark-suite/bmk_utils/result_profile.json"
-    substitution = [
-        {
-            "before": "PROVIDER_PH",
-            "after": init.configs["providerName"]
-        },
-        {
-            "before": "BMKS_PH",
-            "after": str(init.testsCatalog["cpuBenchmarking"]["benchmarks"])[1:-1].replace("\'","")
-        }
-    ]
+    resultOnPod = "/tmp/hep-benchmark-suite/bmkrun_report.json"
 
     kubeconfig = defaultKubeconfig
     runTest(definition,
@@ -273,81 +272,7 @@ def cpuBenchmarking(resDir):
             resultFile,
             podName,
             resultOnPod,
-            kubeconfig,
-            definition_raw=definition_raw,
-            substitution=substitution)
-
-
-def cpuBenchmarking_former(resDir):
-    """ Run containerised CPU Benchmarking test.
-
-    Parameters:
-        resDir (str): Path to the results folder for the current run.
-    """
-
-    podName = "cpu-bmk-pod"
-    definition_raw = "%scpu_benchmarking/raw/cpu_benchmarking_pod_raw.yaml" % testsRoot
-    definition = "%scpu_benchmarking/cpu_benchmarking_pod.yaml" % testsRoot
-    resultFile = "cpu_benchmarking.json"
-    toLog = "src/logging/shared"
-    testName = "cpuBenchmarking"
-    resultOnPod = "/tmp/cern-benchmark_root/bmk_tmp/result_profile.json"
-    substitution = [
-        {
-            "before": "PROVIDER_PH",
-            "after": init.configs["providerName"]
-        }
-    ]
-    kubeconfig = defaultKubeconfig
-    runTest(definition,
-            toLog,
-            testName,
-            resDir,
-            resultFile,
-            podName,
-            resultOnPod,
-            kubeconfig,
-            definition_raw=definition_raw,
-            substitution=substitution)
-
-
-def perfsonarTest(resDir):
-    """ Run Networking Performance test -perfSONAR toolkit-.
-
-    Parameters:
-        resDir (str): Path to the results folder for the current run.
-    """
-
-    keepPerfsonarPod = False # CTS-190
-
-    podName = "ps-pod"
-    testName = "perfSONAR"
-    endpoint = init.testsCatalog["perfsonarTest"]["endpoint"]
-    dependenciesCMD = "yum -y install python-dateutil python-requests"
-    runScriptCMD = "python /tmp/ps_test.py --ep %s" % endpoint
-    runOnPodCMD = "%s && %s" % (dependenciesCMD, runScriptCMD)
-    cmd = "%s" % runOnPodCMD
-    resultFile = "perfsonar_results.json"
-    definition = "%sperfsonar/ps_pod.yaml" % testsRoot
-    toLog = "src/logging/shared"
-    podPath="%s:/tmp" % podName
-    localPath=testsRoot + "perfsonar/ps_test.py"
-    resultOnPod = "/tmp/perfsonar_results.json"
-    kubeconfig = defaultKubeconfig
-    runTest(definition,
-            toLog,
-            testName,
-            resDir,
-            resultFile,
-            podName,
-            resultOnPod,
-            kubeconfig,
-            copyToPodAndRun_flag=True,
-            podPath=podPath,
-            localPath=localPath,
-            cmd=cmd,
-            keepResources=keepPerfsonarPod)
-
+            kubeconfig)
 
 def dodasTest(resDir):
     """ Run DODAS test.
@@ -357,14 +282,49 @@ def dodasTest(resDir):
     """
 
     podName = "dodas-pod"
-    toLog = "src/logging/shared"
-    resultFile = "dodas_results.json"
-    resultOnPod = "/tmp/%s" % resultFile
     definition = "%sdodas/dodas_pod.yaml" % testsRoot
+    resultFile = "dodas_results.json"
+    toLog = "src/logging/shared"
     testName = "dodasTest"
-    podPath = "%s:/CMSSW/CMSSW_9_4_0/src" % podName
-    localPath = "%sdodas/custom_entrypoint.sh" % testsRoot
-    cmd = "sh /CMSSW/CMSSW_9_4_0/src/custom_entrypoint.sh"
+    resultOnPod = "/tmp/%s" % resultFile
+
+    kubeconfig = defaultKubeconfig
+    runTest(definition,
+            toLog,
+            testName,
+            resDir,
+            resultFile,
+            podName,
+            resultOnPod,
+            kubeconfig)
+
+
+def perfsonarTest(resDir):
+    """ Run Networking Performance test -perfSONAR toolkit-.
+
+    Parameters:
+        resDir (str): Path to the results folder for the current run.
+    """
+
+    try:
+        keepPod = init.testsCatalog["perfsonarTest"]["keepPod"]
+    except:
+        keepPod = False
+
+    podName = "ps-pod"
+    definition_raw = "%sperfsonar/raw/ps_pod.yaml" % testsRoot
+    definition = "%sperfsonar/ps_pod.yaml" % testsRoot
+    resultFile = "perfsonar_results.json"
+    toLog = "src/logging/shared"
+    testName = "perfSONAR"
+    resultOnPod = "/home/perfsonar_results.json"
+    substitution = [
+        {
+            "before": "ENDPOINT_PH",
+            "after": init.testsCatalog["perfsonarTest"]["endpoint"]
+        }
+    ]
+
     kubeconfig = defaultKubeconfig
     runTest(definition,
             toLog,
@@ -374,13 +334,12 @@ def dodasTest(resDir):
             podName,
             resultOnPod,
             kubeconfig,
-            copyToPodAndRun_flag=True,
-            podPath=podPath,
-            localPath=localPath,
-            cmd=cmd)
+            definition_raw=definition_raw,
+            substitution=substitution,
+            keepResources=keepPod)
 
 
-def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
+def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs, freeMaster):
     """ Run Deep Learning test -GAN training- on GPU nodes.
 
     Parameters:
@@ -389,6 +348,7 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
         noTerraform (bool): Specifies whether current run uses terraform.
         resDir (str): Path to the results folder for the current run.
         usePrivateIPs (bool): Indicates usage of private or public IPs.
+        freeMaster (bool): If True, pods can't run on the master node.
 
     Returns:
         None: In case of errors the function stops (returns None)
@@ -409,19 +369,16 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
         prov, msg = provisionAndBootstrap("dlTest",
                                           dl["nodes"],
                                           flavor,
-                                          extraInstanceConfig,
                                           "src/logging/dlTest",
                                           init.configs,
                                           init.cfgPath,
                                           testsRoot,
                                           retry,
-                                          instanceDefinition,
-                                          credentials,
-                                          dependencies,
                                           baseCWD,
                                           extraSupportedClouds,
                                           noTerraform,
-                                          usePrivateIPs)
+                                          usePrivateIPs,
+                                          freeMaster)
         if prov is False:
             toPut = {"test": "dlTest", "deployed": res}
             if "provision" in msg:
@@ -450,6 +407,11 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
     mpijobResourceFile = '%s/dlTest/raw/%s_raw.yaml' % (testsRoot, dl["benchmark"])
 
     gpusPerNode = getGpusPerNode(kubeconfig)
+    if gpusPerNode == 0:
+        writeFail(resDir,
+                  "bb_train_history.json",
+                  "ERROR: Cluster %s doesn't have GPUs!" % kubeconfig,
+                  "src/logging/dlTest")
     replicas = gpusPerNode * dl["nodes"]
 
     with open(mpijobResourceFile, 'r') as inputfile:
@@ -473,7 +435,11 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
         writeFail(resDir, "bb_train_history.json",
                   "Error deploying 3D GAN benchmark.", "src/logging/dlTest")
 
-    elif waitForResource(podName, Type.pod, kubeconfig, retrials=70, sleepTime=10) is False:
+    elif waitForResource(podName,
+                         Type.pod,
+                         kubeconfig,
+                         retrials=70,
+                         sleepTime=10) is False:
         writeFail(resDir,
                   "bb_train_history.json",
                   "Error deploying 3D GAN benchmark: pods were never created",
@@ -507,13 +473,19 @@ def dlTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
 
     # cleanup
     writeToFile("src/logging/dlTest", "Cluster cleanup...", True)
-    kubectl(Action.delete, kubeconfig, type=Type.mpijob, name="train-mpijob")
-    kubectl(Action.delete, kubeconfig, type=Type.configmap, name="3dgan-datafile-lists")
+    kubectl(Action.delete,
+            kubeconfig,
+            type=Type.mpijob,
+            name="train-mpijob")
+    kubectl(Action.delete,
+            kubeconfig,
+            type=Type.configmap,
+            name="3dgan-datafile-lists")
 
     init.queue.put(({"test": "dlTest", "deployed": res}, testCost))
 
 
-def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
+def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs, freeMaster):
     """ Train a Progressive GAN.
 
     Parameters:
@@ -522,6 +494,7 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
         noTerraform (bool): Specifies whether current run uses terraform.
         resDir (str): Path to the results folder for the current run.
         usePrivateIPs (bool): Indicates usage of private or public IPs.
+        freeMaster (bool): If True, pods can't run on the master node.
 
     Returns:
         None: In case of errors the function stops (returns None)
@@ -539,23 +512,24 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
     else:
         flavor = proGAN["flavor"]
 
+    numberOfNodes = 1
+    if freeMaster is True:
+        numberOfNodes = 2
+
     if onlyTest is False:
         prov, msg = provisionAndBootstrap("proGANTest",
-                                          1,
+                                          numberOfNodes,
                                           flavor,
-                                          extraInstanceConfig,
                                           "src/logging/proGANTest",
                                           init.configs,
                                           init.cfgPath,
                                           testsRoot,
                                           retry,
-                                          instanceDefinition,
-                                          credentials,
-                                          dependencies,
                                           baseCWD,
                                           extraSupportedClouds,
                                           noTerraform,
-                                          usePrivateIPs)
+                                          usePrivateIPs,
+                                          freeMaster)
         if prov is False:
             toPut = {"test": "proGANTest", "deployed": res}
             if "provision" in msg:
@@ -573,7 +547,13 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
     try:
         gpusToUse = proGAN["gpus"]
     except:
-        gpusToUse = getGpusPerNode(kubeconfig)
+        gpusToUse = getGpusPerNode(kubeconfig) # This benchmark runs on 1 VM
+
+    if gpusToUse == 0:
+        writeFail(resDir,
+                  "progan.json",
+                  "ERROR: Cluster %s doesn't have GPUs!" % kubeconfig,
+                  "src/logging/proGANTest")
 
     with open('%s/proGANTest/raw/progan_raw.yaml' % testsRoot, 'r') as inputfile:
         with open('%s/proGANTest/progan.yaml' % testsRoot, 'w') as outfile:
@@ -601,13 +581,21 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
                file="%sproGANTest/progan.yaml" % testsRoot,
                toLog="src/logging/proGANTest") != 0:
         writeFail(resDir, "progan.json",
-                  "Error deploying Pro-GAN benchmark.", "src/logging/proGANTest")
+                  "Error deploying Pro-GAN benchmark", "src/logging/proGANTest")
 
     else:
         fetchResults(resDir,
                      kubeconfig,
                      podName,
-                     "/root/CProGAN-ME/results/%s/network-final.pkl" % proganPodResDir,
+                     "/root/CProGAN-ME/results/%s/time.json" % proganPodResDir,
+                     "time.json",
+                     "src/logging/proGANTest")
+
+        fetchResults(resDir,
+                     kubeconfig,
+                     podName,
+                     "/root/CProGAN-ME/results/%s/network-final.pkl" \
+                        % proganPodResDir,
                      "network-final.pkl",
                      "src/logging/proGANTest")
 
@@ -615,10 +603,12 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
         #fetchResults(resDir,
         #             kubeconfig,
         #             podName,
-        #             "/root/CProGAN-ME/results/%s/%s" % (proganPodResDir, generatedImage),
+        #             "/root/CProGAN-ME/results/%s/%s" \
+        #                % (proganPodResDir, generatedImage),
         #             "fakes.png",
         #             "src/logging/proGANTest")
-        cmd = "cp progan-pod:/root/CProGAN-ME/results/%s/%s %s/fakesLast.png" % (proganPodResDir, generatedImage, resDir)
+        cmd = "cp progan-pod:/root/CProGAN-ME/results/%s/%s %s/fakesLast.png" \
+                % (proganPodResDir, generatedImage, resDir)
         kubectlCLI(cmd, kubeconfig)
 
         fetchResults(resDir,
@@ -627,6 +617,7 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
                      "/root/CProGAN-ME/results/%s/log.txt" % proganPodResDir,
                      "log.txt",
                      "src/logging/proGANTest")
+
         res = True
 
     # Cost estimation
@@ -640,7 +631,7 @@ def proGANTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
     init.queue.put(({"test": "proGANTest", "deployed": res}, testCost))
 
 
-def hpcTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
+def hpcTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs, freeMaster):
     """ HPC test.
 
     Parameters:
@@ -649,6 +640,7 @@ def hpcTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
         noTerraform (bool): Specifies whether current run uses terraform.
         resDir (str): Path to the results folder for the current run.
         usePrivateIPs (bool): Indicates usage of private or public IPs.
+        freeMaster (bool): Indicates whether test pods should run on the master.
 
     Returns:
         None: In case of errors the function stops (returns None)
@@ -668,19 +660,16 @@ def hpcTest(onlyTest, retry, noTerraform, resDir, usePrivateIPs):
         prov, msg = provisionAndBootstrap("hpcTest",
                                           hpc["nodes"],
                                           flavor,
-                                          None,
                                           "src/logging/hpcTest",
                                           init.configs,
                                           init.cfgPath,
                                           testsRoot,
                                           retry,
-                                          instanceDefinition,
-                                          credentials,
-                                          dependencies,
                                           baseCWD,
                                           extraSupportedClouds,
                                           noTerraform,
-                                          usePrivateIPs)
+                                          usePrivateIPs,
+                                          freeMaster)
         if prov is False:
             toPut = {"test": "hpcTest", "deployed": res}
             if "provision" in msg:

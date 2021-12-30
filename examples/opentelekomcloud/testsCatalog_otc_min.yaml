@@ -1,0 +1,10 @@
+dataRepatriationTest:
+  run: true
+cpuBenchmarking:
+  run: true
+  benchmarks: [hepscore, kv, DB12, hyper-benchmark]
+perfsonarTest:
+  run: true
+  endpoint: psb01-gva.cern.ch
+dodasTest:
+  run: true

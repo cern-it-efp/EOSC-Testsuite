@@ -1,0 +1,28 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: "google"
+pathToKey: "/home/ipelu/.ssh/id_rsa"
+pathToPubKey: "/home/ipelu/.ssh/id_rsa.pub"
+openUser: openu
+flavor: n1-standard-8
+zone: "us-west1-a"
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+image: "ubuntu-os-cloud/ubuntu-1804-lts" # OK
+#image: "deeplearning-platform-release/tf-1-15-cu110-v20201106-ubuntu-1804" # Failed to update apt cache: unknown reason
+#image: "deeplearning-platform-release/tf-1-15-cu110" # Failed to auto-install python-apt. Error was: 'E: Could not get lock /var/lib/dpkg/lock-frontend - open (11: Resource temporarily unavailable)\nE: Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend), is another process using it?
+# Failed to auto-install python-apt. Error was: 'E: Could not get lock /var/lib/dpkg/lock-frontend - open (11: Resource temporarily unavailable)\nE: Unable to acquire the dpkg frontend lock (/var/lib/dpkg/lock-frontend), is another process using it?'
+
+#image: "deeplearning-platform-release/tf2-ent-2-3-cu110"
+
+pathToCredentials: /data/career/cern/clouds/gcp/cern-test-suite-fb46815ac1f0.json
+project: cern-test-suite
+storageCapacity: 50
+gpuType: "nvidia-tesla-p100"
+
+#---------------COST CALCULATION------------------------------------------------
+costCalculation:
+  generalInstancePrice: 0.2
+  GPUInstancePrice: 0.2
+  HPCInstancePrice: 0.2
+  s3bucketPrice: 0.1

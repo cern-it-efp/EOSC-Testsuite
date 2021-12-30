@@ -1,22 +1,35 @@
 type: object
 required:
     - providerName
+    - vendor
     - pathToKey
+    - pathToPubKey
     - flavor
     - imageID
-    - keyPair
     - storageCapacity
-
+    #- externalNetID
+    #- IPpool
 properties:
+    authUrl:
+        type: string
+    region:
+        type: string
     providerName:
         type: string
+    vendor:
+        type: string
+        enum: [cloudferro, ovh, citynetwork, x-ion, cern]
     pathToKey:
+        type: string
+    pathToPubKey:
         type: string
     flavor:
         type: string
     imageID:
         type: string
-    keyPair:
+    externalNetID:
+        type: string
+    IPpool:
         type: string
     storageCapacity:
         type: number
@@ -30,8 +43,6 @@ properties:
         type: string
     securityGroups:
         type: array
-    region:
-        type: string
     availabilityZone:
         type: string
     networkName:

@@ -1,0 +1,12 @@
+# On some CF flavors (same image though) it was seen br_netfilter was not loaded (/proc/sys/net/bridge/bridge-nf-call-iptables did not exist or set to 0)
+# However, this is normally done by Docker when starting it in any case
+
+# ----------------- Add the br_netfilter module to the Linux Kernel (does nothing if the module is already present)
+- name: Bridged traffic
+  ignore_errors: yes
+  shell: modprobe br_netfilter
+
+# ----------------- Pass bridged traffic to iptables chains
+- name: Bridged traffic
+  ignore_errors: yes
+  shell: echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables

@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cosbench-pod
+  namespace: default
+  labels:
+    test: test-pod
+spec:
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: test
+            operator: In
+            values:
+            - test-pod
+        topologyKey: kubernetes.io/hostname
+  hostNetwork: true
+  containers:
+  - name: cosbench-cont
+    image: sl:7
+    imagePullPolicy: Always
+    securityContext:
+      privileged: true
+    env:
+    - name: AWS_ACCESS_KEY_ID
+      value: ACCESS_PH
+    - name: AWS_SECRET_ACCESS_KEY
+      value: SECRET_PH
+    - name: ENDPOINT
+      value: ENDPOINT_PH
+    command: ["/bin/sh","-c"]
+    args:
+    - |
+      ####### INSTALLATION & PREPARATION
+      yum update -y &&
+      yum install nc wget zip unzip java-1.8.0-openjdk -y &&
+      wget https://github.com/intel-cloud/cosbench/releases/download/v0.4.2.c4/0.4.2.c4.zip &&
+      unzip 0.4.2.c4.zip &&
+      mv 0.4.2.c4 /cosbench ; cd /cosbench ; sh start-all.sh &&
+
+      wget https://raw.githubusercontent.com/intel-cloud/cosbench/master/release/conf/s3-config-sample.xml &&
+      sed -i 's/<accesskey>/$(AWS_ACCESS_KEY_ID)/' s3-config-sample.xml &&
+      sed -i 's/<scretkey>/$(AWS_SECRET_ACCESS_KEY)/' s3-config-sample.xml &&
+      sed -i 's/<endpoint>/$(ENDPOINT)/' s3-config-sample.xml &&
+      sed -i 's/proxyhost=<proxyhost>;proxyport=<proxyport>;//' s3-config-sample.xml &&
+
+      ####### SUBMIT WORKLOAD
+      export continue=1
+      while [ $continue != 0 ]; do
+        bash /cosbench/cli.sh submit s3-config-sample.xml | grep "Accepted with ID: w1"
+      	continue=$? # 0 if found
+      	echo Waiting for workload to be accepted - checking again in 5 seconds
+        sleep 5
+      done
+
+      ####### WAIT FOR IT TO START
+      export continue=1
+      while [ $continue != 0 ]; do
+        bash /cosbench/cli.sh info | grep "Total: 1 active workloads"
+      	continue=$? # 0 if found
+      	echo Waiting for workload to start - checking again in 5 seconds
+        sleep 5
+      done
+
+      ####### WAIT FOR RESULTS
+      export continue=1
+      while [ $continue != 0 ]; do
+        bash /cosbench/cli.sh info | grep "Total: 0 active workloads"
+      	continue=$? # 0 if found
+      	echo Waiting for workload to complete - checking again in 5 seconds
+        sleep 5
+      done
+      export continue=1
+      while [ $continue != 0 ]; do
+      	ls /cosbench/archive/w1*
+      	continue=$? # 0 if found
+        echo Waiting for results to be generated - checking again in 3 seconds
+        sleep 3
+      done
+
+      ####### ZIP RESULTS
+      zip -jr /w1-s3-sample.zip /cosbench/archive/w1-s3-sample/* &&
+      echo FINISHED; sleep infinity

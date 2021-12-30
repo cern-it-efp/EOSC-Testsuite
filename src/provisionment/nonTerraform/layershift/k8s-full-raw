@@ -1,0 +1,82 @@
+type: install
+name: CERN k8s example
+
+globals:
+    envName: env-${fn.random}
+
+onInstall:
+    - install:
+       jps: https://raw.githubusercontent.com/jelastic-jps/kubernetes/main/manifest.jps
+       settings:
+           envName: ${globals.envName}
+           version: v1.20.8
+           dashboard: general
+           topo: 0-dev # 1-prod
+           ingress-controller: Nginx
+           deploy: cc # this is the default https://github.com/jelastic-jps/kubernetes/blob/main/configs/settings.yaml#L83
+           storage: true # 'df -h' shows ~190GB. The same if removing this 'storage' ?
+           monitoring: true
+           jaeger: true
+           api: true
+           region: hng-1-vz7
+
+    - install:
+        envName: ${globals.envName}
+        jps:
+          type: update
+          name: Scale Kubernetes Workers and adjust cp layer cloudlet limit to specific CPU cores
+          onInstall:
+              - setNodeCount [cp]: NODES_PH # sets number of workers
+              - cmd [cp]: cat /proc/cpuinfo | grep processor | wc -l
+              - if (${response.responses[0].out} != CORES_PH):
+                  - cmd [cp]: cat /proc/cpuinfo | grep "cpu MHz" | awk '{print $4}' | head -n1
+                  - script: |
+                      var MHz = ${response.responses[0].out};
+                      var cloudlets = ${nodes.cp.flexibleCloudlets};
+                      cloudlets = Math.floor(${response.responses[0].out}/400) * (CORES_PH + 1);
+                      return {result:0, cloudlets: cloudlets }
+                  - adjustCloudlets:
+                      newLimit: ${response.cloudlets}
+
+          actions:
+              checkCores:
+                  - cmd [cp]: cat /proc/cpuinfo | grep processor | wc -l
+                  - if (${response.responses[0].out} > CORES_PH):
+                      - script: |
+                          var cloudlets = ${nodes.cp.flexibleCloudlets};
+                          cloudlets--;
+                          return {result:0, cloudlets: cloudlets }
+                      - adjustCloudlets:
+                          newLimit: ${response.cloudlets}
+                  - elif (${response.responses[0].out} < CORES_PH):
+                      - script: |
+                          var cloudlets = ${nodes.cp.flexibleCloudlets};
+                          cloudlets++;
+                          return {result:0, cloudlets: cloudlets }
+                      - adjustCloudlets:
+                          newLimit: ${response.cloudlets}
+
+              adjustCloudlets:
+                  - env.control.SetCloudletsCountByGroup:
+                      envName: ${env.envName}
+                      nodeGroup: cp
+                      fixedCloudlets: ${nodes.cp.fixedCloudlets}
+                      flexibleCloudlets: ${this.newLimit}
+                  - checkCores
+
+    - env.control.ExecCmdByGroup:
+        envName: ${globals.envName}
+        nodeGroup: k8sm
+        commandList:
+            - command: kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep fulladmin | awk '{print $1}') | grep 'token:' | sed -e's/token:\| //g'
+
+    - set:
+        token: ${response.responses[0].out}
+
+    - env.control.GetEnvInfo:
+        envName: ${globals.envName}
+
+    - return:
+        type: success
+        startPage: https://${response.env.domain}/api/
+        message: ${this.token}

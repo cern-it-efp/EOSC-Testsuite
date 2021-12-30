@@ -1,0 +1,16 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: cloudsigma
+pathToKey: /home/ipelu/.ssh/id_rsa
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
+authFile: /data/career/cern/clouds/cloudsigma/p.yaml
+openUser: cloudsigma
+location: gva
+clone_drive_id: 37f855bc-8203-44bf-b249-50deebfdc017 # centos7 server from GVA location (get from the UI's URL: https://gva.cloudsigma.com/ui/4.0/library)
+storageCapacity: 53687091200 # measured in bytes - 50 * 1024 * 1024 * 1024
+flavor:
+  memory: 32212254720 # 30000000000 was 27.x # 4294967296 # measured in bytes - 512 * 1024 * 1024 # 512MB RAM (UI max is 128GB, tf max is 137438953472)
+  cpu: 23000 # measured in MHz CPU (UI max is 100 GHz, tf max is 124000)
+  #memory: 37438953472 # measured in bytes - 512 * 1024 * 1024 # 512MB RAM (UI max is 128GB, tf max is 137438953472)
+  #cpu: 24000 # measured in MHz CPU (UI max is 100 GHz, tf max is 124000)
+
+staticIPs: ["31.171.250.214","31.171.250.216"] # , "31.171.250.215"

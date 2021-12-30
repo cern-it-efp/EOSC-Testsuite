@@ -1,0 +1,26 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: openstack
+vendor: citynetwork
+pathToKey: /home/ipelu/.ssh/id_rsa
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
+openUser: ubuntu
+IPpool: ext-net
+
+flavor: 8C-32GB-100GB
+
+storageCapacity: 100
+
+region: Fra1 # Frankfurt
+imageID: 235d9bfb-7a13-4434-9966-cfc0ae033e79 # Ubuntu 20.04 Focal Fossa (raw format) - works
+authUrl: https://fra1.citycloud.com:5000
+externalNetID: 2aec7a99-3783-4e2a-bd2b-bbe4fef97d1c
+
+#region: Sto2 # Stockholm
+#imageID: 8cd2f7eb-ecb3-401d-bb34-82ab5ddc25e1
+#authUrl: https://sto2.citycloud.com:5000
+#externalNetID: 3e4a9105-7b10-4186-a053-dc9373bba0f4
+
+#region: Kna1 # Karlskrona
+#imageID: e6cbd963-8c28-4551-a837-e3b85da5d7a1
+#authUrl: https://kna1.citycloud.com:5000
+#externalNetID: fba95253-5543-4078-b793-e2de58c31378

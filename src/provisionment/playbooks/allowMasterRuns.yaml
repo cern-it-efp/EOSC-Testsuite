@@ -1,0 +1,10 @@
+- hosts: master
+  become: yes
+  tasks:
+    - name: Untaint master node - allow pods on master node
+      ignore_errors: yes
+      command: kubectl taint nodes --selector='node-role.kubernetes.io/master' node-role.kubernetes.io/master-
+      register: taint_nodes
+      until: taint_nodes.rc == 0
+      retries: 10
+      delay: 5

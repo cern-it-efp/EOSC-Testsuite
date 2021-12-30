@@ -1,0 +1,19 @@
+type: object
+required:
+    - username
+    - password
+    - domainName
+    - accessKey
+    - secretKey
+properties:
+    username:
+        type: string
+    password:
+        type: string
+    domainName:
+        type: string
+    accessKey:
+        type: string
+    secretKey:
+        type: string
+additionalProperties: false

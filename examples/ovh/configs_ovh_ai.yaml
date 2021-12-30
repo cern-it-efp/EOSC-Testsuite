@@ -1,0 +1,12 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: openstack
+vendor: ovh
+pathToKey: /home/ipelu/.ssh/id_rsa
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
+openUser: ubuntu
+flavor: foo
+
+region: GRA5 # Gravelines
+imageID: 492afb5e-3844-4aa2-8942-921ae35c26ee # NVIDIA GPU Cloud (NGC)
+
+storageCapacity: 150

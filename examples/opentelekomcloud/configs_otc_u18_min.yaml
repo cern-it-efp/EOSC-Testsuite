@@ -1,0 +1,20 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: opentelekomcloud
+pathToKey: "/home/ipelu/.ssh/id_rsa"
+openUser: ubuntu
+
+flavor: "s2.medium.4" # No GPU
+#imageID: "6cc1f24a-f081-45c7-bd71-abe3fbc759f7" # Ubuntu 18.04 AI Environment
+#imageID: "b1b0db52-4c6c-46d4-892d-ff7b23d46968" # OTC-Automated-AI-CondaImage
+imageID: "f617354e-4dfa-4a0c-b905-96cc6858a058" # Standard Ubuntu 18.04
+
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
+domainName: "OTC-EU-DE-00000000001000046175"
+tenantName: "eu-de"
+storageCapacity: 50
+authFile: /tmp/tsk.yaml
+
+# optional
+securityGroups: ["default","Sys-FullAccess"]
+availabilityZone: eu-de-01 # default is eu-de-02 (faulty for gpu, 03 too)
+#networkID: "2593d7a9-0ecd-4a19-b4bc-65ca2c62e1c7"

@@ -123,7 +123,7 @@ resource "azurerm_virtual_machine" "kubenode_publicIPs" {
     disk_size_gb      = var.storageCapacity
   }
 
-  # TODO: fails for OpenLogic
+  # fails for OpenLogic
   #plan {
   #  publisher = var.publisher
   #  name      = var.sku

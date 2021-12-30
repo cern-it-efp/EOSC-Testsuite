@@ -1,4 +1,16 @@
-- name: Waiting for APT to be ready... # Fix https://github.com/ansible/ansible/issues/51663
-  shell: while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 1; done;
-- name: Waiting for APT to be ready... # Fix https://github.com/ansible/ansible/issues/51663
-  shell: while sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1; do sleep 1; done;
+- name: Waiting for APT to be ready (fuser & lock-frontend)... # Fix https://github.com/ansible/ansible/issues/51663
+  shell: while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 1; done;
+
+- name: Waiting for APT to be ready (fuser & lock)... # Fix https://github.com/ansible/ansible/issues/51663
+  shell: while fuser /var/lib/apt/lists/lock >/dev/null 2>&1; do sleep 1; done;
+
+- name: Waiting for APT to be ready (ps aux)...
+  ignore_errors: true
+  #shell: ps aux | grep 'apt -y upgrade' | wc | awk '{print $1}'
+  shell: pgrep apt
+  register: apt_procs
+  #until: apt_procs.stdout == 1
+  #until: apt_procs.stdout_lines|length == 0
+  until: apt_procs.rc == 1
+  retries: 240
+  delay: 5

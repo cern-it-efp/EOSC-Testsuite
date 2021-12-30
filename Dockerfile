@@ -27,12 +27,20 @@ RUN apt-get install -y \
     jq \
     iputils-ping
 
-RUN pip3 install --upgrade\
+RUN pip3 install --upgrade \
+    pip
+
+RUN pip3 install --upgrade \
+    setuptools
+
+RUN pip3 install --upgrade --ignore-installed \
     requests \
     pyyaml \
     kubernetes \
     jsonschema \
+    boto3 \
     ansible
+
 
 # ------------------ Install yq
 RUN wget https://github.com/mikefarah/yq/releases/download/3.4.0/yq_linux_amd64 -O /usr/bin/yq && \

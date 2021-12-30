@@ -21,7 +21,8 @@ spec:
             name: train-mpijob
             command: ["/bin/sh","-c"]
             args:
-            - mpirun
+            - cd /mpi_learn
+              && mpirun
               -tag-output
               -x LD_LIBRARY_PATH
               -x PATH

@@ -7,7 +7,7 @@ git clone https://github.com/ignpelloz/cloud-exporter.git ; cd cloud-exporter
 cat > configs.yaml <<EOL
 access_token: $TOKEN
 path_to_data: ./dir1
-title: "Uploaded from Cloud Validation Test-Suite (VM on $PROVIDER)"
+title: "Uploaded from Cloud Validation Test-Suite (VM)"
 sandbox: False
 EOL
 
@@ -22,7 +22,6 @@ logs=$(./cloud-exporter.py) ; if [ $? -ne 0 ] ; then result=fail ; else result=s
 #create a simple json result file
 cat > "/home/data_repatriation_test.json" <<EOF
 {
-	"provider":"$PROVIDER",
 	"result":"$result"
 }
 EOF

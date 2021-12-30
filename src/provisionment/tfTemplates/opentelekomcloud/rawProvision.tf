@@ -18,8 +18,8 @@ resource "opentelekomcloud_compute_instance_v2" "kubenode" {
   count = var.useDefaultNetwork ? 0 : var.customCount
   name = "${var.instanceName}-${count.index}"
   flavor_name = var.flavor
-  key_pair = yamldecode(file(var.configsFile))["keyPair"]
   security_groups = var.securityGroups
+  user_data     = "#cloud-config\n\nssh_authorized_keys:\n  - ${file(yamldecode(file(var.configsFile))["pathToPubKey"])}"
   availability_zone = var.availabilityZone
   network {
     name = yamldecode(file(var.configsFile))["networkID"]
@@ -39,8 +39,8 @@ resource "opentelekomcloud_compute_instance_v2" "kubenode_defaultNetwork" {
   count = var.useDefaultNetwork ? var.customCount : 0
   name = "${var.instanceName}-${count.index}"
   flavor_name = var.flavor
-  key_pair = yamldecode(file(var.configsFile))["keyPair"]
   security_groups = var.securityGroups
+  user_data     = "#cloud-config\n\nssh_authorized_keys:\n  - ${file(yamldecode(file(var.configsFile))["pathToPubKey"])}"
   availability_zone = var.availabilityZone
   block_device {
     uuid                  = yamldecode(file(var.configsFile))["imageID"]

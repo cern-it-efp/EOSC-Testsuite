@@ -1,0 +1,22 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: aws
+pathToKey: /home/ipelu/.ssh/id_rsa
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
+openUser: centos
+sharedCredentialsFile: /home/ipelu/.aws/credentials_ocrets
+storageCapacity: 150
+
+region: eu-central-1 # Frankfurt
+availabilityZone: eu-central-1a
+ami: ami-0957ba512eafd08d9 # Centos
+flavor: m5.2xlarge
+
+#region: eu-west-1 # Ireland
+#availabilityZone: eu-west-1a
+#ami: ami-0d116949fdb20215e # Centos Ireland
+#flavor: m5.2xlarge
+
+#region: eu-west-3 # Paris
+#availabilityZone: eu-west-3a
+#ami: ami-0cb2a6090e7d480ce
+#flavor: m5.2xlarge

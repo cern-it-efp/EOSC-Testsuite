@@ -1,0 +1,4 @@
+s3Test:
+  run: true
+  endpoint: https://s3.<public cloud region>.cloud.ovh.net
+  keysFile: /home/ipelu/Desktop/work/clouds/ovh/k.yaml

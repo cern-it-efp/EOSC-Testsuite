@@ -1,0 +1,31 @@
+providerName: oci
+pathToKey: /home/ipelu/.ssh/id_rsa
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
+authFile: /data/career/cern/clouds/oci/oci.yaml
+compartmentOcid: ocid1.tenancy.oc1..aaaaaaaaga7f4joh3iwda62mrejpbxmevc34y2cecdd6lmjse2ctczw4lapq # OG was ocid1.compartment.oc1..aaaaaaaancwe6dcw2rvht2wjrysyxxnyxwknq2hxrltpct53acnpyhjcys7a
+openUser: opc # For Oracle Linux and CentOS images, the default username is opc
+storageCapacity: 150 # optional
+
+useFlexShape: true
+flavor: VM.Optimized3.Flex # Intel's flexible shape
+#flavor: VM.Standard.E4.Flex	# AMD's flexible shape, there's also E3
+#flavor: VM.Standard2.8
+memoryInGbs: 32
+ocpus: 4 # 8
+
+# FRANKFURT
+region: eu-frankfurt-1
+availabilityDomain: mQZP:EU-FRANKFURT-1-AD-1 # OG was BKrI:EU-FRANKFURT-1-AD-1 # AD-3 has gpu
+imageOcid: ocid1.image.oc1.eu-frankfurt-1.aaaaaaaawhvrawkfuppm47wqgjf5rrzi4dalnzoqleqwy2ihe7dqycsspm7q # CentOS-7-2021.12.03-0
+#imageOcid: ocid1.image.oc1.eu-frankfurt-1.aaaaaaaawq2h5g4nb6odpdt3rwyvp7bx26fv5pyjpbwzlwnybztss34vuz2q # Oracle Linux 7
+
+# LONDON
+#region: uk-london-1
+#availabilityDomain: mQZP:UK-LONDON-1-AD-1
+#imageOcid: ocid1.image.oc1.uk-london-1.aaaaaaaa3y7wgray2y7tdvcadj4paj2hgobtbhedj3fkvxrkpe3meq3fmfrq # CentOS-7-2021.12.03-0
+
+# AMSTERDAM
+#region: eu-amsterdam-1
+#availabilityDomain: mQZP:EU-AMSTERDAM-1-AD-1
+#imageOcid: ocid1.image.oc1.eu-amsterdam-1.aaaaaaaaipu6pm6lv6x4nmgorayhw43tqh5tuy55zkjasdjddjw6zkcuasxq # CentOS-7-2021.12.03-0
+#flavor: VM.Standard.E4.Flex # AMD's flexible shape because Intel's is not available in Amsterdam

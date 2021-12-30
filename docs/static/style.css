@@ -9,3 +9,20 @@ div.rst-versions > div.rst-other-versions > div.injected > dl:nth-child(4) {
 footer {
     display: none;
 }
+
+.caption-text, .wy-side-nav-search, .wy-nav-top {
+    background: #264899;
+}
+
+.wy-nav-side {
+    background: #264899;
+}
+
+
+img.logo {
+    width: 275px;
+}
+
+.caption-text {
+    color: #ffc107;
+}

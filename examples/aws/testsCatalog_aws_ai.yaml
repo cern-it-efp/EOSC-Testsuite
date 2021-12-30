@@ -1,0 +1,12 @@
+dlTest:
+  run: true
+  nodes: 6
+  flavor: p3.2xlarge
+  epochs: 10
+  benchmark: nnlo # mpi_learn
+  datasetSize: 30 # (each epoch the whole DS is used, meaning keeping epochs fixed if this is increased the training time is higher)
+proGANTest:
+  run:
+  flavor: p3.2xlarge
+  images_amount: 100
+  kimg: 300

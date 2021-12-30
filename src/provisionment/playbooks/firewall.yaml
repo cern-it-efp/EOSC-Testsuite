@@ -1,6 +1,18 @@
-- name: Disable firewalld on redhat distros 
+- name: Disable firewalld on redhat distros
   ignore_errors: yes
   command: systemctl stop firewalld ; systemctl disable firewalld
+
+- name: Install iptables
+  ignore_errors: yes
+  package:
+    name: iptables-services
+    state: latest
+- name:  Start (and enable) iptables
+  ignore_errors: yes
+  service:
+    name: iptables
+    enabled: yes
+    state: started
 
 - name: Backup original rules
   ignore_errors: yes

@@ -1,0 +1,4 @@
+s3Test:
+  run: true
+  endpoint: https://storage.googleapis.com
+  keysFile: /home/ipelu/Desktop/work/clouds/gcp/k.yaml

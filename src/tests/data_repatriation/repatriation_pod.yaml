@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: repatriation-pod
+  namespace: default
+  labels:
+    test: test-pod
+spec:
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: test
+            operator: In
+            values:
+            - test-pod
+        topologyKey: kubernetes.io/hostname
+  hostNetwork: true
+  containers:
+  - name: repatriation-cont
+    image: cernefp/data_repatriation_test_image:latest
+    imagePullPolicy: Always
+    securityContext:
+      privileged: true
+    env:
+    - name: TOKEN
+      value: 5YB2PVNhIJMm7RSFuTZk1tKgX0GF9D4MvG333okfXpEhJxHaVLs21OX3iaMz

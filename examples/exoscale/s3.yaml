@@ -1,0 +1,4 @@
+s3Test:
+  run: true
+  endpoint: https://sos-de-fra-1.exo.io
+  keysFile: /home/ipelu/Desktop/work/clouds/exoscale/k.yaml

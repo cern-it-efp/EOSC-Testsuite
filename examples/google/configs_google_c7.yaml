@@ -1,0 +1,11 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: "google"
+pathToKey: "/home/ipelu/.ssh/id_rsa"
+pathToPubKey: "/home/ipelu/.ssh/id_rsa.pub"
+openUser: openu
+flavor: n1-standard-4
+zone: us-west1-a
+image: centos-cloud/centos-7
+pathToCredentials: /data/career/cern/clouds/gcp/cern-test-suite-fb46815ac1f0.json
+project: cern-test-suite
+storageCapacity: 50

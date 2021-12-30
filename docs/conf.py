@@ -87,8 +87,11 @@ html_theme_options = {
     'logo_only': True,
     'prev_next_buttons_location': None
 }
-html_logo = "../img/logo.png"
-html_favicon = "../img/favicon.ico"
+#html_logo = "../img/logo.png" # CERN
+html_logo = "../img/eosc.png" # EOSC
+#html_favicon = "../img/favicon.ico" # CERN
+html_favicon = "../img/favicon_eosc.png" # EOSC
+
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

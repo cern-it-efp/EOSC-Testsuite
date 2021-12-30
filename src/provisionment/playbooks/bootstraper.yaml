@@ -5,16 +5,30 @@
   tasks:
   - name: Waiting for VMs to be ready...
     wait_for_connection:
-      timeout: 200
+      timeout: 400
 
 # ------------------------------------ Allow root ssh
 - hosts: all
   become: no
-  gather_facts: true
+  #gather_facts: true
   vars:
     open_user: "{{ ansible_user_id }}"
   tasks:
   - include_tasks: allow_root.yaml
+
+# ------------------------------------ Set VMs hostnames (needed for Ionos)
+- hosts: master
+  become: yes
+  tasks:
+  - name: Set master hostname
+    ansible.builtin.hostname:
+      name: kubenode-0
+- hosts: slaves
+  become: yes
+  tasks:
+  - name: Set slaves hostnames
+    ansible.builtin.hostname:
+      name: kubenode-{{ query('community.general.random_string', upper=false, numbers=false, special=false, length=4)[0] }}
 
 # ------------------------------------ pkg manager & install dependencies
 - hosts: all
@@ -23,13 +37,17 @@
   - name: Disable swap (if configured)
     command: swapoff -a
   - include_tasks: firewall.yaml
+  - include_tasks: bridged_traffic.yaml
+  - include_tasks: enable_squashfs.yaml
   - include_tasks: pkgManagerRepo.yaml
+  - include_tasks: aptWait.yaml
   - include_tasks: dependencies.yaml
 
 # ------------------------------------ Init cluster & generate join command
 - hosts: master
   become: yes
   tasks:
+  - include_tasks: bridged_traffic.yaml
   - include_tasks: initCluster.yaml
   - name: Get join command
     shell: kubeadm token create --print-join-command
@@ -42,7 +60,7 @@
 - hosts: slaves
   become: yes
   tasks:
-  - name: slaves join cluster
+  - name: Slaves join cluster
     shell: "{{ hostvars[groups['master'][0]]['join_command'] }} --ignore-preflight-errors all  >> node_joined.txt"
     args:
       chdir: $HOME

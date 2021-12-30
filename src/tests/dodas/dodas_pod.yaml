@@ -25,4 +25,6 @@ spec:
       privileged: true
     command: ["/bin/sh","-c"]
     args:
-    - sleep infinity
+    - wget https://raw.githubusercontent.com/cern-it-efp/EOSC-Testsuite/development/src/tests/dodas/custom_entrypoint.sh &&
+      sh custom_entrypoint.sh &&
+      sleep infinity

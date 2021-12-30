@@ -1,0 +1,9 @@
+dataRepatriationTest:
+  run: true
+cpuBenchmarking:
+  run: true
+perfsonarTest:
+  run: true
+  endpoint: pse01-gva.cern.ch
+dodasTest:
+  run: true

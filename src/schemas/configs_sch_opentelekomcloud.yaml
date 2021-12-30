@@ -2,25 +2,24 @@ type: object
 required:
     - providerName
     - pathToKey
+    - pathToPubKey
     - flavor
     - imageID
-    - keyPair
     - openUser
     - domainName
     - tenantName
     - authFile
     - storageCapacity
-
 properties:
     providerName:
         type: string
     pathToKey:
         type: string
+    pathToPubKey:
+        type: string
     flavor:
         type: string
     imageID:
-        type: string
-    keyPair:
         type: string
     openUser:
         type: string

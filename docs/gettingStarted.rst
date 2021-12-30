@@ -46,11 +46,15 @@ The following python packages are required, install them with pip3:
 
 - requests
 
+jq
+^^^^^^^^^
+Linux' jq is a flexible and lightweight command-line processor for JSON.
+In the test suite it is used to work with JSON data produced by commands such as kubectl.
 
 1.2 SSH key
 ==================
-A ssh key pair is needed to establish connections to the VMs to be created later. Therefore, you must create (or import) this key on your provider, when needed, beforehand.
-Note errors may occur if your key does not have the right permissions. Set these to the right value using the following command:
+A SSH key pair is needed to establish connections to the VMs to be created later. The paths to both the private and public keys are required in the configuration file.
+Note errors may occur if your key does not have the right permissions. Set these correctly using the following command:
 
 .. code-block:: console
 
@@ -58,7 +62,7 @@ Note errors may occur if your key does not have the right permissions. Set these
 
 1.3 Security groups
 ==========================================
-The following ports have to be opened:
+By default the test suite takes care of security groups and other firewall measurements. Ultimately, the traffic that should be allowed is:
 
 .. list-table::
    :widths: 25 25 50

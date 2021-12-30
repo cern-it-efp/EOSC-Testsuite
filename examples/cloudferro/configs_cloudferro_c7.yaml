@@ -1,0 +1,14 @@
+#---------------DEPLOYMENT SPECIFICATION FIELDS AND VARS------------------------
+providerName: openstack
+vendor: cloudferro
+pathToKey: /home/ipelu/.ssh/id_rsa
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
+openUser: eouser
+#flavor: eo1.medium # 2 cores
+#flavor: eo1.large # 4 cores, FileContent--proc-sys-net-bridge-bridge-nf-call-iptables
+#flavor: eo2.xlarge # 4 cores, FileContent--proc-sys-net-bridge-bridge-nf-call-iptables
+flavor: eo2.2xlarge # 8 cores / 32GB
+IPpool: external
+imageID: 95ff4962-4030-45ad-9718-e640ee4a9f86 # CentOS 7
+storageCapacity: 100
+externalNetID: be3cb8d6-5b30-42e7-8fc8-4b5371cd6fe4

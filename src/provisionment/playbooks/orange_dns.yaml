@@ -1,0 +1,18 @@
+- hosts: all
+  become: yes
+  ignore_errors: yes
+  gather_facts: false
+  tasks:
+  - name: Waiting for VMs to be ready...
+    wait_for_connection:
+      timeout: 400
+  - name: DNS server 1
+    replace:
+      path: /etc/resolv.conf
+      regexp: '100.125.0.41'
+      replace: '8.8.8.8'
+  - name: DNS server 1
+    replace:
+      path: /etc/resolv.conf
+      regexp: '100.126.0.41'
+      replace: '1.1.1.1'

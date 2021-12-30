@@ -66,6 +66,49 @@ def checkPodAlive(podName, resDir, toLog, resultFile, kubeconfig):
         bool: True in case the pod is alive, False otherwise
     """
 
+    # kubectl get pods -o=json | jq .items[].metadata.name
+
+    v1 = client.CoreV1Api()
+
+    ############ List pods
+    while True:
+        try:
+            ret = v1.list_namespaced_pod("default") # times out if the connection is lost
+            break
+        except ApiException: # kubernetes.client.exceptions.ApiException,
+            print("WARNING: ApiException - Error from server: etcdserver, " \
+                   "request timed out (%s). Retrying in 5 seconds" % podName)
+            time.sleep(5)
+        except:
+            print("WARNING: Exception! (%s). Retrying in 5 seconds" % podName)
+            time.sleep(5)
+    ############################################################################
+
+    podNames = [i.metadata.name for i in ret.items] # i.status.pod_ip
+    if podName not in podNames:
+        writeFail(resDir,
+                  resultFile,
+                  "%s pod was destroyed (did not fetch %s)" \
+                        % (podName,resultFile),
+                  toLog)
+        return False
+    return True
+
+
+def checkPodAlive_og(podName, resDir, toLog, resultFile, kubeconfig):
+    """ Checks if a pod is alive
+
+    Parameters:
+        podName (str): Pod name.
+        resDir (str): Path to the results folder for the current run.
+        toLog (str): Path to the log file to which logs have to be sent
+        resultFile (str): Name of the results file for the current test.
+        kubeconfig (str): Path to kubeconfig file of the being managed cluster.
+
+    Returns:
+        bool: True in case the pod is alive, False otherwise
+    """
+
     cmd = "get pod %s" % podName
     if kubectlCLI(cmd, kubeconfig=kubeconfig, hideLogs=True) != 0:
         writeFail(resDir,
@@ -76,7 +119,11 @@ def checkPodAlive(podName, resDir, toLog, resultFile, kubeconfig):
     return True
 
 
-def waitForResource(resourceName, resourceType, kubeconfig, retrials=None, sleepTime=None):
+def waitForResource(resourceName,
+                    resourceType,
+                    kubeconfig,
+                    retrials=None,
+                    sleepTime=None):
     """ Waits until the given resource is deployed, i.e. visible by kubectl. If
         after a specific number of retrials this does not happen, returns False.
 
@@ -99,7 +146,8 @@ def waitForResource(resourceName, resourceType, kubeconfig, retrials=None, sleep
         cmd = "get %s %s" % (resourceType.name, resourceName)
         if kubectlCLI(cmd, kubeconfig=kubeconfig, hideLogs=True) == 0:
             return True
-        print("Rsource of type '%s' with name '%s' not ready yet..." % (resourceType, resourceName))
+        print("Rsource of type '%s' with name '%s' not ready yet..." \
+                % (resourceType, resourceName))
         time.sleep(sleepTime)
     return False
 
@@ -301,7 +349,7 @@ def kubectl(
             try:
                 client.CustomObjectsApi().create_namespaced_custom_object(
                     'kubeflow.org',
-                    'v1alpha2',
+                    'v2beta1', #'v1alpha2',
                     namespace,
                     'mpijobs',
                     body)
@@ -331,7 +379,7 @@ def kubectl(
                 try:
                     client.CustomObjectsApi().delete_namespaced_custom_object(
                         'kubeflow.org',
-                        'v1alpha2',
+                        'v2beta1', #'v1alpha2',
                         namespace,
                         'mpijobs',
                         name)
@@ -455,6 +503,7 @@ def kubectlCLI(cmd, kubeconfig, options="", hideLogs=None, read=None):
         options (str): Options to be added to the command.
         hideLogs (bool): Specifies whether the output of the
                          command should be displayed.
+        read (bool): if True, kubectl should return the output.
 
     Returns:
         int: Exit code of the kubectl command.
@@ -476,21 +525,26 @@ def getGpusPerNode(kubeconfig):
     """
 
     cmd = "get nodes"
-    options = "-ojson | jq '.items[0].status.allocatable.\"nvidia.com/gpu\"'"
+    options = "-ojson | jq '.items[].status.allocatable.\"nvidia.com/gpu\"'"
     gpusPerNode = 0
-    tries = 60
+    tries = 100
     while gpusPerNode == 0 and tries != 0:
-        time.sleep(2)
-        kubectlResponse = kubectlCLI(cmd, kubeconfig, options=options, read=True) # "kubectl get nodes -ojson | jq '.items[0].status.allocatable.\"nvidia.com/gpu\"'"
+        time.sleep(3)
+        kubectlResponse = kubectlCLI(cmd, kubeconfig, options=options, read=True)
         print("From kubectl: %s" % str(kubectlResponse))
+        kubectlResponse = kubectlResponse.split("\n")
+        print("From kubectl after split: %s" % str(kubectlResponse))
         try:
-            gpusPerNode = int(kubectlResponse.replace("\"",""))
-        except ValueError:
+            # If freeMaster was used, the first will be "null"
+            gpusPerNode = int(next(x for x in
+                kubectlResponse if x != "null").replace("\"",""))
+        except:
             gpusPerNode = 0
         print("End of attempt %s: %s" % (tries, str(gpusPerNode)))
         tries -= 1
     if gpusPerNode == 0:
-        print("ERROR: Cluster %s doesn't have GPUs or is missing support for them!" % kubeconfig)
+        print("ERROR: Cluster %s doesn't have GPUs or is" \
+              "missing support for them!" % kubeconfig)
     return gpusPerNode
 
 

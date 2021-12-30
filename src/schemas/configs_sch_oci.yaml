@@ -2,14 +2,15 @@ type: object
 required:
     - providerName
     - pathToKey
+    - pathToPubKey
     - flavor
     - openUser
-    - subnet_ocid
-    - availability_domain
-    - compartment_ocid
-    - image_ocid
-    - ssh_public_key_path
+    - availabilityDomain
+    - compartmentOcid
+    - imageOcid
     - authFile
+    - useFlexShape
+    - region
 properties:
     providerName:
         type: string
@@ -17,17 +18,23 @@ properties:
         type: string
     flavor:
         type: string
+    useFlexShape:
+        type: boolean
+    region:
+        type: string
+    memoryInGbs:
+        type: number
+    ocpus:
+        type: number
     openUser:
         type: string
-    subnet_ocid:
+    availabilityDomain:
         type: string
-    availability_domain:
+    compartmentOcid:
         type: string
-    compartment_ocid:
+    imageOcid:
         type: string
-    image_ocid:
-        type: string
-    ssh_public_key_path:
+    pathToPubKey:
         type: string
     authFile:
         type: string
@@ -59,4 +66,13 @@ properties:
                 type:
                     - number
                     - "null"
+############## Flex Shape
+if:
+    properties:
+        useFlexShape:
+            const: true
+then:
+    required:
+        - ocpus
+        - memoryInGbs
 additionalProperties: false

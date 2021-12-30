@@ -1,0 +1,14 @@
+providerName: ibm
+pathToKey: /home/ipelu/.ssh/id_rsa
+pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
+authFile: /data/career/cern/clouds/ibm/p.yaml
+useClassic: True
+os_reference_code: CENTOS_7_64
+network_speed: 1000 # The connection speed (in Mbps) for the instance's network components
+
+#flavor: BL1_8X32X100 # HDD (only available in ams01)
+flavor: BL2_8X32X100 # SSD
+
+datacenter: mil01 # Milan
+#datacenter: par01 # Paris
+#datacenter: ams03 # Amsterdam

@@ -3,16 +3,32 @@
 from checker import *
 from aux import *
 
+onlyTest = False
+killResources = False
+noTerraform = False
+testsCatalog = ""
+cfgPathCLI = None
+tcPathCLI = None
+freeMaster = False
+usePrivateIPs = False
+totalCost = 0
+procs = []
+publish = False
+resultsExist = False
+interactive = True
+retry = None
+destroy = None
+destroyOnCompletion = None
+clustersToDestroy = None
+customNodes = None
+s3Endpoint = "https://s3.cern.ch"
+resultsBucket = "ocre-results" # "ts-results"
+
 configs = ""
 testsCatalog = ""
 cfgPath = None
 tcPath = None
-instanceDefinition = ""
-extraInstanceConfig = ""
-dependencies = ""
-credentials = ""
 testsRoot = "src/tests/"
-allowAllTfClouds = False
 baseCWD = os.getcwd()
 defaultKubeconfig = "%s/src/tests/shared/config" % baseCWD
 obtainCost = True
@@ -23,30 +39,37 @@ extraSupportedClouds = ["openstack",
                         "google",
                         "exoscale",
                         "opentelekomcloud",
-                        "oci"]
+                        "oci",
+                        "ionoscloud",
+                        "cloudsigma",
+                        "ibm",
+                        "layershift",
+                        "flexibleengine",
+                        "yandex"]
 testsSharingCluster = ["s3Test",
                        "dataRepatriationTest",
                        "perfsonarTest",
                        "cpuBenchmarking",
                        "dodasTest"]
 customClustersTests = ["dlTest", "hpcTest", "proGANTest"]
+clusters = ["shared", "dlTest", "hpcTest", "proGANTest"]
 allTests = testsSharingCluster + customClustersTests
+playbookPath = "src/provisionment/playbooks/bootstraper.yaml"
+aggregateLogs = False
+ansibleLogs = "src/logging/ansibleLogs%s"
+publicRepo = "https://eosc-testsuite.rtfd.io"
+
+# ---- Messages
 bootstrapFailMsg = "Failed to bootstrap '%s' k8s cluster. Check 'logs' file"
 clusterCreatedMsg = "...%s CLUSTER CREATED (masterIP: %s) => STARTING TESTS\n"
 TOserviceAccountMsg = "ERROR: timed out waiting for %s cluster's service account\n"
 destroyWarning = "WARNING - destroy infrastructure (%s)? yes/no: "
-playbookPath = "src/provisionment/playbooks/bootstraper.yaml"
-aggregateLogs = False
-ansibleLogs = "src/logging/ansibleLogs%s"
-
 provisionFailMsg = "Failed to provision raw VMs. Check 'logs' file for details"
-
-publicRepo = "https://eosc-testsuite.rtfd.io"
-clusters = ["shared", "dlTest", "hpcTest", "proGANTest"]
 
 
 def initAndChecks(noTerraform,
                   extraSupportedClouds,
+                  onlyTest,
                   usePrivateIPs,
                   cfgPathCLI=None,
                   tcPathCLI=None):
@@ -55,12 +78,13 @@ def initAndChecks(noTerraform,
     Parameters:
         noTerraform (bool): Specifies whether current run uses terraform.
         extraSupportedClouds (dict): Extra supported clouds.
+        onlyTest (str): If True the provisioning phase is skipped.
         usePrivateIPs (bool): If True, the current run is not using bastion.
-        cfgPath (str): Path to configs.yaml file.
-        tcPath (str): Path to testsCatalog.yaml file.
+        cfgPathCLI (str): Path to configs.yaml file.
+        tcPathCLI (str): Path to testsCatalog.yaml file.
 
     Returns:
-        Arrayay(str): Array containing the selected tests.
+        Array(str): Array containing the selected tests.
     """
 
     global obtainCost
@@ -68,12 +92,9 @@ def initAndChecks(noTerraform,
     global cfgPath
     global tcPath
     global testsCatalog
-    global instanceDefinition
-    global extraInstanceConfig
-    global dependencies
-    global credentials
 
     # --------File & deps check
+
     if runCMD("terraform version", hideLogs=True) != 0:
         print("Terraform is not installed")
         stop(1)
@@ -90,11 +111,23 @@ def initAndChecks(noTerraform,
     else:
         tcPath = tcPathCLI
 
-    configs, testsCatalog = validateConfigs(cfgPath, tcPath, noTerraform, extraSupportedClouds, allTests)
+    configs, testsCatalog = validateConfigs(cfgPath,
+                                            tcPath,
+                                            noTerraform,
+                                            extraSupportedClouds,
+                                            allTests)
 
-    if configs['providerName'] in ("oci", "opentelekomcloud"): # authFile validate (only YAML)
+    # authFile validattion (only YAML so no AWS and GCP)
+    if configs['providerName'] in ("oci",
+                                   "opentelekomcloud",
+                                   "cloudsigma",
+                                   "exoscale",
+                                   "flexibleengine",
+                                   "ibm",
+                                   "ionoscloud"):
         authFile = loadFile(configs["authFile"], required=True)
-        schema = loadFile("src/schemas/authFile_sch_%s.yaml" % configs["providerName"], required=True)
+        schema = loadFile("src/schemas/authFile_sch_%s.yaml" \
+                % configs["providerName"], required=True)
         validateAuth(authFile, schema)
 
     if configs['providerName'] in ("azurerm") and usePrivateIPs is True:
@@ -104,37 +137,20 @@ def initAndChecks(noTerraform,
             print("Used --usePrivateIPs but did not provide subnetId")
             stop(1)
 
-    #if noTerraform is False and supportedProvider(configs) is False: # allows all terraform supporting providers to run w/o --no-terraform
-    if noTerraform is False and configs['providerName'] not in extraSupportedClouds: # allows only providers in extraSupportedClouds to run w/o --no-terraform
-        writeToFile("src/logging/header", "Provider '%s' not fully supported, run using '--no-terraform'" %
-                    configs['providerName'], True)
+    # allows only providers in extraSupportedClouds to run w/o --no-terraform
+    if noTerraform is False and configs['providerName'] not in extraSupportedClouds:
+        writeToFile("src/logging/header", "Provider '%s' not fully supported," \
+            " run using '--no-terraform'" % configs['providerName'], True)
         stop(1)
 
-    # SSH key checks: exists and permissions set to 600
-    if os.path.isfile(configs["pathToKey"]) is False:
-        print("Key file not found at '%s'" % configs["pathToKey"])
-        stop(1)
-    if "600" not in oct(os.stat(configs["pathToKey"]).st_mode & 0o777):
-        print("Key permissions must be set to 600")
-        stop(1)
-
-
-    # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-    if allowAllTfClouds is True:
-        instanceDefinition = loadFile("configurations/instanceDefinition")
-        extraInstanceConfig = loadFile("configurations/extraInstanceConfig")
-        dependencies = loadFile("configurations/dependencies")
-        credentials = loadFile("configurations/credentials")
-        if configs['providerName'] not in extraSupportedClouds \
-                and "NAME_PH" not in instanceDefinition \
-                and noTerraform is False:
-            writeToFile(
-                "src/logging/header",
-                "ERROR: NAME_PH was not found in instanceDefinition file.",
-                True)
+    if onlyTest is False:
+        # SSH key checks: exists and permissions set to 600
+        if os.path.isfile(configs["pathToKey"]) is False:
+            print("Key file not found at '%s'" % configs["pathToKey"])
             stop(1)
-    # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+        if "600" not in oct(os.stat(configs["pathToKey"]).st_mode & 0o777):
+            print("Key permissions must be set to 600")
+            stop(1)
 
     # --------Tests config checks
     selected = []
@@ -145,14 +161,22 @@ def initAndChecks(noTerraform,
             selected.append(test)
 
             if test == "dlTest" or test == "proGANTest":
-                instancePrice = tryTakeFromYaml(configs, "costCalculation.GPUInstancePrice", None)
+                instancePrice = tryTakeFromYaml(configs,
+                                        "costCalculation.GPUInstancePrice",
+                                        None)
             elif test == "hpcTest":
-                instancePrice = tryTakeFromYaml(configs, "costCalculation.HPCInstancePrice", None)
+                instancePrice = tryTakeFromYaml(configs,
+                                        "costCalculation.HPCInstancePrice",
+                                        None)
             else:
-                instancePrice = tryTakeFromYaml(configs, "costCalculation.generalInstancePrice", None)
+                instancePrice = tryTakeFromYaml(configs,
+                                        "costCalculation.generalInstancePrice",
+                                        None)
 
             if test == "s3Test":
-                s3bucketPrice = tryTakeFromYaml(configs, "costCalculation.s3bucketPrice", None)
+                s3bucketPrice = tryTakeFromYaml(configs,
+                                        "costCalculation.s3bucketPrice",
+                                        None)
                 obtainCost = checkCost(obtainCost, s3bucketPrice)
 
             obtainCost = checkCost(obtainCost, instancePrice)

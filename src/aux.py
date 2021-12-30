@@ -12,6 +12,7 @@ try:
     import shutil
     import random
     import string
+    import glob
     from configparser import ConfigParser
 
 except ModuleNotFoundError as ex:
@@ -20,6 +21,13 @@ except ModuleNotFoundError as ex:
 
 yaml.warnings({'YAMLLoadWarning': False}) # https://github.com/yaml/pyyaml/wiki/PyYAML-yaml.load(input)-Deprecation
 
+
+def checkFormerInfraFiles():
+    """ Checks if there are Terraform state files from a previous run. """
+
+    if len(glob.glob("src/tests/*/terraform.tfstate")) == 0:
+        return True
+    return False
 
 def getRandomID():
     """ Returns a random ID """
@@ -253,10 +261,14 @@ def validateConfigs(cfgPath, tcPath, noTerraform, extraSupportedClouds, allTests
     testsCatalog = loadFile(tcPath, required=True)
 
     if noTerraform is False:
-        configsSchema = "src/schemas/configs_sch_%s.yaml" % \
-        configs["providerName"] if configs["providerName"] \
-            in extraSupportedClouds else "src/schemas/configs_sch_general.yaml"
-        testsCatalogSchema = "src/schemas/testsCatalog_sch.yaml"
+        try:
+            configsSchema = "src/schemas/configs_sch_%s.yaml" % \
+            configs["providerName"] if configs["providerName"] \
+                in extraSupportedClouds else "src/schemas/configs_sch_general.yaml"
+            testsCatalogSchema = "src/schemas/testsCatalog_sch.yaml"
+        except KeyError:
+            print("Error validating configs file: missing 'providerName'")
+            stop(1)
     else:
         configsSchema = "src/schemas/configs_sch_noTerraform.yaml"
         testsCatalogSchema = "src/schemas/testsCatalog_sch_noTerraform.yaml"
@@ -308,9 +320,9 @@ def getNodeName(configs, test, randomId):
         identifier.
 
     Parameters:
-        dict (dict): Dict object loaded from a yaml file.
-        key (object): Key whose value should be returned if existing.
-        defaultValue (object): value to return in case of KeyError exception.
+        configs (dict): Dict object loaded from a yaml file.
+        test (object): Key whose value should be returned if existing.
+        randomId (object): value to return in case of KeyError exception.
 
     Returns
         Object taken from the yaml file (dict) or default one.
@@ -336,20 +348,20 @@ def subprocPrint(test):
                 print("[ %s ] %s" % (test, line.replace('\n', '')))
 
 
-def getIP(resource, provider, public=False):
+def getIP(resource, configs, public=False):
     """ Given a terraform resource json description, returns the resource's
         IP address if such exists
 
     Parameters:
         resource (object): Terraform resource definition.
-        provider (str): Provider name.
+        configs (str): Configurations (from YAML).
         public (bool): If True, get the public IP.
 
     Returns:
         str: Resource's IP address.
     """
 
-    # TODO: this assumes a single interface in some cases (gcp, openstack)
+    provider = configs["providerName"]
 
     try:
         if provider == "aws":
@@ -363,13 +375,15 @@ def getIP(resource, provider, public=False):
             return resource["values"]["network_interface"][0]["network_ip"]
 
         elif provider == "openstack":
-            if public is True:
+            openstackVendor = tryTakeFromYaml(configs, "vendor", None)
+            if public is not True or openstackVendor == "ovh":
+                return resource["values"]["network"][0]["fixed_ip_v4"]
+            else:
                 return resource["values"]["floating_ip"] # type: openstack_compute_floatingip_associate_v2
-            return resource["values"]["network"][0]["fixed_ip_v4"]
 
-        elif provider == "opentelekomcloud":
+        elif provider == "opentelekomcloud" or provider == "flexibleengine":
             if public is True:
-                return resource["values"]["floating_ip"] # type: opentelekomcloud_compute_floatingip_associate_v2
+                return resource["values"]["floating_ip"] # type: opentelekomcloud_compute_floatingip_associate_v2 / flexibleengine_compute_floatingip_associate_v2
             return resource["values"]["access_ip_v4"]
 
         elif provider == "azurerm":
@@ -377,17 +391,36 @@ def getIP(resource, provider, public=False):
                 return resource["values"]["ip_address"] # type: azurerm_public_ip
             return resource["values"]["private_ip_address"]
 
-        # ---
+        elif provider == "yandex":
+            if public is True:
+                return resource["values"]["network_interface"][0]["nat_ip_address"] # type: yandex_compute_instance
+            return resource["values"]["network_interface"][0]["ip_address"]
+
+        elif provider == "ibm":
+            useClassic = configs["useClassic"]
+            if public is True:
+                if useClassic is True:
+                    return resource["values"]["ipv4_address"] # Classic Infrastructure
+                return resource["values"]["address"] # VPC Infrastructure
+            if useClassic is True:
+                return resource["values"]["ipv4_address_private"] # Classic Infrastructure
+            return resource["values"]["primary_network_interface"][0]["primary_ipv4_address"] # VPC Infrastructure
 
         elif provider == "oci":
             if public is True:
                 return resource["values"]["public_ip"]
             return resource["values"]["private_ip"]
 
+        # --- The following ones offer public IPs w/o NAT
+
         elif provider == "exoscale":
-            if public is True:
-                return resource["values"]["ip_address"]
             return resource["values"]["ip_address"]
+
+        elif provider == "ionoscloud":
+            return resource["values"]["primary_ip"] # type: ionoscloud_server
+
+        elif provider == "cloudsigma":
+            return resource["values"]["ipv4_address"] # type: cloudsigma_server
 
     except KeyError:
         return None # no IP was found for the given resource

@@ -1,0 +1,1 @@
+ansible-playbook ../../../src/provisionment/playbooks/bootstraper.yaml -i hosts --ssh-extra-args "-o StrictHostKeyChecking=no" -u $USER

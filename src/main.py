@@ -14,6 +14,7 @@ try:
     import string
     import re
     import shutil
+    import boto3
 
 except ModuleNotFoundError as ex:
     print(ex)
@@ -22,29 +23,6 @@ except ModuleNotFoundError as ex:
 from checker import *
 from tests import *
 import init
-
-
-onlyTest = False
-killResources = False
-noTerraform = False
-testsCatalog = ""
-cfgPathCLI = None
-tcPathCLI = None
-usePrivateIPs = False
-instanceDefinition = ""
-extraInstanceConfig = ""
-dependencies = ""
-credentials = ""
-totalCost = 0
-procs = []
-viaBackend = False
-resultsExist = False
-interactive = True
-retry = None
-destroy = None
-destroyOnCompletion = None
-clustersToDestroy = None
-customNodes = None
 
 
 def header(noLogo=False, provider=None, results=None):
@@ -110,15 +88,77 @@ def header(noLogo=False, provider=None, results=None):
             header(noLogo=True, provider=provider, results=results)
 
 
+def uploadDirectory(path, bucketName, client_s3):
+    """ Uploads objects one by one to a CERN S3 bucket.
+
+    Parameters:
+        path (str): Path were the S3 results are located.
+        bucketName (str): Name of the bucket.
+        client_s3 (): boto3 client.
+
+    Returns:
+        bool: Operation result, True is success.
+    """
+
+    for root, dirs, files in os.walk("results/" + path):
+        for file in files:
+            try:
+                currentResource = os.path.join(root, file)
+                client_s3.upload_file(currentResource,
+                                      bucketName,
+                                      currentResource.replace("results/",""))
+            except:
+                return False
+    return True
+
+
+def publishResults(s3ResDirBase):
+    """ Uploads objects (run results) one by one to a CERN S3
+        bucket, maintaining the local file structure.
+
+    Parameters:
+        s3ResDirBase (str): Local path to the run results.
+
+    Returns:
+        bool: Operation result, True is success.
+    """
+
+    aws_access_key_id = os.environ.get('S3_ACC_KEY')
+    aws_secret_access_key = os.environ.get('S3_SEC_KEY')
+    endpoint_url = os.environ.get('S3_ENDPOINT', s3Endpoint)
+
+    if aws_access_key_id == None or aws_secret_access_key == None:
+        print("WARNING: credentials not found so results won't be published.")
+        return False
+
+    client_s3=boto3.client(
+        "s3",
+        aws_access_key_id=aws_access_key_id,
+        aws_secret_access_key=aws_secret_access_key,
+        endpoint_url=endpoint_url
+    )
+
+    for root, dirs, files in os.walk("results/" + s3ResDirBase):
+        for file in files:
+            try:
+                currentResource = os.path.join(root, file)
+                client_s3.upload_file(currentResource,
+                                      resultsBucket,
+                                      currentResource.replace("results/",""))
+            except:
+                return False
+    return True
+
+
 # logo, no results, no provider
 header()
 
 # -----------------CMD OPTIONS--------------------------------------------
 parser = argparse.ArgumentParser(prog="./test_suite",
-                                 description='EOSC Test-Suite.',
-                                 allow_abbrev=False)
+                        description='EOSC Test-Suite - Cloud Benchmarking',
+                        allow_abbrev=False)
 parser.add_argument('-y',
-                    help='No interactive.',
+                    help='No interactive (TBD).',
                     action='store_false',
                     dest="interactive")
 parser.add_argument('-o','--onlyTest',
@@ -156,8 +196,14 @@ parser.add_argument('--customNodes',
                     help='Use a specific amount of nodes.',
                     metavar="NODES",
                     type=int)
-parser.add_argument('--noWatch', 
+parser.add_argument('--noWatch',
                     help='Do not use the watch function.',
+                    action='store_true')
+parser.add_argument('--publish',
+                    help='Push results to CERN S3.',
+                    action='store_true')
+parser.add_argument('--freeMaster',
+                    help='Do not allow running tests on the master node.',
                     action='store_true')
 
 args = parser.parse_args()
@@ -176,6 +222,10 @@ if args.customNodes:
     customNodes = args.customNodes
 if args.noTerraform:
     noTerraform = True
+if args.publish:
+    publish = True
+if args.freeMaster:
+    freeMaster = True
 if args.clustersToDestroy:
     clustersToDestroy = args.clustersToDestroy
     if "all" in clustersToDestroy:
@@ -197,6 +247,7 @@ if args.clustersToDestroyOnCompletion:
 # -----------------CHECKS AND PREPARATION---------------------------------
 selectedTests = init.initAndChecks(noTerraform,
                                    extraSupportedClouds,
+                                   onlyTest,
                                    usePrivateIPs,
                                    cfgPathCLI=cfgPathCLI,
                                    tcPathCLI=tcPathCLI)
@@ -218,8 +269,13 @@ if retry is True:
 
 
 # -----------------CREATE RESULTS FOLDER AND GENERAL FILE------------------
-s3ResDirBase = configs["providerName"] + "/" + str(
+vendorDir = configs["providerName"]
+if vendorDir == "openstack":
+    vendorDir = configs["vendor"]
+
+s3ResDirBase = vendorDir + "/" + str(
     datetime.datetime.now().strftime("%d-%m-%Y_%H-%M-%S"))
+
 resDir = "results/%s/detailed" % s3ResDirBase
 os.makedirs(resDir)
 generalResults = {
@@ -235,7 +291,7 @@ queue = Queue()
 init.queue = queue
 cluster = 1
 
-msgArr = ["CLUSTER %s: (parallel running tests):" % (cluster)]
+msgArr = ["CLUSTER %s: (parallel running tests)" % (cluster)]
 for test in testsSharingCluster:
     if testsCatalog[test]["run"] is True:
         msgArr.append(test)
@@ -244,9 +300,19 @@ if len(msgArr) > 1:
     if customNodes is not None:
         numberOfNodes = customNodes
     else:
-        numberOfNodes = len(msgArr) - 1
+        if freeMaster:
+            numberOfNodes = len(msgArr) # No test/bmk will be deployed on the master node, hence an extra node.
+        else:
+            numberOfNodes = len(msgArr) - 1
     p = Process(target=sharedClusterTests, args=( # shared cluster provisioning
-        msgArr, onlyTest, retry, noTerraform, resDir, numberOfNodes, usePrivateIPs))
+                                                msgArr,
+                                                onlyTest,
+                                                retry,
+                                                noTerraform,
+                                                resDir,
+                                                numberOfNodes,
+                                                usePrivateIPs,
+                                                freeMaster))
     procs.append(p)
     p.start()
     cluster += 1
@@ -256,7 +322,12 @@ for test in customClustersTests:
         logger("CLUSTER %s: %s" % (cluster, test),
                "=", "src/logging/%s" % test)
         p = Process(target=eval(test), args=( # custom clusters provisioning
-            onlyTest, retry, noTerraform, resDir, usePrivateIPs))
+                                            onlyTest,
+                                            retry,
+                                            noTerraform,
+                                            resDir,
+                                            usePrivateIPs,
+                                            freeMaster))
         procs.append(p)
         p.start()
         cluster += 1
@@ -289,24 +360,18 @@ if checkResultsExist(resDir) is True:
         json.dump(generalResults, outfile, indent=4, sort_keys=True)
 
     msg1 = "TESTING COMPLETED"
-    # No results push if local run (only ts-backend has AWS creds for this)
-    if viaBackend is True:
-        s3Endpoint = "https://s3.cern.ch"
-        bucket = "s3://ts-results"
-        pushResults = runCMD(
-            "aws s3 cp --endpoint-url=%s %s %s/%s --recursive > /dev/null" %
-            (s3Endpoint, "results/" + s3ResDirBase, bucket, s3ResDirBase))
-        runCMD("cp results/%s/general.json .. " % s3ResDirBase)
-        if pushResults != 0:
-            logger("S3 upload failed! Is 'awscli' installed and configured?",
-                   "!", "src/logging/footer")
+
+    # -----------------S3 RESULTS UPLOAD---------------------------------------
+    if publish is True:
+        if publishResults(s3ResDirBase) is False:
+            logger("S3 upload failed!","!","src/logging/footer")
         else:
-            logger([msg1, "Results on the S3 bucket"],
-                   "#", "src/logging/footer")
+            logger(["TESTING COMPLETED","S3 push OK"],"#","src/logging/footer")
     else:
         logger(msg1, "*", "src/logging/footer")
 
-    if destroyOnCompletion == True:
+    # -----------------RESOURCES DESTROY---------------------------------------
+    if destroyOnCompletion is True:
         for cluster in clustersToDestroy:
             if checkClusterWasProvisioned(cluster, generalResults["testing"]):
                 if destroyTF(baseCWD, clusters=[cluster])[0] != 0:
