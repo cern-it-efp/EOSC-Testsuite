@@ -30,6 +30,21 @@ resource "yandex_vpc_subnet" "subnet" {
   network_id = yandex_vpc_network.network.id
 }
 
+resource "yandex_vpc_security_group" "group" {
+  name = "ts-secgroup-${random_string.id.result}"
+  network_id  = "${yandex_vpc_network.network.id}"
+  ingress {
+    protocol       = "ANY"
+    v4_cidr_blocks = ["0.0.0.0/0"]
+    port           = -1
+  }
+  egress {
+    protocol       = "ANY"
+    port           = -1
+    v4_cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 resource "yandex_compute_instance" "kubenode" {
   count = var.customCount
   name        = "${var.instanceName}-${count.index}"
@@ -51,6 +66,7 @@ resource "yandex_compute_instance" "kubenode" {
   network_interface {
     subnet_id = yandex_vpc_subnet.subnet.id
     nat = true
+    security_group_ids = [yandex_vpc_security_group.group.id]
   }
 
   metadata = {

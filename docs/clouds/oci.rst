@@ -17,6 +17,8 @@ OCI specific variables for configs.yaml:
      - The OCID of the image to be used on the VMs. The OCID list can be consulted here: https://docs.oracle.com/en-us/iaas/images/centos-7x/ (required)
    * - compartment_ocid
      - Compartment's OCID. (required)
+   * - region
+     - Region to be used.
    * - availability_domain
      - Availability domain to be used. (required)
    * - subnet_ocid
@@ -55,7 +57,5 @@ Oracle Cloud Infrastructure credentials file's must be a YAML file containing on
      - Tenancy's OCID.
    * - fingerprint
      - Authentication key's fingerprint.
-   * - region
-     - Region to be used.
 
 It is also possible to use OKE to provision the cluster, for this refer to section :ref:`Using existing clusters<using-existing-clusters>`.

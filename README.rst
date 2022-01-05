@@ -86,7 +86,11 @@ Release notes
 ---------------------------------------------
 (Note the versions are numbered with the date of the release: YEAR.MONTH)
 
-``21.12 - latest``
+``22.03 - latest``
+
+-
+
+``21.12``
 
 - Included deployment support for Ionos, CloudSigma, OVH, IBM, CityNetwork, X-Ion, Layershift, Orange and Yandex.
 
