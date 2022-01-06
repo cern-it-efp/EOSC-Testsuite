@@ -15,7 +15,8 @@ The 3DGAN application is a prototype developed to investigate the possibility to
 3D convolutional Generative Adversarial Network (GAN) using a data-parallel approach on distributed systems.
 It is based on MPI for communication. As such, it tests the performance of single nodes (GPUs cards) but also latency and bandwidth of nodes interconnects and data access. The training uses a Kubernetes cluster (GPU flavored) with Kubeflow and MPI.
 
-If selected, the suite will provision a Kubernetes cluster -GPU flavored- specifically for this test. The test suite **assumes NVIDIA drivers are installed**. Therefore, this test can only run using an OS image that includes it.
+If selected, the suite will provision a Kubernetes cluster -GPU flavored- specifically for this test. The test suite **assumes the NVIDIA driver is installed**. Therefore, this test can only run using an OS image that includes it.
+In addition, the selected image should have ``apt`` (i.e Ubuntu based).
 For this test, apart from the *run* variable, the following can be set in the *testsCatalog.yaml* file:
 
 .. list-table::
@@ -53,10 +54,11 @@ Single-node training, based on |progan_karras|. The |faces_dataset| is a generic
 
 .. |faces_dataset| raw:: html
 
-  <a href="" target="_blank">dataset used for this test</a>
+  <a href="https://s3.cern.ch/swift/v1/gan-bucket/person.zip" target="_blank">dataset used for this test</a>
 
 
-If selected, the suite will provision a single-node Kubernetes cluster -GPU flavored- specifically for this test. The test suite **assumes NVIDIA drivers are installed**. Therefore, this test can only run using an OS image that includes it.
+If selected, the suite will provision a single-node Kubernetes cluster -GPU flavored- specifically for this test. The test suite **assumes the NVIDIA driver is installed**. Therefore, this test can only run using an OS image that includes it.
+In addition, the selected image should have ``apt`` (i.e Ubuntu based).
 For this test, apart from the *run* variable, the following can be set in the *testsCatalog.yaml* file:
 
 .. list-table::
@@ -67,7 +69,7 @@ For this test, apart from the *run* variable, the following can be set in the *t
      - Explanation / Values
    * - flavor
      - Name of the flavor to be used for this test's cluster. (required)
-   * - images_amount (1, 980)
+   * - images_amount
      - Number of images to use from the data set. Minimum 1, maximum 980. (required)
    * - kimg
      - Number of images provided to the network for its training. Note 1 kimg = 1000 images. Minimum 1, maximum 12000. (required)

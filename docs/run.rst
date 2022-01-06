@@ -11,17 +11,36 @@ Once the configuration steps are completed, the Test-Suite is ready to be run:
 The suite uses a combination of Linux' watch and cat commands to display the logs of the run. Hence, the suite will fail if no terminal/TTY is available.
 To change this behaviour use the option *noWatch* as defined in the options below.
 
-Once the provisionment steps are completed (Kubernetes cluster up and running) and pods are deployed, the run will finish once all the deployed tests complete.
+Once the provisionment steps are completed (Kubernetes cluster up and running) and pods are deployed, the run will finish when all the deployed tests complete.
 If for any reason you want to stop the run before completion, delete all the pods and this will finish the run.
 
+**Important**: if the provisionment phase fails (this is, either Terraform or Ansible), all the resources that the test suite created such as networks, VMs, etc. should be destroyed prior to retrying.
+As an example, consider a test suite run in which the user tried to deploy 4 tests (Data Repatriation, DODAS, HEP Benchmarks and perfSONAR), meaning the suite would create a 4-node Kubernetes cluster
+but their cloud provider has a quota that limits the number of concurrent VMs to only 3.
+The provisionment phase would fail as Terraform wouldn't be able to create all the 4 VMs but only 3. Therefore, the user would have to run the following command:
+
+.. code-block:: console
+
+    EOSC-Testsuite$ ./test_suite --destroy shared
+
+After that and once the user fixes the quota issue, the test suite can be run again.
+
+Another example: a user wants to run the proGAN benchmark but in the configs YAML file specifies ``centos`` in ``openUser`` instead of ``ubuntu``, which would be the correct one. In this case, the provisionment phase would fail because Ansible wouldn't be able
+to connect to the VM given the wrong user. Therefore, the user would have to run the following command:
+
+.. code-block:: console
+
+    EOSC-Testsuite$ ./test_suite --destroy proGANTest
+
+After that and once the users corrects ``openUser``, the test suite can be run again.
 
 Options
 ===============
 
--c, --configs
+-c, --configs <path>
     Specifies a custom location of the general configurations YAML file. If omitted, EOSC-Testsuite/configs.yaml will be used.
 
--t, --testsCatalog
+-t, --testsCatalog <path>
     Specifies a custom location of the tests catalog YAML file. If omitted, EOSC-Testsuite/testsCatalog.yaml will be used.
 
 --noTerraform
@@ -30,24 +49,23 @@ Options
 -o, --onlyTest
     Run without creating the infrastructure (VMs and cluster), only deploy tests. Not valid for the first run.
 
-.. --retry
-..     In case of errors on the first run, use this option for retrying. This will make the test-suite try and reuse already provisioned infrastructure. Not valid for the first run, use only when VMs were provisioned but kubernetes bootstrapping failed.
-
 --destroy <cluster>
     No test suite run, only destroy provisioned infrastructure. Argument can be: (note a quote wrapped and space separated subset of these can also be specified, for example "dlTest shared")
 
-    'shared': Destroy the shared cluster.
+    ``shared``: Destroy the shared cluster.
 
-    'dlTest': Destroy the GPU cluster.
+    ``dlTest``: Destroy the Distributed Learning's GPU cluster.
 
-    'hpcTest': Destroy the HPC cluster.
+    ``hpcTest``: Destroy the HPC cluster.
 
-    'all': Destroy all clusters.
+    ``proGANTest``: Destroy the ProGAN's GPU cluster
+
+    ``all``: Destroy all clusters.
 
 --destroyOnCompletion <clusters>
     Destroy infrastructure once the test suite completes its run. Same arguments as for '--destroy' apply.
 
---customNodes <value>
+--customNodes <integer>
     Set the number of instances that should be deployed for the shared cluster. If omitted, the suite will provision as many nodes as tests of the general ones (s3Test, dataRepatriationTest, cpuBenchmarking, perfsonarTest and dodasTest) were selected.
 
 --usePrivateIPs
@@ -68,7 +86,15 @@ Options
     For the other clusters, the number of nodes created would still be the one the user specified on the tests catalog YAML file.
 
 --publish
-    Upload results to CERN's S3. More information can be found here.
+    Upload results to CERN's S3. More information can be found |results_rst|.
+
+.. |results_rst| raw:: html
+
+  <a href="https://eosc-testsuite.readthedocs.io/en/latest/results.html" target="_blank">here</a>
+
+.. --retry
+..     In case of errors on the first run, use this option for retrying. This will make the test-suite try and reuse already provisioned infrastructure. Not valid for the first run, use only when VMs were provisioned but kubernetes bootstrapping failed.
+
 
 
 Other commands
@@ -103,15 +129,16 @@ For tests other than those that are deployed in the general cluster, see their p
 .. code-block:: console
 
     $ watch kubectl --kubeconfig EOSC-Testsuite/src/tests/dlTest/config get pods # For dlTest cluster
-    $ watch kubectl --kubeconfig EOSC-Testsuite/src/tests/dlTest/config get pods # For proGANTest cluster
+    $ watch kubectl --kubeconfig EOSC-Testsuite/src/tests/proGANTest/config get pods # For proGANTest cluster
     $ watch kubectl --kubeconfig EOSC-Testsuite/src/tests/hpcTest/config get pods # For hpcTest cluster
 
-Once the pods are deployed, the suite run can be stopped by destroying pods. This is useful for example when pods go "Evicted" or "ImagePullBackOff". Examples:
+Once the pods are deployed, the suite run can be stopped by destroying pods. This is useful for example if pods go "Evicted" or "ImagePullBackOff". Examples:
 
 .. code-block:: console
 
-    $ kubectl --kubeconfig EOSC-Testsuite/src/tests/shared/config delete pods --all # destroy all pods on the shared cluster
     $ kubectl --kubeconfig EOSC-Testsuite/src/tests/shared/config delete pod dodas-pod # destroy DODAS pod
+    $ kubectl --kubeconfig EOSC-Testsuite/src/tests/proGANTest/config delete pod progan-pod # destroy ProGAN pod
+    $ kubectl --kubeconfig EOSC-Testsuite/src/tests/shared/config delete pods --all # destroy all pods on the shared cluster
 
 
 The following aliases are available when using the provided Docker image:

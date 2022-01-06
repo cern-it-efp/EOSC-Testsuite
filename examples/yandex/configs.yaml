@@ -7,9 +7,10 @@ cloudID: b1gv4hq5u08rjf91v2an
 folderID: b1gh16rcufgc7l1it508 # b1g66eha3mp8lc8iic45
 zone: ru-central1-a
 platformID: standard-v1
-#imageID: fd8vgqmrilk8dchj1ccf # Ubuntu 20.04 LTS
 imageID: fd8kg2vksu2r8tq4fr08 # CentOS 8
+#imageID: fd8vgqmrilk8dchj1ccf # Ubuntu 20.04 LTS
+#imageID: fd8hguc7o9hhr5bcvhql # Ubuntu 20.04 LTS GPU
 flavor:
-  cores: 8 # https://console.cloud.yandex.com/cloud?section=quotas
-  memory: 32 # https://console.cloud.yandex.com/cloud?section=quotas
-storageCapacity: 100 # https://console.cloud.yandex.com/cloud?section=quotas
+  cores: 4
+  memory: 16
+storageCapacity: 60

@@ -6,7 +6,7 @@
      - name: Run NVIDIA driver installation script (required only in GCP)
        command: /opt/deeplearning/install-driver.sh
 
-# ------------------------------------ Nvidia Docker stuff (required for GPU k8s support)
+# ------------------------------------ Nvidia Docker (required for GPU k8s support)
 - name: Transfer and run nvidiaDocker script
   hosts: all
   become: yes
@@ -14,7 +14,9 @@
      - name: Transfer the script nvidiaDocker.sh
        copy: src=../../tests/dlTest/nvidia_docker.sh dest=/tmp/nvidiaDocker.sh mode=0777
      - name: Execute the script nvidiaDocker.sh
-       command: sh /tmp/nvidiaDocker.sh
+       shell: /tmp/nvidiaDocker.sh &> /tmp/nvidia_docker_logs
+       args:
+          executable: /bin/bash # w/o this it would not redirect the output to the file
 
 # ------------------------------------ Kubernetes GPU support
 - hosts: master
