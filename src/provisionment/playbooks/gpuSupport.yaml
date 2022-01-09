@@ -7,16 +7,47 @@
        command: /opt/deeplearning/install-driver.sh
 
 # ------------------------------------ Nvidia Docker (required for GPU k8s support)
-- name: Transfer and run nvidiaDocker script
+- name: Installation of Nvidia-Docker plus Docker configuration
   hosts: all
   become: yes
   tasks:
-     - name: Transfer the script nvidiaDocker.sh
-       copy: src=../../tests/dlTest/nvidia_docker.sh dest=/tmp/nvidiaDocker.sh mode=0777
-     - name: Execute the script nvidiaDocker.sh
-       shell: /tmp/nvidiaDocker.sh &> /tmp/nvidia_docker_logs
-       args:
-          executable: /bin/bash # w/o this it would not redirect the output to the file
+    - include_tasks: aptWait.yaml
+
+    - name: Apt update - Nvidia-Docker repo
+      shell: |
+        distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+        curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add -
+        curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | tee /etc/apt/sources.list.d/nvidia-docker.list
+        mv /etc/docker/daemon.json /etc/docker/original_daemon
+        apt-get update
+      args:
+         executable: /bin/bash # needed?
+
+    - include_tasks: aptWait.yaml
+
+    - name: Install Nvidia-Docker
+      package:
+        name: nvidia-docker2
+        state: latest
+
+    - name: Create /etc/docker/daemon.json
+      copy:
+        dest: /etc/docker/daemon.json
+        content: |
+          {
+              "default-runtime": "nvidia",
+              "runtimes": {
+                  "nvidia": {
+                      "path": "/usr/bin/nvidia-container-runtime",
+                      "runtimeArgs": []
+                  }
+              }
+          }
+
+    - name: Restart Docker
+      service:
+        name: docker
+        state: restarted
 
 # ------------------------------------ Kubernetes GPU support
 - hosts: master

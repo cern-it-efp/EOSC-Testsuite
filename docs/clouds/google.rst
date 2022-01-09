@@ -18,7 +18,7 @@ GCP specific variables for configs.yaml:
    * - project
      - Google project under which the infrastructure has to be provisioned. (required)
    * - gpuType
-     - Type of GPU to be used. Needed if the Deep Learning test was selected at testsCatalog.yaml.
+     - Type of GPU to be used. Needed if the Deep Learning test was selected at testsCatalog.yaml. If not provided, defaults to `nvidia-tesla-v100`.
 
 
 It is also possible to use GKE to provision the cluster, for this refer to section :ref:`Using existing clusters<using-existing-clusters>`.

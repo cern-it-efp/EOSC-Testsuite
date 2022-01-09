@@ -1,5 +1,5 @@
 dlTest:
-  run: #true
+  run:
   nodes: 6
   flavor: VM.GPU3.1
   epochs: 10

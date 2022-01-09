@@ -101,7 +101,7 @@ resource "azurerm_virtual_machine" "kubenode_privateIPs" {
   os_profile_linux_config {
     disable_password_authentication = true
     ssh_keys {
-      key_data = yamldecode(file(var.configsFile))["pubSSH"]
+      key_data = file(yamldecode(file(var.configsFile))["pathToPubKey"])
       path     = "/home/${yamldecode(file(var.configsFile))["openUser"]}/.ssh/authorized_keys"
     }
   }
@@ -143,7 +143,7 @@ resource "azurerm_virtual_machine" "kubenode_publicIPs" {
   os_profile_linux_config {
     disable_password_authentication = true
     ssh_keys {
-      key_data = yamldecode(file(var.configsFile))["pubSSH"]
+      key_data = file(yamldecode(file(var.configsFile))["pathToPubKey"])
       path     = "/home/${yamldecode(file(var.configsFile))["openUser"]}/.ssh/authorized_keys"
     }
   }
