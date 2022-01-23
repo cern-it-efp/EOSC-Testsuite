@@ -2,7 +2,7 @@ Azure
 ---------------------------------------------
 
 Install az CLI and configure credentials with 'az login'.
-Note resource group, security group, and subnet have to be created in advance.
+Note a resource group has to be created prior to running the test suite.
 
 Azure specific variables for configs.yaml:
 
@@ -18,30 +18,20 @@ Azure specific variables for configs.yaml:
      - ID of the subscription. (required)
    * - resourceGroupName
      - Specifies the name of the Resource Group in which the Virtual Machine should exist. (required)
-   * - pubSSH
-     - Public SSH key of the key specified at configs.yaml's pathToKey. (required)
-   * - securityGroupID
-     - The ID of the Network Security Group to associate with the VMs's network interfaces (required)
-   * - subnetId
-     - Reference to a subnet in which the NIC for the VM has been created. (required)
    * - image.publisher
-     - Specifies the publisher of the image used to create the virtual machines.
+     - Specifies the publisher of the image used to create the virtual machines. (required)
    * - image.offer
-     - Specifies the offer of the image used to create the virtual machines.
+     - Specifies the offer of the image used to create the virtual machines. (required)
    * - image.sku
-     - Specifies the SKU of the image used to create the virtual machines.
+     - Specifies the SKU of the image used to create the virtual machines. (required)
    * - image.version
-     - Specifies the version of the image used to create the virtual machines.
+     - Specifies the version of the image used to create the virtual machines. (required)
 
-The image section is optional but in case it is provided, all its 4 variables must be set.
-Omitting the image section defaults to:
+For specific images (i.e. NVIDIA's), its legal terms have to be accepted:
 
-- publisher = OpenLogic
+.. code-block:: console
 
-- offer = CentOS
+    $ az vm image accept-terms --urn IMAGE_URN --subscription SUBSCRIPTION_ID
 
-- sku = 7.5
-
-- version = latest
 
 It is also possible to use AKS to provision the cluster, for this refer to section :ref:`Using existing clusters<using-existing-clusters>`.

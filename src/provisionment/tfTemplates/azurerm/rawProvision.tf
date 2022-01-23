@@ -85,9 +85,9 @@ resource "azurerm_network_interface" "nic" {
   }
 }
 
-# Create VMs
+# Create CPU VMs
 resource "azurerm_virtual_machine" "kubenode" {
-  count                 = var.customCount
+  count                 = var.isGPUcluster ? 0 : var.customCount
   name                  = "${var.instanceName}-${count.index}"
   location              = yamldecode(file(var.configsFile))["location"]
   resource_group_name   = yamldecode(file(var.configsFile))["resourceGroupName"]
@@ -102,12 +102,48 @@ resource "azurerm_virtual_machine" "kubenode" {
     disk_size_gb      = var.storageCapacity
   }
 
-  # TODO: fails for OpenLogic. Is this needed for GPUs though? otherwise, just remove it
-  #plan {
-  #  publisher = var.publisher
-  #  name      = var.sku
-  #  product   = var.offer
-  #}
+  storage_image_reference {
+    publisher = yamldecode(file(var.configsFile))["image"]["publisher"]
+    offer     = yamldecode(file(var.configsFile))["image"]["offer"]
+    sku       = yamldecode(file(var.configsFile))["image"]["sku"]
+    version   = yamldecode(file(var.configsFile))["image"]["version"]
+  }
+  os_profile {
+    computer_name  = "${var.instanceName}-${count.index}"
+    admin_username = yamldecode(file(var.configsFile))["openUser"]
+  }
+  os_profile_linux_config {
+    disable_password_authentication = true
+    ssh_keys {
+      key_data = file(yamldecode(file(var.configsFile))["pathToPubKey"])
+      path     = "/home/${yamldecode(file(var.configsFile))["openUser"]}/.ssh/authorized_keys"
+    }
+  }
+}
+
+# Create GPU VMs
+resource "azurerm_virtual_machine" "kubenode_gpu" {
+  count                 = var.isGPUcluster ? var.customCount : 0
+  name                  = "${var.instanceName}-${count.index}"
+  location              = yamldecode(file(var.configsFile))["location"]
+  resource_group_name   = yamldecode(file(var.configsFile))["resourceGroupName"]
+  vm_size               = var.flavor
+  network_interface_ids = [element(azurerm_network_interface.nic.*.id, count.index)]
+  delete_os_disk_on_termination = true
+
+  storage_os_disk {
+    name              = "ts-osdisk-${count.index}-${random_string.id.result}"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
+    disk_size_gb      = var.storageCapacity
+  }
+
+  # Required when creating a VM from a Marketplace image (i.e. Nvidia's). Fails for OpenLogic
+  plan {
+    publisher = yamldecode(file(var.configsFile))["image"]["publisher"] # publisher
+    name      = yamldecode(file(var.configsFile))["image"]["sku"] # sku
+    product   = yamldecode(file(var.configsFile))["image"]["offer"] # offer
+  }
 
   storage_image_reference {
     publisher = yamldecode(file(var.configsFile))["image"]["publisher"]

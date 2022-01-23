@@ -88,7 +88,9 @@ Release notes
 
 ``22.03 - latest``
 
--
+- Updated support for running on Azure's cloud.
+
+-  
 
 ``21.12``
 

@@ -1,12 +1,12 @@
 dlTest:
-  run:
-  nodes: 2
+  run: true
+  nodes: 6
   flavor: Standard_NC6s_v3 # 1 V100
   epochs: 1
   benchmark: nnlo
-  datasetSize: 1
+  datasetSize: 8
 proGANTest:
-  run: true
+  run:
   flavor: Standard_NC6s_v3 # 1 V100
   images_amount: 1
   kimg: 1

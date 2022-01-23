@@ -5,19 +5,19 @@ pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
 subscriptionId: 66d26b0b-b4c2-4ad9-b222-18015c4bf41e
 openUser: uroot
 flavor: foo
-resourceGroupName: ocrets-east-us
+resourceGroupName: ocre-france-central
 location: "France Central"
 storageCapacity: 150
 image:
   #----- Linux with tensorflow and GPU drivers included
-  publisher: "nvidia"
-  offer: "tensorflow_from_nvidia"
-  #sku: "tensorflow_10_0" # fails starting nov 12, was apparently removed from the marketplace
-  sku: "tensorflow_from_nvidia_19_11_3" # OK
-  #sku: "tensorflow_nvidia_20_03_1"
-  version: "latest"
+  publisher: nvidia
+  offer: tensorflow_from_nvidia
+  version: latest
+  sku: ngc-tensorflow-version-20-08-1 # OK
+  #sku: tensorflow_nvidia_20_03_1 # not available anymore
+  #sku: ngc-tensorflow-version-21-06-0 # shim-signed GRUB prompt
   #----- HPC with IB included
-  #publisher: "OpenLogic" # NOTE: 'plan' has to be removed from the .tf script for this and it's not the only one, the same applies to ubuntu's 'Canonical'
-  #offer: "CentOS-HPC"
+  #publisher: OpenLogic # NOTE: 'plan' has to be removed from the .tf script for this and it's not the only one, the same applies to ubuntu's 'Canonical'
+  #offer: CentOS-HPC
   #sku: "7.7" # 7_7-gen2 # related to 7.6 https://github.com/Azure/azhpc-images/issues/6
-  #version: "latest"
+  #version: latest

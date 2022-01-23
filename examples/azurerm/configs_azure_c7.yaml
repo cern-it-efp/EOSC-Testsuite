@@ -5,13 +5,22 @@ pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
 subscriptionId: 66d26b0b-b4c2-4ad9-b222-18015c4bf41e
 openUser: uroot
 flavor: Standard_D8d_v5
-resourceGroupName: ocrets-east-us
 image:
   publisher: OpenLogic
   offer: CentOS
   sku: "7.5"
   version: latest
 
-#location: "West Europe"
-location: "France Central"
-#location: ""
+#location: "France Central" # Paris
+#resourceGroupName: ocre-france-central
+
+location: "Germany West Central" # Frankfurt
+resourceGroupName: ocre-germany-west-central
+
+#location: "UK South" # London
+#resourceGroupName: ocre-uk-south
+
+# ..................
+
+#location: "North Europe" # Ireland
+#location: "West Europe" # Netherlands

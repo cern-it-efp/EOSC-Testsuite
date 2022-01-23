@@ -246,6 +246,11 @@ def terraformProvisionment(
 
             terraform_cli_vars["useFlexShape"] = configs["useFlexShape"]
 
+        if configs["providerName"] == "azurerm":
+
+            if test in ("dlTest", "proGANTest") :
+                terraform_cli_vars["isGPUcluster"] = True
+
         if configs["providerName"] == "google":
 
             pathToPubKey = tryTakeFromYaml(configs,"pathToPubKey",None)
