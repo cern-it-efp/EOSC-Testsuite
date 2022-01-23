@@ -11,6 +11,6 @@ imageID: fd8kg2vksu2r8tq4fr08 # CentOS 8
 #imageID: fd8vgqmrilk8dchj1ccf # Ubuntu 20.04 LTS
 #imageID: fd8hguc7o9hhr5bcvhql # Ubuntu 20.04 LTS GPU
 flavor:
-  cores: 4
-  memory: 16
+  cores: 8
+  memory: 32
 storageCapacity: 60

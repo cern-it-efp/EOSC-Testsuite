@@ -3,127 +3,106 @@ provider "azurerm" {
   features {}
 }
 
-####################################################################################################
+resource "random_string" "id" {
+  length  = 5
+  special = false
+  upper   = false
+}
 
 # Create one virtual network
-resource "azurerm_virtual_network" "myterraformnetwork" {
-  count = var.usePrivateIPs ? 0 : 1
-  name                = "myVnet-${var.clusterRandomID}"
+resource "azurerm_virtual_network" "network" {
+  name                = "ts-vnet-${random_string.id.result}"
   address_space       = ["10.0.0.0/16"]
   location            = yamldecode(file(var.configsFile))["location"]
   resource_group_name = yamldecode(file(var.configsFile))["resourceGroupName"]
 }
 
 # Create one subnet
-resource "azurerm_subnet" "myterraformsubnet" {
-  count = var.usePrivateIPs ? 0 : 1
-  name                 = "mySubnet-${var.clusterRandomID}"
-  resource_group_name = yamldecode(file(var.configsFile))["resourceGroupName"]
-  virtual_network_name = element(azurerm_virtual_network.myterraformnetwork.*.name, count.index)
-  address_prefixes       = ["10.0.1.0/24"]
+resource "azurerm_subnet" "subnet" {
+  name                 = "ts-subnet-${random_string.id.result}"
+  resource_group_name  = yamldecode(file(var.configsFile))["resourceGroupName"]
+  virtual_network_name = azurerm_virtual_network.network.name
+  address_prefixes     = ["10.0.1.0/24"]
 }
 
-####################################################################################################
+# Create security group with inbound and outbound rules
+resource "azurerm_network_security_group" "security_group" {
+  name                = "ts-secgroup-${random_string.id.result}"
+  location            = yamldecode(file(var.configsFile))["location"]
+  resource_group_name = yamldecode(file(var.configsFile))["resourceGroupName"]
+
+  security_rule {
+    name                       = "inbound_rule"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+  security_rule {
+    name                       = "outbound_rule"
+    priority                   = 100
+    direction                  = "Outbound"
+    access                     = "Allow"
+    protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
+
+# Associate security group to network
+resource "azurerm_subnet_network_security_group_association" "association" {
+  subnet_id                 = azurerm_subnet.subnet.id
+  network_security_group_id = azurerm_network_security_group.security_group.id
+}
 
 # Create public IPs
-resource "azurerm_public_ip" "terraformpublicip" {
+resource "azurerm_public_ip" "publicip" {
   count = var.customCount
-  name                = "myPublicIP${count.index}-${var.clusterRandomID}"
+  name                = "ts-publicIP${count.index}-${random_string.id.result}"
   location            = yamldecode(file(var.configsFile))["location"]
   resource_group_name = yamldecode(file(var.configsFile))["resourceGroupName"]
   allocation_method   = "Dynamic"
 }
 
 # Create NICs
-resource "azurerm_network_interface" "terraformnic_privateIPs" {
-  depends_on = [azurerm_subnet.myterraformsubnet]
-  count = var.usePrivateIPs ? var.customCount : 0
-  name                      = "myNIC${count.index}-${var.clusterRandomID}"
+resource "azurerm_network_interface" "nic" {
+  depends_on = [azurerm_subnet.subnet]
+  count                     = var.customCount
+  name                      = "ts-nic${count.index}-${random_string.id.result}"
   location                  = yamldecode(file(var.configsFile))["location"]
   resource_group_name       = yamldecode(file(var.configsFile))["resourceGroupName"]
   ip_configuration {
-    name                          = "myNicConfiguration"
-    subnet_id                     = yamldecode(file(var.configsFile))["subnetId"]
+    name                          = "nicConfiguration"
+    subnet_id                     = azurerm_subnet.subnet.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = element(azurerm_public_ip.terraformpublicip.*.id, count.index)
+    public_ip_address_id          = element(azurerm_public_ip.publicip.*.id, count.index)
   }
 }
-resource "azurerm_network_interface" "terraformnic_publicIPs" {
-  depends_on = [azurerm_subnet.myterraformsubnet]
-  count = var.usePrivateIPs ? 0 : var.customCount
-  name                      = "myNIC${count.index}-${var.clusterRandomID}"
-  location                  = yamldecode(file(var.configsFile))["location"]
-  resource_group_name       = yamldecode(file(var.configsFile))["resourceGroupName"]
-  ip_configuration {
-    name                          = "myNicConfiguration"
-    subnet_id                     = element(azurerm_subnet.myterraformsubnet.*.id, count.index)
-    private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = element(azurerm_public_ip.terraformpublicip.*.id, count.index)
-  }
-}
-
-####################################################################################################
 
 # Create VMs
-resource "azurerm_virtual_machine" "kubenode_privateIPs" {
-  count = var.usePrivateIPs ? var.customCount : 0
+resource "azurerm_virtual_machine" "kubenode" {
+  count                 = var.customCount
   name                  = "${var.instanceName}-${count.index}"
   location              = yamldecode(file(var.configsFile))["location"]
   resource_group_name   = yamldecode(file(var.configsFile))["resourceGroupName"]
   vm_size               = var.flavor
-  network_interface_ids = [element(azurerm_network_interface.terraformnic_privateIPs.*.id, count.index)]
+  network_interface_ids = [element(azurerm_network_interface.nic.*.id, count.index)]
   delete_os_disk_on_termination = true
 
   storage_os_disk {
-    name              = "myOsDisk${count.index}-${var.clusterRandomID}"
+    name              = "ts-osdisk-${count.index}-${random_string.id.result}"
     caching           = "ReadWrite"
     create_option     = "FromImage"
-    managed_disk_type = "Premium_LRS"
     disk_size_gb      = var.storageCapacity
   }
 
-  plan {
-    publisher = var.publisher
-    name      = var.sku
-    product   = var.offer
-  }
-
-  storage_image_reference {
-    publisher = var.publisher
-    offer     = var.offer
-    sku       = var.sku
-    version   = var.imageVersion
-  }
-  os_profile {
-    computer_name  = "${var.instanceName}-${count.index}"
-    admin_username = yamldecode(file(var.configsFile))["openUser"]
-  }
-  os_profile_linux_config {
-    disable_password_authentication = true
-    ssh_keys {
-      key_data = file(yamldecode(file(var.configsFile))["pathToPubKey"])
-      path     = "/home/${yamldecode(file(var.configsFile))["openUser"]}/.ssh/authorized_keys"
-    }
-  }
-}
-resource "azurerm_virtual_machine" "kubenode_publicIPs" {
-  count = var.usePrivateIPs ? 0 : var.customCount
-  name                  = "${var.instanceName}-${count.index}"
-  location              = yamldecode(file(var.configsFile))["location"]
-  resource_group_name   = yamldecode(file(var.configsFile))["resourceGroupName"]
-  vm_size               = var.flavor
-  network_interface_ids = [element(azurerm_network_interface.terraformnic_publicIPs.*.id, count.index)]
-  delete_os_disk_on_termination = true
-
-  storage_os_disk {
-    name              = "myOsDisk${count.index}-${var.clusterRandomID}"
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Premium_LRS"
-    disk_size_gb      = var.storageCapacity
-  }
-
-  # fails for OpenLogic
+  # TODO: fails for OpenLogic. Is this needed for GPUs though? otherwise, just remove it
   #plan {
   #  publisher = var.publisher
   #  name      = var.sku
@@ -131,10 +110,10 @@ resource "azurerm_virtual_machine" "kubenode_publicIPs" {
   #}
 
   storage_image_reference {
-    publisher = var.publisher
-    offer     = var.offer
-    sku       = var.sku
-    version   = var.imageVersion
+    publisher = yamldecode(file(var.configsFile))["image"]["publisher"]
+    offer     = yamldecode(file(var.configsFile))["image"]["offer"]
+    sku       = yamldecode(file(var.configsFile))["image"]["sku"]
+    version   = yamldecode(file(var.configsFile))["image"]["version"]
   }
   os_profile {
     computer_name  = "${var.instanceName}-${count.index}"

@@ -6,6 +6,6 @@ openUser: openu
 flavor: n1-standard-4
 zone: us-west1-a
 image: centos-cloud/centos-7
-pathToCredentials: /data/career/cern/clouds/gcp/cern-test-suite-fb46815ac1f0.json
+pathToCredentials: /home/ipelu/Desktop/work/clouds/gcp/cern-test-suite-fb46815ac1f0.json
 project: cern-test-suite
 storageCapacity: 50

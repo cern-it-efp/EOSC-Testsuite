@@ -1,14 +1,12 @@
 dlTest:
   run:
   nodes: 2
-  flavor: "Standard_NC24rs_v3"
+  flavor: Standard_NC6s_v3 # 1 V100
   epochs: 1
   benchmark: nnlo
   datasetSize: 1
 proGANTest:
-  run:
-  flavor: Standard_NC24s_v3
+  run: true
+  flavor: Standard_NC6s_v3 # 1 V100
   images_amount: 1
   kimg: 1
-dataRepatriationTest:
-  run: true

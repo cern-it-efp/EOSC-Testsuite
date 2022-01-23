@@ -8,7 +8,7 @@ required:
     - openUser
     - location
     - resourceGroupName
-    #- subnetId
+    - image
 properties:
     subscriptionId:
         type: string

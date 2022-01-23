@@ -211,27 +211,6 @@ def terraformProvisionment(
                 terraform_cli_vars["staticIPs"] = staticIPs
                 terraform_cli_vars["useStaticIPs"] = True
 
-        if configs["providerName"] == "azurerm":
-
-            terraform_cli_vars["clusterRandomID"] = randomId # var.clusterRandomID to have unique interfaces and disks names
-            terraform_cli_vars["publisher"] = tryTakeFromYaml(
-                                                configs,
-                                                "image.publisher",
-                                                "OpenLogic")
-            terraform_cli_vars["offer"] = tryTakeFromYaml(
-                                            configs,
-                                            "image.offer",
-                                            "CentOS")
-            terraform_cli_vars["sku"] = str(tryTakeFromYaml(
-                                                configs,
-                                                "image.sku",
-                                                7.5))
-            terraform_cli_vars["imageVersion"] = str(tryTakeFromYaml(
-                                                    configs,
-                                                    "image.version",
-                                                    "latest"))
-            terraform_cli_vars["usePrivateIPs"] = usePrivateIPs
-
         if configs["providerName"] == "openstack":
 
             networkName = tryTakeFromYaml(configs, "networkName", False)

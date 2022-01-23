@@ -24,18 +24,6 @@ variable "availabilityZone" { default = "" } # region is above
 variable "useDefaultNetwork" { default = true } # default uses existing network (if only 1, otherwise fails)
 variable "authUrl" { default = "" }
 
-############################ AZURE #############################################
-variable "clusterRandomID" { default = "" }
-variable "vmSize" { default = "" }
-#variable "secGroupId" {
-#  default = "SECGROUPID_PH"
-#}
-variable "publisher" { default = "" }
-variable "usePrivateIPs" { default = "" }
-variable "offer" { default = "" }
-variable "sku" { default = "" }
-variable "imageVersion" { default = "" }
-
 ############################ GCP ###############################################
 variable "gpuCount" { default = "" }
 variable "gpuType" { default = "" }
