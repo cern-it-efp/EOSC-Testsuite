@@ -1,0 +1,13 @@
+# ---------------- This is needed because by default the main partition does not take the whole disk.
+- name: Azure's Grow File System
+  hosts: all
+  become: yes
+  tasks:
+     - name: Install cloud-utils-growpart and gdisk
+       package:
+         name: cloud-utils-growpart, gdisk
+         state: latest
+     - name: Run growpart
+       command: growpart /dev/sda 2
+     - name: Run xfs_growfs
+       command: xfs_growfs /

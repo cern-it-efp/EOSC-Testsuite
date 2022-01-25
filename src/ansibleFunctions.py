@@ -91,7 +91,7 @@ def ansiblePlaybook(mainTfDir,
         test (str): Cluster identification.
         configs (dict): Content of configs.yaml.
         usePrivateIPs (bool): Indicates whether private IPs should be used.
-        freeMaster (bool): If True, pods can't run on the master node. 
+        freeMaster (bool): If True, pods can't run on the master node.
 
     Returns:
         int: 0 for success, 1 for failure
@@ -165,6 +165,10 @@ def ansiblePlaybook(mainTfDir,
                 # --------------- OCI's Grow File System
                 if providerName == "oci":
                     playbooksArray.append("src/provisionment/playbooks/oci_growfs.yaml")
+
+                # --------------- Azure's Grow File System
+                if providerName == "azurerm":
+                    playbooksArray.append("src/provisionment/playbooks/azure_growfs.yaml")
 
 
                 res = PlaybookExecutor(playbooks=playbooksArray,

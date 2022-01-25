@@ -5,6 +5,7 @@ pathToPubKey: /home/ipelu/.ssh/id_rsa.pub
 subscriptionId: 66d26b0b-b4c2-4ad9-b222-18015c4bf41e
 openUser: uroot
 flavor: Standard_D8d_v5
+storageCapacity: 150
 image:
   publisher: OpenLogic
   offer: CentOS
