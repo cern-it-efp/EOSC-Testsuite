@@ -99,7 +99,7 @@ resource "azurerm_virtual_machine" "kubenode" {
     name              = "ts-osdisk-${count.index}-${random_string.id.result}"
     caching           = "ReadWrite"
     create_option     = "FromImage"
-    disk_size_gb      = var.storageCapacity
+    disk_size_gb      = yamldecode(file(var.configsFile))["storageCapacity"]
   }
 
   storage_image_reference {
@@ -135,7 +135,7 @@ resource "azurerm_virtual_machine" "kubenode_gpu" {
     name              = "ts-osdisk-${count.index}-${random_string.id.result}"
     caching           = "ReadWrite"
     create_option     = "FromImage"
-    disk_size_gb      = var.storageCapacity
+    disk_size_gb      = yamldecode(file(var.configsFile))["storageCapacity"]
   }
 
   # Required when creating a VM from a Marketplace image (i.e. Nvidia's). Fails for OpenLogic

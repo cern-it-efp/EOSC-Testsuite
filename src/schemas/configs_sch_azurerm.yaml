@@ -9,6 +9,7 @@ required:
     - location
     - resourceGroupName
     - image
+    - storageCapacity
 properties:
     subscriptionId:
         type: string

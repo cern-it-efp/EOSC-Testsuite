@@ -279,7 +279,8 @@ def terraformProvisionment(
                                                     "securityGroups",
                                                     None)
 
-        if configs["providerName"] in ("oci", "aws", "google", "azurerm"):
+        # TODO: make required
+        if configs["providerName"] in ("oci", "aws", "google"):
 
             terraform_cli_vars["storageCapacity"] = tryTakeFromYaml(
                                                         configs,
