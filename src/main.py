@@ -196,8 +196,8 @@ parser.add_argument('--customNodes',
                     help='Use a specific amount of nodes.',
                     metavar="NODES",
                     type=int)
-parser.add_argument('--noWatch',
-                    help='Do not use the watch function.',
+parser.add_argument('--quiet',
+                    help='Do not print logs to terminal.',
                     action='store_true')
 parser.add_argument('--publish',
                     help='Push results to CERN S3.',

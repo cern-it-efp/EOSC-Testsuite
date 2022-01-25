@@ -2,11 +2,11 @@ dlTest:
   run: true
   nodes: 6
   flavor: Standard_NC6s_v3 # 1 V100
-  epochs: 1
+  epochs: 10
   benchmark: nnlo
-  datasetSize: 8
+  datasetSize: 30
 proGANTest:
   run:
   flavor: Standard_NC6s_v3 # 1 V100
-  images_amount: 1
-  kimg: 1
+  images_amount: 100
+  kimg: 300

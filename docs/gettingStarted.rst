@@ -155,7 +155,11 @@ To run the suite on a provider/cloud that is not listed above (supporting Terraf
 
 1.6 Using Docker
 ===================
-A Docker image has been built and pushed to Docker hub. This image allows you to skip section "Dependencies" and jump to "SSH key", you can see the Dockerfile here.
+A Docker image has been built and pushed to Docker hub. This image allows you to skip section "Dependencies" and jump to "SSH key", you can see the Dockerfile |dockerfile|.
+
+.. |dockerfile| raw:: html
+
+  <a href="https://github.com/cern-it-efp/EOSC-Testsuite/blob/master/Dockerfile" target="_blank">here</a>
 
 Run the container (pulls the image first):
 

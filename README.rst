@@ -90,7 +90,7 @@ Release notes
 
 - Updated support for running on Azure's cloud.
 
--  
+- Renamed --noWatch option to --quiet.
 
 ``21.12``
 

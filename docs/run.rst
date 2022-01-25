@@ -9,7 +9,7 @@ Once the configuration steps are completed, the Test-Suite is ready to be run:
     EOSC-Testsuite$ ./test_suite <options>
 
 The suite uses a combination of Linux' watch and cat commands to display the logs of the run. Hence, the suite will fail if no terminal/TTY is available.
-To change this behaviour use the option *noWatch* as defined in the options below.
+To change this behaviour use the option *--quiet* as defined in the options below.
 
 Once the provisionment steps are completed (Kubernetes cluster up and running) and pods are deployed, the run will finish when all the deployed tests complete.
 If for any reason you want to stop the run before completion, delete all the pods and this will finish the run.
@@ -77,7 +77,7 @@ Options
     When using the docker approach, *--net=host* should be used in the Docker run command. With that option, the container will use the network used by its host.
     Without it, the container wouldn't be able to communicate with the nodes, as it would not be in the same network as them and the nodes will not have public IPs.
 
---noWatch
+--quiet
     Makes the test suite not use the watch function, hence disabling logs.
 
 --freeMaster
